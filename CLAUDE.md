@@ -35,6 +35,7 @@ This is a DJ Event Booking System built with React (Vite) frontend and Convex ba
   - `/src/components/ui/` - shadcn/ui base components
   - `/src/components/ui/kibo-ui/` - Kibo UI advanced components
   - `/src/components/EventCreationForm.tsx` - Event creation form with validation
+  - `/src/components/DJSubmissionForm.tsx` - Public DJ submission form with token access
 - `/src/lib/` - Utility functions and configuration
   - `/src/lib/utils.ts` - Utility functions for component styling
   - `/src/lib/validation.ts` - ArkType validation schemas and helpers
@@ -45,12 +46,12 @@ This is a DJ Event Booking System built with React (Vite) frontend and Convex ba
 - `/convex/` - Convex backend functions and schema
 - `/convex/schema.ts` - Database schema definition with tables:
   - `events` - Event information with venue, deadlines, payment configuration
-  - `timeslots` - DJ time slots linked to events with Instagram handles
+  - `timeslots` - DJ time slots with unique submission tokens and Instagram handles
   - `submissions` - DJ submissions with promo materials, guest lists, payment info
   - `users` - Organizer authentication
 - `/convex/_generated/` - Auto-generated Convex API files
 - `/convex/events.ts` - Event management API functions (create, list, get, update status)
-- `/convex/timeslots.ts` - Timeslot management API functions
+- `/convex/timeslots.ts` - Timeslot management and token-based access functions
 
 ### Key Features
 
@@ -61,27 +62,37 @@ This is a DJ Event Booking System built with React (Vite) frontend and Convex ba
 - **Instagram Handle Validation**: Enforces @username format with character validation
 - **Database Integration**: Events and timeslots saved to Convex with atomic operations
 - **Dynamic UI**: Responsive forms with loading states and error boundaries
+- **Unique Submission Links**: Each DJ gets a unique 16-character token for material submission
+- **DJ Submission Form**: Public form accessible via URL parameters (?token=ABC123)
+- **Guest List Management**: Dynamic add/remove guest entries with name and phone fields
+- **Payment Info Collection**: Secure form for DJ payment details with privacy notice
+- **Token-based Access**: URL routing system for seamless DJ submission experience
 
 **📋 Planned:**
-- **Unique Submission Links**: Each DJ gets a unique link for submitting materials
-- **File Uploads**: Promo materials stored in Convex file storage
+- **File Upload Integration**: Connect Dropzone to Convex file storage for actual uploads
+- **Submission Data Storage**: Save guest lists and payment info to database with encryption
+- **Submission Status Tracking**: Dashboard for organizers to monitor submission progress
 - **Instagram Integration**: Generates copy-paste messages for Instagram announcements
-- **Encrypted Data**: Payment information (account numbers, resident registration) encrypted at rest
 - **Authentication**: Organizer login and session management
+- **Email Notifications**: Deadline reminders and submission confirmations
 
 ### Data Flow
 
 **Current Implementation:**
 1. Organizers create events through dashboard with form validation
-2. Event data and timeslots are atomically saved to Convex database
+2. Event data and timeslots are atomically saved to Convex database with unique submission tokens
 3. Dashboard displays real-time event counts and status updates
 4. Form provides immediate feedback with ArkType validation
+5. DJs access personalized submission forms via unique token URLs (?token=ABC123)
+6. Submission forms display event context, deadlines, and collect guest lists + payment info
+7. Token-based routing ensures each DJ sees only their relevant timeslot information
 
 **Planned Extensions:**
-5. System generates unique submission links for each DJ timeslot
-6. DJs submit materials via public submission page (no auth required)
-7. Organizers track submissions and export data through dashboard
-8. Instagram messages auto-generated for event promotion
+8. File uploads are processed and stored in Convex file storage
+9. Submission data is encrypted and saved to database
+10. Organizers track submission progress through dedicated dashboard
+11. Instagram messages auto-generated for event promotion
+12. Email notifications sent for deadlines and confirmations
 
 ### Available UI Components
 
@@ -155,16 +166,19 @@ import { validateEvent, validateTimeslot } from "@/lib/validation"
 - [x] Real-time form validation with visual feedback
 - [x] Database schema aligned with form structure
 
-### Phase 2: DJ Submission System - 📋 **PLANNED**
-- [ ] Public DJ submission pages
+### Phase 2: DJ Submission System - 🚧 **IN PROGRESS** (75% Complete)
+- [x] Unique submission link generation with 16-character tokens
+- [x] Public DJ submission pages with token-based access
+- [x] Guest list management with dynamic add/remove functionality
+- [x] Payment information collection forms with privacy notices
+- [x] Token-based URL routing and event context display
 - [ ] File upload integration with Convex storage
-- [ ] Unique submission link generation
-- [ ] Guest list management
-- [ ] Payment information collection
+- [ ] Submission data storage with encryption
+- [ ] Form validation and error handling for submissions
 
 ### Phase 3: Advanced Features - 📋 **PLANNED**
+- [ ] Submission status dashboard for organizers
 - [ ] Instagram message generation
 - [ ] Organizer authentication system
-- [ ] Event dashboard with submission tracking
 - [ ] Data export functionality
-- [ ] Email notifications
+- [ ] Email notifications and deadline reminders
