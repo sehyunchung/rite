@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useQuery } from "convex/react";
 import { api } from "../convex/_generated/api";
 import { Button } from "@/components/ui/button";
@@ -5,21 +6,39 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Dropzone } from "@/components/ui/kibo-ui/dropzone";
 import { QRCode } from "@/components/ui/kibo-ui/qr-code";
 import { CodeBlock } from "@/components/ui/kibo-ui/code-block";
+import { EventCreationForm } from "@/components/EventCreationForm";
 
 export default function App() {
+  const [currentPage, setCurrentPage] = useState<'dashboard' | 'create-event'>('dashboard');
   return (
     <>
       <header className="sticky top-0 z-10 bg-slate-50 dark:bg-slate-900 p-4 border-b-2 border-slate-200 dark:border-slate-800">
-        <h1 className="text-xl font-bold">DJ Event Booking System</h1>
-      </header>
-      <main className="p-8 flex flex-col gap-16">
-        <div className="text-center">
-          <h1 className="text-4xl font-bold mb-4">DJ Event Booking</h1>
-          <p className="text-lg text-slate-600 dark:text-slate-400">
-            Streamline your DJ event management with Instagram integration
-          </p>
+        <div className="flex items-center justify-between">
+          <h1 className="text-xl font-bold">DJ Event Booking System</h1>
+          {currentPage === 'create-event' && (
+            <Button 
+              variant="outline" 
+              onClick={() => setCurrentPage('dashboard')}
+            >
+              ← Back to Dashboard
+            </Button>
+          )}
         </div>
-        <Content />
+      </header>
+      <main className="p-8">
+        {currentPage === 'dashboard' ? (
+          <div className="flex flex-col gap-16">
+            <div className="text-center">
+              <h1 className="text-4xl font-bold mb-4">DJ Event Booking</h1>
+              <p className="text-lg text-slate-600 dark:text-slate-400">
+                Streamline your DJ event management with Instagram integration
+              </p>
+            </div>
+            <Content />
+          </div>
+        ) : (
+          <EventCreationForm />
+        )}
       </main>
     </>
   );
@@ -168,14 +187,14 @@ LINEUP:
         {/* Action Button Test */}
         <div className="flex gap-4 justify-center">
           <Button 
-            onClick={() => alert("Event creation flow would start here!")}
+            onClick={() => setCurrentPage('create-event')}
             size="lg"
           >
             🎪 Create New Event
           </Button>
           <Button 
             variant="outline" 
-            onClick={() => alert("Dashboard navigation would happen here!")}
+            onClick={() => setCurrentPage('dashboard')}
             size="lg"
           >
             📊 View Dashboard
