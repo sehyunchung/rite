@@ -1,5 +1,10 @@
 import { useQuery } from "convex/react";
 import { api } from "../convex/_generated/api";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Dropzone } from "@/components/ui/kibo-ui/dropzone";
+import { QRCode } from "@/components/ui/kibo-ui/qr-code";
+import { CodeBlock } from "@/components/ui/kibo-ui/code-block";
 
 export default function App() {
   return (
@@ -82,6 +87,100 @@ function Content() {
           description="Export guest lists and payment information with encryption support."
           status="Planned"
         />
+      </div>
+
+      {/* Component Testing Section */}
+      <div className="space-y-6">
+        <h2 className="text-2xl font-bold">🧪 Component Testing</h2>
+        
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* File Upload Test */}
+          <Card>
+            <CardHeader>
+              <CardTitle>📁 File Upload (Dropzone)</CardTitle>
+              <CardDescription>Test drag-and-drop file upload for DJ promo materials</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Dropzone
+                onDrop={(files) => {
+                  console.log("Files dropped:", files);
+                  alert(`${files.length} file(s) uploaded successfully!`);
+                }}
+                maxFiles={5}
+                accept={{
+                  'image/*': ['.png', '.jpg', '.jpeg'],
+                  'video/*': ['.mp4', '.mov'],
+                  'application/pdf': ['.pdf']
+                }}
+              >
+                Drop DJ promo materials here
+              </Dropzone>
+            </CardContent>
+          </Card>
+
+          {/* QR Code Test */}
+          <Card>
+            <CardHeader>
+              <CardTitle>📱 QR Code Generator</CardTitle>
+              <CardDescription>Generate QR codes for event check-in</CardDescription>
+            </CardHeader>
+            <CardContent className="flex flex-col items-center space-y-4">
+              <QRCode 
+                value="https://dj-event-booking.com/submit/abc123" 
+                size={150}
+              />
+              <p className="text-sm text-muted-foreground text-center">
+                Scan to access DJ submission form
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Instagram Message Preview */}
+        <Card>
+          <CardHeader>
+            <CardTitle>📱 Instagram Message Preview</CardTitle>
+            <CardDescription>Auto-generated Instagram post content</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <CodeBlock
+              language="text"
+              code={`🎵 Seoul Underground Night - 2025년 1월 15일
+📍 Hongdae Club VERA
+
+LINEUP:
+22:00-23:00 - @dj_hansol
+23:00-00:00 - @dj_minjae  
+00:00-01:00 - @dj_seoyoung
+
+📝 각 디제이별 제출 링크는 DM으로 전송됩니다
+⏰ 마감일:
+- 게스트 명단: 1월 10일
+- 프로모 자료: 1월 8일
+
+#seoulunderground #djnight #hongdae #electronicmusic`}
+              showLineNumbers={false}
+              allowCopy={true}
+            />
+          </CardContent>
+        </Card>
+
+        {/* Action Button Test */}
+        <div className="flex gap-4 justify-center">
+          <Button 
+            onClick={() => alert("Event creation flow would start here!")}
+            size="lg"
+          >
+            🎪 Create New Event
+          </Button>
+          <Button 
+            variant="outline" 
+            onClick={() => alert("Dashboard navigation would happen here!")}
+            size="lg"
+          >
+            📊 View Dashboard
+          </Button>
+        </div>
       </div>
 
       <div className="bg-slate-100 dark:bg-slate-800 p-6 rounded-lg">

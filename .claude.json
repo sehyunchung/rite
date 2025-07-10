@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "kibo-ui": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote",
+        "https://www.kibo-ui.com/api/mcp/http"
+      ]
+    }
+  }
+}
