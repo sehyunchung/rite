@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "convex/react";
 import { api } from "../convex/_generated/api";
 import { Button } from "@/components/ui/button";
@@ -7,25 +7,40 @@ import { Dropzone } from "@/components/ui/kibo-ui/dropzone";
 import { QRCode } from "@/components/ui/kibo-ui/qr-code";
 import { CodeBlock } from "@/components/ui/kibo-ui/code-block";
 import { EventCreationForm } from "@/components/EventCreationForm";
+import { DJSubmissionForm } from "@/components/DJSubmissionForm";
 
 export default function App() {
-  const [currentPage, setCurrentPage] = useState<'dashboard' | 'create-event'>('dashboard');
+  const [currentPage, setCurrentPage] = useState<'dashboard' | 'create-event' | 'dj-submission'>('dashboard');
+  const [submissionToken, setSubmissionToken] = useState<string>('');
+
+  // Check URL for submission token
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const token = urlParams.get('token');
+    if (token) {
+      setSubmissionToken(token);
+      setCurrentPage('dj-submission');
+    }
+  }, []);
   return (
     <>
-      <header className="sticky top-0 z-10 bg-slate-50 dark:bg-slate-900 p-4 border-b-2 border-slate-200 dark:border-slate-800">
-        <div className="flex items-center justify-between">
-          <h1 className="text-xl font-bold">DJ Event Booking System</h1>
-          {currentPage === 'create-event' && (
-            <Button 
-              variant="outline" 
-              onClick={() => setCurrentPage('dashboard')}
-            >
-              ← Back to Dashboard
-            </Button>
-          )}
-        </div>
-      </header>
-      <main className="p-8">
+      {currentPage !== 'dj-submission' && (
+        <header className="sticky top-0 z-10 bg-slate-50 dark:bg-slate-900 p-4 border-b-2 border-slate-200 dark:border-slate-800">
+          <div className="flex items-center justify-between">
+            <h1 className="text-xl font-bold">DJ Event Booking System</h1>
+            {currentPage === 'create-event' && (
+              <Button 
+                variant="outline" 
+                onClick={() => setCurrentPage('dashboard')}
+              >
+                ← Back to Dashboard
+              </Button>
+            )}
+          </div>
+        </header>
+      )}
+      
+      <main className={currentPage === 'dj-submission' ? '' : 'p-8'}>
         {currentPage === 'dashboard' ? (
           <div className="flex flex-col gap-16">
             <div className="text-center">
@@ -36,10 +51,12 @@ export default function App() {
             </div>
             <Content setCurrentPage={setCurrentPage} />
           </div>
-        ) : (
+        ) : currentPage === 'create-event' ? (
           <EventCreationForm 
             onEventCreated={() => setCurrentPage('dashboard')} 
           />
+        ) : (
+          <DJSubmissionForm submissionToken={submissionToken} />
         )}
       </main>
     </>

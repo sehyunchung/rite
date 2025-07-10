@@ -1,6 +1,16 @@
 import { v } from "convex/values";
 import { query, mutation } from "./_generated/server";
 
+// Generate a unique submission token for a timeslot
+function generateSubmissionToken(): string {
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let token = '';
+  for (let i = 0; i < 16; i++) {
+    token += characters.charAt(Math.floor(Math.random() * characters.length));
+  }
+  return token;
+}
+
 // Query to list all events for the organizer
 export const listEvents = query({
   args: {
@@ -78,22 +88,27 @@ export const createEvent = mutation({
       status: "draft" as const,
     });
     
-    // Create timeslots for the event
-    const timeslotIds = await Promise.all(
+    // Create timeslots for the event with unique submission tokens
+    const timeslotResults = await Promise.all(
       timeslots.map(async (slot) => {
+        const submissionToken = generateSubmissionToken();
         const timeslotId = await ctx.db.insert("timeslots", {
           eventId,
           startTime: slot.startTime,
           endTime: slot.endTime,
           djName: slot.djName,
           djInstagram: slot.djInstagram,
+          submissionToken,
         });
-        return timeslotId;
+        return { timeslotId, submissionToken };
       })
     );
     
-    console.log("Created new event with id:", eventId, "and timeslots:", timeslotIds);
-    return { eventId, timeslotIds };
+    console.log("Created new event with id:", eventId, "and timeslots:", timeslotResults);
+    return { 
+      eventId, 
+      timeslots: timeslotResults 
+    };
   },
 });
 

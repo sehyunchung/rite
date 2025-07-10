@@ -1,6 +1,16 @@
 import { v } from "convex/values";
 import { query, mutation } from "./_generated/server";
 
+// Generate a unique submission token for a timeslot
+function generateSubmissionToken(): string {
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let token = '';
+  for (let i = 0; i < 16; i++) {
+    token += characters.charAt(Math.floor(Math.random() * characters.length));
+  }
+  return token;
+}
+
 // Query to get timeslots for an event
 export const getTimeslots = query({
   args: {
@@ -16,6 +26,34 @@ export const getTimeslots = query({
   },
 });
 
+// Query to get a timeslot by its submission token
+export const getTimeslotByToken = query({
+  args: {
+    submissionToken: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const timeslot = await ctx.db
+      .query("timeslots")
+      .filter((q) => q.eq(q.field("submissionToken"), args.submissionToken))
+      .first();
+    
+    if (!timeslot || !timeslot.submissionToken) {
+      throw new Error("Invalid submission link");
+    }
+    
+    // Also get the event details
+    const event = await ctx.db.get(timeslot.eventId);
+    if (!event) {
+      throw new Error("Event not found");
+    }
+    
+    return {
+      ...timeslot,
+      event,
+    };
+  },
+});
+
 // Mutation to create a timeslot
 export const createTimeslot = mutation({
   args: {
@@ -26,10 +64,15 @@ export const createTimeslot = mutation({
     djInstagram: v.string(),
   },
   handler: async (ctx, args) => {
-    const timeslotId = await ctx.db.insert("timeslots", args);
+    const submissionToken = generateSubmissionToken();
     
-    console.log("Created new timeslot with id:", timeslotId);
-    return timeslotId;
+    const timeslotId = await ctx.db.insert("timeslots", {
+      ...args,
+      submissionToken,
+    });
+    
+    console.log("Created new timeslot with id:", timeslotId, "and token:", submissionToken);
+    return { timeslotId, submissionToken };
   },
 });
 
@@ -61,5 +104,26 @@ export const deleteTimeslot = mutation({
   },
   handler: async (ctx, args) => {
     await ctx.db.delete(args.timeslotId);
+  },
+});
+
+// Migration function to add submission tokens to existing timeslots
+export const addSubmissionTokensToExistingTimeslots = mutation({
+  args: {},
+  handler: async (ctx) => {
+    const timeslotsWithoutTokens = await ctx.db
+      .query("timeslots")
+      .filter((q) => q.eq(q.field("submissionToken"), undefined))
+      .collect();
+    
+    console.log(`Found ${timeslotsWithoutTokens.length} timeslots without submission tokens`);
+    
+    for (const timeslot of timeslotsWithoutTokens) {
+      const submissionToken = generateSubmissionToken();
+      await ctx.db.patch(timeslot._id, { submissionToken });
+      console.log(`Added token ${submissionToken} to timeslot ${timeslot._id}`);
+    }
+    
+    return { updated: timeslotsWithoutTokens.length };
   },
 });

@@ -30,6 +30,7 @@ export default defineSchema({
     endTime: v.string(),
     djName: v.string(),
     djInstagram: v.string(),
+    submissionToken: v.optional(v.string()),
     submissionId: v.optional(v.id("submissions")),
   }),
 
