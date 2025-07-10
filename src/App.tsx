@@ -34,20 +34,22 @@ export default function App() {
                 Streamline your DJ event management with Instagram integration
               </p>
             </div>
-            <Content />
+            <Content setCurrentPage={setCurrentPage} />
           </div>
         ) : (
-          <EventCreationForm />
+          <EventCreationForm 
+            onEventCreated={() => setCurrentPage('dashboard')} 
+          />
         )}
       </main>
     </>
   );
 }
 
-function Content() {
+function Content({ setCurrentPage }: { setCurrentPage: (page: 'dashboard' | 'create-event') => void }) {
   // Test connection to our events API
   const events = useQuery(api.events.listEvents, {
-    organizerId: "test-organizer-id",
+    organizerId: "demo-organizer",
   });
 
   if (events === undefined) {

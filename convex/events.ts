@@ -41,7 +41,7 @@ export const getEvent = query({
   },
 });
 
-// Mutation to create a new event
+// Mutation to create a new event with timeslots
 export const createEvent = mutation({
   args: {
     organizerId: v.string(),
@@ -52,24 +52,48 @@ export const createEvent = mutation({
       address: v.string(),
     }),
     description: v.optional(v.string()),
-    hashtags: v.array(v.string()),
-    paymentAmount: v.number(),
-    guestLimitPerDj: v.number(),
     deadlines: v.object({
       guestList: v.string(),
-      promoMaterial: v.string(),
-      paymentInfo: v.string(),
+      promoMaterials: v.string(),
     }),
+    payment: v.object({
+      amount: v.number(),
+      currency: v.string(),
+      dueDate: v.string(),
+    }),
+    timeslots: v.array(v.object({
+      startTime: v.string(),
+      endTime: v.string(),
+      djName: v.string(),
+      djInstagram: v.string(),
+    })),
   },
   handler: async (ctx, args) => {
+    const { timeslots, ...eventData } = args;
+    
+    // Create the event
     const eventId = await ctx.db.insert("events", {
-      ...args,
+      ...eventData,
       createdAt: new Date().toISOString(),
       status: "draft" as const,
     });
     
-    console.log("Created new event with id:", eventId);
-    return eventId;
+    // Create timeslots for the event
+    const timeslotIds = await Promise.all(
+      timeslots.map(async (slot) => {
+        const timeslotId = await ctx.db.insert("timeslots", {
+          eventId,
+          startTime: slot.startTime,
+          endTime: slot.endTime,
+          djName: slot.djName,
+          djInstagram: slot.djInstagram,
+        });
+        return timeslotId;
+      })
+    );
+    
+    console.log("Created new event with id:", eventId, "and timeslots:", timeslotIds);
+    return { eventId, timeslotIds };
   },
 });
 
