@@ -8,6 +8,7 @@ import { QRCode } from "@/components/ui/kibo-ui/qr-code";
 import { CodeBlock } from "@/components/ui/kibo-ui/code-block";
 import { EventCreationForm } from "@/components/EventCreationForm";
 import { DJSubmissionForm } from "@/components/DJSubmissionForm";
+import { Footer } from "@/components/Footer";
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState<'dashboard' | 'create-event' | 'dj-submission'>('dashboard');
@@ -59,6 +60,8 @@ export default function App() {
           <DJSubmissionForm submissionToken={submissionToken} />
         )}
       </main>
+      
+      <Footer />
     </>
   );
 }
@@ -219,17 +222,6 @@ LINEUP:
             📊 View Dashboard
           </Button>
         </div>
-      </div>
-
-      <div className="bg-slate-100 dark:bg-slate-800 p-6 rounded-lg">
-        <h3 className="text-lg font-semibold mb-2">Next Steps</h3>
-        <ul className="space-y-2 text-slate-600 dark:text-slate-400">
-          <li>• Set up authentication for organizers</li>
-          <li>• Create event management interface</li>
-          <li>• Build DJ submission forms</li>
-          <li>• Implement file upload functionality</li>
-          <li>• Add Instagram message generation</li>
-        </ul>
       </div>
     </div>
   );
