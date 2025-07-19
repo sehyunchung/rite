@@ -314,6 +314,10 @@ export type CodeBlockProps = HTMLAttributes<HTMLDivElement> & {
   value?: string;
   onValueChange?: (value: string) => void;
   data: CodeBlockData[];
+  showLineNumbers?: boolean;
+  allowCopy?: boolean;
+  language?: string;
+  code?: string;
 };
 
 export const CodeBlock = ({
@@ -322,6 +326,10 @@ export const CodeBlock = ({
   defaultValue,
   className,
   data,
+  showLineNumbers: _showLineNumbers,
+  allowCopy: _allowCopy,
+  language: _language,
+  code: _code,
   ...props
 }: CodeBlockProps) => {
   const [value, onValueChange] = useControllableState({
