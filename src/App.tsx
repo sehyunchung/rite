@@ -64,29 +64,6 @@ function Content({ setCurrentPage }: { setCurrentPage: (page: 'dashboard' | 'cre
 
   return (
     <div className="flex flex-col gap-8 max-w-4xl mx-auto">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <FeatureCard
-          title="Event Management"
-          description="Create and manage DJ events with custom timeslots and venue information."
-          status="Ready"
-        />
-        <FeatureCard
-          title="Submission System"
-          description="Generate unique links for DJs to submit promo materials and guest lists."
-          status="Ready"
-        />
-        <FeatureCard
-          title="Instagram Integration"
-          description="Auto-generate copy-paste messages for Instagram event announcements."
-          status="Planned"
-        />
-        <FeatureCard
-          title="Data Export"
-          description="Export guest lists and payment information with encryption support."
-          status="Planned"
-        />
-      </div>
-
       {/* Action Buttons */}
       <div className="flex gap-4 justify-center">
         <Button 
@@ -107,28 +84,3 @@ function Content({ setCurrentPage }: { setCurrentPage: (page: 'dashboard' | 'cre
   );
 }
 
-function FeatureCard({
-  title,
-  description,
-  status,
-}: {
-  title: string;
-  description: string;
-  status: string;
-}) {
-  const statusColor = status === "Ready" 
-    ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200" 
-    : "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200";
-
-  return (
-    <div className="bg-white dark:bg-slate-800 p-6 rounded-lg border border-slate-200 dark:border-slate-700">
-      <div className="flex justify-between items-start mb-3">
-        <h3 className="text-lg font-semibold">{title}</h3>
-        <span className={`px-2 py-1 text-xs font-medium rounded-full ${statusColor}`}>
-          {status}
-        </span>
-      </div>
-      <p className="text-slate-600 dark:text-slate-400">{description}</p>
-    </div>
-  );
-}
