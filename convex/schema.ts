@@ -18,11 +18,11 @@ export default defineSchema({
     }),
     payment: v.object({
       amount: v.number(), // Total payment amount (for backward compatibility)
-      perDJ: v.number(), // Payment amount per DJ
+      perDJ: v.optional(v.number()), // Payment amount per DJ (optional for backward compatibility)
       currency: v.string(),
       dueDate: v.string(),
     }),
-    guestLimitPerDJ: v.number(), // Maximum guests each DJ can add
+    guestLimitPerDJ: v.optional(v.number()), // Maximum guests each DJ can add (optional for backward compatibility)
     createdAt: v.string(),
     status: v.union(v.literal("draft"), v.literal("active"), v.literal("completed")),
   }),

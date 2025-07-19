@@ -23,7 +23,16 @@ export const listEvents = query({
       .order("desc")
       .collect();
     
-    return events;
+    // Provide defaults for optional fields for backward compatibility
+    return events.map(event => ({
+      ...event,
+      guestLimitPerDJ: event.guestLimitPerDJ ?? 2, // Default to 2 guests per DJ
+      payment: {
+        ...event.payment,
+        perDJ: event.payment.perDJ ?? event.payment.amount, // Default perDJ to total amount
+      },
+      hashtags: event.hashtags ?? '', // Default to empty string
+    }));
   },
 });
 
@@ -44,8 +53,15 @@ export const getEvent = query({
       .filter((q) => q.eq(q.field("eventId"), args.eventId))
       .collect();
     
+    // Provide defaults for optional fields for backward compatibility
     return {
       ...event,
+      guestLimitPerDJ: event.guestLimitPerDJ ?? 2, // Default to 2 guests per DJ
+      payment: {
+        ...event.payment,
+        perDJ: event.payment.perDJ ?? event.payment.amount, // Default perDJ to total amount
+      },
+      hashtags: event.hashtags ?? '', // Default to empty string
       timeslots,
     };
   },
