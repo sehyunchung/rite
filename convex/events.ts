@@ -62,15 +62,18 @@ export const createEvent = mutation({
       address: v.string(),
     }),
     description: v.optional(v.string()),
+    hashtags: v.optional(v.string()),
     deadlines: v.object({
       guestList: v.string(),
       promoMaterials: v.string(),
     }),
     payment: v.object({
       amount: v.number(),
+      perDJ: v.number(),
       currency: v.string(),
       dueDate: v.string(),
     }),
+    guestLimitPerDJ: v.number(),
     timeslots: v.array(v.object({
       startTime: v.string(),
       endTime: v.string(),

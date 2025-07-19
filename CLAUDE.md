@@ -166,19 +166,33 @@ import { validateEvent, validateTimeslot } from "@/lib/validation"
 - [x] Real-time form validation with visual feedback
 - [x] Database schema aligned with form structure
 
-### Phase 2: DJ Submission System - 🚧 **IN PROGRESS** (75% Complete)
+### Phase 2: DJ Submission System - 🚧 **IN PROGRESS** (85% Complete)
 - [x] Unique submission link generation with 16-character tokens
 - [x] Public DJ submission pages with token-based access
 - [x] Guest list management with dynamic add/remove functionality
-- [x] Payment information collection forms with privacy notices
+- [x] Payment information collection forms with privacy notices (includes resident registration number)
 - [x] Token-based URL routing and event context display
+- [x] Form validation with guest phone numbers as optional
 - [ ] File upload integration with Convex storage
 - [ ] Submission data storage with encryption
-- [ ] Form validation and error handling for submissions
+
+### Phase 2.5: Enhanced Event Creation - ✅ **COMPLETED**
+- [x] Instagram hashtags field for event promotion
+- [x] Payment per DJ amount (separate from total budget)
+- [x] Guest limit per DJ configuration
+- [x] Guest list deadline must be before promo deadline validation
+- [x] Minimum timeslot duration (30 minutes) validation
+- [x] Maximum 12 timeslots per event limit
+- [x] Resident registration number field in payment form
+- [x] Optional phone numbers for guest list entries
 
 ### Phase 3: Advanced Features - 📋 **PLANNED**
+- [ ] Drag-and-drop reordering for timeslots
+- [ ] File preview functionality before submission
 - [ ] Submission status dashboard for organizers
-- [ ] Instagram message generation
+- [ ] Instagram message generation with copy-paste templates
 - [ ] Organizer authentication system
+- [ ] Event template system for recurring events
 - [ ] Data export functionality
 - [ ] Email notifications and deadline reminders
+- [ ] Form persistence (remember progress)

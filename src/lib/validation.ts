@@ -13,6 +13,7 @@ export const EventValidation = type({
   name: 'string>0',
   date: 'string',
   description: 'string',
+  hashtags: 'string', // Instagram hashtags for event promotion
   venue: {
     name: 'string>0',
     address: 'string>0',
@@ -23,9 +24,11 @@ export const EventValidation = type({
   },
   payment: {
     amount: 'number>0',
+    perDJ: 'number>0', // Payment amount per DJ
     currency: '"KRW" | "USD" | "EUR"',
     dueDate: 'string',
   },
+  guestLimitPerDJ: 'number>0', // Maximum guests each DJ can add
 });
 
 export const TimeslotsValidation = type(TimeslotValidation.array());
@@ -107,6 +110,38 @@ export function validateDate(date: string, minDate?: string): string | null {
     if (selectedDate < minimum) {
       return `Date must be after ${minDate}`;
     }
+  }
+  
+  return null;
+}
+
+export function validateDeadlineOrder(guestListDeadline: string, promoDeadline: string): string | null {
+  if (!guestListDeadline || !promoDeadline) {
+    return null; // Skip validation if dates are not provided
+  }
+  
+  const guestDate = new Date(guestListDeadline);
+  const promoDate = new Date(promoDeadline);
+  
+  if (guestDate >= promoDate) {
+    return 'Guest list deadline must be before promo materials deadline';
+  }
+  
+  return null;
+}
+
+export function validateTimeslotDuration(startTime: string, endTime: string, minMinutes: number = 30): string | null {
+  if (!startTime || !endTime) {
+    return null; // Skip validation if times are not provided
+  }
+  
+  const start = new Date(`2000-01-01T${startTime}:00`);
+  const end = new Date(`2000-01-01T${endTime}:00`);
+  
+  const durationMinutes = (end.getTime() - start.getTime()) / (1000 * 60);
+  
+  if (durationMinutes < minMinutes) {
+    return `Timeslot must be at least ${minMinutes} minutes long`;
   }
   
   return null;

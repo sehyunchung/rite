@@ -14,12 +14,16 @@ import {
   validateTimeslot,
   validateTimeRange,
   validateInstagramHandle,
-  validateDate 
+  validateDate,
+  validateDeadlineOrder,
+  validateTimeslotDuration
 } from '@/lib/validation';
 
 interface EventCreationFormProps {
   onEventCreated?: () => void;
 }
+
+const MAX_TIMESLOTS_PER_EVENT = 12; // Maximum number of DJ timeslots allowed
 
 export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
   const createEvent = useMutation(api.events.createEvent);
@@ -32,15 +36,18 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
       address: '',
     },
     description: '',
+    hashtags: '',
     deadlines: {
       guestList: '',
       promoMaterials: '',
     },
     payment: {
       amount: 0,
+      perDJ: 0,
       currency: 'KRW',
       dueDate: '',
     },
+    guestLimitPerDJ: 2,
   });
 
   const [timeslots, setTimeslots] = useState<Timeslot[]>([]);
@@ -48,6 +55,11 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const addTimeslot = () => {
+    if (timeslots.length >= MAX_TIMESLOTS_PER_EVENT) {
+      setErrors({ ...errors, maxTimeslots: `Maximum ${MAX_TIMESLOTS_PER_EVENT} timeslots allowed per event` });
+      return;
+    }
+    
     const newTimeslot: Timeslot = {
       id: `timeslot-${Date.now()}`,
       startTime: '',
@@ -56,6 +68,11 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
       djInstagram: '',
     };
     setTimeslots([...timeslots, newTimeslot]);
+    
+    // Clear max timeslots error if it exists
+    if (errors.maxTimeslots) {
+      clearFieldError('maxTimeslots');
+    }
   };
 
   const updateTimeslot = (id: string, field: keyof Timeslot, value: string) => {
@@ -111,6 +128,10 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
     const paymentError = validateDate(formData.payment.dueDate);
     if (paymentError) newErrors.paymentDue = paymentError;
 
+    // Validate deadline order
+    const deadlineOrderError = validateDeadlineOrder(formData.deadlines.guestList, formData.deadlines.promoMaterials);
+    if (deadlineOrderError) newErrors.deadlineOrder = deadlineOrderError;
+
     // Validate timeslots
     if (timeslots.length === 0) {
       newErrors.timeslots = 'At least one timeslot is required';
@@ -126,6 +147,12 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
       const timeError = validateTimeRange(slot.startTime, slot.endTime);
       if (timeError) {
         newErrors[`timeslot-${slot.id}-time`] = timeError;
+      }
+
+      // Validate timeslot duration (minimum 30 minutes)
+      const durationError = validateTimeslotDuration(slot.startTime, slot.endTime);
+      if (durationError) {
+        newErrors[`timeslot-${slot.id}-duration`] = durationError;
       }
 
       // Validate Instagram handle
@@ -176,9 +203,11 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
         date: formData.date,
         venue: formData.venue,
         description: formData.description || '',
+        hashtags: formData.hashtags || '',
         deadlines: formData.deadlines,
         payment: formData.payment,
-        timeslots: timeslots.map(({ id, ...slot }) => slot), // Remove the temporary id
+        guestLimitPerDJ: formData.guestLimitPerDJ,
+        timeslots: timeslots.map(({ id: _id, ...slot }) => slot), // Remove the temporary id
       };
 
       const result = await createEvent(eventData);
@@ -192,8 +221,10 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
         date: '',
         venue: { name: '', address: '' },
         description: '',
+        hashtags: '',
         deadlines: { guestList: '', promoMaterials: '' },
-        payment: { amount: 0, currency: 'KRW', dueDate: '' },
+        payment: { amount: 0, perDJ: 0, currency: 'KRW', dueDate: '' },
+        guestLimitPerDJ: 2,
       });
       setTimeslots([]);
       setErrors({});
@@ -226,7 +257,7 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
         <p className="text-muted-foreground">Set up your DJ event with timeslots and submission requirements</p>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-8">
+      <form onSubmit={(e) => void handleSubmit(e)} className="space-y-8">
         {/* Basic Event Information */}
         <Card>
           <CardHeader>
@@ -281,6 +312,17 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
                 rows={3}
               />
             </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="hashtags">Instagram Hashtags</Label>
+              <Input
+                id="hashtags"
+                placeholder="#seouldj #underground #techno"
+                value={formData.hashtags}
+                onChange={(e) => setFormData({ ...formData, hashtags: e.target.value })}
+              />
+              <p className="text-sm text-muted-foreground">Hashtags for Instagram promotion</p>
+            </div>
           </CardContent>
         </Card>
 
@@ -324,20 +366,34 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
         <Card>
           <CardHeader>
             <CardTitle>Payment Details</CardTitle>
-            <CardDescription>DJ payment information</CardDescription>
+            <CardDescription>DJ payment information and guest limits</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="paymentAmount">Amount</Label>
+                <Label htmlFor="paymentAmount">Total Budget</Label>
                 <Input
                   id="paymentAmount"
                   type="number"
-                  placeholder="150000"
+                  placeholder="900000"
                   value={formData.payment.amount}
                   onChange={(e) => setFormData({ 
                     ...formData, 
                     payment: { ...formData.payment, amount: Number(e.target.value) }
+                  })}
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="paymentPerDJ">Amount per DJ</Label>
+                <Input
+                  id="paymentPerDJ"
+                  type="number"
+                  placeholder="150000"
+                  value={formData.payment.perDJ}
+                  onChange={(e) => setFormData({ 
+                    ...formData, 
+                    payment: { ...formData.payment, perDJ: Number(e.target.value) }
                   })}
                   required
                 />
@@ -375,6 +431,25 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
                 />
               </div>
             </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="guestLimit">Guest Limit per DJ</Label>
+                <Input
+                  id="guestLimit"
+                  type="number"
+                  placeholder="2"
+                  value={formData.guestLimitPerDJ}
+                  onChange={(e) => setFormData({ 
+                    ...formData, 
+                    guestLimitPerDJ: Number(e.target.value)
+                  })}
+                  min="0"
+                  required
+                />
+                <p className="text-sm text-muted-foreground">Maximum number of guests each DJ can add</p>
+              </div>
+            </div>
           </CardContent>
         </Card>
 
@@ -392,12 +467,20 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
                   id="guestListDeadline"
                   type="date"
                   value={formData.deadlines.guestList}
-                  onChange={(e) => setFormData({ 
-                    ...formData, 
-                    deadlines: { ...formData.deadlines, guestList: e.target.value }
-                  })}
+                  onChange={(e) => {
+                    setFormData({ 
+                      ...formData, 
+                      deadlines: { ...formData.deadlines, guestList: e.target.value }
+                    });
+                    clearFieldError('guestListDeadline');
+                    clearFieldError('deadlineOrder');
+                  }}
+                  className={errors.guestListDeadline ? 'border-red-500' : ''}
                   required
                 />
+                {errors.guestListDeadline && (
+                  <p className="text-sm text-red-500 mt-1">{errors.guestListDeadline}</p>
+                )}
               </div>
               <div className="space-y-2">
                 <Label htmlFor="promoDeadline">Promo Materials Deadline</Label>
@@ -405,14 +488,25 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
                   id="promoDeadline"
                   type="date"
                   value={formData.deadlines.promoMaterials}
-                  onChange={(e) => setFormData({ 
-                    ...formData, 
-                    deadlines: { ...formData.deadlines, promoMaterials: e.target.value }
-                  })}
+                  onChange={(e) => {
+                    setFormData({ 
+                      ...formData, 
+                      deadlines: { ...formData.deadlines, promoMaterials: e.target.value }
+                    });
+                    clearFieldError('promoDeadline');
+                    clearFieldError('deadlineOrder');
+                  }}
+                  className={errors.promoDeadline ? 'border-red-500' : ''}
                   required
                 />
+                {errors.promoDeadline && (
+                  <p className="text-sm text-red-500 mt-1">{errors.promoDeadline}</p>
+                )}
               </div>
             </div>
+            {errors.deadlineOrder && (
+              <p className="text-sm text-red-500 text-center">{errors.deadlineOrder}</p>
+            )}
           </CardContent>
         </Card>
 
@@ -444,12 +538,12 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
                       type="time"
                       value={slot.startTime}
                       onChange={(e) => updateTimeslot(slot.id, 'startTime', e.target.value)}
-                      className={errors[`timeslot-${slot.id}-time`] || errors[`timeslot-${slot.id}-overlap`] ? 'border-red-500' : ''}
+                      className={errors[`timeslot-${slot.id}-time`] || errors[`timeslot-${slot.id}-overlap`] || errors[`timeslot-${slot.id}-duration`] ? 'border-red-500' : ''}
                       required
                     />
-                    {(errors[`timeslot-${slot.id}-time`] || errors[`timeslot-${slot.id}-overlap`]) && (
+                    {(errors[`timeslot-${slot.id}-time`] || errors[`timeslot-${slot.id}-overlap`] || errors[`timeslot-${slot.id}-duration`]) && (
                       <p className="text-xs text-red-500 mt-1">
-                        {errors[`timeslot-${slot.id}-time`] || errors[`timeslot-${slot.id}-overlap`]}
+                        {errors[`timeslot-${slot.id}-time`] || errors[`timeslot-${slot.id}-overlap`] || errors[`timeslot-${slot.id}-duration`]}
                       </p>
                     )}
                   </div>
@@ -497,8 +591,8 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
               + Add Timeslot
             </Button>
             
-            {errors.timeslots && (
-              <p className="text-sm text-red-500 text-center">{errors.timeslots}</p>
+            {(errors.timeslots || errors.maxTimeslots) && (
+              <p className="text-sm text-red-500 text-center">{errors.timeslots || errors.maxTimeslots}</p>
             )}
           </CardContent>
         </Card>

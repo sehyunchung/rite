@@ -11,15 +11,18 @@ export default defineSchema({
       address: v.string(),
     }),
     description: v.optional(v.string()),
+    hashtags: v.optional(v.string()), // Instagram hashtags for event promotion
     deadlines: v.object({
       guestList: v.string(),
       promoMaterials: v.string(),
     }),
     payment: v.object({
-      amount: v.number(),
+      amount: v.number(), // Total payment amount (for backward compatibility)
+      perDJ: v.number(), // Payment amount per DJ
       currency: v.string(),
       dueDate: v.string(),
     }),
+    guestLimitPerDJ: v.number(), // Maximum guests each DJ can add
     createdAt: v.string(),
     status: v.union(v.literal("draft"), v.literal("active"), v.literal("completed")),
   }),

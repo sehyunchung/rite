@@ -148,7 +148,7 @@ export function DJSubmissionForm({ submissionToken }: DJSubmissionFormProps) {
           </CardContent>
         </Card>
 
-        <form onSubmit={handleSubmit} className="space-y-8">
+        <form onSubmit={(e) => void handleSubmit(e)} className="space-y-8">
           {/* Promo Materials */}
           <Card>
             <CardHeader>
