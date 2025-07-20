@@ -404,7 +404,7 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
                   value={formData.payment.currency}
                   onValueChange={(value) => setFormData({ 
                     ...formData, 
-                    payment: { ...formData.payment, currency: value }
+                    payment: { ...formData.payment, currency: value as "KRW" | "USD" | "EUR" }
                   })}
                 >
                   <SelectTrigger>
