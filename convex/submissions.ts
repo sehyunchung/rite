@@ -1,5 +1,6 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
+import { requireAuth } from "./auth";
 
 // Generate upload URL for file storage
 export const generateUploadUrl = mutation(async (ctx) => {
@@ -106,10 +107,20 @@ export const getSubmissionByTimeslot = query({
   },
 });
 
-// Get submission status for an event
+// Get submission status for an event (must be owned by authenticated user)
 export const getEventSubmissionStatus = query({
   args: { eventId: v.id("events") },
   handler: async (ctx, args) => {
+    const userId = await requireAuth(ctx);
+    
+    // Verify the event belongs to the authenticated user
+    const event = await ctx.db.get(args.eventId);
+    if (!event) {
+      throw new Error("Event not found");
+    }
+    if (event.organizerId !== userId) {
+      throw new Error("Access denied");
+    }
     const timeslots = await ctx.db
       .query("timeslots")
       .filter((q) => q.eq(q.field("eventId"), args.eventId))
@@ -138,10 +149,11 @@ export const getEventSubmissionStatus = query({
   },
 });
 
-// Get file URL for viewing
+// Get file URL for viewing (requires authentication)
 export const getFileUrl = query({
   args: { storageId: v.id("_storage") },
   handler: async (ctx, args) => {
+    await requireAuth(ctx); // Ensure user is authenticated to view files
     return await ctx.storage.getUrl(args.storageId);
   },
 });

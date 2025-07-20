@@ -4,6 +4,7 @@ import { api } from '../../../convex/_generated/api'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { QRCode } from '@/components/ui/kibo-ui/qr-code'
+import { RequireAuth } from '@/components/auth/RequireAuth'
 import { Id } from '../../../convex/_generated/dataModel'
 
 export const Route = createFileRoute('/events/$eventId')({
@@ -11,6 +12,14 @@ export const Route = createFileRoute('/events/$eventId')({
 })
 
 function EventDetails() {
+  return (
+    <RequireAuth>
+      <EventDetailsContent />
+    </RequireAuth>
+  )
+}
+
+function EventDetailsContent() {
   const { eventId } = Route.useParams()
   const event = useQuery(api.events.getEvent, { eventId: eventId as Id<"events"> })
   const submissionStatus = useQuery(api.submissions.getEventSubmissionStatus, { 

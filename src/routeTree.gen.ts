@@ -11,7 +11,9 @@
 import { createFileRoute } from '@tanstack/react-router'
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as LoginRouteImport } from './routes/login'
 import { Route as DjSubmissionRouteImport } from './routes/dj-submission'
+import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as EventsIndexRouteImport } from './routes/events/index'
 import { Route as EventsCreateRouteImport } from './routes/events/create'
@@ -26,9 +28,19 @@ const AdminRoute = AdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DjSubmissionRoute = DjSubmissionRouteImport.update({
   id: '/dj-submission',
   path: '/dj-submission',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardRoute = DashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -63,7 +75,9 @@ const AdminLayoutRoute = AdminLayoutRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/dashboard': typeof DashboardRoute
   '/dj-submission': typeof DjSubmissionRoute
+  '/login': typeof LoginRoute
   '/admin': typeof AdminLayoutRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/events/$eventId': typeof EventsEventIdRoute
@@ -72,7 +86,9 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/dashboard': typeof DashboardRoute
   '/dj-submission': typeof DjSubmissionRoute
+  '/login': typeof LoginRoute
   '/admin': typeof AdminLayoutRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/events/$eventId': typeof EventsEventIdRoute
@@ -82,7 +98,9 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/dashboard': typeof DashboardRoute
   '/dj-submission': typeof DjSubmissionRoute
+  '/login': typeof LoginRoute
   '/admin': typeof AdminRouteWithChildren
   '/admin/_layout': typeof AdminLayoutRoute
   '/admin/dashboard': typeof AdminDashboardRoute
@@ -94,7 +112,9 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/dashboard'
     | '/dj-submission'
+    | '/login'
     | '/admin'
     | '/admin/dashboard'
     | '/events/$eventId'
@@ -103,7 +123,9 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/dashboard'
     | '/dj-submission'
+    | '/login'
     | '/admin'
     | '/admin/dashboard'
     | '/events/$eventId'
@@ -112,7 +134,9 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/dashboard'
     | '/dj-submission'
+    | '/login'
     | '/admin'
     | '/admin/_layout'
     | '/admin/dashboard'
@@ -123,7 +147,9 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  DashboardRoute: typeof DashboardRoute
   DjSubmissionRoute: typeof DjSubmissionRoute
+  LoginRoute: typeof LoginRoute
   AdminRoute: typeof AdminRouteWithChildren
   EventsEventIdRoute: typeof EventsEventIdRoute
   EventsCreateRoute: typeof EventsCreateRoute
@@ -139,11 +165,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/dj-submission': {
       id: '/dj-submission'
       path: '/dj-submission'
       fullPath: '/dj-submission'
       preLoaderRoute: typeof DjSubmissionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard': {
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -205,7 +245,9 @@ const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  DashboardRoute: DashboardRoute,
   DjSubmissionRoute: DjSubmissionRoute,
+  LoginRoute: LoginRoute,
   AdminRoute: AdminRouteWithChildren,
   EventsEventIdRoute: EventsEventIdRoute,
   EventsCreateRoute: EventsCreateRoute,

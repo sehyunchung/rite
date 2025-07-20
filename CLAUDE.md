@@ -11,6 +11,20 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Lint: `npm run lint`
 - Preview: `npm run preview`
 
+## Authentication Setup
+The application uses Clerk for authentication. To set up authentication:
+
+1. Create a Clerk account at https://dashboard.clerk.com/
+2. Create a new application 
+3. Copy the Publishable Key from your Clerk dashboard
+4. In `.env.local`, uncomment and set:
+   ```
+   VITE_CLERK_PUBLISHABLE_KEY=pk_test_your_actual_key_here
+   ```
+5. Configure Clerk webhook for Convex user synchronization (optional for development)
+
+**Current Status**: Authentication system is implemented but requires Clerk configuration to be fully functional.
+
 ## Project Architecture
 
 This is a DJ Event Booking System built with React (Vite) frontend and Convex backend. The application streamlines event management for DJ bookings with Instagram workflow integration.

@@ -264,9 +264,8 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
     setIsSubmitting(true);
     
     try {
-      // Prepare data for Convex
+      // Prepare data for Convex (organizerId will be set automatically from auth)
       const eventData = {
-        organizerId: 'demo-organizer', // TODO: Get from auth
         name: formData.name,
         date: formData.date,
         venue: formData.venue,

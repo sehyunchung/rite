@@ -1,5 +1,6 @@
 import { v } from "convex/values";
 import { query, mutation } from "./_generated/server";
+import { requireAuth } from "./auth";
 
 // Generate a unique submission token for a timeslot
 function generateSubmissionToken(): string {
@@ -11,15 +12,14 @@ function generateSubmissionToken(): string {
   return token;
 }
 
-// Query to list all events for the organizer
+// Query to list all events for the authenticated organizer
 export const listEvents = query({
-  args: {
-    organizerId: v.string(),
-  },
-  handler: async (ctx, args) => {
+  args: {},
+  handler: async (ctx) => {
+    const userId = await requireAuth(ctx);
     const events = await ctx.db
       .query("events")
-      .filter((q) => q.eq(q.field("organizerId"), args.organizerId))
+      .filter((q) => q.eq(q.field("organizerId"), userId))
       .order("desc")
       .collect();
     
@@ -36,15 +36,21 @@ export const listEvents = query({
   },
 });
 
-// Query to get a single event by ID
+// Query to get a single event by ID (must be owned by authenticated user)
 export const getEvent = query({
   args: {
     eventId: v.id("events"),
   },
   handler: async (ctx, args) => {
+    const userId = await requireAuth(ctx);
     const event = await ctx.db.get(args.eventId);
     if (!event) {
       throw new Error("Event not found");
+    }
+    
+    // Ensure the event belongs to the authenticated user
+    if (event.organizerId !== userId) {
+      throw new Error("Access denied");
     }
     
     // Also get the timeslots for this event
@@ -70,7 +76,6 @@ export const getEvent = query({
 // Mutation to create a new event with timeslots
 export const createEvent = mutation({
   args: {
-    organizerId: v.string(),
     name: v.string(),
     date: v.string(),
     venue: v.object({
@@ -98,11 +103,13 @@ export const createEvent = mutation({
     })),
   },
   handler: async (ctx, args) => {
+    const userId = await requireAuth(ctx);
     const { timeslots, ...eventData } = args;
     
-    // Create the event
+    // Create the event with authenticated user as organizer
     const eventId = await ctx.db.insert("events", {
       ...eventData,
+      organizerId: userId,
       createdAt: new Date().toISOString(),
       status: "draft" as const,
     });
@@ -138,6 +145,17 @@ export const updateEventStatus = mutation({
     status: v.union(v.literal("draft"), v.literal("active"), v.literal("completed")),
   },
   handler: async (ctx, args) => {
+    const userId = await requireAuth(ctx);
+    
+    // Verify the event belongs to the authenticated user
+    const event = await ctx.db.get(args.eventId);
+    if (!event) {
+      throw new Error("Event not found");
+    }
+    if (event.organizerId !== userId) {
+      throw new Error("Access denied");
+    }
+    
     await ctx.db.patch(args.eventId, {
       status: args.status,
     });

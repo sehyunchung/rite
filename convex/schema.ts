@@ -73,6 +73,12 @@ export default defineSchema({
   users: defineTable({
     email: v.string(),
     name: v.optional(v.string()),
+    clerkId: v.string(), // Link to Clerk user
+    organizerProfile: v.object({
+      companyName: v.optional(v.string()),
+      phone: v.optional(v.string()),
+    }),
+    createdAt: v.string(),
     lastLoginAt: v.optional(v.string()),
-  }),
+  }).index("by_clerk_id", ["clerkId"]),
 });

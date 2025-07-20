@@ -1,6 +1,7 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { EventCreationForm } from '@/components/EventCreationForm'
 import { GeneralError } from '@/components/errors/GeneralError'
+import { RequireAuth } from '@/components/auth/RequireAuth'
 
 export const Route = createFileRoute('/events/create')({
   component: CreateEvent,
@@ -17,10 +18,18 @@ function LoadingSpinner() {
 }
 
 function CreateEvent() {
+  return (
+    <RequireAuth>
+      <CreateEventContent />
+    </RequireAuth>
+  )
+}
+
+function CreateEventContent() {
   const navigate = useNavigate()
   
   const handleEventCreated = () => {
-    void navigate({ to: '/' })
+    void navigate({ to: '/dashboard' })
   }
   
   return <EventCreationForm onEventCreated={handleEventCreated} />

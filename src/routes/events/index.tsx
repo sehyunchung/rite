@@ -3,14 +3,23 @@ import { useQuery } from 'convex/react'
 import { api } from '../../../convex/_generated/api'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { RequireAuth } from '@/components/auth/RequireAuth'
 
 export const Route = createFileRoute('/events/')({
   component: EventsList,
 })
 
 function EventsList() {
-  // For now, use a hardcoded organizer ID. In production, this would come from auth
-  const events = useQuery(api.events.listEvents, { organizerId: "demo-organizer" })
+  return (
+    <RequireAuth>
+      <EventsListContent />
+    </RequireAuth>
+  )
+}
+
+function EventsListContent() {
+  // Events are automatically filtered by authenticated user
+  const events = useQuery(api.events.listEvents)
   
   if (events === undefined) {
     return (
