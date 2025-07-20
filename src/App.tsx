@@ -20,7 +20,7 @@ export default function App() {
   return (
     <>
       {currentPage !== 'dj-submission' && (
-        <header className="sticky top-0 z-10 bg-slate-50 dark:bg-slate-900 p-4 border-b-2 border-slate-200 dark:border-slate-800">
+        <header className="sticky top-0 z-10 bg-slate-50 p-4 border-b-2 border-slate-200">
           <div className="flex items-center justify-between">
             <h1 className="text-xl font-bold">DJ Event Booking System</h1>
             {currentPage === 'create-event' && (
@@ -40,7 +40,7 @@ export default function App() {
           <div className="flex flex-col gap-16">
             <div className="text-center">
               <h1 className="text-4xl font-bold mb-4">DJ Event Booking</h1>
-              <p className="text-lg text-slate-600 dark:text-slate-400">
+              <p className="text-lg text-slate-600">
                 Streamline your DJ event management with Instagram integration
               </p>
             </div>

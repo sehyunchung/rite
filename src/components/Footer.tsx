@@ -102,12 +102,12 @@ const nextSteps = [
 
 export function Footer() {
   return (
-    <footer className="bg-slate-50 dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 py-8 px-4">
+    <footer className="bg-slate-50 border-t border-slate-200 py-8 px-4">
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* System Status */}
           <div className="lg:col-span-2">
-            <h3 className="text-lg font-semibold mb-4 text-slate-900 dark:text-slate-100">
+            <h3 className="text-lg font-semibold mb-4 text-slate-900">
               Development Status
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -144,15 +144,15 @@ export function Footer() {
                           </span>
                           <span className={`text-xs ${
                             item.completed 
-                              ? 'text-slate-600 dark:text-slate-400' 
-                              : 'text-slate-500 dark:text-slate-500'
+                              ? 'text-slate-600' 
+                              : 'text-slate-500'
                           }`}>
                             {item.name}
                           </span>
                         </div>
                       ))}
                       {phase.items.length > 3 && (
-                        <div className="text-xs text-slate-500 dark:text-slate-500">
+                        <div className="text-xs text-slate-500">
                           +{phase.items.length - 3} more items
                         </div>
                       )}
@@ -165,10 +165,10 @@ export function Footer() {
 
           {/* Next Steps */}
           <div>
-            <h3 className="text-lg font-semibold mb-4 text-slate-900 dark:text-slate-100">
+            <h3 className="text-lg font-semibold mb-4 text-slate-900">
               Next Steps
             </h3>
-            <Card className="border-slate-200 dark:border-slate-700">
+            <Card className="border-slate-200">
               <CardHeader>
                 <CardTitle className="text-sm">Upcoming Tasks</CardTitle>
                 <CardDescription>
@@ -179,10 +179,10 @@ export function Footer() {
                 <ul className="space-y-2">
                   {nextSteps.map((step, index) => (
                     <li key={index} className="flex items-start space-x-2">
-                      <span className="text-slate-400 dark:text-slate-500 text-sm mt-0.5">
+                      <span className="text-slate-400 text-sm mt-0.5">
                         {index + 1}.
                       </span>
-                      <span className="text-sm text-slate-600 dark:text-slate-400">
+                      <span className="text-sm text-slate-600">
                         {step}
                       </span>
                     </li>
@@ -194,12 +194,12 @@ export function Footer() {
         </div>
 
         {/* Footer Bottom */}
-        <div className="mt-8 pt-6 border-t border-slate-200 dark:border-slate-800">
+        <div className="mt-8 pt-6 border-t border-slate-200">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-2 md:space-y-0">
-            <div className="text-sm text-slate-500 dark:text-slate-400">
+            <div className="text-sm text-slate-500">
               DJ Event Booking System • Built with React, Convex, and TypeScript
             </div>
-            <div className="text-sm text-slate-500 dark:text-slate-400">
+            <div className="text-sm text-slate-500">
               🤖 Enhanced with Claude Code
             </div>
           </div>
