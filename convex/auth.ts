@@ -4,15 +4,13 @@ import { Id } from "./_generated/dataModel";
 
 // Get the current authenticated user from Clerk
 export async function getAuthUserId(ctx: QueryCtx | MutationCtx): Promise<Id<"users"> | null> {
-  // In a real implementation, this would validate the Clerk JWT token
-  // For now, we'll implement a simple version that checks for a clerk ID in headers
-  // This is a placeholder - proper Clerk integration will replace this
-  
-  // TODO: Replace with actual Clerk JWT validation
-  const clerkId = (ctx as any).auth?.userId; // This will be populated by Clerk
-  if (!clerkId) {
+  // Get the Clerk user ID from the authenticated context
+  const identity = await ctx.auth.getUserIdentity();
+  if (!identity) {
     return null;
   }
+  
+  const clerkId = identity.subject;
 
   const user = await ctx.db
     .query("users")
@@ -40,23 +38,29 @@ export async function getCurrentUser(ctx: QueryCtx | MutationCtx) {
   return await ctx.db.get(userId);
 }
 
-// Create or update user from Clerk webhook/authentication
+// Create or update user from Clerk authentication (called automatically)
 export const upsertUser = mutation({
-  args: {
-    clerkId: v.string(),
-    email: v.string(),
-    name: v.optional(v.string()),
-  },
-  handler: async (ctx, args) => {
+  args: {},
+  handler: async (ctx) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("Authentication required");
+    }
+
+    const clerkId = identity.subject;
+    const email = typeof identity.email === 'string' ? identity.email : 
+                  (typeof identity.emailVerified === 'string' ? identity.emailVerified : "");
+    const name = identity.name;
+
     const existingUser = await ctx.db
       .query("users")
-      .withIndex("by_clerk_id", (q) => q.eq("clerkId", args.clerkId))
+      .withIndex("by_clerk_id", (q) => q.eq("clerkId", clerkId))
       .first();
 
     const userData = {
-      clerkId: args.clerkId,
-      email: args.email,
-      name: args.name,
+      clerkId,
+      email,
+      name,
       organizerProfile: {
         companyName: undefined,
         phone: undefined,

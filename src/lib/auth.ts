@@ -11,12 +11,8 @@ export function useAuthSync() {
 
   useEffect(() => {
     if (isLoaded && isSignedIn && user) {
-      // Sync user data with Convex
-      void upsertUser({
-        clerkId: user.id,
-        email: user.primaryEmailAddress?.emailAddress ?? '',
-        name: user.fullName ?? undefined,
-      });
+      // Sync user data with Convex (auth context automatically provides user info)
+      void upsertUser();
     }
   }, [isLoaded, isSignedIn, user, upsertUser]);
 
