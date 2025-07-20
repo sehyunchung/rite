@@ -23,10 +23,18 @@ function Content() {
   return (
     <div className="flex flex-col gap-8 max-w-4xl mx-auto">
       {/* Action Buttons */}
-      <div className="flex gap-4 justify-center">
+      <div className="flex gap-4 justify-center flex-wrap">
         <Link to="/events/create">
           <Button size="lg">
             🎪 Create New Event
+          </Button>
+        </Link>
+        <Link to="/events">
+          <Button 
+            variant="outline" 
+            size="lg"
+          >
+            📋 View All Events
           </Button>
         </Link>
         <Link to="/">
@@ -34,7 +42,7 @@ function Content() {
             variant="outline" 
             size="lg"
           >
-            📊 View Dashboard
+            📊 Dashboard
           </Button>
         </Link>
       </div>
