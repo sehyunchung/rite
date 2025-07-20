@@ -194,7 +194,7 @@ function EventDetails() {
                     <div className="flex flex-col gap-2">
                       <Button 
                         size="sm" 
-                        onClick={() => navigator.clipboard.writeText(submissionUrl)}
+                        onClick={() => void navigator.clipboard.writeText(submissionUrl)}
                       >
                         Copy Link
                       </Button>

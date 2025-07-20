@@ -115,6 +115,29 @@ export function validateDate(date: string, minDate?: string): string | null {
   return null;
 }
 
+export function validateDeadlineDate(date: string, eventDate?: string): string | null {
+  if (!date) {
+    return 'Date is required';
+  }
+  
+  const selectedDate = new Date(date);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  
+  if (selectedDate < today) {
+    return 'Date cannot be in the past';
+  }
+  
+  if (eventDate) {
+    const event = new Date(eventDate);
+    if (selectedDate >= event) {
+      return `Deadline must be before the event date (${eventDate})`;
+    }
+  }
+  
+  return null;
+}
+
 export function validateDeadlineOrder(guestListDeadline: string, promoDeadline: string): string | null {
   if (!guestListDeadline || !promoDeadline) {
     return null; // Skip validation if dates are not provided
@@ -123,8 +146,10 @@ export function validateDeadlineOrder(guestListDeadline: string, promoDeadline: 
   const guestDate = new Date(guestListDeadline);
   const promoDate = new Date(promoDeadline);
   
-  if (guestDate >= promoDate) {
-    return 'Guest list deadline must be before promo materials deadline';
+  // Promo materials deadline should be BEFORE guest list deadline
+  // (Promo: 3 weeks before event, Guest list: 1 day before event)
+  if (promoDate >= guestDate) {
+    return 'Promo materials deadline must be before guest list deadline';
   }
   
   return null;
@@ -145,4 +170,105 @@ export function validateTimeslotDuration(startTime: string, endTime: string, min
   }
   
   return null;
+}
+
+// Smart defaults and business rule helpers
+export function getDefaultGuestListDeadline(eventDate: string): string {
+  if (!eventDate) return '';
+  
+  const event = new Date(eventDate);
+  const guestDeadline = new Date(event);
+  guestDeadline.setDate(event.getDate() - 1); // Day before event
+  
+  return guestDeadline.toISOString().split('T')[0];
+}
+
+export function getDefaultPromoDeadline(eventDate: string): string {
+  if (!eventDate) return '';
+  
+  const event = new Date(eventDate);
+  const promoDeadline = new Date(event);
+  promoDeadline.setDate(event.getDate() - 21); // 3 weeks (21 days) before event
+  
+  return promoDeadline.toISOString().split('T')[0];
+}
+
+export function getDefaultStartTime(): string {
+  return '22:00'; // 10 PM default
+}
+
+export function getDefaultEndTime(startTime: string): string {
+  if (!startTime) return '23:00';
+  
+  const [hours, minutes] = startTime.split(':').map(Number);
+  const start = new Date(2000, 0, 1, hours, minutes);
+  start.setHours(start.getHours() + 1); // Default 1-hour slot
+  
+  return start.toTimeString().slice(0, 5);
+}
+
+// Enhanced validation with business rule suggestions
+export function validateGuestListDeadline(guestDate: string, eventDate: string): {
+  isValid: boolean;
+  error?: string;
+  suggestion?: string;
+} {
+  const dateError = validateDeadlineDate(guestDate, eventDate);
+  if (dateError) {
+    return { isValid: false, error: dateError };
+  }
+  
+  const suggestedDate = getDefaultGuestListDeadline(eventDate);
+  const guest = new Date(guestDate);
+  const event = new Date(eventDate);
+  const daysDiff = Math.ceil((event.getTime() - guest.getTime()) / (1000 * 60 * 60 * 24));
+  
+  if (daysDiff < 1) {
+    return {
+      isValid: false,
+      error: 'Guest list deadline should be at least 1 day before the event',
+      suggestion: `Consider ${suggestedDate} (day before event)`
+    };
+  }
+  
+  if (daysDiff > 7) {
+    return {
+      isValid: true,
+      suggestion: `Suggested: ${suggestedDate} (day before event)`
+    };
+  }
+  
+  return { isValid: true };
+}
+
+export function validatePromoDeadline(promoDate: string, eventDate: string): {
+  isValid: boolean;
+  error?: string;
+  suggestion?: string;
+} {
+  const dateError = validateDeadlineDate(promoDate, eventDate);
+  if (dateError) {
+    return { isValid: false, error: dateError };
+  }
+  
+  const suggestedDate = getDefaultPromoDeadline(eventDate);
+  const promo = new Date(promoDate);
+  const event = new Date(eventDate);
+  const daysDiff = Math.ceil((event.getTime() - promo.getTime()) / (1000 * 60 * 60 * 24));
+  
+  if (daysDiff < 7) {
+    return {
+      isValid: true,
+      suggestion: `Consider ${suggestedDate} (3 weeks before) for better DJ preparation time`
+    };
+  }
+  
+  if (daysDiff < 14) {
+    return {
+      isValid: true,
+      suggestion: `Good timing! Suggested: ${suggestedDate} (3 weeks before)`
+    };
+  }
+  
+  return { isValid: true };
 }

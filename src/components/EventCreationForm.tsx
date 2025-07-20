@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useMutation } from 'convex/react';
 import { api } from '../../convex/_generated/api';
 import { Button } from '@/components/ui/button';
@@ -16,7 +16,13 @@ import {
   validateInstagramHandle,
   validateDate,
   validateDeadlineOrder,
-  validateTimeslotDuration
+  validateTimeslotDuration,
+  getDefaultGuestListDeadline,
+  getDefaultPromoDeadline,
+  getDefaultStartTime,
+  getDefaultEndTime,
+  validateGuestListDeadline,
+  validatePromoDeadline
 } from '@/lib/validation';
 
 interface EventCreationFormProps {
@@ -53,6 +59,36 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
   const [timeslots, setTimeslots] = useState<Timeslot[]>([]);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [suggestions, setSuggestions] = useState<Record<string, string>>({});
+
+  // Auto-fill deadlines when event date changes
+  useEffect(() => {
+    if (formData.date) {
+      const guestDeadline = getDefaultGuestListDeadline(formData.date);
+      const promoDeadline = getDefaultPromoDeadline(formData.date);
+      
+      // Only auto-fill if deadlines are empty or if user hasn't manually set them
+      if (!formData.deadlines.guestList || formData.deadlines.guestList === '') {
+        setFormData(prev => ({
+          ...prev,
+          deadlines: {
+            ...prev.deadlines,
+            guestList: guestDeadline
+          }
+        }));
+      }
+      
+      if (!formData.deadlines.promoMaterials || formData.deadlines.promoMaterials === '') {
+        setFormData(prev => ({
+          ...prev,
+          deadlines: {
+            ...prev.deadlines,
+            promoMaterials: promoDeadline
+          }
+        }));
+      }
+    }
+  }, [formData.date]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const addTimeslot = () => {
     if (timeslots.length >= MAX_TIMESLOTS_PER_EVENT) {
@@ -60,10 +96,27 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
       return;
     }
     
+    // Smart defaults for timeslot times
+    let defaultStartTime = '';
+    let defaultEndTime = '';
+    
+    if (timeslots.length === 0) {
+      // First timeslot defaults to 10pm
+      defaultStartTime = getDefaultStartTime();
+      defaultEndTime = getDefaultEndTime(defaultStartTime);
+    } else {
+      // Subsequent timeslots start where the previous one ended
+      const lastSlot = timeslots[timeslots.length - 1];
+      if (lastSlot.endTime) {
+        defaultStartTime = lastSlot.endTime;
+        defaultEndTime = getDefaultEndTime(defaultStartTime);
+      }
+    }
+
     const newTimeslot: Timeslot = {
       id: `timeslot-${Date.now()}`,
-      startTime: '',
-      endTime: '',
+      startTime: defaultStartTime,
+      endTime: defaultEndTime,
       djName: '',
       djInstagram: '',
     };
@@ -119,11 +172,16 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
     const dateError = validateDate(formData.date);
     if (dateError) newErrors.date = dateError;
 
-    const guestListError = validateDate(formData.deadlines.guestList, formData.date);
-    if (guestListError) newErrors.guestListDeadline = guestListError;
+    // Enhanced deadline validation with business rule suggestions
+    const guestValidation = validateGuestListDeadline(formData.deadlines.guestList, formData.date);
+    if (!guestValidation.isValid && guestValidation.error) {
+      newErrors.guestListDeadline = guestValidation.error;
+    }
 
-    const promoError = validateDate(formData.deadlines.promoMaterials, formData.date);
-    if (promoError) newErrors.promoDeadline = promoError;
+    const promoValidation = validatePromoDeadline(formData.deadlines.promoMaterials, formData.date);
+    if (!promoValidation.isValid && promoValidation.error) {
+      newErrors.promoDeadline = promoValidation.error;
+    }
 
     const paymentError = validateDate(formData.payment.dueDate);
     if (paymentError) newErrors.paymentDue = paymentError;
@@ -131,6 +189,16 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
     // Validate deadline order
     const deadlineOrderError = validateDeadlineOrder(formData.deadlines.guestList, formData.deadlines.promoMaterials);
     if (deadlineOrderError) newErrors.deadlineOrder = deadlineOrderError;
+
+    // Update suggestions
+    const newSuggestions: Record<string, string> = {};
+    if (guestValidation.suggestion) {
+      newSuggestions.guestListDeadline = guestValidation.suggestion;
+    }
+    if (promoValidation.suggestion) {
+      newSuggestions.promoDeadline = promoValidation.suggestion;
+    }
+    setSuggestions(newSuggestions);
 
     // Validate timeslots
     if (timeslots.length === 0) {
@@ -481,6 +549,9 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
                 {errors.guestListDeadline && (
                   <p className="text-sm text-red-500 mt-1">{errors.guestListDeadline}</p>
                 )}
+                {suggestions.guestListDeadline && !errors.guestListDeadline && (
+                  <p className="text-sm text-blue-600 mt-1">💡 {suggestions.guestListDeadline}</p>
+                )}
               </div>
               <div className="space-y-2">
                 <Label htmlFor="promoDeadline">Promo Materials Deadline</Label>
@@ -501,6 +572,9 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
                 />
                 {errors.promoDeadline && (
                   <p className="text-sm text-red-500 mt-1">{errors.promoDeadline}</p>
+                )}
+                {suggestions.promoDeadline && !errors.promoDeadline && (
+                  <p className="text-sm text-blue-600 mt-1">💡 {suggestions.promoDeadline}</p>
                 )}
               </div>
             </div>
