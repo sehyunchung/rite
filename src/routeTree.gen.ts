@@ -20,6 +20,7 @@ import { Route as EventsCreateRouteImport } from './routes/events/create'
 import { Route as EventsEventIdRouteImport } from './routes/events/$eventId'
 import { Route as AdminDashboardRouteImport } from './routes/admin/dashboard'
 import { Route as AdminLayoutRouteImport } from './routes/admin/_layout'
+import { Route as AuthInstagramSuccessRouteImport } from './routes/auth/instagram/success'
 
 const AdminRouteImport = createFileRoute('/admin')()
 
@@ -72,6 +73,11 @@ const AdminLayoutRoute = AdminLayoutRouteImport.update({
   id: '/_layout',
   getParentRoute: () => AdminRoute,
 } as any)
+const AuthInstagramSuccessRoute = AuthInstagramSuccessRouteImport.update({
+  id: '/auth/instagram/success',
+  path: '/auth/instagram/success',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -83,6 +89,7 @@ export interface FileRoutesByFullPath {
   '/events/$eventId': typeof EventsEventIdRoute
   '/events/create': typeof EventsCreateRoute
   '/events': typeof EventsIndexRoute
+  '/auth/instagram/success': typeof AuthInstagramSuccessRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -94,6 +101,7 @@ export interface FileRoutesByTo {
   '/events/$eventId': typeof EventsEventIdRoute
   '/events/create': typeof EventsCreateRoute
   '/events': typeof EventsIndexRoute
+  '/auth/instagram/success': typeof AuthInstagramSuccessRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -107,6 +115,7 @@ export interface FileRoutesById {
   '/events/$eventId': typeof EventsEventIdRoute
   '/events/create': typeof EventsCreateRoute
   '/events/': typeof EventsIndexRoute
+  '/auth/instagram/success': typeof AuthInstagramSuccessRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -120,6 +129,7 @@ export interface FileRouteTypes {
     | '/events/$eventId'
     | '/events/create'
     | '/events'
+    | '/auth/instagram/success'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -131,6 +141,7 @@ export interface FileRouteTypes {
     | '/events/$eventId'
     | '/events/create'
     | '/events'
+    | '/auth/instagram/success'
   id:
     | '__root__'
     | '/'
@@ -143,6 +154,7 @@ export interface FileRouteTypes {
     | '/events/$eventId'
     | '/events/create'
     | '/events/'
+    | '/auth/instagram/success'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -154,6 +166,7 @@ export interface RootRouteChildren {
   EventsEventIdRoute: typeof EventsEventIdRoute
   EventsCreateRoute: typeof EventsCreateRoute
   EventsIndexRoute: typeof EventsIndexRoute
+  AuthInstagramSuccessRoute: typeof AuthInstagramSuccessRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -228,6 +241,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminLayoutRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/auth/instagram/success': {
+      id: '/auth/instagram/success'
+      path: '/auth/instagram/success'
+      fullPath: '/auth/instagram/success'
+      preLoaderRoute: typeof AuthInstagramSuccessRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -252,6 +272,7 @@ const rootRouteChildren: RootRouteChildren = {
   EventsEventIdRoute: EventsEventIdRoute,
   EventsCreateRoute: EventsCreateRoute,
   EventsIndexRoute: EventsIndexRoute,
+  AuthInstagramSuccessRoute: AuthInstagramSuccessRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

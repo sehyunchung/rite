@@ -23,7 +23,41 @@ The application uses Clerk for authentication. To set up authentication:
    ```
 5. Configure Clerk webhook for Convex user synchronization (optional for development)
 
-**Current Status**: Authentication system is implemented but requires Clerk configuration to be fully functional.
+**Current Status**: Authentication system is fully functional with Clerk integration.
+
+### Social OAuth Providers
+To enable social login options:
+
+#### Quick Setup (Clerk Dashboard Only)
+1. **Google OAuth**:
+   - Go to Clerk Dashboard → SSO Connections
+   - Enable Google provider
+   - Configure OAuth credentials from Google Cloud Console
+
+2. **Facebook OAuth**:
+   - Go to Clerk Dashboard → SSO Connections  
+   - Enable Facebook provider
+   - Configure OAuth credentials from Facebook Developer Console
+
+#### Instagram OAuth (Custom Implementation)
+Instagram login requires a custom OAuth proxy service since Instagram is not natively supported by Clerk:
+
+1. **Create Instagram App**:
+   - Go to Meta Developer Console (developers.facebook.com)
+   - Create new app and add Instagram Basic Display product
+   - Configure redirect URIs for your proxy service
+
+2. **Deploy Proxy Service**:
+   - Use Cloudflare Workers or similar serverless platform
+   - Handle Instagram OAuth 2.0 flow and transform to OIDC format
+   - Map Instagram user data (username, user_id, account_type)
+
+3. **Configure in Clerk**:
+   - Add custom OIDC provider pointing to proxy service
+   - Configure attribute mapping for Instagram fields
+   - Test authentication flow
+
+**Note**: Instagram Basic Display API doesn't provide email addresses. Handle this by prompting users for email after Instagram login or using placeholder emails.
 
 ## Project Architecture
 

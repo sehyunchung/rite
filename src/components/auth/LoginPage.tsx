@@ -1,5 +1,6 @@
 import { SignIn } from '@clerk/clerk-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { InstagramLogin } from './InstagramLogin';
 
 export function LoginPage() {
   return (
@@ -17,7 +18,11 @@ export function LoginPage() {
               Sign in to manage your DJ events and submissions
             </CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="space-y-6">
+            {/* Instagram Login - Featured for DJ/Organizer audience */}
+            <InstagramLogin />
+            
+            {/* Standard Clerk Login */}
             <SignIn 
               appearance={{
                 elements: {
