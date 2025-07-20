@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useQuery } from 'convex/react';
+import { useQuery, useMutation } from 'convex/react';
 import { api } from '../../convex/_generated/api';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Dropzone } from '@/components/ui/kibo-ui/dropzone';
+import { Id } from '../../convex/_generated/dataModel';
 
 interface DJSubmissionFormProps {
   submissionToken: string;
@@ -20,6 +21,8 @@ interface GuestListEntry {
 
 export function DJSubmissionForm({ submissionToken }: DJSubmissionFormProps) {
   const timeslotData = useQuery(api.timeslots.getTimeslotByToken, { submissionToken });
+  const generateUploadUrl = useMutation(api.submissions.generateUploadUrl);
+  const saveSubmission = useMutation(api.submissions.saveSubmission);
   
   const [guestList, setGuestList] = useState<GuestListEntry[]>([]);
   const [promoFiles, setPromoFiles] = useState<File[]>([]);
@@ -32,6 +35,7 @@ export function DJSubmissionForm({ submissionToken }: DJSubmissionFormProps) {
     preferDirectContact: false,
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submissionComplete, setSubmissionComplete] = useState(false);
 
   const addGuestEntry = () => {
     const newEntry: GuestListEntry = {
@@ -57,18 +61,65 @@ export function DJSubmissionForm({ submissionToken }: DJSubmissionFormProps) {
     setIsSubmitting(true);
     
     try {
-      // TODO: Implement file upload and form submission
-      console.log('Submission data:', {
-        guestList: guestList.filter(entry => entry.name.trim()),
-        promoFiles,
-        promoDescription,
+      if (!timeslotData) {
+        throw new Error('Timeslot data not available');
+      }
+
+      // Upload files to Convex storage
+      const uploadedFiles = [];
+      for (const file of promoFiles) {
+        // Validate file size (max 50MB)
+        if (file.size > 50 * 1024 * 1024) {
+          throw new Error(`File ${file.name} is too large. Maximum size is 50MB.`);
+        }
+
+        // Generate upload URL
+        const uploadUrl = await generateUploadUrl();
+        
+        // Upload file
+        const result = await fetch(uploadUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': file.type },
+          body: file,
+        });
+        
+        if (!result.ok) {
+          throw new Error(`Failed to upload ${file.name}`);
+        }
+        
+        const { storageId } = await result.json();
+        
+        uploadedFiles.push({
+          fileName: file.name,
+          fileType: file.type,
+          fileSize: file.size,
+          storageId: storageId as Id<"_storage">,
+        });
+      }
+
+      // Prepare guest list (filter out empty entries)
+      const validGuestList = guestList
+        .filter(entry => entry.name.trim())
+        .map(entry => ({
+          name: entry.name.trim(),
+          phone: entry.phone.trim() || undefined,
+        }));
+
+      // Save submission to database
+      await saveSubmission({
+        eventId: timeslotData.event._id,
+        timeslotId: timeslotData._id,
+        submissionToken,
+        promoFiles: uploadedFiles,
+        promoDescription: promoDescription.trim(),
+        guestList: validGuestList,
         paymentInfo,
       });
       
-      alert('Submission successful!');
+      setSubmissionComplete(true);
     } catch (error) {
       console.error('Submission failed:', error);
-      alert('Submission failed. Please try again.');
+      alert(`Submission failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     } finally {
       setIsSubmitting(false);
     }
@@ -103,6 +154,42 @@ export function DJSubmissionForm({ submissionToken }: DJSubmissionFormProps) {
   }
 
   const { event, djName, djInstagram, startTime, endTime } = timeslotData;
+
+  // Show success confirmation after submission
+  if (submissionComplete) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <Card className="w-full max-w-md text-center">
+          <CardHeader>
+            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+            <CardTitle className="text-green-600">Submission Complete!</CardTitle>
+            <CardDescription>
+              Your materials have been successfully submitted for {event.name}.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="bg-green-50 p-4 rounded-lg text-left">
+              <h4 className="font-semibold text-green-800 mb-2">What happens next?</h4>
+              <ul className="text-sm text-green-700 space-y-1">
+                <li>• The organizer will review your submission</li>
+                <li>• You'll receive confirmation via Instagram DM</li>
+                <li>• Payment will be processed after the event</li>
+              </ul>
+            </div>
+            <div className="text-sm text-gray-600">
+              <p><strong>Event:</strong> {event.name}</p>
+              <p><strong>Your Slot:</strong> {startTime} - {endTime}</p>
+              <p><strong>DJ:</strong> {djName} ({djInstagram})</p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
