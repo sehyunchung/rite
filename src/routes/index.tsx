@@ -31,7 +31,7 @@ function HomePage() {
   return (
     <div className="flex flex-col gap-16">
       <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">DJ Event Booking</h1>
+        <h1 className="text-4xl font-bold mb-4">Rite</h1>
         <p className="text-lg text-slate-600">
           Streamline your DJ event management with Instagram integration
         </p>

@@ -22,7 +22,7 @@ function RootComponent() {
           <div className="flex items-center justify-between">
             <Link to={isSignedIn ? "/dashboard" : "/"}>
               <h1 className="text-xl font-bold hover:text-blue-600 transition-colors">
-                DJ Event Booking System
+                Rite
               </h1>
             </Link>
             

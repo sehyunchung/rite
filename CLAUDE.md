@@ -27,7 +27,7 @@ The application uses Clerk for authentication. To set up authentication:
 
 ## Project Architecture
 
-This is a DJ Event Booking System built with React (Vite) frontend and Convex backend. The application streamlines event management for DJ bookings with Instagram workflow integration.
+This is Rite, a DJ event management platform built with React (Vite) frontend and Convex backend. The application streamlines event management for DJ bookings with Instagram workflow integration.
 
 ### Tech Stack
 - **Frontend**: React 19 with TypeScript, Vite, Tailwind CSS, React Router
