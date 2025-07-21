@@ -40,24 +40,32 @@ To enable social login options:
    - Configure OAuth credentials from Facebook Developer Console
 
 #### Instagram OAuth (Custom Implementation)
-Instagram login requires a custom OAuth proxy service since Instagram is not natively supported by Clerk:
+Instagram login requires a custom OAuth proxy service since Instagram is not natively supported by Clerk.
 
-1. **Create Instagram App**:
+**Important Update (2024)**: Instagram Basic Display API was deprecated on December 4, 2024. Now using Instagram API with Instagram Login.
+
+1. **Requirements**:
+   - Users must have Instagram Business or Creator accounts (not personal)
+   - No Facebook Page connection required
+
+2. **Create Instagram App**:
    - Go to Meta Developer Console (developers.facebook.com)
-   - Create new app and add Instagram Basic Display product
-   - Configure redirect URIs for your proxy service
+   - Add "Instagram API with Instagram Login" product
+   - Configure OAuth redirect URIs for your proxy service
+   - Request scopes: `instagram_business_basic`, `instagram_business_content_publish`
 
-2. **Deploy Proxy Service**:
-   - Use Cloudflare Workers or similar serverless platform
-   - Handle Instagram OAuth 2.0 flow and transform to OIDC format
-   - Map Instagram user data (username, user_id, account_type)
+3. **Deploy Proxy Service** (Already deployed):
+   - Cloudflare Worker handles OAuth flow at `rite-instagram-oauth-proxy.workers.dev`
+   - Transforms Instagram OAuth to OIDC format for Clerk
+   - Validates Business/Creator account requirement
+   - Maps user data (username, user_id, account_type, profile_picture_url)
 
-3. **Configure in Clerk**:
+4. **Configure in Clerk**:
    - Add custom OIDC provider pointing to proxy service
    - Configure attribute mapping for Instagram fields
-   - Test authentication flow
+   - Handle account type validation
 
-**Note**: Instagram Basic Display API doesn't provide email addresses. Handle this by prompting users for email after Instagram login or using placeholder emails.
+**Note**: The new API provides better features for content publishing (Phase 3) but requires professional accounts.
 
 ## Project Architecture
 

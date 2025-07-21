@@ -60,7 +60,10 @@ export function InstagramLogin({ onStartLogin }: InstagramLoginProps) {
       </Button>
 
       <p className="text-xs text-center text-gray-600">
-        Perfect for DJs and event organizers already on Instagram
+        Requires Instagram Business or Creator account
+      </p>
+      <p className="text-xs text-center text-gray-500">
+        Personal accounts need to <a href="https://help.instagram.com/502981923235522" target="_blank" rel="noopener noreferrer" className="underline">switch to professional</a>
       </p>
     </div>
   )

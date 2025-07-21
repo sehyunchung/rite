@@ -17,6 +17,8 @@ interface InstagramUserResponse {
   username: string
   account_type?: string
   media_count?: number
+  name?: string
+  profile_picture_url?: string
 }
 
 const app = new Hono<{ Bindings: Env }>()
@@ -33,7 +35,9 @@ app.get('/', (c) => {
   return c.json({ 
     service: 'Rite Instagram OAuth Proxy',
     status: 'healthy',
-    version: '1.0.0'
+    version: '2.0.0',
+    api: 'Instagram API with Instagram Login',
+    requirements: 'Business or Creator account required'
   })
 })
 
@@ -65,7 +69,8 @@ app.get('/oauth/authorize', (c) => {
   const instagramAuthUrl = new URL('https://api.instagram.com/oauth/authorize')
   instagramAuthUrl.searchParams.set('client_id', clientId)
   instagramAuthUrl.searchParams.set('redirect_uri', redirectUri)
-  instagramAuthUrl.searchParams.set('scope', 'user_profile')
+  // New scopes for Instagram API with Instagram Login
+  instagramAuthUrl.searchParams.set('scope', 'instagram_business_basic,instagram_business_content_publish')
   instagramAuthUrl.searchParams.set('response_type', 'code')
   instagramAuthUrl.searchParams.set('state', state)
   
@@ -175,8 +180,8 @@ app.get('/oauth/userinfo', async (c) => {
   const accessToken = authorization.replace('Bearer ', '')
   
   try {
-    // Fetch user info from Instagram
-    const userResponse = await fetch(`https://graph.instagram.com/me?fields=id,username,account_type&access_token=${accessToken}`)
+    // Fetch user info from Instagram (using new API endpoint)
+    const userResponse = await fetch(`https://graph.instagram.com/v18.0/me?fields=id,username,account_type,name,profile_picture_url&access_token=${accessToken}`)
     
     if (!userResponse.ok) {
       throw new Error(`User info fetch failed: ${userResponse.statusText}`)
@@ -184,16 +189,24 @@ app.get('/oauth/userinfo', async (c) => {
     
     const userData: InstagramUserResponse = await userResponse.json()
     
+    // Validate account type for new API
+    if (userData.account_type !== 'BUSINESS' && userData.account_type !== 'CREATOR') {
+      return c.json({ 
+        error: 'invalid_account_type',
+        error_description: 'Instagram Business or Creator account required'
+      }, 403)
+    }
+    
     // Transform to OIDC claims format
     return c.json({
       sub: userData.id,
-      name: userData.username,
+      name: userData.name || userData.username,
       preferred_username: userData.username,
-      picture: `https://instagram.com/${userData.username}`, // Profile link
+      picture: userData.profile_picture_url || `https://instagram.com/${userData.username}`,
       // Note: Instagram doesn't provide email, so we'll handle this in the app
       'https://rite.app/instagram_username': userData.username,
       'https://rite.app/instagram_id': userData.id,
-      'https://rite.app/account_type': userData.account_type || 'personal',
+      'https://rite.app/account_type': userData.account_type,
     })
     
   } catch (error) {
