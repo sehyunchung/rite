@@ -64,12 +64,13 @@ Instagram login requires a custom OAuth proxy service since Instagram is not nat
 This is Rite, a DJ event management platform built with React (Vite) frontend and Convex backend. The application streamlines event management for DJ bookings with Instagram workflow integration.
 
 ### Tech Stack
-- **Frontend**: React 19 with TypeScript, Vite, Tailwind CSS, React Router
+- **Frontend**: React 19 with TypeScript, Vite, Tailwind CSS, TanStack Router
 - **UI Libraries**: 
   - shadcn/ui - Base component library with Radix UI primitives
   - Kibo UI - Advanced components (Dropzone, QR Code, Code Block)
 - **Backend**: Convex (real-time database and file storage)
-- **Authentication**: Organizer-only auth (magic link/OAuth) - *Planned*
+- **Authentication**: Clerk with Instagram OAuth integration
+- **Routing**: TanStack Router for type-safe, file-based routing
 - **Validation**: ArkType (high-performance TypeScript schema validation)
 - **File Handling**: Convex file storage for promo materials
 - **AI Integration**: Model Context Protocol (MCP) for Kibo UI
@@ -79,14 +80,23 @@ This is Rite, a DJ event management platform built with React (Vite) frontend an
 
 **Frontend Structure:**
 - `/src/` - Main application source code
+- `/src/routes/` - TanStack Router file-based routes
+  - `/src/routes/__root.tsx` - Root layout with navigation
+  - `/src/routes/index.tsx` - Landing page
+  - `/src/routes/dashboard.tsx` - Organizer dashboard
+  - `/src/routes/events/create.tsx` - Event creation route
+  - `/src/routes/dj-submission.tsx` - Public DJ submission with token params
+  - `/src/routes/login.tsx` - Clerk authentication page
 - `/src/components/` - React components
   - `/src/components/ui/` - shadcn/ui base components
   - `/src/components/ui/kibo-ui/` - Kibo UI advanced components
   - `/src/components/EventCreationForm.tsx` - Event creation form with validation
   - `/src/components/DJSubmissionForm.tsx` - Public DJ submission form with token access
+  - `/src/components/Footer.tsx` - Development status footer
 - `/src/lib/` - Utility functions and configuration
   - `/src/lib/utils.ts` - Utility functions for component styling
   - `/src/lib/validation.ts` - ArkType validation schemas and helpers
+  - `/src/lib/router.ts` - TanStack Router configuration
 - `/src/types/` - TypeScript type definitions matching Convex schema
 - `/public/` - Static assets
 
@@ -200,9 +210,16 @@ import { Dropzone } from "@/components/ui/kibo-ui/dropzone"
 import { QRCode } from "@/components/ui/kibo-ui/qr-code"
 import { CodeBlock } from "@/components/ui/kibo-ui/code-block"
 
+// TanStack Router
+import { Link, useNavigate, useRouter } from "@tanstack/react-router"
+import { createFileRoute, createRootRoute } from "@tanstack/react-router"
+
 // Convex integration
 import { useQuery, useMutation } from "convex/react"
 import { api } from "../convex/_generated/api"
+
+// Clerk authentication
+import { useAuth, useUser, SignInButton, SignOutButton } from "@clerk/clerk-react"
 
 // Validation
 import { validateEvent, validateTimeslot } from "@/lib/validation"
@@ -258,3 +275,37 @@ import { validateEvent, validateTimeslot } from "@/lib/validation"
 - [ ] Data export functionality
 - [ ] Email notifications and deadline reminders
 - [ ] Form persistence (remember progress)
+
+## Deployment Recommendations
+
+### Recommended Platform: Vercel
+**Why Vercel:**
+- Zero-config deployment for Vite + TanStack Router
+- Excellent Asia/Pacific edge network (critical for Korean users)
+- Automatic GitHub deployments on push to main
+- Simple environment variable management for Clerk/Convex keys
+- Generous free tier (100GB bandwidth, perfect for MVP phase)
+
+### Alternative Options:
+1. **Netlify** - Similar features, slightly slower in Asia
+2. **Cloudflare Pages** - Fast globally, more complex setup
+3. **Railway** - Good for full-stack apps, overkill for frontend
+
+### Deployment Setup:
+1. Connect GitHub repository to Vercel
+2. Set environment variables:
+   - `VITE_CONVEX_URL`
+   - `VITE_CLERK_PUBLISHABLE_KEY`
+3. Deploy settings:
+   - Build Command: `npm run build`
+   - Output Directory: `dist`
+   - Install Command: `npm install`
+4. Enable automatic deployments for main branch
+
+### Performance Optimization:
+- Vercel automatically handles:
+  - Client-side routing for TanStack Router
+  - Asset optimization and CDN distribution
+  - HTTPS certificates
+  - Compression (gzip/brotli)
+- Consider adding Korean CDN endpoints when scaling
