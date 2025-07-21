@@ -81,4 +81,38 @@ export default defineSchema({
     createdAt: v.string(),
     lastLoginAt: v.optional(v.string()),
   }).index("by_clerk_id", ["clerkId"]),
+
+  // Instagram integration tables
+  instagramConnections: defineTable({
+    userId: v.id("users"),
+    instagramUserId: v.string(),
+    username: v.string(),
+    accessToken: v.string(), // Encrypted by Convex
+    tokenExpiresAt: v.optional(v.string()),
+    connectedAt: v.string(),
+    isActive: v.boolean(),
+    accountType: v.optional(v.string()), // "business" or "creator"
+  }).index("by_user_id", ["userId"]),
+
+  generatedPosts: defineTable({
+    eventId: v.id("events"),
+    userId: v.id("users"),
+    templateType: v.union(v.literal("announcement"), v.literal("lineup"), v.literal("countdown")),
+    imageId: v.id("_storage"),
+    caption: v.string(),
+    hashtags: v.array(v.string()),
+    generatedAt: v.string(),
+    downloaded: v.boolean(),
+  }).index("by_event_id", ["eventId"]).index("by_user_id", ["userId"]),
+
+  scheduledPosts: defineTable({
+    generatedPostId: v.id("generatedPosts"),
+    userId: v.id("users"),
+    scheduledTime: v.string(), // KST timezone
+    status: v.union(v.literal("pending"), v.literal("published"), v.literal("failed")),
+    retryCount: v.number(),
+    instagramPostId: v.optional(v.string()),
+    error: v.optional(v.string()),
+    publishedAt: v.optional(v.string()),
+  }).index("by_user_id", ["userId"]).index("by_status", ["status"]),
 });

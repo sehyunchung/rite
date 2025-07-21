@@ -21,6 +21,7 @@ import { Route as EventsEventIdRouteImport } from './routes/events/$eventId'
 import { Route as AdminDashboardRouteImport } from './routes/admin/dashboard'
 import { Route as AdminLayoutRouteImport } from './routes/admin/_layout'
 import { Route as AuthInstagramSuccessRouteImport } from './routes/auth/instagram/success'
+import { Route as AuthInstagramCallbackRouteImport } from './routes/auth/instagram/callback'
 
 const AdminRouteImport = createFileRoute('/admin')()
 
@@ -78,6 +79,11 @@ const AuthInstagramSuccessRoute = AuthInstagramSuccessRouteImport.update({
   path: '/auth/instagram/success',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthInstagramCallbackRoute = AuthInstagramCallbackRouteImport.update({
+  id: '/auth/instagram/callback',
+  path: '/auth/instagram/callback',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -89,6 +95,7 @@ export interface FileRoutesByFullPath {
   '/events/$eventId': typeof EventsEventIdRoute
   '/events/create': typeof EventsCreateRoute
   '/events': typeof EventsIndexRoute
+  '/auth/instagram/callback': typeof AuthInstagramCallbackRoute
   '/auth/instagram/success': typeof AuthInstagramSuccessRoute
 }
 export interface FileRoutesByTo {
@@ -101,6 +108,7 @@ export interface FileRoutesByTo {
   '/events/$eventId': typeof EventsEventIdRoute
   '/events/create': typeof EventsCreateRoute
   '/events': typeof EventsIndexRoute
+  '/auth/instagram/callback': typeof AuthInstagramCallbackRoute
   '/auth/instagram/success': typeof AuthInstagramSuccessRoute
 }
 export interface FileRoutesById {
@@ -115,6 +123,7 @@ export interface FileRoutesById {
   '/events/$eventId': typeof EventsEventIdRoute
   '/events/create': typeof EventsCreateRoute
   '/events/': typeof EventsIndexRoute
+  '/auth/instagram/callback': typeof AuthInstagramCallbackRoute
   '/auth/instagram/success': typeof AuthInstagramSuccessRoute
 }
 export interface FileRouteTypes {
@@ -129,6 +138,7 @@ export interface FileRouteTypes {
     | '/events/$eventId'
     | '/events/create'
     | '/events'
+    | '/auth/instagram/callback'
     | '/auth/instagram/success'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -141,6 +151,7 @@ export interface FileRouteTypes {
     | '/events/$eventId'
     | '/events/create'
     | '/events'
+    | '/auth/instagram/callback'
     | '/auth/instagram/success'
   id:
     | '__root__'
@@ -154,6 +165,7 @@ export interface FileRouteTypes {
     | '/events/$eventId'
     | '/events/create'
     | '/events/'
+    | '/auth/instagram/callback'
     | '/auth/instagram/success'
   fileRoutesById: FileRoutesById
 }
@@ -166,6 +178,7 @@ export interface RootRouteChildren {
   EventsEventIdRoute: typeof EventsEventIdRoute
   EventsCreateRoute: typeof EventsCreateRoute
   EventsIndexRoute: typeof EventsIndexRoute
+  AuthInstagramCallbackRoute: typeof AuthInstagramCallbackRoute
   AuthInstagramSuccessRoute: typeof AuthInstagramSuccessRoute
 }
 
@@ -248,6 +261,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthInstagramSuccessRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/auth/instagram/callback': {
+      id: '/auth/instagram/callback'
+      path: '/auth/instagram/callback'
+      fullPath: '/auth/instagram/callback'
+      preLoaderRoute: typeof AuthInstagramCallbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -272,6 +292,7 @@ const rootRouteChildren: RootRouteChildren = {
   EventsEventIdRoute: EventsEventIdRoute,
   EventsCreateRoute: EventsCreateRoute,
   EventsIndexRoute: EventsIndexRoute,
+  AuthInstagramCallbackRoute: AuthInstagramCallbackRoute,
   AuthInstagramSuccessRoute: AuthInstagramSuccessRoute,
 }
 export const routeTree = rootRouteImport
