@@ -22,7 +22,8 @@ function RootComponent() {
           <div className="flex items-center justify-between">
             <Link to={isSignedIn ? "/dashboard" : "/"}>
               <h1 className="text-xl font-bold hover:text-blue-600 transition-colors">
-                Rite
+                <span className="text-2xl mr-1">Ⓡ</span>
+                <span>RITE</span>
               </h1>
             </Link>
             

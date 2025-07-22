@@ -31,9 +31,15 @@ function HomePage() {
   return (
     <div className="flex flex-col gap-16">
       <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Rite</h1>
-        <p className="text-lg text-slate-600">
+        <h1 className="text-6xl font-light mb-6">
+          <span className="text-7xl mr-3">Ⓡ</span>
+          <span>RITE</span>
+        </h1>
+        <p className="text-lg text-slate-600 mb-2">
           Streamline your DJ event management with Instagram integration
+        </p>
+        <p className="text-sm text-slate-500">
+          친구를 위한 도구 - A tool for friends
         </p>
       </div>
       <PublicContent />
