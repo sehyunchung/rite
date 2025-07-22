@@ -301,14 +301,18 @@ import { validateEvent, validateTimeslot } from "@/lib/validation"
 
 ### Deployment Setup:
 1. Connect GitHub repository to Vercel
-2. Set environment variables:
+2. Add custom domain: rite.party
+3. Set environment variables:
    - `VITE_CONVEX_URL`
    - `VITE_CLERK_PUBLISHABLE_KEY`
-3. Deploy settings:
+   - `VITE_CLERK_FRONTEND_API_URL`
+   - `VITE_INSTAGRAM_CLIENT_ID`
+   - `VITE_INSTAGRAM_OAUTH_PROXY_URL`
+4. Deploy settings:
    - Build Command: `npm run build`
    - Output Directory: `dist`
    - Install Command: `npm install`
-4. Enable automatic deployments for main branch
+5. Enable automatic deployments for main branch
 
 ### Performance Optimization:
 - Vercel automatically handles:
