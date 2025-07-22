@@ -1,5 +1,6 @@
 import { Button } from '@/components/ui/button'
 import { useState } from 'react'
+import { useSignIn } from '@clerk/clerk-react'
 
 interface InstagramLoginProps {
   onStartLogin?: () => void
@@ -7,24 +8,23 @@ interface InstagramLoginProps {
 
 export function InstagramLogin({ onStartLogin }: InstagramLoginProps) {
   const [isLoading, setIsLoading] = useState(false)
+  const { signIn } = useSignIn()
 
-  const handleInstagramLogin = () => {
+  const handleInstagramLogin = async () => {
     setIsLoading(true)
     onStartLogin?.()
     
-    // Redirect to Instagram OAuth proxy
-    const proxyUrl = import.meta.env.VITE_INSTAGRAM_OAUTH_PROXY_URL || 'https://rite-instagram-oauth-proxy.workers.dev'
-    const authUrl = new URL(`${proxyUrl}/oauth/authorize`)
-    
-    // Add state parameter for security
-    const state = crypto.randomUUID()
-    authUrl.searchParams.set('state', state)
-    
-    // Store state in sessionStorage for validation
-    sessionStorage.setItem('instagram_oauth_state', state)
-    
-    // Redirect to Instagram OAuth
-    window.location.href = authUrl.toString()
+    try {
+      // Use Clerk's OAuth flow with the custom Instagram provider
+      await signIn?.authenticateWithRedirect({
+        strategy: 'oauth_custom_instagram',
+        redirectUrl: '/dashboard',
+        redirectUrlComplete: '/dashboard',
+      })
+    } catch (error) {
+      console.error('Instagram login failed:', error)
+      setIsLoading(false)
+    }
   }
 
   return (

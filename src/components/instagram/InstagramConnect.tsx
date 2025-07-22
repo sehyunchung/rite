@@ -23,11 +23,16 @@ export function InstagramConnect() {
     
     setIsConnecting(true)
     
-    const authUrl = new URL('https://api.instagram.com/oauth/authorize')
-    authUrl.searchParams.set('client_id', import.meta.env.VITE_INSTAGRAM_CLIENT_ID || '735938226061336')
-    authUrl.searchParams.set('redirect_uri', import.meta.env.INSTAGRAM_REDIRECT_URI || 'http://localhost:5173/auth/instagram/callback')
-    authUrl.searchParams.set('scope', 'instagram_basic,instagram_content_publish')
-    authUrl.searchParams.set('response_type', 'code')
+    // Use the OAuth proxy for consistency (same as login flow)
+    const proxyUrl = import.meta.env.VITE_INSTAGRAM_OAUTH_PROXY_URL || 'https://rite-instagram-oauth-proxy.workers.dev'
+    const authUrl = new URL(`${proxyUrl}/oauth/authorize`)
+    
+    // Add state to identify this as dashboard connection (not Clerk login)
+    const state = `dashboard-connect-${crypto.randomUUID()}`
+    authUrl.searchParams.set('state', state)
+    
+    // Store state for validation
+    sessionStorage.setItem('instagram_connect_state', state)
     
     window.location.href = authUrl.toString()
   }

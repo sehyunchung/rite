@@ -25,9 +25,10 @@ const app = new Hono<{ Bindings: Env }>()
 
 // Enable CORS for Clerk
 app.use('*', cors({
-  origin: ['https://clerk.com', 'https://*.clerk.accounts.dev'],
+  origin: ['https://clerk.com', 'https://*.clerk.accounts.dev', 'https://*.accounts.dev'],
   allowHeaders: ['Authorization', 'Content-Type'],
   allowMethods: ['GET', 'POST', 'OPTIONS'],
+  credentials: true,
 }))
 
 // Health check endpoint
@@ -64,6 +65,14 @@ app.get('/oauth/authorize', (c) => {
   const clientId = c.env.INSTAGRAM_CLIENT_ID
   const redirectUri = `${new URL(c.req.url).origin}/oauth/callback`
   const state = c.req.query('state') || ''
+  const clerkRedirectUri = c.req.query('redirect_uri') || ''
+  
+  // Store Clerk's redirect URI in state for later use
+  const stateData = {
+    originalState: state,
+    clerkRedirectUri: clerkRedirectUri
+  }
+  const encodedState = btoa(JSON.stringify(stateData))
   
   // Redirect to Instagram OAuth
   const instagramAuthUrl = new URL('https://api.instagram.com/oauth/authorize')
@@ -72,7 +81,7 @@ app.get('/oauth/authorize', (c) => {
   // New scopes for Instagram API with Instagram Login
   instagramAuthUrl.searchParams.set('scope', 'instagram_business_basic,instagram_business_content_publish')
   instagramAuthUrl.searchParams.set('response_type', 'code')
-  instagramAuthUrl.searchParams.set('state', state)
+  instagramAuthUrl.searchParams.set('state', encodedState)
   
   return c.redirect(instagramAuthUrl.toString())
 })
@@ -80,14 +89,31 @@ app.get('/oauth/authorize', (c) => {
 // OAuth callback endpoint  
 app.get('/oauth/callback', async (c) => {
   const code = c.req.query('code')
-  const state = c.req.query('state') || ''
+  const encodedState = c.req.query('state') || ''
   
   if (!code) {
     return c.json({ error: 'Authorization code not provided' }, 400)
   }
   
   try {
-    // Exchange code for access token
+    // Decode state to get Clerk's redirect URI
+    let stateData: { originalState: string; clerkRedirectUri: string }
+    try {
+      stateData = JSON.parse(atob(encodedState))
+    } catch {
+      // Fallback for old state format
+      stateData = { originalState: encodedState, clerkRedirectUri: '' }
+    }
+    
+    // If we have a Clerk redirect URI, redirect back to Clerk with the code
+    if (stateData.clerkRedirectUri) {
+      const clerkCallbackUrl = new URL(stateData.clerkRedirectUri)
+      clerkCallbackUrl.searchParams.set('code', code)
+      clerkCallbackUrl.searchParams.set('state', stateData.originalState)
+      return c.redirect(clerkCallbackUrl.toString())
+    }
+    
+    // Otherwise, handle the old flow (for backward compatibility)
     const tokenResponse = await fetch('https://api.instagram.com/oauth/access_token', {
       method: 'POST',
       headers: {
@@ -108,12 +134,11 @@ app.get('/oauth/callback', async (c) => {
     
     const tokenData: InstagramTokenResponse = await tokenResponse.json()
     
-    // Store access token in a temporary way and redirect back to Clerk
-    // In a real implementation, you might want to encrypt this token
+    // Redirect to app success page (old flow)
     const redirectUrl = new URL(`${c.env.RITE_APP_URL}/auth/instagram/success`)
     redirectUrl.searchParams.set('access_token', tokenData.access_token)
     redirectUrl.searchParams.set('user_id', tokenData.user_id.toString())
-    redirectUrl.searchParams.set('state', state)
+    redirectUrl.searchParams.set('state', stateData.originalState)
     
     return c.redirect(redirectUrl.toString())
     
@@ -127,14 +152,21 @@ app.get('/oauth/callback', async (c) => {
 app.post('/oauth/token', async (c) => {
   const body = await c.req.formData()
   const code = body.get('code')
-  const redirectUri = body.get('redirect_uri')
+  const clientId = body.get('client_id')
+  const clientSecret = body.get('client_secret')
   
   if (!code) {
-    return c.json({ error: 'invalid_request' }, 400)
+    return c.json({ error: 'invalid_request', error_description: 'Missing code parameter' }, 400)
   }
   
+  // Note: We don't validate client credentials here since this is a proxy
+  // Clerk will send its own client_id/secret, not Instagram's
+  
   try {
-    // Exchange code for access token
+    // Exchange code for access token with Instagram
+    // Always use the proxy's callback URL as redirect_uri for Instagram
+    const proxyCallbackUrl = `${new URL(c.req.url).origin}/oauth/callback`
+    
     const tokenResponse = await fetch('https://api.instagram.com/oauth/access_token', {
       method: 'POST',
       headers: {
@@ -144,34 +176,59 @@ app.post('/oauth/token', async (c) => {
         client_id: c.env.INSTAGRAM_CLIENT_ID,
         client_secret: c.env.INSTAGRAM_CLIENT_SECRET,
         grant_type: 'authorization_code',
-        redirect_uri: redirectUri as string,
+        redirect_uri: proxyCallbackUrl,
         code: code as string,
       }),
     })
     
     if (!tokenResponse.ok) {
+      const errorText = await tokenResponse.text()
+      console.error('Instagram token exchange failed:', errorText)
       throw new Error(`Token exchange failed: ${tokenResponse.statusText}`)
     }
     
     const tokenData: InstagramTokenResponse = await tokenResponse.json()
+    
+    // Generate a simple JWT-like ID token (unsigned for simplicity)
+    // In production, this should be a properly signed JWT with RS256
+    const header = btoa(JSON.stringify({ alg: 'none', typ: 'JWT' }))
+    const payload = btoa(JSON.stringify({
+      iss: new URL(c.req.url).origin,
+      sub: tokenData.user_id.toString(),
+      aud: clientId || 'rite-app',
+      exp: Math.floor(Date.now() / 1000) + 3600,
+      iat: Math.floor(Date.now() / 1000),
+      instagram_user_id: tokenData.user_id.toString(),
+      preferred_username: '', // Will be filled by userinfo endpoint
+      name: '', // Will be filled by userinfo endpoint
+    }))
+    const idToken = `${header}.${payload}.` // Unsigned JWT
+    
+    console.log('Token endpoint: Returning token response for user_id:', tokenData.user_id)
     
     // Return OIDC-compatible token response
     return c.json({
       access_token: tokenData.access_token,
       token_type: 'Bearer',
       expires_in: 3600,
-      id_token: tokenData.access_token, // Using access token as ID token for simplicity
+      id_token: idToken,
+      scope: 'openid profile',
     })
     
   } catch (error) {
     console.error('Token endpoint error:', error)
-    return c.json({ error: 'invalid_grant' }, 400)
+    return c.json({ 
+      error: 'invalid_grant',
+      error_description: error instanceof Error ? error.message : 'Token exchange failed'
+    }, 400)
   }
 })
 
 // User info endpoint (for OIDC compatibility)
 app.get('/oauth/userinfo', async (c) => {
   const authorization = c.req.header('Authorization')
+  
+  console.log('Userinfo endpoint called with auth:', authorization ? 'Bearer token present' : 'No auth')
   
   if (!authorization || !authorization.startsWith('Bearer ')) {
     return c.json({ error: 'invalid_token' }, 401)

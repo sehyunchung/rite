@@ -31,7 +31,7 @@ export function LoginPage() {
                 }
               }}
               signUpUrl="/signup"
-              afterSignInUrl="/dashboard"
+              fallbackRedirectUrl="/dashboard"
             />
           </CardContent>
         </Card>

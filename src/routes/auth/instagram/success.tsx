@@ -26,11 +26,19 @@ function InstagramSuccess() {
     const urlParams = new URLSearchParams(window.location.search)
     const accessToken = urlParams.get('access_token')
     const userId = urlParams.get('user_id')
+    const state = urlParams.get('state')
     
     if (accessToken && userId) {
       setInstagramData({ accessToken, userId })
       // Fetch Instagram username
       void fetchInstagramUsername(accessToken)
+      
+      // If this is a dashboard connection (not login), handle differently
+      if (state && state.startsWith('dashboard-connect-')) {
+        // This is an Instagram connection from dashboard, not a login attempt
+        // TODO: Save Instagram connection to Convex and redirect back to dashboard
+        console.log('Dashboard Instagram connection:', { accessToken, userId, state })
+      }
     } else {
       // Redirect to login if no valid data
       void navigate({ to: '/login' })
@@ -54,15 +62,28 @@ function InstagramSuccess() {
 
     setIsLoading(true)
     try {
-      // Use Clerk's custom OAuth flow to complete authentication
-      // This would integrate with your Instagram OAuth proxy
-      await signIn?.authenticateWithRedirect({
-        strategy: 'oauth_custom_instagram',
-        redirectUrl: '/auth/instagram/callback',
-        redirectUrlComplete: '/dashboard',
-      })
+      // Check if this is a dashboard connection or login attempt
+      const urlParams = new URLSearchParams(window.location.search)
+      const state = urlParams.get('state')
+      
+      if (state && state.startsWith('dashboard-connect-')) {
+        // This is a dashboard Instagram connection - save to Convex and redirect back
+        // TODO: Implement Convex mutation to save Instagram connection
+        console.log('Saving Instagram connection for authenticated user:', instagramData)
+        
+        // For now, just redirect back to dashboard with success message
+        alert(`Instagram account @${instagramData.username || instagramData.userId} connected successfully!`)
+        void navigate({ to: '/dashboard' })
+      } else {
+        // This is a login attempt - the old flow (should not happen anymore with working OAuth)
+        console.log('Instagram login data:', instagramData)
+        console.log('Email:', email)
+        
+        alert('Instagram login is now handled through the main login page. Please use the Instagram button on the login page.')
+        void navigate({ to: '/login' })
+      }
     } catch (error) {
-      console.error('Instagram authentication failed:', error)
+      console.error('Instagram connection failed:', error)
       setIsLoading(false)
     }
   }
