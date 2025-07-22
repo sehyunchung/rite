@@ -10,6 +10,8 @@ export default tseslint.config(
       "dist",
       "eslint.config.js",
       "convex/_generated",
+      "convex/auth.config.ts",
+      "instagram-oauth-proxy/**",
       "postcss.config.js",
       "tailwind.config.js",
       "vite.config.ts",

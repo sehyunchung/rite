@@ -89,7 +89,7 @@ export function InstagramConnect() {
             <Button 
               variant="outline" 
               size="sm" 
-              onClick={handleDisconnect}
+              onClick={() => void handleDisconnect()}
               className="text-red-600 hover:text-red-700"
             >
               <X className="h-4 w-4 mr-1" />

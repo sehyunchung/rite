@@ -50,11 +50,11 @@ export function InstagramCallback() {
   }, [searchParams, exchangeCode])
 
   const handleContinue = () => {
-    navigate('/dashboard')
+    void navigate('/dashboard')
   }
 
   const handleRetry = () => {
-    navigate('/dashboard')
+    void navigate('/dashboard')
   }
 
   if (status === 'loading') {

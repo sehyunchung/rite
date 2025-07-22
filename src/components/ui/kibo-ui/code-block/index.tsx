@@ -393,7 +393,6 @@ export type CodeBlockFilenameProps = HTMLAttributes<HTMLDivElement> & {
 };
 
 export const CodeBlockFilename = ({
-  className,
   icon,
   value,
   children,
@@ -505,7 +504,7 @@ export const CodeBlockCopyButton = ({
       return;
     }
 
-    navigator.clipboard.writeText(code).then(() => {
+    void navigator.clipboard.writeText(code).then(() => {
       setIsCopied(true);
       onCopy?.();
 
@@ -537,22 +536,27 @@ export const CodeBlockCopyButton = ({
 
 type CodeBlockFallbackProps = HTMLAttributes<HTMLDivElement>;
 
-const CodeBlockFallback = ({ children, ...props }: CodeBlockFallbackProps) => (
-  <div {...props}>
-    <pre className="w-full">
-      <code>
-        {children
-          ?.toString()
-          .split('\n')
-          .map((line, i) => (
-            <span className="line" key={i}>
-              {line}
-            </span>
-          ))}
-      </code>
-    </pre>
-  </div>
-);
+const CodeBlockFallback = ({ children, ...props }: CodeBlockFallbackProps) => {
+  const content = typeof children === 'string' || typeof children === 'number' 
+    ? String(children) 
+    : '';
+    
+  return (
+    <div {...props}>
+      <pre className="w-full">
+        <code>
+          {content
+            .split('\n')
+            .map((line, i) => (
+              <span className="line" key={i}>
+                {line}
+              </span>
+            ))}
+        </code>
+      </pre>
+    </div>
+  );
+};
 
 export type CodeBlockBodyProps = Omit<
   HTMLAttributes<HTMLDivElement>,

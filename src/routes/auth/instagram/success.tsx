@@ -30,10 +30,10 @@ function InstagramSuccess() {
     if (accessToken && userId) {
       setInstagramData({ accessToken, userId })
       // Fetch Instagram username
-      fetchInstagramUsername(accessToken)
+      void fetchInstagramUsername(accessToken)
     } else {
       // Redirect to login if no valid data
-      navigate({ to: '/login' })
+      void navigate({ to: '/login' })
     }
   }, [navigate])
 
@@ -108,7 +108,7 @@ function InstagramSuccess() {
             </div>
 
             <Button 
-              onClick={handleCompleteSignup}
+              onClick={() => void handleCompleteSignup()}
               disabled={!email || isLoading}
               className="w-full"
             >
@@ -117,7 +117,7 @@ function InstagramSuccess() {
 
             <div className="text-center">
               <button
-                onClick={() => navigate({ to: '/login' })}
+                onClick={() => void navigate({ to: '/login' })}
                 className="text-sm text-gray-600 hover:text-gray-800"
               >
                 Use a different login method
