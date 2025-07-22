@@ -11,6 +11,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TermsRouteImport } from './routes/terms'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as DjSubmissionRouteImport } from './routes/dj-submission'
@@ -29,6 +30,11 @@ const AdminRouteImport = createFileRoute('/admin')()
 const AdminRoute = AdminRouteImport.update({
   id: '/admin',
   path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PrivacyRoute = PrivacyRouteImport.update({
@@ -97,6 +103,7 @@ export interface FileRoutesByFullPath {
   '/dj-submission': typeof DjSubmissionRoute
   '/login': typeof LoginRoute
   '/privacy': typeof PrivacyRoute
+  '/terms': typeof TermsRoute
   '/admin': typeof AdminLayoutRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/events/$eventId': typeof EventsEventIdRoute
@@ -111,6 +118,7 @@ export interface FileRoutesByTo {
   '/dj-submission': typeof DjSubmissionRoute
   '/login': typeof LoginRoute
   '/privacy': typeof PrivacyRoute
+  '/terms': typeof TermsRoute
   '/admin': typeof AdminLayoutRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/events/$eventId': typeof EventsEventIdRoute
@@ -126,6 +134,7 @@ export interface FileRoutesById {
   '/dj-submission': typeof DjSubmissionRoute
   '/login': typeof LoginRoute
   '/privacy': typeof PrivacyRoute
+  '/terms': typeof TermsRoute
   '/admin': typeof AdminRouteWithChildren
   '/admin/_layout': typeof AdminLayoutRoute
   '/admin/dashboard': typeof AdminDashboardRoute
@@ -143,6 +152,7 @@ export interface FileRouteTypes {
     | '/dj-submission'
     | '/login'
     | '/privacy'
+    | '/terms'
     | '/admin'
     | '/admin/dashboard'
     | '/events/$eventId'
@@ -157,6 +167,7 @@ export interface FileRouteTypes {
     | '/dj-submission'
     | '/login'
     | '/privacy'
+    | '/terms'
     | '/admin'
     | '/admin/dashboard'
     | '/events/$eventId'
@@ -171,6 +182,7 @@ export interface FileRouteTypes {
     | '/dj-submission'
     | '/login'
     | '/privacy'
+    | '/terms'
     | '/admin'
     | '/admin/_layout'
     | '/admin/dashboard'
@@ -187,6 +199,7 @@ export interface RootRouteChildren {
   DjSubmissionRoute: typeof DjSubmissionRoute
   LoginRoute: typeof LoginRoute
   PrivacyRoute: typeof PrivacyRoute
+  TermsRoute: typeof TermsRoute
   AdminRoute: typeof AdminRouteWithChildren
   EventsEventIdRoute: typeof EventsEventIdRoute
   EventsCreateRoute: typeof EventsCreateRoute
@@ -202,6 +215,13 @@ declare module '@tanstack/react-router' {
       path: '/admin'
       fullPath: '/admin'
       preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/privacy': {
@@ -309,6 +329,7 @@ const rootRouteChildren: RootRouteChildren = {
   DjSubmissionRoute: DjSubmissionRoute,
   LoginRoute: LoginRoute,
   PrivacyRoute: PrivacyRoute,
+  TermsRoute: TermsRoute,
   AdminRoute: AdminRouteWithChildren,
   EventsEventIdRoute: EventsEventIdRoute,
   EventsCreateRoute: EventsCreateRoute,
