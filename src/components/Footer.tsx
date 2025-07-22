@@ -1,15 +1,9 @@
 export function Footer() {
   return (
-    <footer className="bg-slate-50 border-t border-slate-200 py-6 px-4">
+    <footer className="fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-sm py-4 px-4">
       <div className="max-w-7xl mx-auto">
-        <div className="flex flex-col md:flex-row justify-between items-center space-y-2 md:space-y-0">
-          <div className="text-sm text-slate-600">
-            <span className="text-lg mr-2">Ⓡ</span>
-            <span>RITE • 친구를 위한 도구</span>
-          </div>
-          <div className="text-sm text-slate-500">
-            DJ Event Management Platform
-          </div>
+        <div className="flex justify-center items-center">
+          <span className="text-sm text-gray-300">Ⓡ</span>
         </div>
       </div>
     </footer>
