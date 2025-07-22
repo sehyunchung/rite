@@ -4,6 +4,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { useMutation } from 'convex/react'
+import { api } from '../../../convex/_generated/api'
 
 export const Route = createFileRoute('/auth/instagram/success')({
   component: InstagramSuccess,
@@ -18,6 +20,8 @@ function InstagramSuccess() {
     userId: string
     username?: string
   } | null>(null)
+  
+  const saveConnection = useMutation(api.instagram.saveConnection)
 
   useEffect(() => {
     // Extract Instagram data from URL params
@@ -66,12 +70,23 @@ function InstagramSuccess() {
       
       if (state && state.startsWith('dashboard-connect-')) {
         // This is a dashboard Instagram connection - save to Convex and redirect back
-        // TODO: Implement Convex mutation to save Instagram connection
         console.log('Saving Instagram connection for authenticated user:', instagramData)
         
-        // For now, just redirect back to dashboard with success message
-        alert(`Instagram account @${instagramData.username || instagramData.userId} connected successfully!`)
-        void navigate({ to: '/dashboard' })
+        try {
+          await saveConnection({
+            instagramUserId: instagramData.userId,
+            username: instagramData.username || instagramData.userId,
+            accessToken: instagramData.accessToken,
+            accountType: 'business', // Assume business account for now
+          })
+          
+          alert(`Instagram account @${instagramData.username || instagramData.userId} connected successfully!`)
+          void navigate({ to: '/dashboard' })
+        } catch (error) {
+          console.error('Failed to save Instagram connection:', error)
+          alert('Failed to connect Instagram account. Please try again.')
+          setIsLoading(false)
+        }
       } else {
         // This is a login attempt - the old flow (should not happen anymore with working OAuth)
         console.log('Instagram login data:', instagramData)
