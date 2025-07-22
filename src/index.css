@@ -77,9 +77,34 @@
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    @apply border-border outline-none;
   }
   body {
     @apply bg-background text-foreground;
+  }
+  
+  /* Minimal design overrides */
+  .card {
+    @apply border-0 shadow-none bg-transparent;
+  }
+  
+  /* Simplify all buttons globally */
+  button, [role="button"] {
+    @apply transition-opacity hover:opacity-60;
+  }
+  
+  /* Remove heavy borders */
+  .border-2 {
+    @apply border;
+  }
+  
+  /* Lighter shadows */
+  .shadow-md, .shadow-lg, .shadow-xl {
+    @apply shadow-sm;
+  }
+  
+  /* Simpler inputs */
+  input, textarea, select {
+    @apply border-gray-200 focus:border-gray-400 focus:ring-0;
   }
 }

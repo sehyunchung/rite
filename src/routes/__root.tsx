@@ -2,7 +2,6 @@ import { createRootRoute, Outlet, useLocation, Link } from '@tanstack/react-rout
 import { TanStackRouterDevtools } from '@tanstack/router-devtools'
 import { useAuth, useUser, SignOutButton } from '@clerk/clerk-react'
 import { Footer } from '@/components/Footer'
-import { Button } from '@/components/ui/button'
 
 export const Route = createRootRoute({
   component: RootComponent,
@@ -18,11 +17,11 @@ function RootComponent() {
   return (
     <>
       {!isDJSubmission && (
-        <header className="sticky top-0 z-10 bg-slate-50 p-4 border-b-2 border-slate-200">
+        <header className="sticky top-0 z-10 bg-white p-4 border-b border-gray-100">
           <div className="flex items-center justify-between">
             <Link to={isSignedIn ? "/dashboard" : "/"}>
-              <h1 className="text-xl font-bold hover:text-blue-600 transition-colors">
-                <span className="text-2xl mr-1">Ⓡ</span>
+              <h1 className="text-lg font-normal hover:opacity-60 transition-opacity">
+                <span className="text-xl mr-1">Ⓡ</span>
                 <span>RITE</span>
               </h1>
             </Link>
@@ -30,22 +29,22 @@ function RootComponent() {
             <div className="flex items-center gap-4">
               {isSignedIn && !isPublicRoute && (
                 <>
-                  <span className="text-sm text-gray-600">
+                  <span className="text-sm text-gray-500">
                     {user?.firstName || user?.fullName || 'Organizer'}
                   </span>
                   <SignOutButton>
-                    <Button variant="outline" size="sm">
+                    <button className="text-sm text-gray-500 hover:text-gray-900 transition-colors">
                       Sign Out
-                    </Button>
+                    </button>
                   </SignOutButton>
                 </>
               )}
               
               {location.pathname === '/events/create' && (
                 <Link to="/dashboard">
-                  <Button variant="outline">
-                    ← Back to Dashboard
-                  </Button>
+                  <button className="text-sm text-gray-500 hover:text-gray-900 transition-colors">
+                    ← Back
+                  </button>
                 </Link>
               )}
             </div>
@@ -53,7 +52,7 @@ function RootComponent() {
         </header>
       )}
       
-      <main className={isDJSubmission ? '' : 'p-8'}>
+      <main className={isDJSubmission ? '' : 'p-8 pb-20'}>
         <Outlet />
       </main>
       

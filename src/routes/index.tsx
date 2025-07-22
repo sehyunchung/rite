@@ -1,6 +1,5 @@
 import { createFileRoute, Link, useRouter } from '@tanstack/react-router'
 import { useAuth } from '@clerk/clerk-react'
-import { Button } from '@/components/ui/button'
 import { useEffect } from 'react'
 
 export const Route = createFileRoute('/')({
@@ -29,17 +28,13 @@ function HomePage() {
 
   // Public landing page for non-authenticated users
   return (
-    <div className="flex flex-col gap-16">
-      <div className="text-center">
-        <h1 className="text-6xl font-light mb-6">
-          <span className="text-7xl mr-3">Ⓡ</span>
-          <span>RITE</span>
+    <div className="min-h-[80vh] flex flex-col items-center justify-center">
+      <div className="text-center mb-16">
+        <h1 className="text-6xl font-extralight mb-4">
+          <span className="text-7xl">Ⓡ</span>
         </h1>
-        <p className="text-lg text-slate-600 mb-2">
-          Streamline your DJ event management with Instagram integration
-        </p>
-        <p className="text-sm text-slate-500">
-          친구를 위한 도구 - A tool for friends
+        <p className="text-sm text-gray-600">
+          DJ event management
         </p>
       </div>
       <PublicContent />
@@ -51,26 +46,13 @@ function PublicContent() {
   return (
     <div className="flex flex-col gap-8 max-w-4xl mx-auto">
       {/* Landing page for non-authenticated users */}
-      <div className="text-center space-y-6">
-        <h2 className="text-2xl font-semibold">For Event Organizers</h2>
-        <p className="text-gray-600 max-w-2xl mx-auto">
-          Manage your DJ events, track submissions, and coordinate with DJs seamlessly. 
-          Get started with professional event management tools.
-        </p>
-        
-        <div className="flex gap-4 justify-center flex-wrap">
-          <Link to="/login">
-            <Button size="lg">
-              🔐 Organizer Login
-            </Button>
+      <div className="text-center space-y-8">
+        <div className="flex gap-6 justify-center">
+          <Link to="/login" className="text-sm text-gray-600 hover:text-gray-900 transition-colors">
+            Login
           </Link>
-          <Link to="/login">
-            <Button 
-              variant="outline" 
-              size="lg"
-            >
-              📋 Create Account
-            </Button>
+          <Link to="/login" className="text-sm text-gray-600 hover:text-gray-900 transition-colors">
+            Sign up
           </Link>
         </div>
       </div>

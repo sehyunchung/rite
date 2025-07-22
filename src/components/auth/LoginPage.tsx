@@ -4,15 +4,11 @@ import { InstagramLogin } from './InstagramLogin';
 
 export function LoginPage() {
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
+    <div className="min-h-screen bg-white flex items-center justify-center py-12 px-4">
+      <div className="max-w-md w-full space-y-12">
         <div className="text-center">
-          <h1 className="text-4xl font-light mb-2">
-            <span className="text-5xl mr-2">Ⓡ</span>
-            <span>RITE</span>
-          </h1>
-          <p className="text-gray-600">Organizer Dashboard</p>
-          <p className="text-sm text-gray-500 mt-1">친구를 위한 도구</p>
+          <h1 className="text-6xl font-extralight mb-8">Ⓡ</h1>
+          <p className="text-sm text-gray-600">Organizer login</p>
         </div>
         
         <Card>
