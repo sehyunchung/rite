@@ -79,6 +79,34 @@ function PrivacyPolicy() {
           </ul>
         </section>
 
+        <section className="mb-8" id="data-deletion">
+          <h2 className="text-xl font-normal mb-4">6-1. 데이터 삭제 방법</h2>
+          <p>이용자는 다음과 같은 방법으로 개인정보를 삭제할 수 있습니다:</p>
+          <ol className="list-decimal pl-5 space-y-2 mt-4">
+            <li>
+              <strong>Instagram 연동 해제</strong>
+              <ul className="list-disc pl-5 mt-2">
+                <li>RITE 대시보드에서 Instagram 연동 해제</li>
+                <li>Instagram 설정 → 웹사이트 권한에서 RITE 제거</li>
+              </ul>
+            </li>
+            <li>
+              <strong>계정 삭제 요청</strong>
+              <ul className="list-disc pl-5 mt-2">
+                <li>이메일: privacy@rite.party</li>
+                <li>요청 시 7일 이내 처리</li>
+              </ul>
+            </li>
+            <li>
+              <strong>자동 삭제</strong>
+              <ul className="list-disc pl-5 mt-2">
+                <li>이벤트 종료 1년 후 자동 삭제</li>
+                <li>비활성 계정 2년 후 자동 삭제</li>
+              </ul>
+            </li>
+          </ol>
+        </section>
+
         <section className="mb-8">
           <h2 className="text-xl font-normal mb-4">7. 개인정보 보호책임자</h2>
           <p>이메일: privacy@rite.party</p>
