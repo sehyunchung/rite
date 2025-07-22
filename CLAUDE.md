@@ -23,7 +23,7 @@ The application uses Clerk for authentication. To set up authentication:
    ```
 5. Configure Clerk webhook for Convex user synchronization (optional for development)
 
-**Current Status**: Authentication system is fully functional with Clerk integration.
+**Current Status**: Authentication system is fully functional with Clerk integration, including complete Instagram OAuth support.
 
 ### Social OAuth Providers
 To enable social login options:
@@ -54,18 +54,26 @@ Instagram login requires a custom OAuth proxy service since Instagram is not nat
    - Configure OAuth redirect URIs for your proxy service
    - Request scopes: `instagram_business_basic`, `instagram_business_content_publish`
 
-3. **Deploy Proxy Service** (Already deployed):
-   - Cloudflare Worker handles OAuth flow at `rite-instagram-oauth-proxy.workers.dev`
-   - Transforms Instagram OAuth to OIDC format for Clerk
+3. **Deploy Proxy Service** ✅ **COMPLETED**:
+   - Cloudflare Worker deployed at `rite-instagram-oauth-proxy.sehyunchung.workers.dev`
+   - Transforms Instagram OAuth to OIDC format for Clerk compatibility
+   - Handles both login and dashboard connection flows
    - Validates Business/Creator account requirement
    - Maps user data (username, user_id, account_type, profile_picture_url)
 
-4. **Configure in Clerk**:
-   - Add custom OIDC provider pointing to proxy service
-   - Configure attribute mapping for Instagram fields
-   - Handle account type validation
+4. **Configure in Clerk** ✅ **COMPLETED**:
+   - Custom OIDC provider configured with key: `instagram`
+   - Strategy name: `oauth_custom_instagram`
+   - Discovery URL: `https://rite-instagram-oauth-proxy.sehyunchung.workers.dev/.well-known/openid-configuration`
+   - Attribute mapping configured for Instagram fields
 
-**Note**: The new API provides better features for content publishing (Phase 3) but requires professional accounts.
+5. **Integration Status** ✅ **FULLY WORKING**:
+   - Instagram login through Clerk OAuth ✅
+   - Instagram connection for content publishing ✅
+   - Connection data saved to Convex database ✅
+   - Dashboard displays connected account status ✅
+
+**Note**: The new API provides better features for content publishing and requires Business/Creator accounts.
 
 ## Project Architecture
 
@@ -137,13 +145,16 @@ This is Rite, a DJ event management platform built with React (Vite) frontend an
 - **Robust QR Code Generation**: Canvas validation and error handling for reliable QR codes
 - **Professional Interface**: Clean dashboard with development status in footer
 - **Backward Compatibility**: Schema updates work with existing database records
+- **Instagram Authentication**: Full OAuth login integration through Clerk
+- **Instagram Connection Management**: Connect/disconnect Instagram for content publishing
+- **Instagram Data Storage**: Connection details saved to Convex with account validation
 
 **📋 Planned:**
 - **File Upload Integration**: Connect Dropzone to Convex file storage for actual uploads
 - **Submission Data Storage**: Save guest lists and payment info to database with encryption
 - **Submission Status Tracking**: Dashboard for organizers to monitor submission progress
-- **Instagram Integration**: Generates copy-paste messages for Instagram announcements
-- **Authentication**: Organizer login and session management
+- **Instagram Content Publishing**: Generate and publish Instagram posts automatically
+- **Instagram Post Templates**: Copy-paste messages for Instagram announcements
 - **Email Notifications**: Deadline reminders and submission confirmations
 
 ### Data Flow
@@ -254,6 +265,14 @@ import { validateEvent, validateTimeslot } from "@/lib/validation"
 - [ ] File upload integration with Convex storage
 - [ ] Submission data storage with encryption
 
+### Phase 2.7: Instagram OAuth Integration - ✅ **COMPLETED**
+- [x] Custom OAuth proxy deployed on Cloudflare Workers
+- [x] Instagram OAuth integration with Clerk authentication
+- [x] Support for both login and dashboard connection flows
+- [x] Instagram connection data storage in Convex database
+- [x] Dashboard UI for connected account management
+- [x] Business/Creator account validation and display
+
 ### Phase 2.5: Enhanced Event Creation - ✅ **COMPLETED**
 - [x] Instagram hashtags field for event promotion
 - [x] Payment per DJ amount (separate from total budget)
@@ -321,3 +340,42 @@ import { validateEvent, validateTimeslot } from "@/lib/validation"
   - HTTPS certificates
   - Compression (gzip/brotli)
 - Consider adding Korean CDN endpoints when scaling
+
+## Instagram OAuth Proxy
+
+The Instagram OAuth integration uses a custom Cloudflare Workers proxy to bridge Instagram's OAuth 2.0 with Clerk's OIDC requirements.
+
+### Architecture
+- **Proxy Service**: Deployed at `rite-instagram-oauth-proxy.sehyunchung.workers.dev`
+- **Framework**: Hono.js on Cloudflare Workers
+- **Purpose**: Transform Instagram OAuth to OIDC format for Clerk compatibility
+
+### Key Features
+- ✅ **Dual Flow Support**: Handles both login (via Clerk) and dashboard connection flows
+- ✅ **JWT Token Generation**: Creates proper OIDC-compatible ID tokens
+- ✅ **State Management**: Preserves OAuth state for security and flow routing
+- ✅ **Business Account Validation**: Ensures only Business/Creator accounts can connect
+- ✅ **Convex Integration**: Saves connection data to database with proper authentication
+
+### API Endpoints
+- `GET /.well-known/openid-configuration` - OIDC discovery for Clerk
+- `GET /oauth/authorize` - Instagram authorization initiation
+- `GET /oauth/callback` - Instagram OAuth callback handler
+- `POST /oauth/token` - Token exchange for OIDC compatibility
+- `GET /oauth/userinfo` - User information endpoint for Clerk
+
+### Environment Variables (Cloudflare Workers)
+- `INSTAGRAM_CLIENT_ID` - Instagram app client ID
+- `INSTAGRAM_CLIENT_SECRET` - Instagram app client secret
+- `RITE_APP_URL` - Main application URL for redirects
+
+### Deployment Commands
+```bash
+# Deploy to Cloudflare Workers
+cd instagram-oauth-proxy && npx wrangler deploy
+
+# Set secrets
+npx wrangler secret put INSTAGRAM_CLIENT_ID
+npx wrangler secret put INSTAGRAM_CLIENT_SECRET  
+npx wrangler secret put RITE_APP_URL
+```
