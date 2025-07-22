@@ -10,7 +10,7 @@ function PrivacyPolicy() {
       <div className="prose prose-gray max-w-none">
         <h1 className="text-3xl font-light mb-8">개인정보처리방침</h1>
         
-        <p className="text-sm text-gray-600 mb-8">시행일: 2025년 1월 1일</p>
+        <p className="text-sm text-gray-600 mb-8">시행일: 2025년 1월 22일</p>
 
         <section className="mb-8">
           <h2 className="text-xl font-normal mb-4">1. 개인정보의 수집 및 이용 목적</h2>

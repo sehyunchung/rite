@@ -10,7 +10,7 @@ function TermsOfService() {
       <div className="prose prose-gray max-w-none">
         <h1 className="text-3xl font-light mb-8">서비스 이용약관</h1>
         
-        <p className="text-sm text-gray-600 mb-8">시행일: 2025년 1월 1일</p>
+        <p className="text-sm text-gray-600 mb-8">시행일: 2025년 1월 22일</p>
 
         <section className="mb-8">
           <h2 className="text-xl font-normal mb-4">제1조 (목적)</h2>
@@ -92,7 +92,7 @@ function TermsOfService() {
 
         <section className="mb-8">
           <h2 className="text-xl font-normal mb-4">부칙</h2>
-          <p>이 약관은 2025년 1월 1일부터 시행됩니다.</p>
+          <p>이 약관은 2025년 1월 22일부터 시행됩니다.</p>
         </section>
       </div>
     </div>
