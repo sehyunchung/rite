@@ -1,5 +1,4 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { useSignIn } from '@clerk/clerk-react'
 import { useEffect, useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -12,7 +11,6 @@ export const Route = createFileRoute('/auth/instagram/success')({
 
 function InstagramSuccess() {
   const navigate = useNavigate()
-  const { signIn } = useSignIn()
   const [email, setEmail] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [instagramData, setInstagramData] = useState<{
