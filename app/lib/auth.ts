@@ -29,6 +29,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           accountType: profile.account_type,
         }
       },
+      allowDangerousEmailAccountLinking: true,
     },
   ],
   callbacks: {
@@ -80,6 +81,4 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   experimental: {
     enableWebAuthn: false,
   },
-  // Allow linking Instagram to existing email accounts
-  allowDangerousEmailAccountLinking: true,
 })

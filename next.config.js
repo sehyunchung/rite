@@ -18,10 +18,8 @@ const nextConfig = {
       },
     ],
   },
-  turbopack: (config) => {
-    // Exclude src directory from builds
-    config.resolve.modules = config.resolve.modules.filter(module => module !== 'src')
-    return config
+  turbopack: {
+    // Turbopack is enabled by default when using --turbopack flag
   },
 }
 
