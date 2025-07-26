@@ -20,6 +20,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as EventsIndexRouteImport } from './routes/events/index'
 import { Route as EventsCreateRouteImport } from './routes/events/create'
 import { Route as EventsEventIdRouteImport } from './routes/events/$eventId'
+import { Route as AuthCallbackRouteImport } from './routes/auth/callback'
 import { Route as AdminDashboardRouteImport } from './routes/admin/dashboard'
 import { Route as AdminLayoutRouteImport } from './routes/admin/_layout'
 import { Route as AuthInstagramSuccessRouteImport } from './routes/auth/instagram/success'
@@ -77,6 +78,11 @@ const EventsEventIdRoute = EventsEventIdRouteImport.update({
   path: '/events/$eventId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthCallbackRoute = AuthCallbackRouteImport.update({
+  id: '/auth/callback',
+  path: '/auth/callback',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminDashboardRoute = AdminDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -106,6 +112,7 @@ export interface FileRoutesByFullPath {
   '/terms': typeof TermsRoute
   '/admin': typeof AdminLayoutRoute
   '/admin/dashboard': typeof AdminDashboardRoute
+  '/auth/callback': typeof AuthCallbackRoute
   '/events/$eventId': typeof EventsEventIdRoute
   '/events/create': typeof EventsCreateRoute
   '/events': typeof EventsIndexRoute
@@ -121,6 +128,7 @@ export interface FileRoutesByTo {
   '/terms': typeof TermsRoute
   '/admin': typeof AdminLayoutRoute
   '/admin/dashboard': typeof AdminDashboardRoute
+  '/auth/callback': typeof AuthCallbackRoute
   '/events/$eventId': typeof EventsEventIdRoute
   '/events/create': typeof EventsCreateRoute
   '/events': typeof EventsIndexRoute
@@ -138,6 +146,7 @@ export interface FileRoutesById {
   '/admin': typeof AdminRouteWithChildren
   '/admin/_layout': typeof AdminLayoutRoute
   '/admin/dashboard': typeof AdminDashboardRoute
+  '/auth/callback': typeof AuthCallbackRoute
   '/events/$eventId': typeof EventsEventIdRoute
   '/events/create': typeof EventsCreateRoute
   '/events/': typeof EventsIndexRoute
@@ -155,6 +164,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/admin'
     | '/admin/dashboard'
+    | '/auth/callback'
     | '/events/$eventId'
     | '/events/create'
     | '/events'
@@ -170,6 +180,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/admin'
     | '/admin/dashboard'
+    | '/auth/callback'
     | '/events/$eventId'
     | '/events/create'
     | '/events'
@@ -186,6 +197,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/admin/_layout'
     | '/admin/dashboard'
+    | '/auth/callback'
     | '/events/$eventId'
     | '/events/create'
     | '/events/'
@@ -201,6 +213,7 @@ export interface RootRouteChildren {
   PrivacyRoute: typeof PrivacyRoute
   TermsRoute: typeof TermsRoute
   AdminRoute: typeof AdminRouteWithChildren
+  AuthCallbackRoute: typeof AuthCallbackRoute
   EventsEventIdRoute: typeof EventsEventIdRoute
   EventsCreateRoute: typeof EventsCreateRoute
   EventsIndexRoute: typeof EventsIndexRoute
@@ -280,6 +293,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EventsEventIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/auth/callback': {
+      id: '/auth/callback'
+      path: '/auth/callback'
+      fullPath: '/auth/callback'
+      preLoaderRoute: typeof AuthCallbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/dashboard': {
       id: '/admin/dashboard'
       path: '/dashboard'
@@ -331,6 +351,7 @@ const rootRouteChildren: RootRouteChildren = {
   PrivacyRoute: PrivacyRoute,
   TermsRoute: TermsRoute,
   AdminRoute: AdminRouteWithChildren,
+  AuthCallbackRoute: AuthCallbackRoute,
   EventsEventIdRoute: EventsEventIdRoute,
   EventsCreateRoute: EventsCreateRoute,
   EventsIndexRoute: EventsIndexRoute,
