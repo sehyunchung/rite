@@ -77,7 +77,7 @@ export const saveConnectionFromAuth = mutation({
     accountType: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
-    // Find the user by ID (NextAuth passes the database ID directly)
+    // args.userId is now a Convex ID passed directly from the signIn callback
     const userId = args.userId as Id<"users">;
     const user = await ctx.db.get(userId);
 

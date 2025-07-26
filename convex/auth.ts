@@ -121,7 +121,18 @@ export const createUser = mutation({
     emailVerified: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
-    return await ctx.db.insert("users", {
+    // Check if user already exists with this email
+    const existingUser = await ctx.db
+      .query("users")
+      .withIndex("by_email", (q) => q.eq("email", args.email))
+      .first();
+    
+    if (existingUser) {
+      // Return existing user ID if user already exists
+      return existingUser._id;
+    }
+    
+    const userId = await ctx.db.insert("users", {
       email: args.email,
       name: args.name,
       image: args.image,
@@ -129,6 +140,8 @@ export const createUser = mutation({
       organizerProfile: {},
       createdAt: new Date().toISOString(),
     });
+    
+    return userId;
   },
 });
 
@@ -145,6 +158,16 @@ export const getUserByEmail = query({
     return await ctx.db
       .query("users")
       .filter((q) => q.eq(q.field("email"), args.email))
+      .first();
+  },
+});
+
+export const getUserByNextAuthId = query({
+  args: { nextAuthId: v.string() },
+  handler: async (ctx, args) => {
+    return await ctx.db
+      .query("users")
+      .withIndex("by_nextauth_id", (q) => q.eq("nextAuthId", args.nextAuthId))
       .first();
   },
 });

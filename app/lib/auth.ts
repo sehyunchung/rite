@@ -34,18 +34,27 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   callbacks: {
     async signIn({ user, account, profile }) {
       // Auto-connect Instagram during signup
-      if (account?.provider === 'instagram' && profile) {
+      if (account?.provider === 'instagram' && profile && user.email) {
         try {
-          // Save Instagram connection data
-          await convex.mutation(api.instagram.saveConnectionFromAuth, {
-            userId: user.id!,
-            instagramUserId: (profile as any).sub,
-            username: (profile as any).username || (profile as any).name,
-            accessToken: account.access_token || '',
-            accountType: (profile as any).account_type,
-          })
+          // Find user by email instead of relying on NextAuth ID
+          const convexUser = await convex.query(api.auth.getUserByEmail, { 
+            email: user.email 
+          });
           
-          console.log('✅ Instagram auto-connected for user:', user.id)
+          if (convexUser) {
+            // Save Instagram connection data using Convex user ID
+            await convex.mutation(api.instagram.saveConnectionFromAuth, {
+              userId: convexUser._id,
+              instagramUserId: (profile as any).sub,
+              username: (profile as any).username || (profile as any).name,
+              accessToken: account.access_token || '',
+              accountType: (profile as any).account_type,
+            })
+            
+            console.log('✅ Instagram auto-connected for user:', user.email)
+          } else {
+            console.warn('⚠️ User not found by email:', user.email)
+          }
         } catch (error) {
           console.error('❌ Failed to auto-connect Instagram:', error)
           // Don't block signin if Instagram connection fails
@@ -68,4 +77,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   session: {
     strategy: 'database',
   },
+  experimental: {
+    enableWebAuthn: false,
+  },
+  // Allow linking Instagram to existing email accounts
+  allowDangerousEmailAccountLinking: true,
 })

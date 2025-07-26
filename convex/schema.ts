@@ -85,6 +85,7 @@ export default defineSchema({
     image: v.optional(v.string()),
   })
     .index("by_clerk_id", ["clerkId"])
+    .index("by_nextauth_id", ["nextAuthId"])
     .index("by_email", ["email"]),
 
   // NextAuth.js required tables

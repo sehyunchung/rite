@@ -22,13 +22,14 @@ export function ConvexAdapter(convex: ConvexHttpClient): Adapter {
     },
 
     async getUser(id) {
-      const user = await convex.query(api.auth.getUser, { userId: id })
+      // id here is the NextAuth UUID, need to find user by nextAuthId
+      const user = await convex.query(api.auth.getUserByNextAuthId, { nextAuthId: id })
       if (!user) return null
       
       // Type assertion since we know this is a user document
       const userDoc = user as any
       return {
-        id: userDoc._id,
+        id: id, // Return the NextAuth UUID, not Convex ID
         email: userDoc.email,
         name: userDoc.name,
         image: userDoc.image,
