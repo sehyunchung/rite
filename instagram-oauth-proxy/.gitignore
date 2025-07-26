@@ -1,1 +1,15 @@
+# Dependencies
+node_modules/
+package-lock.json
+
+# Vercel
 .vercel
+
+# Environment variables
+.env*.local
+
+# Build output
+dist/
+
+# Logs
+*.log
