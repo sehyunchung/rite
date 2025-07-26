@@ -18,7 +18,7 @@ const nextConfig = {
       },
     ],
   },
-  webpack: (config) => {
+  turbopack: (config) => {
     // Exclude src directory from builds
     config.resolve.modules = config.resolve.modules.filter(module => module !== 'src')
     return config
