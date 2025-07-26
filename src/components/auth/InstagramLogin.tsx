@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button'
-import { useState } from 'react'
-import { useSignIn } from '@clerk/clerk-react'
+import { useState, useEffect } from 'react'
+import { useSignIn, useAuth } from '@clerk/clerk-react'
+import { useRouter } from '@tanstack/react-router'
 
 interface InstagramLoginProps {
   onStartLogin?: () => void
@@ -8,21 +9,41 @@ interface InstagramLoginProps {
 
 export function InstagramLogin({ onStartLogin }: InstagramLoginProps) {
   const [isLoading, setIsLoading] = useState(false)
-  const { signIn } = useSignIn()
+  const [error, setError] = useState<string | null>(null)
+  const { signIn, isLoaded: signInLoaded } = useSignIn()
+  const { isSignedIn, isLoaded: authLoaded } = useAuth()
+  const router = useRouter()
+
+  // Reset loading state if user becomes signed in
+  useEffect(() => {
+    if (authLoaded && isSignedIn && isLoading) {
+      setIsLoading(false)
+      // Redirect to dashboard on successful login
+      void router.navigate({ to: '/dashboard' })
+    }
+  }, [authLoaded, isSignedIn, isLoading, router])
 
   const handleInstagramLogin = async () => {
+    if (!signInLoaded || !signIn) {
+      setError('Authentication service not ready. Please try again.')
+      return
+    }
+
     setIsLoading(true)
+    setError(null)
     onStartLogin?.()
     
     try {
-      // Use Clerk's OAuth flow with the custom Instagram provider
-      await signIn?.authenticateWithRedirect({
+      // Use Clerk's OAuth flow following official documentation
+      await signIn.authenticateWithRedirect({
         strategy: 'oauth_custom_instagram',
-        redirectUrl: '/dashboard',
-        redirectUrlComplete: '/dashboard',
+        redirectUrl: window.location.origin + '/auth/callback',
+        redirectUrlComplete: window.location.origin + '/dashboard',
       })
+      // Note: execution stops here due to redirect
     } catch (error) {
       console.error('Instagram login failed:', error)
+      setError(error instanceof Error ? error.message : 'Login failed. Please try again.')
       setIsLoading(false)
     }
   }
@@ -37,6 +58,12 @@ export function InstagramLogin({ onStartLogin }: InstagramLoginProps) {
           <span className="bg-white px-2 text-muted-foreground">Or continue with</span>
         </div>
       </div>
+      
+      {error && (
+        <div className="p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-md">
+          {error}
+        </div>
+      )}
       
       <Button
         variant="outline"
