@@ -73,14 +73,50 @@ export default defineSchema({
   users: defineTable({
     email: v.string(),
     name: v.optional(v.string()),
-    clerkId: v.string(), // Link to Clerk user
+    clerkId: v.optional(v.string()), // Legacy Clerk support
+    nextAuthId: v.optional(v.string()), // NextAuth user ID
     organizerProfile: v.object({
       companyName: v.optional(v.string()),
       phone: v.optional(v.string()),
     }),
     createdAt: v.string(),
     lastLoginAt: v.optional(v.string()),
-  }).index("by_clerk_id", ["clerkId"]),
+    emailVerified: v.optional(v.number()),
+    image: v.optional(v.string()),
+  })
+    .index("by_clerk_id", ["clerkId"])
+    .index("by_email", ["email"]),
+
+  // NextAuth.js required tables
+  accounts: defineTable({
+    userId: v.id("users"),
+    type: v.string(),
+    provider: v.string(),
+    providerAccountId: v.string(),
+    refresh_token: v.optional(v.string()),
+    access_token: v.optional(v.string()),
+    expires_at: v.optional(v.number()),
+    token_type: v.optional(v.string()),
+    scope: v.optional(v.string()),
+    id_token: v.optional(v.string()),
+    session_state: v.optional(v.string()),
+  })
+    .index("by_provider_and_account_id", ["provider", "providerAccountId"])
+    .index("by_user_id", ["userId"]),
+
+  sessions: defineTable({
+    sessionToken: v.string(),
+    userId: v.id("users"),
+    expires: v.number(),
+  })
+    .index("by_session_token", ["sessionToken"])
+    .index("by_user_id", ["userId"]),
+
+  verificationTokens: defineTable({
+    identifier: v.string(),
+    token: v.string(),
+    expires: v.number(),
+  }).index("by_identifier", ["identifier"]),
 
   // Instagram integration tables
   instagramConnections: defineTable({

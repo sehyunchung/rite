@@ -1,0 +1,28 @@
+{
+  "node": {
+    "00a6d227a29d6dd66a246e66552d5ad5fb4cc09eb9": {
+      "workers": {
+        "app/dashboard/page": {
+          "moduleId": "(rsc)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fsehyunchung%2Fpersonal%2Frite%2Fapp%2Fdashboard%2Fpage.tsx%22%2C%5B%7B%22id%22%3A%2200a6d227a29d6dd66a246e66552d5ad5fb4cc09eb9%22%2C%22exportedName%22%3A%22%24%24RSC_SERVER_ACTION_0%22%7D%5D%5D%5D&__client_imported__=!",
+          "async": true
+        }
+      },
+      "layer": {
+        "app/dashboard/page": "rsc"
+      }
+    },
+    "0063e7c39e10f6413e89b39ec7cd6c380f6d9f0696": {
+      "workers": {
+        "app/auth/signin/page": {
+          "moduleId": "(rsc)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fsehyunchung%2Fpersonal%2Frite%2Fapp%2Fauth%2Fsignin%2Fpage.tsx%22%2C%5B%7B%22id%22%3A%220063e7c39e10f6413e89b39ec7cd6c380f6d9f0696%22%2C%22exportedName%22%3A%22%24%24RSC_SERVER_ACTION_0%22%7D%5D%5D%5D&__client_imported__=!",
+          "async": true
+        }
+      },
+      "layer": {
+        "app/auth/signin/page": "rsc"
+      }
+    }
+  },
+  "edge": {},
+  "encryptionKey": "6Bq9zmfexfXEyx4ULBhJDyhuIS19nnT8TL9i8+55a3Q="
+}

@@ -7,8 +7,8 @@ A web application that streamlines the booking and administration process for lo
 ## Tech Stack
 
 - **Backend**: Convex
-- **Frontend**: React (Vite), Tailwind CSS
-- **Authentication**: Simple magic link or OAuth (organizer only)
+- **Frontend**: React, Tanstack Router, Tailwind CSS
+- **Authentication**: Instagram OAuth Login using Clerk and Cloudflare Workers Proxy
 - **Storage**: Convex file storage for uploads
 - **Security**: Encrypted storage for sensitive payment information
 
