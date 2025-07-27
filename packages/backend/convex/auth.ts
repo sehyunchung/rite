@@ -37,6 +37,7 @@ export const createUser = mutation({
     name: v.optional(v.string()),
     image: v.optional(v.string()),
     emailVerified: v.optional(v.number()),
+    nextAuthId: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     return await ctx.db.insert("users", {
@@ -44,6 +45,7 @@ export const createUser = mutation({
       name: args.name,
       image: args.image,
       emailVerified: args.emailVerified,
+      nextAuthId: args.nextAuthId,
       createdAt: new Date().toISOString(),
       organizerProfile: {
         companyName: undefined,

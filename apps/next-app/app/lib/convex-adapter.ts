@@ -20,6 +20,7 @@ export function ConvexAdapter(convex: ConvexHttpClient): Adapter {
         name: user.name || undefined,
         image: user.image || undefined,
         emailVerified: user.emailVerified?.getTime(),
+        nextAuthId: user.id, // Store the NextAuth ID for lookups
       })
       
       return {
