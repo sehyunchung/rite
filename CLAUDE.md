@@ -37,7 +37,7 @@ The application uses Clerk for authentication. To set up authentication:
    ```
 5. Configure Clerk webhook for Convex user synchronization (optional for development)
 
-**Current Status**: Authentication system is fully functional with NextAuth v5 integration, including complete Instagram OAuth support.
+**Current Status**: Authentication system is fully functional with NextAuth v5 integration, including complete Instagram OAuth support with comprehensive profile data handling.
 
 ### Social OAuth Providers
 To enable social login options:
@@ -70,24 +70,35 @@ Instagram login requires a custom OAuth proxy service since Instagram is not nat
 
 3. **Deploy Proxy Service** ✅ **COMPLETED**:
    - Cloudflare Worker deployed at `rite-instagram-oauth-proxy.sehyunchung.workers.dev`
-   - Transforms Instagram OAuth to OIDC format for Clerk compatibility
+   - Transforms Instagram OAuth to OIDC format for NextAuth compatibility
    - Handles both login and dashboard connection flows
    - Validates Business/Creator account requirement
-   - Maps user data (username, user_id, account_type, profile_picture_url)
+   - Fetches complete profile data during token exchange
+   - Maps user data (username, name, profile_picture_url, account_type, instagram_user_id)
 
-4. **Configure in Clerk** ✅ **COMPLETED**:
-   - Custom OIDC provider configured with key: `instagram`
-   - Strategy name: `oauth_custom_instagram`
+4. **Configure in NextAuth** ✅ **COMPLETED**:
+   - Custom OIDC provider configured with Instagram OAuth proxy
    - Discovery URL: `https://rite-instagram-oauth-proxy.sehyunchung.workers.dev/.well-known/openid-configuration`
-   - Attribute mapping configured for Instagram fields
+   - Automatic profile mapping for Instagram fields
+   - Resilient profile handling with fallback username generation
 
 5. **Integration Status** ✅ **FULLY WORKING**:
-   - Instagram login through Clerk OAuth ✅
-   - Instagram connection for content publishing ✅
-   - Connection data saved to Convex database ✅
-   - Dashboard displays connected account status ✅
+   - Instagram login through NextAuth OAuth ✅
+   - Complete profile data capture (username, display name, profile picture) ✅
+   - Auto-connection during signup with NextAuth ID lookup ✅
+   - Connection data saved to Convex database with all profile fields ✅
+   - Dashboard displays Instagram handle (@username format) ✅
+   - No fake email generation - proper profile handling ✅
+   - Automatic retry logic for reliable user connection ✅
 
-**Note**: The new API provides better features for content publishing and requires Business/Creator accounts.
+**Key Improvements**:
+- **Complete Profile Data**: Captures username, display name, and profile picture URL during OAuth
+- **Smart Display Logic**: Dashboard prioritizes Instagram handle (@username) over email/name
+- **Robust Connection**: Auto-connection works seamlessly during signup with retry logic
+- **Clean Data Handling**: No more fake email addresses - users can add real email later
+- **NextAuth ID Storage**: Proper user lookup using NextAuth IDs instead of email matching
+
+**Note**: The Instagram API provides comprehensive profile data for Business/Creator accounts and enables reliable content publishing features.
 
 ## Project Architecture
 
@@ -116,7 +127,7 @@ rite/
   - shadcn/ui - Base component library with Radix UI primitives
   - Kibo UI - Advanced components (Dropzone, QR Code, Code Block)
 - **Backend**: Convex (real-time database and file storage, shared across apps)
-- **Authentication**: NextAuth v5 with Instagram OAuth integration
+- **Authentication**: NextAuth v5 with complete Instagram OAuth integration and profile data handling
 - **Routing**: Next.js App Router / SvelteKit file-based routing
 - **Validation**: ArkType (high-performance TypeScript schema validation)
 - **File Handling**: Convex file storage for promo materials
@@ -152,10 +163,13 @@ rite/
   - `events` - Event information with venue, deadlines, payment configuration
   - `timeslots` - DJ time slots with unique submission tokens and Instagram handles
   - `submissions` - DJ submissions with promo materials, guest lists, payment info
-  - `users` - Organizer authentication
+  - `users` - User authentication and profile data
+  - `instagramConnections` - Instagram account connections with complete profile data
 - `/convex/_generated/` - Auto-generated Convex API files
 - `/convex/events.ts` - Event management API functions (create, list, get, update status)
 - `/convex/timeslots.ts` - Timeslot management and token-based access functions
+- `/convex/instagram.ts` - Instagram OAuth and connection management functions
+- `/convex/auth.ts` - User authentication and NextAuth integration functions
 
 ### Key Features
 
@@ -175,9 +189,11 @@ rite/
 - **Robust QR Code Generation**: Canvas validation and error handling for reliable QR codes
 - **Professional Interface**: Clean dashboard with development status in footer
 - **Backward Compatibility**: Schema updates work with existing database records
-- **Instagram Authentication**: Full OAuth login integration through Clerk
-- **Instagram Connection Management**: Connect/disconnect Instagram for content publishing
-- **Instagram Data Storage**: Connection details saved to Convex with account validation
+- **Instagram Authentication**: Complete OAuth login integration through NextAuth with full profile data
+- **Instagram Connection Management**: Seamless auto-connection during signup with retry logic
+- **Instagram Profile Display**: Dashboard shows Instagram handles (@username format) with profile pictures
+- **Instagram Data Storage**: Complete profile data saved to Convex (username, display name, profile picture, account type)
+- **Smart User Lookup**: NextAuth ID-based user matching for reliable connection handling
 
 **📋 Planned:**
 - **File Upload Integration**: Connect Dropzone to Convex file storage for actual uploads
@@ -298,12 +314,15 @@ import { validateEvent, validateTimeslot } from "@/lib/validation"
 - [ ] Submission data storage with encryption
 
 ### Phase 2.7: Instagram OAuth Integration - ✅ **COMPLETED**
-- [x] Custom OAuth proxy deployed on Cloudflare Workers
-- [x] Instagram OAuth integration with Clerk authentication
-- [x] Support for both login and dashboard connection flows
-- [x] Instagram connection data storage in Convex database
-- [x] Dashboard UI for connected account management
-- [x] Business/Creator account validation and display
+- [x] Custom OAuth proxy deployed on Cloudflare Workers with complete profile data fetching
+- [x] Instagram OAuth integration with NextAuth authentication and auto-connection
+- [x] Complete profile data capture (username, display name, profile picture URL)
+- [x] Instagram connection data storage in Convex database with all profile fields
+- [x] Dashboard UI displaying Instagram handles (@username format)
+- [x] Smart user lookup using NextAuth IDs instead of email matching
+- [x] Automatic retry logic for reliable connection establishment
+- [x] Removal of fake email generation for cleaner user profiles
+- [x] Business/Creator account validation and proper data mapping
 
 ### Phase 2.5: Enhanced Event Creation - ✅ **COMPLETED**
 - [x] Instagram hashtags field for event promotion
@@ -385,21 +404,23 @@ The Instagram OAuth integration uses a custom Cloudflare Workers proxy to bridge
 ### Architecture
 - **Proxy Service**: Deployed at `rite-instagram-oauth-proxy.sehyunchung.workers.dev`
 - **Framework**: Hono.js on Cloudflare Workers
-- **Purpose**: Transform Instagram OAuth to OIDC format for Clerk compatibility
+- **Purpose**: Transform Instagram OAuth to OIDC format for NextAuth compatibility
 
 ### Key Features
-- ✅ **Dual Flow Support**: Handles both login (via Clerk) and dashboard connection flows
-- ✅ **JWT Token Generation**: Creates proper OIDC-compatible ID tokens
+- ✅ **Dual Flow Support**: Handles both login (via NextAuth) and dashboard connection flows
+- ✅ **JWT Token Generation**: Creates proper OIDC-compatible ID tokens with complete profile data
+- ✅ **Complete Profile Fetching**: Retrieves username, display name, and profile picture during token exchange
 - ✅ **State Management**: Preserves OAuth state for security and flow routing
 - ✅ **Business Account Validation**: Ensures only Business/Creator accounts can connect
-- ✅ **Convex Integration**: Saves connection data to database with proper authentication
+- ✅ **Convex Integration**: Saves complete connection data to database with proper authentication
+- ✅ **Auto-Connection**: Seamlessly connects Instagram accounts during NextAuth signup process
 
 ### API Endpoints
-- `GET /.well-known/openid-configuration` - OIDC discovery for Clerk
+- `GET /.well-known/openid-configuration` - OIDC discovery for NextAuth
 - `GET /oauth/authorize` - Instagram authorization initiation
-- `GET /oauth/callback` - Instagram OAuth callback handler
-- `POST /oauth/token` - Token exchange for OIDC compatibility
-- `GET /oauth/userinfo` - User information endpoint for Clerk
+- `GET /oauth/callback` - Instagram OAuth callback handler with profile data fetching
+- `POST /oauth/token` - Token exchange for OIDC compatibility with complete user profile
+- `GET /oauth/userinfo` - User information endpoint for NextAuth (includes username, display name, profile picture)
 
 ### Environment Variables (Cloudflare Workers)
 - `INSTAGRAM_CLIENT_ID` - Instagram app client ID
