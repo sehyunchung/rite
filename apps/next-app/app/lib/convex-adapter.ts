@@ -1,12 +1,13 @@
 import type { Adapter } from "@auth/core/adapters"
 import { ConvexHttpClient } from "convex/browser"
 import { api } from "@rite/backend/convex/_generated/api"
+import { Id } from "@rite/backend/convex/_generated/dataModel"
 
 export function ConvexAdapter(convex: ConvexHttpClient): Adapter {
   return {
     async createUser(user) {
       const userId = await convex.mutation(api.auth.createUser, {
-        email: user.email!,
+        email: user.email || '',
         name: user.name || undefined,
         image: user.image || undefined,
         emailVerified: user.emailVerified?.getTime(),
@@ -14,7 +15,7 @@ export function ConvexAdapter(convex: ConvexHttpClient): Adapter {
       
       return {
         id: userId,
-        email: user.email!,
+        email: user.email || '',
         name: user.name,
         image: user.image,
         emailVerified: user.emailVerified,
@@ -75,7 +76,7 @@ export function ConvexAdapter(convex: ConvexHttpClient): Adapter {
 
     async updateUser({ id, ...user }) {
       const updatedUser = await convex.mutation(api.auth.updateUser, {
-        userId: id,
+        userId: id as Id<"users">,
         email: user.email || undefined,
         name: user.name || undefined,
         image: user.image || undefined,
@@ -95,7 +96,7 @@ export function ConvexAdapter(convex: ConvexHttpClient): Adapter {
 
     async linkAccount(account) {
       await convex.mutation(api.auth.linkAccount, {
-        userId: account.userId,
+        userId: account.userId as Id<"users">,
         type: account.type,
         provider: account.provider,
         providerAccountId: account.providerAccountId,
@@ -121,7 +122,7 @@ export function ConvexAdapter(convex: ConvexHttpClient): Adapter {
     async createSession({ sessionToken, userId, expires }) {
       await convex.mutation(api.auth.createSession, {
         sessionToken,
-        userId,
+        userId: userId as Id<"users">,
         expires: expires.getTime(),
       })
       

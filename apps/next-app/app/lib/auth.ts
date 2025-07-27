@@ -1,25 +1,35 @@
 import NextAuth from 'next-auth'
+import type { Provider } from 'next-auth/providers'
 import { ConvexAdapter } from './convex-adapter'
 import { convex } from './convex'
 import { api } from '@rite/backend/convex/_generated/api'
 
+// Instagram profile type from our OAuth proxy
+interface InstagramProfile {
+  sub: string
+  username: string
+  email?: string
+  profile_picture_url?: string
+  account_type: 'BUSINESS' | 'CREATOR'
+}
+
 // Create providers array with fallback handling
-const providers = []
-if (process.env.INSTAGRAM_OAUTH_PROXY_URL && process.env.INSTAGRAM_CLIENT_ID) {
+const providers: Provider[] = []
+if (process.env.INSTAGRAM_OAUTH_PROXY_URL && process.env.INSTAGRAM_CLIENT_ID && process.env.INSTAGRAM_CLIENT_SECRET) {
   providers.push({
     id: 'instagram',
     name: 'Instagram',
-    type: 'oidc',
+    type: 'oidc' as const,
     issuer: process.env.INSTAGRAM_OAUTH_PROXY_URL,
     wellKnown: `${process.env.INSTAGRAM_OAUTH_PROXY_URL}/.well-known/openid-configuration`,
     clientId: process.env.INSTAGRAM_CLIENT_ID,
     clientSecret: process.env.INSTAGRAM_CLIENT_SECRET,
-    checks: ['state'],
+    checks: ['state'] as const,
     client: {
       id_token_signed_response_alg: 'none',
       token_endpoint_auth_method: 'client_secret_post',
     },
-    profile(profile: any) {
+    profile(profile: InstagramProfile) {
       return {
         id: profile.sub,
         name: profile.username,
@@ -51,12 +61,13 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           
           if (convexUser) {
             // Save Instagram connection data using Convex user ID
+            const instagramProfile = profile as unknown as InstagramProfile
             await convex.mutation(api.instagram.saveConnectionFromAuth, {
               userId: convexUser._id,
-              instagramUserId: (profile as any).sub,
-              username: (profile as any).username || (profile as any).name,
+              instagramUserId: instagramProfile.sub,
+              username: instagramProfile.username,
               accessToken: account.access_token || '',
-              accountType: (profile as any).account_type,
+              accountType: instagramProfile.account_type,
             })
             
             console.log('✅ Instagram auto-connected for user:', user.email)
@@ -74,7 +85,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     async session({ session, user, token }) {
       if (session?.user) {
         // Use user.id for database sessions, token.sub for JWT sessions
-        session.user.id = user?.id || token?.sub
+        session.user.id = user?.id || token?.sub || ''
       }
       return session
     },
