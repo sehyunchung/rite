@@ -54,10 +54,25 @@
 		<li>✅ Demonstrate SvelteKit setup in monorepo</li>
 		<li>✅ Configure Cloudflare adapter</li>
 		<li>✅ Show performance benefits</li>
-		<li>🔄 Test Convex integration (next step)</li>
+		<li>✅ Test Convex integration with shared backend</li>
+		<li>✅ Real-time data updates and reactivity</li>
 		<li>🔄 Compare build times and bundle sizes</li>
 		<li>🔄 Evaluate developer experience</li>
 	</ul>
+</div>
+
+<div class="demo-section">
+	<h2>🚀 Interactive Demos</h2>
+	<div class="demo-cards">
+		<a href="/convex-demo" class="demo-card">
+			<h3>🔌 Convex Integration</h3>
+			<p>Test connection to shared Convex backend</p>
+		</a>
+		<a href="/real-time-demo" class="demo-card">
+			<h3>⚡ Real-time Updates</h3>
+			<p>See live data updates from the database</p>
+		</a>
+	</div>
 </div>
 
 <style>
@@ -73,8 +88,50 @@
 		margin: 2rem 0;
 	}
 	
+	.demo-section {
+		margin: 3rem 0;
+	}
+	
+	.demo-cards {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 1.5rem;
+		margin-top: 1rem;
+	}
+	
+	.demo-card {
+		background: white;
+		padding: 2rem;
+		border-radius: 8px;
+		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+		text-decoration: none;
+		color: inherit;
+		transition: transform 0.2s, box-shadow 0.2s;
+		border: 2px solid transparent;
+	}
+	
+	.demo-card:hover {
+		transform: translateY(-2px);
+		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+		border-color: #3b82f6;
+	}
+	
+	.demo-card h3 {
+		margin: 0 0 0.5rem 0;
+		color: #1e293b;
+	}
+	
+	.demo-card p {
+		margin: 0;
+		color: #64748b;
+	}
+	
 	@media (max-width: 768px) {
 		.comparison {
+			grid-template-columns: 1fr;
+		}
+		
+		.demo-cards {
 			grid-template-columns: 1fr;
 		}
 	}
