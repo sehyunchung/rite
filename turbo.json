@@ -1,5 +1,14 @@
 {
   "$schema": "https://turbo.build/schema.json",
+  "globalEnv": [
+    "CONVEX_DEPLOY_KEY",
+    "NEXTAUTH_URL",
+    "NEXTAUTH_SECRET",
+    "INSTAGRAM_CLIENT_ID",
+    "INSTAGRAM_CLIENT_SECRET",
+    "INSTAGRAM_OAUTH_PROXY_URL",
+    "NEXT_PUBLIC_CONVEX_URL"
+  ],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
