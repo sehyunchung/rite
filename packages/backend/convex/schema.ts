@@ -102,7 +102,7 @@ export default defineSchema({
     id_token: v.optional(v.string()),
     session_state: v.optional(v.string()),
   })
-    .index("by_provider_and_account_id", ["provider", "providerAccountId"])
+    .index("by_provider", ["provider", "providerAccountId"])
     .index("by_user_id", ["userId"]),
 
   sessions: defineTable({
@@ -117,7 +117,9 @@ export default defineSchema({
     identifier: v.string(),
     token: v.string(),
     expires: v.number(),
-  }).index("by_identifier", ["identifier"]),
+  })
+    .index("by_identifier", ["identifier"])
+    .index("by_identifier_token", ["identifier", "token"]),
 
   // Instagram integration tables
   instagramConnections: defineTable({

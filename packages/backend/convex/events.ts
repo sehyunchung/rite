@@ -12,6 +12,28 @@ function generateSubmissionToken(): string {
   return token;
 }
 
+// Public query to list all events (for demo purposes)
+export const listEventsPublic = query({
+  args: {},
+  handler: async (ctx) => {
+    const events = await ctx.db
+      .query("events")
+      .order("desc")
+      .collect();
+    
+    // Provide defaults for optional fields for backward compatibility
+    return events.map(event => ({
+      ...event,
+      guestLimitPerDJ: event.guestLimitPerDJ ?? 2, // Default to 2 guests per DJ
+      payment: {
+        ...event.payment,
+        perDJ: event.payment.perDJ ?? event.payment.amount, // Default perDJ to total amount
+      },
+      hashtags: event.hashtags ?? '', // Default to empty string
+    }));
+  },
+});
+
 // Query to list all events for the authenticated organizer
 export const listEvents = query({
   args: {},
