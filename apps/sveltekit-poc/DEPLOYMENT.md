@@ -95,6 +95,19 @@ pnpm run preview
 Set environment variables in Cloudflare Pages dashboard:
 - `VITE_CONVEX_URL`: Your Convex production deployment URL
 
+### Static Assets Configuration
+
+**Font Files**:
+- SUIT Variable font located at `/static/fonts/SUIT-Variable.woff2`
+- Automatically served from `/fonts/SUIT-Variable.woff2` in production
+- No additional configuration needed for Cloudflare Workers/Pages
+- Font loading optimized with `font-display: swap`
+
+**Asset Optimization**:
+- Cloudflare automatically compresses WOFF2 files
+- Global CDN distribution for fast font loading
+- Cache headers automatically set for static assets
+
 ## Workers vs Pages Comparison
 
 ### Why Workers for New Projects?
@@ -123,6 +136,7 @@ Based on [Cloudflare's compatibility matrix](https://developers.cloudflare.com/w
 
 2. **SvelteKit + Workers Performance**:
    - **Bundle Size**: ~50KB (vs ~200KB+ for React)
+   - **Font Loading**: SUIT Variable font (~50KB) served from global CDN
    - **Cold Start**: <25ms on Workers (vs <50ms on Pages)
    - **Time to Interactive**: <100ms
    - **Global Network**: 330+ edge locations
@@ -145,7 +159,13 @@ Based on [Cloudflare's compatibility matrix](https://developers.cloudflare.com/w
    - Check Convex deployment status
    - Ensure environment variable is available at runtime
 
-3. **Adapter Issues**
+3. **Font Loading Issues**
+   - Verify font file exists at `/static/fonts/SUIT-Variable.woff2`
+   - Check browser developer tools for 404 errors on font requests
+   - Ensure CSS is correctly referencing `/fonts/SUIT-Variable.woff2`
+   - Fallback fonts (system-ui, sans-serif) should display if font fails
+
+4. **Adapter Issues**
    ```bash
    # Reinstall adapter
    pnpm add -D @sveltejs/adapter-cloudflare@latest

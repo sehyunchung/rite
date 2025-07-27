@@ -22,6 +22,7 @@ rite/
 - **Alternative Frontend**: [SvelteKit](https://kit.svelte.dev/) with Cloudflare adapter
 - **Backend**: [Convex](https://convex.dev/) for real-time database and file storage
 - **Authentication**: [NextAuth v5](https://authjs.dev/) with Instagram OAuth integration
+- **Typography**: [SUIT Variable](https://sunn.us/suit/) font with Korean/English support
 - **Styling**: [Tailwind CSS](https://tailwindcss.com/) with shadcn/ui components
 - **Validation**: [ArkType](https://arktype.io/) for high-performance schema validation
 - **Package Manager**: pnpm
@@ -68,6 +69,74 @@ NODE_ENV=development
 ```
 
 **Note**: The apps include graceful fallbacks and will run without environment variables for development/testing purposes.
+
+## Typography Setup
+
+### SUIT Variable Font
+
+Both applications use the **SUIT Variable font**, a modern Korean/English typeface designed for digital interfaces:
+
+- **Variable Weights**: 100-900 (Thin to Black)
+- **Language Support**: Complete Korean Hangul + Latin characters
+- **Format**: WOFF2 variable font for optimal performance
+- **Size**: ~50KB (significantly smaller than multiple font files)
+
+### Font Configuration
+
+**Next.js App** (`apps/next-app/`):
+- Font file: `/app/lib/SUIT-Variable.woff2`
+- Configuration: `/app/lib/fonts.ts` with `next/font/local`
+- CSS Variable: `--font-suit` available globally
+- Tailwind Class: `font-suit` available in components
+
+**SvelteKit POC** (`apps/sveltekit-poc/`):
+- Font file: `/static/fonts/SUIT-Variable.woff2`
+- Configuration: `/src/routes/app.css` with `@font-face`
+- Global Application: Applied to `body` element
+- Usage: Direct CSS `font-family: 'SUIT'`
+
+### Usage Examples
+
+**Next.js with Tailwind:**
+```tsx
+// Use Tailwind font class
+<h1 className="font-suit font-bold text-2xl">
+  한국어 + English Heading
+</h1>
+
+// Or use CSS variable directly
+<div style={{ fontFamily: 'var(--font-suit)' }}>
+  Content with SUIT font
+</div>
+```
+
+**SvelteKit with CSS:**
+```svelte
+<style>
+  .heading {
+    font-family: 'SUIT', sans-serif;
+    font-weight: 700;
+  }
+</style>
+
+<h1 class="heading">한국어 + English Heading</h1>
+```
+
+### Performance Benefits
+
+- **Single File**: One variable font replaces multiple weight files
+- **Smaller Bundle**: ~50KB vs ~200KB+ for traditional font stacks
+- **Faster Loading**: `font-display: swap` prevents invisible text
+- **Better UX**: Smooth weight transitions and custom intermediate weights
+
+## Font Assets
+
+The SUIT Variable font files are included in both applications:
+
+- **Next.js**: `/apps/next-app/app/lib/SUIT-Variable.woff2`
+- **SvelteKit**: `/apps/sveltekit-poc/static/fonts/SUIT-Variable.woff2`
+
+Both files are identical and optimized for web performance with variable font technology.
 
 ## Learn more
 

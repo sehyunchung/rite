@@ -124,6 +124,7 @@ rite/
 - **Frontend Apps**: 
   - Next.js 15 with React 18, TypeScript, Turbopack
   - SvelteKit with Cloudflare adapter (POC)
+- **Typography**: SUIT Variable font with Korean/English support (weights 100-900)
 - **UI Libraries**: 
   - shadcn/ui - Base component library with Radix UI primitives
   - Kibo UI - Advanced components (Dropzone, QR Code, Code Block)
@@ -444,11 +445,145 @@ pnpm --filter=sveltekit-poc run deploy:preview
 
 **Decision Milestone:** Complete evaluation by Q2 2024 to inform production framework choice.
 
+## Typography Configuration
+
+### SUIT Variable Font Setup
+
+Both applications use the SUIT Variable font, a comprehensive Korean/English typeface optimized for digital interfaces:
+
+**Font Features:**
+- **Variable Weights**: 100-900 (Thin to Black)
+- **Language Support**: Complete Korean Hangul + Latin character sets
+- **Format**: WOFF2 variable font format for optimal performance
+- **Fallbacks**: System fonts (-apple-system, BlinkMacSystemFont, sans-serif)
+- **Display**: `font-display: swap` for improved loading performance
+
+### Next.js Font Implementation
+
+**Configuration** (`/apps/next-app/app/lib/fonts.ts`):
+```typescript
+import localFont from 'next/font/local'
+
+export const suit = localFont({
+  src: './SUIT-Variable.woff2',
+  display: 'swap',
+  weight: '100 900',
+  variable: '--font-suit',
+})
+```
+
+**Integration** (`/apps/next-app/app/layout.tsx`):
+```typescript
+import { suit } from './lib/fonts'
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en">
+      <body className={suit.variable}>
+        {children}
+      </body>
+    </html>
+  )
+}
+```
+
+**Tailwind Configuration** (`/apps/next-app/tailwind.config.cjs`):
+```javascript
+module.exports = {
+  theme: {
+    extend: {
+      fontFamily: {
+        'suit': ['var(--font-suit)', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+      },
+    },
+  },
+}
+```
+
+**Usage in Components:**
+```typescript
+// Apply SUIT font via Tailwind class
+<div className="font-suit">
+  <h1 className="font-bold">한국어 + English Text</h1>
+  <p className="font-normal">Variable weight support</p>
+</div>
+
+// Or use CSS variable directly
+<div style={{ fontFamily: 'var(--font-suit)' }}>
+  Content with SUIT font
+</div>
+```
+
+### SvelteKit Font Implementation
+
+**CSS Configuration** (`/apps/sveltekit-poc/src/routes/app.css`):
+```css
+@font-face {
+  font-family: 'SUIT';
+  src: url('/fonts/SUIT-Variable.woff2') format('woff2-variations');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+body {
+  font-family: 'SUIT', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+```
+
+**Static Asset** (`/apps/sveltekit-poc/static/fonts/SUIT-Variable.woff2`):
+- Font file served directly from static directory
+- Accessible at `/fonts/SUIT-Variable.woff2` in production
+
+**Usage in Components:**
+```svelte
+<style>
+  .heading {
+    font-family: 'SUIT', sans-serif;
+    font-weight: 700;
+  }
+  
+  .body-text {
+    font-family: 'SUIT', sans-serif;
+    font-weight: 400;
+  }
+</style>
+
+<h1 class="heading">한국어 + English Heading</h1>
+<p class="body-text">Body text with SUIT font</p>
+```
+
+### Font Performance Considerations
+
+1. **Preloading** (recommended for Next.js):
+   ```html
+   <link rel="preload" href="/fonts/SUIT-Variable.woff2" as="font" type="font/woff2" crossorigin>
+   ```
+
+2. **Variable Font Benefits**:
+   - **Single File**: One font file supports all weights (100-900)
+   - **Smaller Bundle**: ~50KB vs multiple weight files (~200KB+)
+   - **Performance**: Fewer HTTP requests, faster loading
+   - **Flexibility**: Smooth weight transitions, custom intermediate weights
+
+3. **Browser Support**:
+   - **Modern Browsers**: Full variable font support
+   - **Fallbacks**: System fonts ensure universal compatibility
+   - **Progressive Enhancement**: Enhanced typography where supported
+
+### Font Loading Strategy
+
+- **Next.js**: Automatic optimization via `next/font/local`
+- **SvelteKit**: Manual optimization with `font-display: swap`
+- **Fallback Chain**: SUIT → system-ui → -apple-system → BlinkMacSystemFont → sans-serif
+- **Loading State**: `font-display: swap` prevents invisible text flash
+
 ## Code Style Guidelines
 - Formatting: Follow Prettier defaults, 2-space indentation
 - Imports: Group and sort imports (React/Next, external, internal, types)
 - Types: Use TypeScript strictly, avoid `any` types and non-null assertions
 - Naming: Use PascalCase for components, camelCase for variables/functions
+- Typography: SUIT Variable font with full Korean/English support and variable weights 100-900
 - Styling: Use Tailwind CSS for styling with shadcn/ui design tokens
 - Components: 
   - Prefer functional components with hooks
@@ -561,6 +696,15 @@ import type { Event, Timeslot } from '@rite/shared-types'
 - [x] Professional appearance suitable for client demonstrations
 - [x] Development progress tracking contained in footer only
 - [x] Minimalist dashboard focused on core user actions
+
+### Phase 2.8: Typography System - ✅ **COMPLETED**
+- [x] SUIT Variable font integration across both Next.js and SvelteKit apps
+- [x] Next.js font configuration with next/font/local and CSS variables
+- [x] SvelteKit font configuration with @font-face and static assets
+- [x] Tailwind CSS font family configuration for Next.js app
+- [x] Variable font weights (100-900) support for Korean and English text
+- [x] Performance optimization with font-display: swap
+- [x] Documentation updates for font setup and usage guidelines
 
 ### Phase 3: Advanced Features - 📋 **PLANNED**
 - [ ] Drag-and-drop reordering for timeslots
