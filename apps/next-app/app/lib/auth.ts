@@ -19,7 +19,7 @@ if (process.env.INSTAGRAM_OAUTH_PROXY_URL && process.env.INSTAGRAM_CLIENT_ID) {
       id_token_signed_response_alg: 'none',
       token_endpoint_auth_method: 'client_secret_post',
     },
-    profile(profile) {
+    profile(profile: any) {
       return {
         id: profile.sub,
         name: profile.username,

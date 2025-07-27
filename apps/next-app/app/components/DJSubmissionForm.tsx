@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Dropzone } from '@/components/ui/kibo-ui/dropzone';
-import { Id } from '@rite/backend/_generated/dataModel';
+import { Id } from '@rite/backend/convex/_generated/dataModel';
 
 interface DJSubmissionFormProps {
   submissionToken: string;
