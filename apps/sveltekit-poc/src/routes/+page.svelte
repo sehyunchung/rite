@@ -72,6 +72,22 @@
 			<h3>⚡ Real-time Updates</h3>
 			<p>See live data updates from the database</p>
 		</a>
+		<a href="/dashboard" class="demo-card">
+			<h3>📊 Dashboard</h3>
+			<p>Event creation and management interface</p>
+		</a>
+		<a href="/dj-submission" class="demo-card">
+			<h3>🎧 DJ Submission</h3>
+			<p>DJ submission form with token validation</p>
+		</a>
+		<a href="/file-upload-demo" class="demo-card">
+			<h3>📁 File Upload</h3>
+			<p>Drag-and-drop file upload with Convex integration</p>
+		</a>
+		<a href="/performance-comparison" class="demo-card">
+			<h3>⚡ Performance Analysis</h3>
+			<p>Comprehensive benchmarks vs Next.js</p>
+		</a>
 	</div>
 </div>
 
@@ -94,7 +110,7 @@
 	
 	.demo-cards {
 		display: grid;
-		grid-template-columns: 1fr 1fr;
+		grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
 		gap: 1.5rem;
 		margin-top: 1rem;
 	}
