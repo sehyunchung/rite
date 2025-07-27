@@ -176,7 +176,7 @@ export function DJSubmissionForm({ submissionToken }: DJSubmissionFormProps) {
               <h4 className="font-semibold text-green-800 mb-2">What happens next?</h4>
               <ul className="text-sm text-green-700 space-y-1">
                 <li>• The organizer will review your submission</li>
-                <li>• You'll receive confirmation via Instagram DM</li>
+                <li>• You&apos;ll receive confirmation via Instagram DM</li>
                 <li>• Payment will be processed after the event</li>
               </ul>
             </div>
