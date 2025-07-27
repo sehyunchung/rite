@@ -127,6 +127,8 @@ export default defineSchema({
     instagramUserId: v.string(),
     username: v.string(),
     accessToken: v.string(), // Encrypted by Convex
+    profilePictureUrl: v.optional(v.string()),
+    displayName: v.optional(v.string()),
     tokenExpiresAt: v.optional(v.string()),
     connectedAt: v.string(),
     isActive: v.boolean(),

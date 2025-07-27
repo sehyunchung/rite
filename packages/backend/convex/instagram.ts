@@ -1,7 +1,7 @@
 import { v } from "convex/values";
 import { action, mutation, query } from "./_generated/server";
 import { api } from "./_generated/api";
-import { Id } from "./_generated/dataModel";
+import type { Id } from "./_generated/dataModel";
 
 // Instagram OAuth flow
 export const exchangeCodeForToken = action({
@@ -39,7 +39,7 @@ export const exchangeCodeForToken = action({
 
       // Get user info
       const userResponse = await fetch(
-        `https://graph.instagram.com/me?fields=id,username,account_type&access_token=${tokenData.access_token}`
+        `https://graph.instagram.com/me?fields=id,username,account_type,name,profile_picture_url&access_token=${tokenData.access_token}`
       );
       const userData = await userResponse.json();
 
@@ -53,12 +53,15 @@ export const exchangeCodeForToken = action({
         username: userData.username,
         accessToken: tokenData.access_token,
         accountType: userData.account_type,
+        profilePictureUrl: userData.profile_picture_url,
+        displayName: userData.name,
       });
 
       return { 
         success: true, 
         username: userData.username,
-        accountType: userData.account_type 
+        accountType: userData.account_type,
+        profilePictureUrl: userData.profile_picture_url
       };
     } catch (error) {
       console.error("Instagram OAuth error:", error);
@@ -75,6 +78,8 @@ export const saveConnectionFromAuth = mutation({
     username: v.optional(v.string()),
     accessToken: v.string(),
     accountType: v.optional(v.string()),
+    profilePictureUrl: v.optional(v.string()),
+    displayName: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     // args.userId is now a Convex ID passed directly from the signIn callback
@@ -101,6 +106,8 @@ export const saveConnectionFromAuth = mutation({
         username: username,
         accessToken: args.accessToken,
         accountType: args.accountType,
+        profilePictureUrl: args.profilePictureUrl,
+        displayName: args.displayName,
         connectedAt: new Date().toISOString(),
         isActive: true,
       });
@@ -113,6 +120,8 @@ export const saveConnectionFromAuth = mutation({
         username: username,
         accessToken: args.accessToken,
         accountType: args.accountType,
+        profilePictureUrl: args.profilePictureUrl,
+        displayName: args.displayName,
         connectedAt: new Date().toISOString(),
         isActive: true,
       });
@@ -127,6 +136,8 @@ export const saveConnection = mutation({
     username: v.string(),
     accessToken: v.string(),
     accountType: v.optional(v.string()),
+    profilePictureUrl: v.optional(v.string()),
+    displayName: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
@@ -157,6 +168,8 @@ export const saveConnection = mutation({
         username: args.username,
         accessToken: args.accessToken,
         accountType: args.accountType,
+        profilePictureUrl: args.profilePictureUrl,
+        displayName: args.displayName,
         connectedAt: new Date().toISOString(),
         isActive: true,
       });
@@ -169,6 +182,8 @@ export const saveConnection = mutation({
         username: args.username,
         accessToken: args.accessToken,
         accountType: args.accountType,
+        profilePictureUrl: args.profilePictureUrl,
+        displayName: args.displayName,
         connectedAt: new Date().toISOString(),
         isActive: true,
       });
@@ -209,6 +224,8 @@ export const getConnection = query({
       username: connection.username,
       instagramUserId: connection.instagramUserId,
       accountType: connection.accountType,
+      profilePictureUrl: connection.profilePictureUrl,
+      displayName: connection.displayName,
       connectedAt: connection.connectedAt,
       isActive: connection.isActive,
     };
