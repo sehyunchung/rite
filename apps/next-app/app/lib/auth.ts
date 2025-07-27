@@ -9,6 +9,7 @@ interface InstagramProfile {
   username?: string
   preferred_username?: string
   email?: string
+  picture?: string
   profile_picture_url?: string
   account_type?: 'BUSINESS' | 'CREATOR'
   instagram_user_id?: string
@@ -47,7 +48,7 @@ if (process.env.INSTAGRAM_OAUTH_PROXY_URL && process.env.INSTAGRAM_CLIENT_ID && 
         id: profile.sub,
         name: profile.name || username,
         email: profile.email, // Leave undefined if Instagram doesn't provide email
-        image: profile.profile_picture_url,
+        image: profile.picture,
         username: username,
         accountType: profile.account_type || 'BUSINESS',
       }
@@ -76,54 +77,41 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         })
       }
 
-      // Auto-connect Instagram during signup (only if convex is available)
-      if (convex && account?.provider === 'instagram' && profile && user.id) {
-        try {
-          // Add timeout for Convex queries to prevent hanging
-          const timeoutPromise = new Promise((_, reject) => {
-            setTimeout(() => reject(new Error('Convex query timeout')), 5000)
-          })
-          
-          // Find user by NextAuth ID since email might be empty for Instagram users
-          const convexUser = await Promise.race([
-            convex.query(api.auth.getUserByNextAuthId, { nextAuthId: user.id }),
-            timeoutPromise
-          ]) as any;
-          
-          if (convexUser) {
-            if (isInstagramProfile(profile)) {
-              const username = profile.username || profile.preferred_username || profile.instagram_user_id || 'unknown'
-              // Save Instagram connection data using Convex user ID
-              await Promise.race([
-                convex.mutation(api.instagram.saveConnectionFromAuth, {
-                  userId: convexUser._id,
-                  instagramUserId: profile.sub,
-                  username: username,
-                  accessToken: account.access_token || '',
-                  accountType: profile.account_type || 'BUSINESS',
-                  profilePictureUrl: profile.profile_picture_url,
-                  displayName: profile.name,
-                }),
-                timeoutPromise
-              ])
-              
-              console.log('✅ Instagram auto-connected for user:', user.id)
-            } else {
-              console.warn('⚠️ Invalid Instagram profile format:', profile)
+      // Auto-connect Instagram with retry logic
+      if (convex && account?.provider === 'instagram' && profile && user.id && isInstagramProfile(profile)) {
+        // Don't await this - let it run in background to not block signin
+        setTimeout(async () => {
+          try {
+            // Retry a few times to wait for adapter to create user
+            let convexUser = null
+            for (let i = 0; i < 5; i++) {
+              convexUser = await convex!.query(api.auth.getUserByNextAuthId, { nextAuthId: user.id! })
+              if (convexUser) break
+              await new Promise(resolve => setTimeout(resolve, 200 * (i + 1))) // Exponential backoff
             }
-          } else {
-            console.warn('⚠️ User not found by ID:', user.id, '- this is normal for new users, they should be created by the adapter')
+            
+            if (convexUser) {
+              const username = profile.username || profile.preferred_username || profile.instagram_user_id || 'unknown'
+              await convex!.mutation(api.instagram.saveConnectionFromAuth, {
+                userId: convexUser._id,
+                instagramUserId: profile.sub,
+                username: username,
+                accessToken: account.access_token || '',
+                accountType: profile.account_type || 'BUSINESS',
+                profilePictureUrl: profile.picture,
+                displayName: profile.name,
+              })
+              
+              console.log('✅ Instagram auto-connected (delayed) for user:', convexUser._id)
+            } else {
+              console.warn('⚠️ Failed to find Convex user after retries for NextAuth ID:', user.id)
+            }
+          } catch (error) {
+            console.error('❌ Failed to auto-connect Instagram (delayed):', error)
           }
-        } catch (error) {
-          console.error('❌ Failed to auto-connect Instagram:', error)
-          // Don't block signin if Instagram connection fails
-        }
-      } else if (account?.provider === 'instagram') {
-        console.warn('⚠️ Instagram signin skipped:', {
-          convex: !!convex,
-          profile: !!profile, 
-          userId: user.id
-        })
+        }, 0)
+        
+        console.log('📝 Instagram auto-connection scheduled for NextAuth ID:', user.id)
       }
       
       return true
