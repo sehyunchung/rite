@@ -8,6 +8,7 @@
   "scripts": {
     "dev": "convex dev",
     "deploy": "convex deploy",
+    "deploy:prod": "convex deploy",
     "build": "echo 'Backend validation completed'"
   },
   "dependencies": {
