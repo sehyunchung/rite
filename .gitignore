@@ -8,9 +8,16 @@ node_modules/
 .next/
 /out/
 
+# SvelteKit
+.svelte-kit/
+.svelte/
+
 # Production build
 /build
 dist/
+
+# Turborepo
+.turbo/
 
 # Environment variables
 .env*

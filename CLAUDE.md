@@ -3,13 +3,22 @@
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## Build/Run Commands
-- Install: `npm install`
-- Dev (both frontend & backend): `npm run dev`
-- Dev frontend only: `npm run dev:frontend`
-- Dev backend only: `npm run dev:backend`
-- Build: `npm run build`
-- Lint: `npm run lint`
-- Type check: `npm run type-check`
+
+### Monorepo Commands (Root Level)
+- Install all dependencies: `pnpm install`
+- Build all apps: `pnpm run build`
+- Lint all apps: `pnpm run lint`
+- Type check all apps: `pnpm run type-check`
+- Dev backend only: `pnpm run dev:backend`
+
+### Individual App Commands
+- **Next.js App**: `pnpm run dev:next` or `pnpm --filter=next-app run dev`
+- **SvelteKit POC**: `pnpm run dev:sveltekit` or `pnpm --filter=sveltekit-poc run dev`
+- **Shared Types**: `pnpm --filter=@rite/shared-types run build`
+
+### Legacy Commands (for reference)
+- Dev (both frontend & backend): `npm run dev` → now `pnpm run dev`
+- Dev frontend only: `npm run dev:frontend` → now use individual app commands
 
 ## Authentication Setup
 The application uses Clerk for authentication. To set up authentication:
@@ -82,20 +91,36 @@ Instagram login requires a custom OAuth proxy service since Instagram is not nat
 
 ## Project Architecture
 
-This is Rite, a DJ event management platform built with Next.js 15 frontend and Convex backend. The application streamlines event management for DJ bookings with Instagram workflow integration.
+This is Rite, a DJ event management platform with a **monorepo structure** containing multiple frontend applications and a shared Convex backend. The platform streamlines event management for DJ bookings with Instagram workflow integration.
+
+### Monorepo Structure
+```
+rite/
+├── apps/
+│   ├── next-app/          # Main Next.js application (production)
+│   └── sveltekit-poc/     # SvelteKit POC for Cloudflare comparison
+├── packages/
+│   └── shared-types/      # Shared TypeScript types across apps
+├── convex/               # Shared Convex backend
+├── pnpm-workspace.yaml   # pnpm workspace configuration
+└── turbo.json           # Turborepo build pipeline
+```
 
 ### Tech Stack
-- **Frontend**: Next.js 15 with React 18, TypeScript, Turbopack
+- **Package Manager**: pnpm with workspaces
+- **Build System**: Turborepo for optimized builds and caching
+- **Frontend Apps**: 
+  - Next.js 15 with React 18, TypeScript, Turbopack
+  - SvelteKit with Cloudflare adapter (POC)
 - **UI Libraries**: 
   - shadcn/ui - Base component library with Radix UI primitives
   - Kibo UI - Advanced components (Dropzone, QR Code, Code Block)
-- **Backend**: Convex (real-time database and file storage)
+- **Backend**: Convex (real-time database and file storage, shared across apps)
 - **Authentication**: NextAuth v5 with Instagram OAuth integration
-- **Routing**: Next.js App Router (file-based routing)
+- **Routing**: Next.js App Router / SvelteKit file-based routing
 - **Validation**: ArkType (high-performance TypeScript schema validation)
 - **File Handling**: Convex file storage for promo materials
 - **AI Integration**: Model Context Protocol (MCP) for Kibo UI
-- **Package Manager**: npm
 
 ### Core Architecture
 
