@@ -1,58 +1,69 @@
-# SvelteKit POC - Cloudflare Deployment Guide
+# SvelteKit POC - Cloudflare Workers Deployment Guide
 
 ## Overview
-This SvelteKit POC is configured for Cloudflare Pages deployment using the `@sveltejs/adapter-cloudflare` adapter.
+This SvelteKit POC is configured for Cloudflare Workers deployment using the `@sveltejs/adapter-cloudflare` adapter. Following Cloudflare's recommendation to use Workers for new projects, this guide focuses on the Workers deployment approach.
 
 ## Prerequisites
 1. Cloudflare account
-2. GitHub repository (or direct upload)
+2. Wrangler CLI installed (`npm install -g wrangler`)
 3. Convex backend URL
+4. Node.js 18+ and pnpm
 
 ## Deployment Options
 
-### Option 1: Cloudflare Pages (Recommended)
+### Option 1: Cloudflare Workers (Recommended)
 
-#### Step 1: Build Configuration
-The app is already configured for Cloudflare Pages:
-- `svelte.config.js` uses `@sveltejs/adapter-cloudflare`
-- Build output will be in `build/` directory
-- Functions are supported for edge computing
-
-#### Step 2: Deploy via GitHub Integration
-1. Go to [Cloudflare Dashboard → Pages](https://dash.cloudflare.com/pages)
-2. Click "Create a project" → "Connect to Git"
-3. Select your GitHub repository
-4. Configure build settings:
-   ```
-   Framework preset: SvelteKit
-   Build command: pnpm run build
-   Build output directory: build
-   Root directory: apps/sveltekit-poc
-   ```
-
-#### Step 3: Environment Variables
-Add these environment variables in Cloudflare Pages:
-```
-VITE_CONVEX_URL=your_convex_deployment_url
-```
-
-#### Step 4: Custom Domain (Optional)
-- Add your custom domain in Pages settings
-- Configure DNS records as instructed
-
-### Option 2: Cloudflare Workers (Advanced)
-
-For more control over deployment:
+#### Step 1: Initial Setup
 
 ```bash
-# Install Wrangler CLI
+# Install Wrangler CLI globally (if not already installed)
 npm install -g wrangler
 
 # Login to Cloudflare
 wrangler login
+```
 
-# Deploy from apps/sveltekit-poc directory
+#### Step 2: Configure Environment Variables
+
+1. Create a `.env` file for local development:
+```bash
+VITE_CONVEX_URL=your_convex_development_url
+```
+
+2. For production, add secrets via Wrangler:
+```bash
+wrangler secret put VITE_CONVEX_URL
+# Enter your production Convex URL when prompted
+```
+
+#### Step 3: Build and Deploy
+
+```bash
+# From monorepo root
 cd apps/sveltekit-poc
+
+# Build the application
+pnpm run build
+
+# Deploy to Workers
+pnpm run deploy
+
+# Or deploy to a preview environment
+pnpm run deploy:preview
+```
+
+#### Step 4: Verify Deployment
+
+After deployment, Wrangler will provide:
+- Worker URL: `https://rite-sveltekit-poc.<your-subdomain>.workers.dev`
+- Dashboard link for monitoring and logs
+
+### Option 2: Cloudflare Pages (Legacy)
+
+While Cloudflare recommends Workers for new projects, Pages is still supported:
+
+```bash
+# Deploy using Pages
 wrangler pages deploy build --project-name=rite-sveltekit-poc
 ```
 
@@ -84,30 +95,37 @@ pnpm run preview
 Set environment variables in Cloudflare Pages dashboard:
 - `VITE_CONVEX_URL`: Your Convex production deployment URL
 
-## Performance Benefits on Cloudflare
+## Workers vs Pages Comparison
 
-### Why SvelteKit + Cloudflare?
-1. **Smaller Bundle Size**: SvelteKit compiles to vanilla JS
-2. **Edge Performance**: Runs closer to users globally
-3. **Fast Cold Starts**: Minimal runtime overhead
-4. **Cost Effective**: Generous free tier
-5. **Global CDN**: Automatic asset optimization
+### Why Workers for New Projects?
 
-### Expected Performance
-- **Bundle Size**: ~50KB (vs ~200KB+ for equivalent React)
-- **Cold Start**: <50ms
-- **Time to Interactive**: <100ms
-- **Global Latency**: <100ms from edge locations
+Based on [Cloudflare's compatibility matrix](https://developers.cloudflare.com/workers/static-assets/migrate-from-pages/#compatibility-matrix):
 
-## Comparison with Next.js Deployment
+| Feature | Workers | Pages |
+|---------|---------|-------|
+| Static Assets | ✅ Native support | ✅ Built-in |
+| Server-side Rendering | ✅ Full support | ✅ Limited |
+| API Routes | ✅ Full Workers API | ⚠️ Functions only |
+| Bindings (KV, D1, R2) | ✅ All bindings | ⚠️ Limited |
+| WebSockets | ✅ Supported | ❌ Not supported |
+| Cron Triggers | ✅ Supported | ❌ Not supported |
+| Custom Domains | ✅ Unlimited | ✅ Unlimited |
+| Preview Deployments | ✅ Via `--env` | ✅ Automatic |
+| Build Pipeline | ⚡ Local/CI | ☁️ Cloudflare |
 
-| Metric | SvelteKit + Cloudflare | Next.js + Vercel |
-|--------|------------------------|-------------------|
-| Bundle Size | ~50KB | ~200KB+ |
-| Cold Start | <50ms | 100-300ms |
-| Edge Locations | 330+ | 100+ |
-| Free Tier | 100,000 requests/day | 100GB bandwidth |
-| Build Time | ~30s | ~60s |
+### Performance Benefits
+
+1. **Workers Advantages**:
+   - Better cold start performance
+   - More consistent response times
+   - Full access to Workers runtime APIs
+   - Better integration with other Cloudflare services
+
+2. **SvelteKit + Workers Performance**:
+   - **Bundle Size**: ~50KB (vs ~200KB+ for React)
+   - **Cold Start**: <25ms on Workers (vs <50ms on Pages)
+   - **Time to Interactive**: <100ms
+   - **Global Network**: 330+ edge locations
 
 ## Troubleshooting
 
@@ -146,16 +164,73 @@ Set environment variables in Cloudflare Pages dashboard:
 - Function execution times
 - Real-time connection stats
 
-## Next Steps
+## Advanced Configuration
 
-1. **Set up CI/CD**: Automatic deployments on push to main
-2. **Add Custom Domain**: Configure DNS for production domain
-3. **Enable Analytics**: Set up monitoring and alerting
-4. **Performance Testing**: Load testing and optimization
-5. **A/B Testing**: Compare with Next.js deployment side-by-side
+### Custom Domain Setup
+
+1. Add your domain to Cloudflare DNS
+2. Update `wrangler.toml`:
+```toml
+[[routes]]
+pattern = "rite.party/*"
+zone_name = "rite.party"
+```
+3. Deploy with: `pnpm run deploy`
+
+### Environment-specific Deployments
+
+```bash
+# Development
+wrangler dev
+
+# Preview/Staging
+wrangler deploy --env preview
+
+# Production
+wrangler deploy --env production
+```
+
+### CI/CD with GitHub Actions
+
+Create `.github/workflows/deploy.yml`:
+```yaml
+name: Deploy to Cloudflare Workers
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'apps/sveltekit-poc/**'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: pnpm/action-setup@v2
+      - name: Install dependencies
+        run: pnpm install
+      - name: Build
+        run: pnpm --filter=sveltekit-poc run build
+      - name: Deploy
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          workingDirectory: apps/sveltekit-poc
+```
+
+## Monitoring & Analytics
+
+### Workers Analytics
+- Real-time request logs
+- Performance metrics
+- Error tracking
+- Geographic distribution
+
+Access via: [Cloudflare Dashboard → Workers & Pages → Analytics](https://dash.cloudflare.com)
 
 ## Resources
 
-- [SvelteKit Cloudflare Adapter Docs](https://kit.svelte.dev/docs/adapter-cloudflare)
-- [Cloudflare Pages Documentation](https://developers.cloudflare.com/pages/)
-- [Convex Deployment Guide](https://docs.convex.dev/production/hosting)
+- [Workers Static Assets Guide](https://developers.cloudflare.com/workers/static-assets)
+- [Migrate from Pages to Workers](https://developers.cloudflare.com/workers/static-assets/migrate-from-pages/)
+- [SvelteKit Cloudflare Adapter](https://kit.svelte.dev/docs/adapter-cloudflare)
+- [Wrangler CLI Documentation](https://developers.cloudflare.com/workers/wrangler/)
