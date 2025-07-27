@@ -132,6 +132,9 @@ importers:
 
   apps/sveltekit-poc:
     dependencies:
+      '@rite/backend':
+        specifier: workspace:*
+        version: link:../../packages/backend
       convex:
         specifier: ^1.23.0
         version: 1.25.4(react@18.3.1)
