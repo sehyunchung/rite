@@ -37,7 +37,7 @@ If needed, you can manually deploy Convex:
 
 ```bash
 cd packages/backend
-pnpm run deploy
+pnpm run deploy:prod
 # or
 npx convex deploy
 ```
