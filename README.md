@@ -9,6 +9,7 @@ This is a DJ event management platform built with [Next.js](https://nextjs.org/)
 - **Authentication**: [NextAuth v5](https://authjs.dev/) with Instagram OAuth integration
 - **Styling**: [Tailwind CSS](https://tailwindcss.com/) with shadcn/ui components
 - **Validation**: [ArkType](https://arktype.io/) for high-performance schema validation
+- **Package Manager**: npm
 
 ## Get started
 
