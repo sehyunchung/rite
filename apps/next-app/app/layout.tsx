@@ -1,10 +1,9 @@
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
 import './globals.css'
 import { ConvexProviderClient } from './providers/convex-provider-client'
 import { AuthProvider } from './providers/auth-provider'
+import { suit } from './lib/fonts'
 
-const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: 'Rite - DJ Event Management Platform',
@@ -19,7 +18,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className={suit.variable}>
         <ConvexProviderClient>
           <AuthProvider>
             {children}
