@@ -19,6 +19,21 @@
 	<p>Exploring SvelteKit as an alternative to Next.js for Cloudflare deployment</p>
 </div>
 
+<div class="font-test">
+	<h2>🔤 SUIT Variable Font Test</h2>
+	<div class="font-samples">
+		<p class="font-thin">Font Weight 100 - 매우 얇은 글꼴 (Thin)</p>
+		<p class="font-light">Font Weight 300 - 얇은 글꼴 (Light)</p>
+		<p class="font-normal">Font Weight 400 - 보통 글꼴 (Normal)</p>
+		<p class="font-medium">Font Weight 500 - 중간 글꼴 (Medium)</p>
+		<p class="font-semibold">Font Weight 600 - 세미볼드 글꼴 (Semibold)</p>
+		<p class="font-bold">Font Weight 700 - 굵은 글꼴 (Bold)</p>
+		<p class="font-extrabold">Font Weight 800 - 매우 굵은 글꼴 (Extra Bold)</p>
+		<p class="font-black">Font Weight 900 - 블랙 글꼴 (Black)</p>
+	</div>
+	<p class="korean-test">한글과 English 모두 SUIT 폰트로 잘 표시됩니다! 🎉</p>
+</div>
+
 <div class="comparison">
 	<div class="card">
 		<h2>📊 Performance Metrics</h2>
@@ -95,6 +110,36 @@
 	.hero {
 		text-align: center;
 		padding: 4rem 0;
+	}
+	
+	.font-test {
+		background: white;
+		padding: 2rem;
+		border-radius: 8px;
+		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+		margin: 2rem 0;
+	}
+	
+	.font-samples p {
+		margin: 0.5rem 0;
+		font-size: 1.125rem;
+	}
+	
+	.font-thin { font-weight: 100; }
+	.font-light { font-weight: 300; }
+	.font-normal { font-weight: 400; }
+	.font-medium { font-weight: 500; }
+	.font-semibold { font-weight: 600; }
+	.font-bold { font-weight: 700; }
+	.font-extrabold { font-weight: 800; }
+	.font-black { font-weight: 900; }
+	
+	.korean-test {
+		font-size: 1.25rem;
+		color: #059669;
+		text-align: center;
+		margin-top: 1.5rem;
+		font-weight: 500;
 	}
 	
 	.comparison {
