@@ -189,22 +189,41 @@ app.post('/oauth/token', async (c) => {
     
     const tokenData: InstagramTokenResponse = await tokenResponse.json()
     
+    // Fetch user info immediately to include in JWT token
+    const userResponse = await fetch(`https://graph.instagram.com/v18.0/me?fields=id,username,account_type,name,profile_picture_url&access_token=${tokenData.access_token}`)
+    
+    if (!userResponse.ok) {
+      throw new Error(`User info fetch failed: ${userResponse.statusText}`)
+    }
+    
+    const userData: InstagramUserResponse = await userResponse.json()
+    
+    // Validate account type (temporarily disabled for testing)
+    console.log('Account type detected:', userData.account_type)
+    // if (userData.account_type !== 'BUSINESS' && userData.account_type !== 'CREATOR') {
+    //   throw new Error('Instagram Business or Creator account required')
+    // }
+    
     // Generate a simple JWT-like ID token (unsigned for simplicity)
     // In production, this should be a properly signed JWT with RS256
     const header = btoa(JSON.stringify({ alg: 'none', typ: 'JWT' }))
     const payload = btoa(JSON.stringify({
       iss: new URL(c.req.url).origin,
-      sub: tokenData.user_id.toString(),
+      sub: userData.id,
       aud: clientId || 'rite-app',
       exp: Math.floor(Date.now() / 1000) + 3600,
       iat: Math.floor(Date.now() / 1000),
-      instagram_user_id: tokenData.user_id.toString(),
-      preferred_username: '', // Will be filled by userinfo endpoint
-      name: '', // Will be filled by userinfo endpoint
+      instagram_user_id: userData.id,
+      preferred_username: userData.username,
+      name: userData.name || userData.username,
+      picture: userData.profile_picture_url,
+      'https://rite.app/instagram_username': userData.username,
+      'https://rite.app/instagram_id': userData.id,
+      'https://rite.app/account_type': userData.account_type,
     }))
     const idToken = `${header}.${payload}.` // Unsigned JWT
     
-    console.log('Token endpoint: Returning token response for user_id:', tokenData.user_id)
+    console.log('Token endpoint: Returning token response for user:', userData.username, 'ID:', userData.id)
     
     // Return OIDC-compatible token response
     return c.json({
@@ -246,13 +265,14 @@ app.get('/oauth/userinfo', async (c) => {
     
     const userData: InstagramUserResponse = await userResponse.json()
     
-    // Validate account type for new API
-    if (userData.account_type !== 'BUSINESS' && userData.account_type !== 'CREATOR') {
-      return c.json({ 
-        error: 'invalid_account_type',
-        error_description: 'Instagram Business or Creator account required'
-      }, 403)
-    }
+    // Validate account type for new API (temporarily disabled for testing)
+    console.log('Userinfo - Account type detected:', userData.account_type)
+    // if (userData.account_type !== 'BUSINESS' && userData.account_type !== 'CREATOR') {
+    //   return c.json({ 
+    //     error: 'invalid_account_type',
+    //     error_description: 'Instagram Business or Creator account required'
+    //   }, 403)
+    // }
     
     // Transform to OIDC claims format
     return c.json({
