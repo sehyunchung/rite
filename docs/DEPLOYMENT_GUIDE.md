@@ -1,22 +1,22 @@
 # Rite Deployment Guide
 
 ## Overview
-This guide covers deploying the Rite DJ event management platform to production, with a focus on Korean market requirements and the specific tech stack (Vite + TanStack Router + Convex + Clerk).
+This guide covers deploying the Rite DJ event management platform to production, with a focus on Korean market requirements and the specific tech stack (Next.js 15 + App Router + Convex + NextAuth).
 
 ## Recommended Platform: Vercel
 
 ### Why Vercel?
 1. **Asia Performance**: Edge network optimized for Korean users (Seoul edge location)
-2. **Zero Configuration**: Works perfectly with Vite + TanStack Router out of the box
+2. **Zero Configuration**: Works perfectly with Next.js out of the box
 3. **GitHub Integration**: Automatic deployments on push to main branch
-4. **Environment Variables**: Simple UI for managing Clerk and Convex keys
+4. **Environment Variables**: Simple UI for managing NextAuth and Convex keys
 5. **Free Tier**: 100GB bandwidth/month - more than enough for MVP phase
-6. **SPA Support**: Handles client-side routing without additional configuration
+6. **SSR Support**: Handles server-side rendering and API routes automatically
 
 ### Prerequisites
 - GitHub repository connected (already done ✓)
 - Vercel account (free tier is sufficient)
-- Production keys from Convex and Clerk
+- Production keys from Convex and NextAuth configuration
 
 ## Step-by-Step Deployment
 
