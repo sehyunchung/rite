@@ -232,6 +232,35 @@ export const getConnection = query({
   },
 });
 
+// Get Instagram connection by user ID (for server-side use)
+export const getConnectionByUserId = query({
+  args: {
+    userId: v.id("users"),
+  },
+  handler: async (ctx, args) => {
+    const connection = await ctx.db
+      .query("instagramConnections")
+      .filter((q) => q.eq(q.field("userId"), args.userId))
+      .first();
+
+    if (!connection) {
+      return null;
+    }
+
+    // Return connection without access token for security
+    return {
+      _id: connection._id,
+      username: connection.username,
+      instagramUserId: connection.instagramUserId,
+      accountType: connection.accountType,
+      profilePictureUrl: connection.profilePictureUrl,
+      displayName: connection.displayName,
+      connectedAt: connection.connectedAt,
+      isActive: connection.isActive,
+    };
+  },
+});
+
 // Disconnect Instagram account
 export const disconnectAccount = mutation({
   handler: async (ctx) => {

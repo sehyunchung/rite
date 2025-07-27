@@ -1,6 +1,8 @@
 import { auth, signOut } from '@/lib/auth'
 import { Button } from '@/components/ui/button'
 import { redirect } from 'next/navigation'
+import { convex } from '@/lib/convex'
+import { api } from '@rite/backend/convex/_generated/api'
 
 export default async function DashboardPage() {
   const session = await auth()
@@ -9,7 +11,24 @@ export default async function DashboardPage() {
     redirect('/auth/signin')
   }
 
-  const displayName = session.user?.email || 'User'
+  // Get Instagram connection data if available
+  let instagramConnection = null
+  try {
+    if (convex && session.user?.id) {
+      // Find user by NextAuth ID to get Instagram connection
+      const user = await convex.query(api.auth.getUserByNextAuthId, { nextAuthId: session.user.id })
+      if (user) {
+        instagramConnection = await convex.query(api.instagram.getConnectionByUserId, { userId: user._id })
+      }
+    }
+  } catch (error) {
+    console.error('Failed to fetch Instagram connection:', error)
+  }
+
+  // Display priority: Instagram handle > user name > email > fallback
+  const displayName = instagramConnection?.username 
+    ? `@${instagramConnection.username}`
+    : session.user?.name || session.user?.email || 'User'
 
   return (
     <div className="min-h-screen bg-gray-50">
