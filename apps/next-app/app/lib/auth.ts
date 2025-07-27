@@ -1,7 +1,7 @@
 import NextAuth from 'next-auth'
 import { ConvexAdapter } from './convex-adapter'
 import { convex } from './convex'
-import { api } from '@rite/backend/_generated/api'
+import { api } from '@rite/backend/convex/_generated/api'
 
 // Create providers array with fallback handling
 const providers = []

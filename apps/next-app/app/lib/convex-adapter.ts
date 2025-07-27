@@ -1,6 +1,6 @@
 import type { Adapter } from "@auth/core/adapters"
 import { ConvexHttpClient } from "convex/browser"
-import { api } from "@rite/backend/_generated/api"
+import { api } from "@rite/backend/convex/_generated/api"
 
 export function ConvexAdapter(convex: ConvexHttpClient): Adapter {
   return {
