@@ -157,7 +157,7 @@ export const getUserByEmail = query({
   handler: async (ctx, args) => {
     return await ctx.db
       .query("users")
-      .filter((q) => q.eq(q.field("email"), args.email))
+      .withIndex("by_email", (q) => q.eq("email", args.email))
       .first();
   },
 });
@@ -227,11 +227,8 @@ export const getAccountByProvider = query({
   handler: async (ctx, args) => {
     return await ctx.db
       .query("accounts")
-      .filter((q) =>
-        q.and(
-          q.eq(q.field("provider"), args.provider),
-          q.eq(q.field("providerAccountId"), args.providerAccountId)
-        )
+      .withIndex("by_provider_and_account_id", (q) =>
+        q.eq("provider", args.provider).eq("providerAccountId", args.providerAccountId)
       )
       .first();
   },
@@ -245,11 +242,8 @@ export const unlinkAccount = mutation({
   handler: async (ctx, args) => {
     const account = await ctx.db
       .query("accounts")
-      .filter((q) =>
-        q.and(
-          q.eq(q.field("provider"), args.provider),
-          q.eq(q.field("providerAccountId"), args.providerAccountId)
-        )
+      .withIndex("by_provider_and_account_id", (q) =>
+        q.eq("provider", args.provider).eq("providerAccountId", args.providerAccountId)
       )
       .first();
     
@@ -280,7 +274,7 @@ export const getSession = query({
   handler: async (ctx, args) => {
     return await ctx.db
       .query("sessions")
-      .filter((q) => q.eq(q.field("sessionToken"), args.sessionToken))
+      .withIndex("by_session_token", (q) => q.eq("sessionToken", args.sessionToken))
       .first();
   },
 });
@@ -293,7 +287,7 @@ export const updateSession = mutation({
   handler: async (ctx, args) => {
     const session = await ctx.db
       .query("sessions")
-      .filter((q) => q.eq(q.field("sessionToken"), args.sessionToken))
+      .withIndex("by_session_token", (q) => q.eq("sessionToken", args.sessionToken))
       .first();
     
     if (session && args.expires) {
@@ -310,7 +304,7 @@ export const deleteSession = mutation({
   handler: async (ctx, args) => {
     const session = await ctx.db
       .query("sessions")
-      .filter((q) => q.eq(q.field("sessionToken"), args.sessionToken))
+      .withIndex("by_session_token", (q) => q.eq("sessionToken", args.sessionToken))
       .first();
     
     if (session) {
