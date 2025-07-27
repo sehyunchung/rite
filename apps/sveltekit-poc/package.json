@@ -32,7 +32,21 @@
   },
   "dependencies": {
     "convex": "^1.23.0",
-    "@rite/backend": "workspace:*"
+    "@rite/backend": "workspace:*",
+    "@auth/sveltekit": "^1.10.0",
+    "@auth/core": "^0.40.0",
+    "arktype": "^2.1.20",
+    "tailwindcss": "^3.4.16",
+    "autoprefixer": "^10.4.20",
+    "lucide-svelte": "^0.475.0",
+    "clsx": "^2.1.1",
+    "tailwind-merge": "^3.3.1",
+    "tailwind-variants": "^0.3.1",
+    "bits-ui": "^2.8.13",
+    "cmdk-sv": "^0.0.19",
+    "formsnap": "^2.0.1",
+    "mode-watcher": "^0.4.1",
+    "sveltekit-superforms": "^2.20.1"
   },
   "type": "module"
 }
