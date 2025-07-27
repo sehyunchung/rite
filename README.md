@@ -1,13 +1,14 @@
-# Welcome to your Convex + React (Vite) app
+# Rite - DJ Event Management Platform
 
-This is a [Convex](https://convex.dev/) project created with [`npm create convex`](https://www.npmjs.com/package/create-convex).
+This is a DJ event management platform built with [Next.js](https://nextjs.org/) and [Convex](https://convex.dev/).
 
-After the initial setup (<2 minutes) you'll have a working full-stack app using:
+## Tech Stack
 
-- Convex as your backend (database, server logic)
-- [React](https://react.dev/) as your frontend (web page interactivity)
-- [Vite](https://vitest.dev/) for optimized web hosting
-- [Tailwind](https://tailwindcss.com/) for building great looking accessible UI
+- **Frontend**: [Next.js 15](https://nextjs.org/) with React 18, TypeScript, and Turbopack
+- **Backend**: [Convex](https://convex.dev/) for real-time database and file storage
+- **Authentication**: [NextAuth v5](https://authjs.dev/) with Instagram OAuth integration
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/) with shadcn/ui components
+- **Validation**: [ArkType](https://arktype.io/) for high-performance schema validation
 
 ## Get started
 
@@ -18,10 +19,18 @@ npm install
 npm run dev
 ```
 
-If you're reading this README on GitHub and want to use this template, run:
+## Environment Setup
+
+Create a `.env.local` file with the following variables:
 
 ```
-npm create convex@latest -- -t react-vite
+NEXT_PUBLIC_CONVEX_URL=your_convex_url
+CONVEX_DEPLOY_KEY=your_convex_deploy_key
+NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_SECRET=your_nextauth_secret
+INSTAGRAM_CLIENT_ID=your_instagram_client_id
+INSTAGRAM_CLIENT_SECRET=your_instagram_client_secret
+INSTAGRAM_OAUTH_PROXY_URL=https://rite-instagram-oauth-proxy.sehyunchung.workers.dev
 ```
 
 ## Learn more

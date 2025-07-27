@@ -9,7 +9,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Dev backend only: `npm run dev:backend`
 - Build: `npm run build`
 - Lint: `npm run lint`
-- Preview: `npm run preview`
+- Type check: `npm run type-check`
 
 ## Authentication Setup
 The application uses Clerk for authentication. To set up authentication:
@@ -17,13 +17,18 @@ The application uses Clerk for authentication. To set up authentication:
 1. Create a Clerk account at https://dashboard.clerk.com/
 2. Create a new application 
 3. Copy the Publishable Key from your Clerk dashboard
-4. In `.env.local`, uncomment and set:
+4. In `.env.local`, set the required environment variables:
    ```
-   VITE_CLERK_PUBLISHABLE_KEY=pk_test_your_actual_key_here
+   INSTAGRAM_CLIENT_ID=your_instagram_client_id
+   INSTAGRAM_CLIENT_SECRET=your_instagram_client_secret
+   INSTAGRAM_OAUTH_PROXY_URL=https://rite-instagram-oauth-proxy.sehyunchung.workers.dev
+   NEXTAUTH_URL=http://localhost:3000
+   NEXTAUTH_SECRET=your_nextauth_secret_here
+   NEXT_PUBLIC_CONVEX_URL=your_convex_url
    ```
 5. Configure Clerk webhook for Convex user synchronization (optional for development)
 
-**Current Status**: Authentication system is fully functional with Clerk integration, including complete Instagram OAuth support.
+**Current Status**: Authentication system is fully functional with NextAuth v5 integration, including complete Instagram OAuth support.
 
 ### Social OAuth Providers
 To enable social login options:
@@ -77,16 +82,16 @@ Instagram login requires a custom OAuth proxy service since Instagram is not nat
 
 ## Project Architecture
 
-This is Rite, a DJ event management platform built with React (Vite) frontend and Convex backend. The application streamlines event management for DJ bookings with Instagram workflow integration.
+This is Rite, a DJ event management platform built with Next.js 15 frontend and Convex backend. The application streamlines event management for DJ bookings with Instagram workflow integration.
 
 ### Tech Stack
-- **Frontend**: React 19 with TypeScript, Vite, Tailwind CSS, TanStack Router
+- **Frontend**: Next.js 15 with React 18, TypeScript, Turbopack
 - **UI Libraries**: 
   - shadcn/ui - Base component library with Radix UI primitives
   - Kibo UI - Advanced components (Dropzone, QR Code, Code Block)
 - **Backend**: Convex (real-time database and file storage)
-- **Authentication**: Clerk with Instagram OAuth integration
-- **Routing**: TanStack Router for type-safe, file-based routing
+- **Authentication**: NextAuth v5 with Instagram OAuth integration
+- **Routing**: Next.js App Router (file-based routing)
 - **Validation**: ArkType (high-performance TypeScript schema validation)
 - **File Handling**: Convex file storage for promo materials
 - **AI Integration**: Model Context Protocol (MCP) for Kibo UI
@@ -95,25 +100,25 @@ This is Rite, a DJ event management platform built with React (Vite) frontend an
 ### Core Architecture
 
 **Frontend Structure:**
-- `/src/` - Main application source code
-- `/src/routes/` - TanStack Router file-based routes
-  - `/src/routes/__root.tsx` - Root layout with navigation
-  - `/src/routes/index.tsx` - Landing page
-  - `/src/routes/dashboard.tsx` - Organizer dashboard
-  - `/src/routes/events/create.tsx` - Event creation route
-  - `/src/routes/dj-submission.tsx` - Public DJ submission with token params
-  - `/src/routes/login.tsx` - Clerk authentication page
-- `/src/components/` - React components
-  - `/src/components/ui/` - shadcn/ui base components
-  - `/src/components/ui/kibo-ui/` - Kibo UI advanced components
-  - `/src/components/EventCreationForm.tsx` - Event creation form with validation
-  - `/src/components/DJSubmissionForm.tsx` - Public DJ submission form with token access
-  - `/src/components/Footer.tsx` - Development status footer
-- `/src/lib/` - Utility functions and configuration
-  - `/src/lib/utils.ts` - Utility functions for component styling
-  - `/src/lib/validation.ts` - ArkType validation schemas and helpers
-  - `/src/lib/router.ts` - TanStack Router configuration
-- `/src/types/` - TypeScript type definitions matching Convex schema
+- `/app/` - Next.js App Router pages and layouts
+  - `/app/layout.tsx` - Root layout with providers
+  - `/app/page.tsx` - Landing page
+  - `/app/dashboard/page.tsx` - Organizer dashboard
+  - `/app/events/create/page.tsx` - Event creation page
+  - `/app/dj-submission/page.tsx` - Public DJ submission with token params
+  - `/app/auth/signin/page.tsx` - NextAuth authentication page
+- `/app/components/` - React components
+  - `/app/components/ui/` - shadcn/ui base components
+  - `/app/components/ui/kibo-ui/` - Kibo UI advanced components
+  - `/app/components/EventCreationForm.tsx` - Event creation form with validation
+  - `/app/components/DJSubmissionForm.tsx` - Public DJ submission form with token access
+  - `/app/components/Footer.tsx` - Development status footer
+- `/app/lib/` - Utility functions and configuration
+  - `/app/lib/utils.ts` - Utility functions for component styling
+  - `/app/lib/validation.ts` - ArkType validation schemas and helpers
+  - `/app/lib/auth.ts` - NextAuth configuration
+  - `/app/lib/convex.ts` - Convex client setup
+- `/app/types/` - TypeScript type definitions matching Convex schema
 - `/public/` - Static assets
 
 **Backend Structure (Convex):**
@@ -195,9 +200,10 @@ This project is configured with Kibo UI MCP server for AI-assisted development:
 
 ### Development Setup
 - Run `npm run predev` to initialize Convex development environment and open dashboard
-- Use `npm run dev` to start both frontend (Vite) and backend (Convex) in parallel
+- Use `npm run dev` to start both frontend (Next.js with Turbopack) and backend (Convex) in parallel
 - Convex dashboard automatically opens for database management
-- Frontend serves at localhost with auto-reload
+- Frontend serves at localhost:3000 with fast refresh
+- Turbopack provides fast bundling and hot module replacement
 - MCP integration provides AI-assisted component development
 
 ## Code Style Guidelines
@@ -229,16 +235,17 @@ import { Dropzone } from "@/components/ui/kibo-ui/dropzone"
 import { QRCode } from "@/components/ui/kibo-ui/qr-code"
 import { CodeBlock } from "@/components/ui/kibo-ui/code-block"
 
-// TanStack Router
-import { Link, useNavigate, useRouter } from "@tanstack/react-router"
-import { createFileRoute, createRootRoute } from "@tanstack/react-router"
+// Next.js navigation
+import Link from "next/link"
+import { useRouter } from "next/navigation"
 
 // Convex integration
 import { useQuery, useMutation } from "convex/react"
 import { api } from "../convex/_generated/api"
 
-// Clerk authentication
-import { useAuth, useUser, SignInButton, SignOutButton } from "@clerk/clerk-react"
+// NextAuth authentication
+import { useSession } from "next-auth/react"
+import { signIn, signOut } from "next-auth/react"
 
 // Validation
 import { validateEvent, validateTimeslot } from "@/lib/validation"
@@ -307,10 +314,11 @@ import { validateEvent, validateTimeslot } from "@/lib/validation"
 
 ### Recommended Platform: Vercel
 **Why Vercel:**
-- Zero-config deployment for Vite + TanStack Router
+- Zero-config deployment for Next.js applications
+- Native Next.js optimization and edge functions
 - Excellent Asia/Pacific edge network (critical for Korean users)
 - Automatic GitHub deployments on push to main
-- Simple environment variable management for Clerk/Convex keys
+- Simple environment variable management for NextAuth/Convex keys
 - Generous free tier (100GB bandwidth, perfect for MVP phase)
 
 ### Alternative Options:
@@ -322,20 +330,24 @@ import { validateEvent, validateTimeslot } from "@/lib/validation"
 1. Connect GitHub repository to Vercel
 2. Add custom domain: rite.party
 3. Set environment variables:
-   - `VITE_CONVEX_URL`
-   - `VITE_CLERK_PUBLISHABLE_KEY`
-   - `VITE_CLERK_FRONTEND_API_URL`
-   - `VITE_INSTAGRAM_CLIENT_ID`
-   - `VITE_INSTAGRAM_OAUTH_PROXY_URL`
+   - `NEXT_PUBLIC_CONVEX_URL`
+   - `CONVEX_DEPLOY_KEY`
+   - `NEXTAUTH_URL`
+   - `NEXTAUTH_SECRET`
+   - `INSTAGRAM_CLIENT_ID`
+   - `INSTAGRAM_CLIENT_SECRET`
+   - `INSTAGRAM_OAUTH_PROXY_URL`
 4. Deploy settings:
+   - Framework Preset: Next.js (auto-detected)
    - Build Command: `npm run build`
-   - Output Directory: `dist`
    - Install Command: `npm install`
 5. Enable automatic deployments for main branch
 
 ### Performance Optimization:
 - Vercel automatically handles:
-  - Client-side routing for TanStack Router
+  - Next.js optimizations (Image, Font, Script components)
+  - Server-side rendering and static generation
+  - API routes and edge functions
   - Asset optimization and CDN distribution
   - HTTPS certificates
   - Compression (gzip/brotli)
