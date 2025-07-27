@@ -15,15 +15,21 @@ export default async function DashboardPage() {
   let instagramConnection = null
   try {
     if (convex && session.user?.id) {
-      // Find user by NextAuth ID to get Instagram connection
-      const user = await convex.query(api.auth.getUserByNextAuthId, { nextAuthId: session.user.id })
-      if (user) {
-        instagramConnection = await convex.query(api.instagram.getConnectionByUserId, { userId: user._id })
-      }
+      // Use session user ID directly (should be Convex ID for database sessions)
+      instagramConnection = await convex.query(api.instagram.getConnectionByUserId, { userId: session.user.id as any })
     }
   } catch (error) {
     console.error('Failed to fetch Instagram connection:', error)
   }
+
+  // Debug logging
+  console.log('Dashboard debug:', {
+    sessionUserId: session.user?.id,
+    sessionUserName: session.user?.name,
+    sessionUserEmail: session.user?.email,
+    instagramConnection: instagramConnection,
+    instagramUsername: instagramConnection?.username
+  })
 
   // Display priority: Instagram handle > user name > email > fallback
   const displayName = instagramConnection?.username 
