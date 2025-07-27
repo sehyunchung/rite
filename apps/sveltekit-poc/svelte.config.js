@@ -6,13 +6,7 @@ const config = {
 	preprocess: vitePreprocess(),
 	kit: {
 		adapter: adapter({
-			// Enable Workers mode with default routes
-			platformProxy: {
-				configPath: 'wrangler.toml',
-				environment: undefined,
-				experimentalJsonConfig: false,
-				persist: false
-			}
+			// Cloudflare Pages configuration
 		}),
 		alias: {
 			'@rite/backend': '../../packages/backend'
