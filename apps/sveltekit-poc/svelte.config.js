@@ -6,9 +6,17 @@ const config = {
 	preprocess: vitePreprocess(),
 	kit: {
 		adapter: adapter({
+			// Workers-specific configuration
 			routes: {
 				include: ['/*'],
 				exclude: ['<all>']
+			},
+			// Enable Workers mode
+			platformProxy: {
+				configPath: 'wrangler.toml',
+				environment: undefined,
+				experimentalJsonConfig: false,
+				persist: false
 			}
 		}),
 		alias: {
