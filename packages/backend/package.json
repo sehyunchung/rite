@@ -2,6 +2,9 @@
   "name": "@rite/backend",
   "version": "0.0.1",
   "private": true,
+  "exports": {
+    "./convex/_generated/*": "./convex/_generated/*"
+  },
   "scripts": {
     "dev": "convex dev",
     "deploy": "convex deploy",
