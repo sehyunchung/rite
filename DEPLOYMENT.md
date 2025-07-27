@@ -17,26 +17,28 @@ Add these in Vercel's Environment Variables settings:
 
 ```bash
 # Convex
-VITE_CONVEX_URL=https://valiant-curlew-94.convex.cloud
+NEXT_PUBLIC_CONVEX_URL=https://lovely-husky-802.convex.cloud
+CONVEX_DEPLOY_KEY=your_production_deploy_key
 
-# Clerk (Production) - Update with your production keys
-VITE_CLERK_PUBLISHABLE_KEY=pk_prod_YOUR_KEY_HERE
-VITE_CLERK_FRONTEND_API_URL=https://YOUR_INSTANCE.clerk.accounts.dev
-CLERK_FRONTEND_API_URL=https://YOUR_INSTANCE.clerk.accounts.dev
+# NextAuth
+NEXTAUTH_URL=https://rite.party
+NEXTAUTH_SECRET=your_secure_secret_here
 
 # Instagram OAuth
-VITE_INSTAGRAM_OAUTH_PROXY_URL=https://rite-instagram-oauth-proxy.workers.dev
-VITE_INSTAGRAM_CLIENT_ID=735938226061336
+INSTAGRAM_CLIENT_ID=735938226061336
+INSTAGRAM_CLIENT_SECRET=your_instagram_secret
+INSTAGRAM_OAUTH_PROXY_URL=https://rite-instagram-oauth-proxy.sehyunchung.workers.dev
 ```
 
 ### 3. OAuth Redirect URLs to Update
 
 #### Instagram (Meta Developer Console)
-- Add `https://rite.party/auth/instagram/callback` to valid OAuth redirect URIs
+- Add redirect URIs to your Instagram app settings:
+  - `https://rite-instagram-oauth-proxy.sehyunchung.workers.dev/oauth/callback`
 
-#### Clerk Dashboard
-- Add `https://rite.party` to allowed origins
-- Update redirect URLs for social logins
+#### NextAuth Configuration
+- Ensure `NEXTAUTH_URL` is set to `https://rite.party`
+- Instagram OAuth flows through the custom proxy service
 
 ### 4. Instagram OAuth Proxy
 The proxy at `rite-instagram-oauth-proxy.workers.dev` may need updates:
@@ -45,7 +47,7 @@ The proxy at `rite-instagram-oauth-proxy.workers.dev` may need updates:
 
 ### 5. Post-Deployment Verification
 - [ ] Test Instagram OAuth flow
-- [ ] Test Clerk authentication
+- [ ] Test NextAuth authentication
 - [ ] Verify DJ submission links work
 - [ ] Check QR code generation
 - [ ] Test event creation flow
@@ -61,4 +63,5 @@ After adding the domain in Vercel, you'll need to update your DNS:
 ## Monitoring
 - Check Vercel Analytics for performance
 - Monitor Convex dashboard for database usage
-- Watch Clerk dashboard for authentication metrics
+- Watch NextAuth logs for authentication metrics
+- Monitor Instagram OAuth proxy logs in Cloudflare Workers
