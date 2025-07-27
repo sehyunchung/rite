@@ -13,6 +13,7 @@
   "dependencies": {
     "@auth/core": "^0.36.0",
     "@icons-pack/react-simple-icons": "^13.4.0",
+    "@rite/backend": "workspace:*",
     "@radix-ui/react-label": "^2.1.7",
     "@radix-ui/react-select": "^2.2.5",
     "@radix-ui/react-slot": "^1.2.3",
