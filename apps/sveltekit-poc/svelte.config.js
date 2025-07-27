@@ -6,12 +6,7 @@ const config = {
 	preprocess: vitePreprocess(),
 	kit: {
 		adapter: adapter({
-			// Workers-specific configuration
-			routes: {
-				include: ['/*'],
-				exclude: ['<all>']
-			},
-			// Enable Workers mode
+			// Enable Workers mode with default routes
 			platformProxy: {
 				configPath: 'wrangler.toml',
 				environment: undefined,

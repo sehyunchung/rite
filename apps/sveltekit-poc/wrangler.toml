@@ -1,27 +1,29 @@
 name = "rite-sveltekit-poc"
-main = ".svelte-kit/cloudflare-workers/index.js"
+main = ".svelte-kit/cloudflare/_worker.js"
+assets = { directory = ".svelte-kit/cloudflare", binding = "ASSETS" }
 compatibility_date = "2025-01-27"
 
 # Workers Paid plan is required for always warm
 workers_dev = true
 compatibility_flags = ["nodejs_compat"]
 
-# Asset configuration for serving static files
-[site]
-bucket = ".svelte-kit/cloudflare-workers/assets"
+# Modern Workers deployment - no [site] needed for SvelteKit
 
 # Environment variables
 [vars]
-# Add your non-sensitive environment variables here
+VITE_CONVEX_URL = "https://valiant-curlew-94.convex.cloud"
+NEXTAUTH_URL = "https://rite-sveltekit-poc.sehyunchung.workers.dev"
+INSTAGRAM_OAUTH_PROXY_URL = "https://rite-instagram-oauth-proxy.sehyunchung.workers.dev"
+NODE_ENV = "production"
 
 # Bindings
 # [env.production.vars]
 # SOME_VAR = "production_value"
 
-# Routes configuration
-[[routes]]
-pattern = "/*"
-zone_name = "rite.party" # Replace with your domain when ready
+# Routes configuration (commented out for Workers subdomain deployment)
+# [[routes]]
+# pattern = "/*"
+# zone_name = "rite.party" # Replace with your domain when ready
 
 # Build configuration
 [build]
@@ -31,3 +33,7 @@ command = "pnpm run build"
 [dev]
 port = 8788
 local_protocol = "http"
+
+# Observability (logging)
+[observability.logs]
+enabled = true
