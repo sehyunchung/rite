@@ -10,7 +10,10 @@ const config = {
 				include: ['/*'],
 				exclude: ['<all>']
 			}
-		})
+		}),
+		alias: {
+			'@rite/backend': '../../packages/backend'
+		}
 	}
 };
 

@@ -28,7 +28,8 @@
     "eslint-config-prettier": "^9.1.0"
   },
   "dependencies": {
-    "convex": "^1.23.0"
+    "convex": "^1.23.0",
+    "@rite/backend": "workspace:*"
   },
   "type": "module"
 }
