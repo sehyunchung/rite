@@ -1,0 +1,33 @@
+name = "rite-sveltekit-poc"
+main = ".svelte-kit/cloudflare-workers/index.js"
+compatibility_date = "2025-01-27"
+
+# Workers Paid plan is required for always warm
+workers_dev = true
+compatibility_flags = ["nodejs_compat"]
+
+# Asset configuration for serving static files
+[site]
+bucket = ".svelte-kit/cloudflare-workers/assets"
+
+# Environment variables
+[vars]
+# Add your non-sensitive environment variables here
+
+# Bindings
+# [env.production.vars]
+# SOME_VAR = "production_value"
+
+# Routes configuration
+[[routes]]
+pattern = "/*"
+zone_name = "rite.party" # Replace with your domain when ready
+
+# Build configuration
+[build]
+command = "pnpm run build"
+
+# Development configuration
+[dev]
+port = 8788
+local_protocol = "http"
