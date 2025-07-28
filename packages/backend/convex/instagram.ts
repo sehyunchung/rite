@@ -3,6 +3,34 @@ import { action, mutation, query } from "./_generated/server";
 import { api } from "./_generated/api";
 import type { Id } from "./_generated/dataModel";
 
+// Query to get Instagram connection for a user
+export const getInstagramConnection = query({
+  args: { userId: v.id("users") },
+  handler: async (ctx, args) => {
+    const connection = await ctx.db
+      .query("instagramConnections")
+      .filter((q) => q.eq(q.field("userId"), args.userId))
+      .first();
+      
+    if (!connection) {
+      return null;
+    }
+    
+    // Return connection without access token for security
+    return {
+      _id: connection._id,
+      userId: connection.userId,
+      instagramUserId: connection.instagramUserId,
+      username: connection.username,
+      accountType: connection.accountType,
+      connectedAt: connection.connectedAt,
+      isActive: connection.isActive,
+      profilePictureUrl: connection.profilePictureUrl,
+      displayName: connection.displayName,
+    };
+  },
+});
+
 // Instagram OAuth flow
 export const exchangeCodeForToken = action({
   args: { code: v.string() },

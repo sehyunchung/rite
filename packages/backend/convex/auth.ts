@@ -5,8 +5,8 @@ import type { Id } from "./_generated/dataModel";
 
 // Get the current authenticated user from NextAuth via custom token
 export async function getAuthUserId(ctx: QueryCtx | MutationCtx): Promise<Id<"users"> | null> {
-  // For now, since we don't have proper JWT integration, return null
-  // This will make mutations fall back to the organizerId parameter
+  // TODO: Implement proper JWT token verification from NextAuth
+  // For now, return null which will require authentication
   return null;
 }
 
@@ -26,7 +26,6 @@ export const createUser = mutation({
     name: v.optional(v.string()),
     image: v.optional(v.string()),
     emailVerified: v.optional(v.number()),
-    nextAuthId: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     return await ctx.db.insert("users", {
@@ -34,7 +33,6 @@ export const createUser = mutation({
       name: args.name,
       image: args.image,
       emailVerified: args.emailVerified,
-      nextAuthId: args.nextAuthId,
       createdAt: new Date().toISOString(),
       organizerProfile: {
         companyName: undefined,
@@ -61,15 +59,6 @@ export const getUserByEmail = query({
   },
 });
 
-export const getUserByNextAuthId = query({
-  args: { nextAuthId: v.string() },
-  handler: async (ctx, args) => {
-    return await ctx.db
-      .query("users")
-      .filter((q) => q.eq(q.field("nextAuthId"), args.nextAuthId))
-      .first();
-  },
-});
 
 export const updateUser = mutation({
   args: {
