@@ -12,6 +12,7 @@
     "build": "echo 'Backend validation completed'"
   },
   "dependencies": {
+    "@convex-dev/auth": "^0.0.87",
     "convex": "^1.23.0"
   },
   "devDependencies": {

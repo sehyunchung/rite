@@ -3,22 +3,24 @@ import type { QueryCtx, MutationCtx } from "./_generated/server";
 import { mutation, query } from "./_generated/server";
 import type { Id } from "./_generated/dataModel";
 
-// Get the current authenticated user from Clerk
+// Get the current authenticated user from NextAuth via custom token
 export async function getAuthUserId(ctx: QueryCtx | MutationCtx): Promise<Id<"users"> | null> {
-  // Get the Clerk user ID from the authenticated context
+  // Get the identity from the auth context
   const identity = await ctx.auth.getUserIdentity();
   if (!identity) {
     return null;
   }
   
-  const clerkId = identity.subject;
+  // The subject should be the user's Convex ID from our NextAuth adapter
+  const userId = identity.subject;
+  
+  // Verify the user exists
+  const user = await ctx.db.get(userId as Id<"users">);
+  if (!user) {
+    return null;
+  }
 
-  const user = await ctx.db
-    .query("users")
-    .withIndex("by_clerk_id", (q) => q.eq("clerkId", clerkId))
-    .first();
-
-  return user?._id ?? null;
+  return userId as Id<"users">;
 }
 
 // Require authentication - throws if not authenticated

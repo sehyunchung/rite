@@ -1,8 +1,5 @@
+// This file is for future Convex Auth implementation
+// Currently using NextAuth with custom adapter
 export default {
-  providers: [
-    {
-      domain: process.env.CLERK_FRONTEND_API_URL,
-      applicationID: "convex",
-    },
-  ],
+  providers: [],
 };
