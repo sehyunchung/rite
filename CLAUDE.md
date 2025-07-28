@@ -21,12 +21,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Dev frontend only: `npm run dev:frontend` → now use individual app commands
 
 ## Authentication Setup
-The application uses Clerk for authentication. To set up authentication:
+The application uses NextAuth v5 for authentication with a streamlined, direct approach. To set up authentication:
 
-1. Create a Clerk account at https://dashboard.clerk.com/
-2. Create a new application 
-3. Copy the Publishable Key from your Clerk dashboard
-4. In `.env.local`, set the required environment variables:
+1. In `.env.local`, set the required environment variables:
    ```
    INSTAGRAM_CLIENT_ID=your_instagram_client_id
    INSTAGRAM_CLIENT_SECRET=your_instagram_client_secret
@@ -35,9 +32,8 @@ The application uses Clerk for authentication. To set up authentication:
    NEXTAUTH_SECRET=your_nextauth_secret_here
    NEXT_PUBLIC_CONVEX_URL=your_convex_url
    ```
-5. Configure Clerk webhook for Convex user synchronization (optional for development)
 
-**Current Status**: Authentication system is fully functional with NextAuth v5 integration, including complete Instagram OAuth support with comprehensive profile data handling.
+**Current Status**: Authentication system is fully functional with NextAuth v5 integration and clean, simplified architecture.
 
 ### Social OAuth Providers
 To enable social login options:
@@ -85,18 +81,18 @@ Instagram login requires a custom OAuth proxy service since Instagram is not nat
 5. **Integration Status** ✅ **FULLY WORKING**:
    - Instagram login through NextAuth OAuth ✅
    - Complete profile data capture (username, display name, profile picture) ✅
-   - Auto-connection during signup with NextAuth ID lookup ✅
+   - Auto-connection during signup with direct Convex ID usage ✅
    - Connection data saved to Convex database with all profile fields ✅
    - Dashboard displays Instagram handle (@username format) ✅
-   - No fake email generation - proper profile handling ✅
-   - Automatic retry logic for reliable user connection ✅
+   - Clean profile handling without fake email generation ✅
+   - Simplified authentication flow with direct ID mapping ✅
 
 **Key Improvements**:
+- **Streamlined Architecture**: Direct Convex ID usage eliminates complex ID mapping and retry logic
 - **Complete Profile Data**: Captures username, display name, and profile picture URL during OAuth
 - **Smart Display Logic**: Dashboard prioritizes Instagram handle (@username) over email/name
-- **Robust Connection**: Auto-connection works seamlessly during signup with retry logic
-- **Clean Data Handling**: No more fake email addresses - users can add real email later
-- **NextAuth ID Storage**: Proper user lookup using NextAuth IDs instead of email matching
+- **Clean Authentication**: Simplified auth flow without temporary workarounds or band-aid solutions
+- **Reliable Connection**: Auto-connection works seamlessly with direct user ID passing
 
 **Note**: The Instagram API provides comprehensive profile data for Business/Creator accounts and enables reliable content publishing features.
 
@@ -129,11 +125,71 @@ rite/
   - shadcn/ui - Base component library with Radix UI primitives
   - Kibo UI - Advanced components (Dropzone, QR Code, Code Block)
 - **Backend**: Convex (real-time database and file storage, shared across apps)
-- **Authentication**: NextAuth v5 with complete Instagram OAuth integration and profile data handling
+- **Authentication**: NextAuth v5 with streamlined Instagram OAuth integration and direct Convex ID usage
 - **Routing**: Next.js App Router / SvelteKit file-based routing
 - **Validation**: ArkType (high-performance TypeScript schema validation)
 - **File Handling**: Convex file storage for promo materials
 - **AI Integration**: Model Context Protocol (MCP) for Kibo UI
+
+### Authentication Architecture
+
+**Current Implementation (Simplified & Clean):**
+- **NextAuth v5**: Primary authentication provider with direct configuration
+- **Convex Integration**: Direct user ID usage eliminates complex mapping and retry logic
+- **Instagram OAuth Proxy**: Custom Cloudflare Workers service for OIDC compatibility
+- **Auto-Connection**: Seamless Instagram profile linking during signup without temporary workarounds
+
+**Key Files:**
+- `/app/lib/auth.ts` - NextAuth configuration with Instagram provider and Convex adapter
+- `/app/providers/root-provider.tsx` - Main provider wrapper with proper SSR handling
+- `/app/providers/convex-provider-client.tsx` - Client-side Convex initialization with hydration safety
+- `/packages/backend/convex/auth.ts` - Convex authentication functions with direct ID handling
+- `/packages/backend/convex/instagram.ts` - Instagram connection management
+
+**Provider Setup & Hydration Handling:**
+```typescript
+// Root provider with proper SSR handling
+export function RootProvider({ children }: { children: ReactNode }) {
+  return (
+    <AuthProvider>
+      <ConvexProviderClient>{children}</ConvexProviderClient>
+    </AuthProvider>
+  );
+}
+
+// Client-side Convex provider with hydration safety
+export function ConvexProviderClient({ children }: { children: ReactNode }) {
+  const [isClient, setIsClient] = useState(false)
+  const [convex, setConvex] = useState<ConvexReactClient | null>(null)
+
+  useEffect(() => {
+    // Client-side only initialization prevents hydration mismatches
+    const convexUrl = process.env.NEXT_PUBLIC_CONVEX_URL
+    if (convexUrl) {
+      const client = new ConvexReactClient(convexUrl)
+      setConvex(client)
+    }
+    setIsClient(true)
+  }, [])
+
+  // Proper loading states prevent "Objects are not valid as a React child" errors
+  if (!isClient) {
+    return <div className="min-h-screen flex items-center justify-center">
+      <div className="animate-pulse text-gray-600">Loading...</div>
+    </div>
+  }
+
+  return convex ? 
+    <ConvexReactProvider client={convex}>{children}</ConvexReactProvider> : 
+    <>{children}</>
+}
+```
+
+**Build Configuration:**
+- **Force Dynamic**: All NextAuth pages use `export const dynamic = 'force-dynamic'` to prevent prerender errors
+- **SSR Disabled**: ConvexProvider uses dynamic imports with `ssr: false` to prevent hydration mismatches
+- **Environment Handling**: Graceful fallbacks for missing `NEXT_PUBLIC_CONVEX_URL`
+- **Error Boundaries**: Proper 404 handling with `/app/not-found.tsx`
 
 ### Core Architecture
 
@@ -191,11 +247,12 @@ rite/
 - **Robust QR Code Generation**: Canvas validation and error handling for reliable QR codes
 - **Professional Interface**: Clean dashboard with development status in footer
 - **Backward Compatibility**: Schema updates work with existing database records
-- **Instagram Authentication**: Complete OAuth login integration through NextAuth with full profile data
-- **Instagram Connection Management**: Seamless auto-connection during signup with retry logic
+- **Instagram Authentication**: Streamlined OAuth login integration through NextAuth with direct ID mapping
+- **Instagram Connection Management**: Seamless auto-connection during signup with simplified architecture
 - **Instagram Profile Display**: Dashboard shows Instagram handles (@username format) with profile pictures
 - **Instagram Data Storage**: Complete profile data saved to Convex (username, display name, profile picture, account type)
-- **Smart User Lookup**: NextAuth ID-based user matching for reliable connection handling
+- **Clean Authentication Flow**: Direct Convex ID usage eliminates complex mapping and temporary workarounds
+- **Hydration-Safe Providers**: ConvexProvider with proper SSR handling and client-side initialization
 
 **📋 Planned:**
 - **File Upload Integration**: Connect Dropzone to Convex file storage for actual uploads
@@ -673,10 +730,27 @@ import type { Event, Timeslot } from '@rite/shared-types'
 - [x] Complete profile data capture (username, display name, profile picture URL)
 - [x] Instagram connection data storage in Convex database with all profile fields
 - [x] Dashboard UI displaying Instagram handles (@username format)
-- [x] Smart user lookup using NextAuth IDs instead of email matching
-- [x] Automatic retry logic for reliable connection establishment
-- [x] Removal of fake email generation for cleaner user profiles
+- [x] Direct Convex ID usage eliminating complex NextAuth UUID mapping
+- [x] Simplified authentication flow without retry logic or temporary workarounds
+- [x] Clean profile handling without fake email generation
 - [x] Business/Creator account validation and proper data mapping
+
+### Phase 2.9: Authentication System Cleanup - ✅ **COMPLETED**
+- [x] Removed complex NextAuth ID mapping and retry logic from authentication flow
+- [x] Direct Convex ID usage throughout authentication system for consistency
+- [x] Cleaned backend auth functions, removed temporary user creation workarounds
+- [x] Eliminated band-aid users.ts file and unnecessary migrations folder
+- [x] Updated components to use proper Convex queries with correct typing
+- [x] Streamlined auth configuration with direct provider setup
+
+### Phase 2.10: ConvexProvider Hydration Fixes - ✅ **COMPLETED**  
+- [x] Fixed "Objects are not valid as a React child" hydration error with comprehensive solution
+- [x] Client-side ConvexReactClient initialization using useEffect pattern
+- [x] Dynamic imports with SSR disabled to prevent server/client mismatches
+- [x] Proper loading states during hydration to prevent render errors
+- [x] Graceful handling of missing NEXT_PUBLIC_CONVEX_URL environment variable
+- [x] Added force-dynamic export to all pages using NextAuth
+- [x] Created proper not-found page for 404 handling
 
 ### Phase 2.5: Enhanced Event Creation - ✅ **COMPLETED**
 - [x] Instagram hashtags field for event promotion
@@ -717,6 +791,74 @@ import type { Event, Timeslot } from '@rite/shared-types'
 - [ ] Email notifications and deadline reminders
 - [ ] Form persistence (remember progress)
 
+## Troubleshooting Guide
+
+### Common Authentication Issues
+
+**1. "Objects are not valid as a React child" Error**
+- **Cause**: ConvexReactClient being initialized on server-side during SSR
+- **Solution**: Use client-side initialization with useEffect pattern
+- **Implementation**: See `ConvexProviderClient` in `/app/providers/convex-provider-client.tsx`
+
+**2. NextAuth Prerender Errors**  
+- **Cause**: Pages using NextAuth attempting to prerender during build
+- **Solution**: Add `export const dynamic = 'force-dynamic'` to affected pages
+- **Affected Pages**: `/app/dashboard/page.tsx`, `/app/not-found.tsx`, and any page using `auth()`
+
+**3. Hydration Mismatches**
+- **Cause**: Server and client rendering different content due to environment variables
+- **Solution**: Dynamic imports with SSR disabled for provider components
+- **Implementation**: Use `dynamic(() => import(), { ssr: false })` pattern
+
+**4. Missing Environment Variables**
+- **Cause**: `NEXT_PUBLIC_CONVEX_URL` not available during build or runtime
+- **Solution**: Graceful fallbacks and proper error handling
+- **Implementation**: Check for environment variables before client initialization
+
+### Build Configuration Best Practices
+
+**Force Dynamic Rendering:**
+```typescript
+// Add to any page using NextAuth
+export const dynamic = 'force-dynamic'
+```
+
+**Proper Provider Structure:**
+```typescript
+// Use dynamic imports for client-side only providers
+const ConvexProviderClient = dynamic(
+  () => import("./convex-provider-client"),
+  { ssr: false, loading: () => <LoadingComponent /> }
+);
+```
+
+**Environment Variable Handling:**
+```typescript
+// Always check for required environment variables
+const convexUrl = process.env.NEXT_PUBLIC_CONVEX_URL
+if (!convexUrl) {
+  console.warn('NEXT_PUBLIC_CONVEX_URL is not set. Convex functionality will be disabled.')
+  return
+}
+```
+
+### Authentication Flow Debugging
+
+**1. Check NextAuth Configuration**
+- Verify all required environment variables are set
+- Ensure Instagram OAuth proxy is accessible
+- Validate client ID and secret match Instagram app settings
+
+**2. Verify Convex Connection**
+- Check that Convex deployment is active
+- Confirm database schema matches expected structure
+- Validate user creation and Instagram connection flow
+
+**3. Debug Instagram OAuth**
+- Test OAuth proxy endpoints independently
+- Verify Business/Creator account requirements
+- Check profile data mapping in auth callbacks
+
 ## Deployment Recommendations
 
 ### Recommended Platform: Vercel
@@ -737,18 +879,27 @@ import type { Event, Timeslot } from '@rite/shared-types'
 1. Connect GitHub repository to Vercel
 2. Add custom domain: rite.party
 3. Set environment variables:
-   - `NEXT_PUBLIC_CONVEX_URL`
-   - `CONVEX_DEPLOY_KEY`
-   - `NEXTAUTH_URL`
-   - `NEXTAUTH_SECRET`
-   - `INSTAGRAM_CLIENT_ID`
-   - `INSTAGRAM_CLIENT_SECRET`
-   - `INSTAGRAM_OAUTH_PROXY_URL`
+   - `NEXT_PUBLIC_CONVEX_URL` (Required for Convex integration)
+   - `CONVEX_DEPLOY_KEY` (For Convex deployment)
+   - `NEXTAUTH_URL` (Should match production domain)
+   - `NEXTAUTH_SECRET` (Generate secure random string)
+   - `INSTAGRAM_CLIENT_ID` (From Instagram app configuration)  
+   - `INSTAGRAM_CLIENT_SECRET` (From Instagram app configuration)
+   - `INSTAGRAM_OAUTH_PROXY_URL` (Cloudflare Workers proxy URL)
 4. Deploy settings:
    - Framework Preset: Next.js (auto-detected)
-   - Build Command: `npm run build`
-   - Install Command: `npm install`
+   - Build Command: `pnpm run build` (uses monorepo structure)
+   - Install Command: `pnpm install`
+   - Node.js Version: 18.x or later
 5. Enable automatic deployments for main branch
+
+### Pre-Deployment Checklist:
+- [ ] All environment variables are set and validated
+- [ ] Instagram OAuth proxy is deployed and accessible
+- [ ] Convex backend is deployed and schema is up to date
+- [ ] Build passes locally with same environment variables
+- [ ] All pages using NextAuth have `export const dynamic = 'force-dynamic'`
+- [ ] ConvexProvider is properly configured with SSR disabled
 
 ### Performance Optimization:
 - Vercel automatically handles:
