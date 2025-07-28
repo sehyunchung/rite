@@ -317,13 +317,7 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6 space-y-8">
-      <div className="text-center">
-        <h1 className="text-3xl font-bold mb-2">Create New Event</h1>
-        <p className="text-muted-foreground">Set up your DJ event with timeslots and submission requirements</p>
-      </div>
-
-      <form onSubmit={(e) => void handleSubmit(e)} className="space-y-8">
+    <form onSubmit={(e) => void handleSubmit(e)} className="space-y-8">
         {/* Basic Event Information */}
         <Card>
           <CardHeader>
@@ -697,6 +691,5 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
           </Button>
         </div>
       </form>
-    </div>
   );
 }
