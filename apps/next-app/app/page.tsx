@@ -4,7 +4,12 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 
 export default async function HomePage() {
-  const session = await auth()
+  let session = null
+  try {
+    session = await auth()
+  } catch (error) {
+    console.error('Auth error in HomePage:', error)
+  }
 
   // Redirect authenticated users to dashboard
   if (session) {
