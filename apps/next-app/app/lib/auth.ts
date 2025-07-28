@@ -64,7 +64,30 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   adapter: convex ? ConvexAdapter(convex) : undefined,
   secret: process.env.NEXTAUTH_SECRET || 'fallback-secret-for-development',
   providers,
+  session: {
+    strategy: 'jwt',
+  },
   callbacks: {
+    async jwt({ token, user, account }) {
+      // When user signs in, add their Convex user ID to the token
+      if (user && convex) {
+        // Find the user in Convex by NextAuth ID
+        const convexUser = await convex.query(api.auth.getUserByNextAuthId, { 
+          nextAuthId: user.id 
+        })
+        if (convexUser) {
+          token.convexUserId = convexUser._id
+        }
+      }
+      return token
+    },
+    async session({ session, token }) {
+      // Add the Convex user ID to the session
+      if (token.convexUserId) {
+        session.user.convexUserId = token.convexUserId as string
+      }
+      return session
+    },
     async signIn({ user, account, profile }) {
       // Debug Instagram profile data
       if (account?.provider === 'instagram') {
