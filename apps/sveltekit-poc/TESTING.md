@@ -4,7 +4,7 @@
 1. Environment variables are set in `.env.local`:
    - `VITE_CONVEX_URL` - Convex backend URL  
    - `NEXTAUTH_SECRET` - NextAuth secret key
-   - `NEXTAUTH_URL` - Should be `http://localhost:3001`
+   - `NEXTAUTH_URL` - Should be `http://localhost:8001`
    - `INSTAGRAM_CLIENT_ID` - Instagram app client ID
    - `INSTAGRAM_CLIENT_SECRET` - Instagram app client secret
    - `INSTAGRAM_OAUTH_PROXY_URL` - Instagram OAuth proxy URL
@@ -16,7 +16,7 @@
 cd apps/sveltekit-poc
 pnpm run dev
 ```
-The app should be available at `http://localhost:3001`
+The app should be available at `http://localhost:8001`
 
 ### 2. Check Console Output
 Look for these confirmations in the server console:

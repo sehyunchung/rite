@@ -31,7 +31,7 @@ The application uses Clerk for authentication. To set up authentication:
    INSTAGRAM_CLIENT_ID=your_instagram_client_id
    INSTAGRAM_CLIENT_SECRET=your_instagram_client_secret
    INSTAGRAM_OAUTH_PROXY_URL=https://rite-instagram-oauth-proxy.sehyunchung.workers.dev
-   NEXTAUTH_URL=http://localhost:3000
+   NEXTAUTH_URL=http://localhost:8000
    NEXTAUTH_SECRET=your_nextauth_secret_here
    NEXT_PUBLIC_CONVEX_URL=your_convex_url
    ```
@@ -245,7 +245,7 @@ This project is configured with Kibo UI MCP server for AI-assisted development:
 - Run `npm run predev` to initialize Convex development environment and open dashboard
 - Use `npm run dev` to start both frontend (Next.js with Turbopack) and backend (Convex) in parallel
 - Convex dashboard automatically opens for database management
-- Frontend serves at localhost:3000 with fast refresh
+- Frontend serves at localhost:8000 with fast refresh
 - Turbopack provides fast bundling and hot module replacement
 - MCP integration provides AI-assisted component development
 

@@ -46,8 +46,8 @@ pnpm run dev:backend     # Convex backend only
 
 ## Development URLs
 
-- **Next.js App**: http://localhost:3000
-- **SvelteKit POC**: http://localhost:3001
+- **Next.js App**: http://localhost:8000
+- **SvelteKit POC**: http://localhost:8001
 - **Convex Dashboard**: Opens automatically when running backend
 
 ## Environment Setup
@@ -58,7 +58,7 @@ Create a `.env.local` file in `apps/next-app/` with the following variables:
 # Required for full functionality
 NEXT_PUBLIC_CONVEX_URL=your_convex_url
 CONVEX_URL=your_convex_url
-NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_URL=http://localhost:8000
 NEXTAUTH_SECRET=your_nextauth_secret
 INSTAGRAM_CLIENT_ID=your_instagram_client_id
 INSTAGRAM_CLIENT_SECRET=your_instagram_client_secret
