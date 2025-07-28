@@ -1,7 +1,12 @@
 # Cloudflare Pages configuration
 name = "rite-sveltekit"
+main = "placeholder-worker.js"
 compatibility_date = "2025-01-27"
 compatibility_flags = ["nodejs_compat"]
+
+# Build configuration
+[build]
+command = "pnpm run build"
 
 # Environment variables for Cloudflare Pages
 [vars]
