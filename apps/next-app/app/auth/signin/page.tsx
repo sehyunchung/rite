@@ -15,7 +15,8 @@ export default async function SignInPage() {
     <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4">
       <div className="max-w-md w-full space-y-12">
         <div className="text-center">
-          <h1 className="text-6xl font-extralight">Ⓡ</h1>
+          <h1 className="text-5xl font-bold">RITE</h1>
+          <p className="text-lg text-gray-600 mt-4">Streamline your event workflow with Instagram integration</p>
         </div>
         
         <Card>
