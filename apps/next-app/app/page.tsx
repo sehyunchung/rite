@@ -19,15 +19,15 @@ export default async function HomePage() {
           <div className="flex justify-between h-16 items-center">
             <div className="flex items-center gap-1">
               <h1 className="text-2xl font-extralight flex pb-[2px]">Ⓡ</h1>
-              <span className="text-lg font-medium uppercase font-suit">Rite</span>
+              <span className="text-lg font-medium uppercase font-suit">RITE</span>
             </div>
             <div className="flex items-center space-x-4">
-              <Link href="/auth/signin">
-                <Button variant="outline" className="font-suit">Sign In</Button>
-              </Link>
-              <Link href="/auth/signin">
-                <Button className="font-suit">Get Started</Button>
-              </Link>
+              <Button variant="outline" className="font-suit" asChild>
+                <Link href="/auth/signin">Sign In</Link>
+              </Button>
+              <Button className="font-suit" asChild>
+                <Link href="/auth/signin">Get Started</Link>
+              </Button>
             </div>
           </div>
         </div>

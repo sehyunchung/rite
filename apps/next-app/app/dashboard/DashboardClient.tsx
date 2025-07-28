@@ -50,9 +50,9 @@ export function DashboardClient({ userId, fallbackDisplayName }: DashboardClient
               <h1 className="text-3xl font-light text-gray-900">Dashboard</h1>
               <p className="text-gray-600 mt-2">Welcome back! Your DJ event management platform is ready.</p>
             </div>
-            <Link href="/events/create">
-              <Button>Create New Event</Button>
-            </Link>
+            <Button asChild>
+              <Link href="/events/create">Create New Event</Link>
+            </Button>
           </div>
 
           <DashboardContent userId={userId} />

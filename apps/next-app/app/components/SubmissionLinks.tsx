@@ -23,8 +23,8 @@ export function SubmissionLinks({ events }: SubmissionLinksProps) {
             Share these links with your DJs for them to submit their materials:
           </p>
           <div className="space-y-4">
-            {events.map((event: any) => 
-              event.timeslots?.map((slot: any) => {
+            {events.flatMap((event: any) => 
+              (event.timeslots || []).map((slot: any) => {
                 const submissionUrl = `${baseUrl}/dj-submission?token=${slot.submissionToken}`;
                 
                 return (
@@ -49,7 +49,7 @@ export function SubmissionLinks({ events }: SubmissionLinksProps) {
                   </div>
                 );
               })
-            ).filter(Boolean)}
+            )}
           </div>
         </CardContent>
       </Card>

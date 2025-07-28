@@ -94,9 +94,9 @@ export function DashboardContent({ userId }: DashboardContentProps) {
             <CardContent className="pt-6">
               <div className="text-center text-gray-500">
                 <p className="mb-4">No events yet. Create your first event to get started!</p>
-                <Link href="/events/create">
-                  <Button variant="outline">Create Event</Button>
-                </Link>
+                <Button variant="outline" asChild>
+                  <Link href="/events/create">Create Event</Link>
+                </Button>
               </div>
             </CardContent>
           </Card>
