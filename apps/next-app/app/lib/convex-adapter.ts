@@ -1,7 +1,7 @@
 import type { Adapter } from "@auth/core/adapters"
 import { ConvexHttpClient } from "convex/browser"
 import { api } from "@rite/backend/convex/_generated/api"
-import { Id, Doc } from "@rite/backend/convex/_generated/dataModel"
+import { Id } from "@rite/backend/convex/_generated/dataModel"
 
 // Utility function to safely cast optional account fields
 function safeString(value: unknown): string | undefined {
@@ -20,7 +20,6 @@ export function ConvexAdapter(convex: ConvexHttpClient): Adapter {
         name: user.name || undefined,
         image: user.image || undefined,
         emailVerified: user.emailVerified?.getTime(),
-        nextAuthId: user.id, // Store the NextAuth ID for lookups
       })
       
       return {
@@ -33,12 +32,11 @@ export function ConvexAdapter(convex: ConvexHttpClient): Adapter {
     },
 
     async getUser(id) {
-      // id here is the NextAuth UUID, need to find user by nextAuthId
-      const userDoc = await convex.query(api.auth.getUserByNextAuthId, { nextAuthId: id })
+      const userDoc = await convex.query(api.auth.getUser, { userId: id as Id<"users"> })
       if (!userDoc) return null
       
       return {
-        id: id, // Return the NextAuth UUID, not Convex ID
+        id: userDoc._id,
         email: userDoc.email,
         name: userDoc.name,
         image: userDoc.image,
@@ -88,17 +86,17 @@ export function ConvexAdapter(convex: ConvexHttpClient): Adapter {
       })
       
       // Get the updated user
-      const userDoc = await convex.query(api.auth.getUser, { userId: id as Id<"users"> })
-      if (!userDoc) {
-        throw new Error(`User with id ${id} not found`)
+      const updatedUser = await convex.query(api.auth.getUser, { userId: id as Id<"users"> })
+      if (!updatedUser) {
+        throw new Error(`User with id ${id} not found after update`)
       }
       
       return {
-        id: userDoc._id,
-        email: userDoc.email,
-        name: userDoc.name,
-        image: userDoc.image,
-        emailVerified: userDoc.emailVerified ? new Date(userDoc.emailVerified) : null,
+        id: updatedUser._id,
+        email: updatedUser.email,
+        name: updatedUser.name,
+        image: updatedUser.image,
+        emailVerified: updatedUser.emailVerified ? new Date(updatedUser.emailVerified) : null,
       }
     },
 

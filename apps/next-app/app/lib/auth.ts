@@ -2,6 +2,7 @@ import NextAuth from 'next-auth'
 import { ConvexAdapter } from './convex-adapter'
 import { convex } from './convex'
 import { api } from '@rite/backend/convex/_generated/api'
+import { Id } from '@rite/backend/convex/_generated/dataModel'
 
 // Instagram profile type from our OAuth proxy
 interface InstagramProfile {
@@ -68,92 +69,45 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     strategy: 'jwt',
   },
   callbacks: {
-    async jwt({ token, user, account }) {
-      // When user signs in, add their Convex user ID to the token
-      if (user && convex) {
-        // Find the user in Convex by NextAuth ID
-        const convexUser = await convex.query(api.auth.getUserByNextAuthId, { 
-          nextAuthId: user.id 
-        })
-        if (convexUser) {
-          token.convexUserId = convexUser._id
-        }
+    async jwt({ token, user }) {
+      // When user signs in, add their ID to the token
+      if (user) {
+        token.userId = user.id
       }
       return token
     },
     async session({ session, token }) {
-      // Add the Convex user ID to the session
-      if (token.convexUserId) {
-        session.user.convexUserId = token.convexUserId as string
+      if (session?.user && token?.userId) {
+        session.user.id = token.userId as string
       }
       return session
     },
     async signIn({ user, account, profile }) {
-      // Debug Instagram profile data
-      if (account?.provider === 'instagram') {
-        console.log('🔍 Instagram signin attempt:', {
-          userEmail: user.email,
-          userId: user.id,
-          profileData: profile,
-          convexAvailable: !!convex,
-          signInStep: 'callback-after-user-creation'
-        })
-      }
-
-      // Auto-connect Instagram with retry logic
+      // Auto-connect Instagram on sign in
       if (convex && account?.provider === 'instagram' && profile && user.id && isInstagramProfile(profile)) {
-        // Don't await this - let it run in background to not block signin
-        setTimeout(async () => {
-          try {
-            // Retry a few times to wait for adapter to create user
-            let convexUser = null
-            for (let i = 0; i < 5; i++) {
-              convexUser = await convex!.query(api.auth.getUserByNextAuthId, { nextAuthId: user.id! })
-              if (convexUser) break
-              await new Promise(resolve => setTimeout(resolve, 200 * (i + 1))) // Exponential backoff
-            }
-            
-            if (convexUser) {
-              const username = profile.username || profile.preferred_username || profile.instagram_user_id || 'unknown'
-              await convex!.mutation(api.instagram.saveConnectionFromAuth, {
-                userId: convexUser._id,
-                instagramUserId: profile.sub,
-                username: username,
-                accessToken: account.access_token || '',
-                accountType: profile.account_type || 'BUSINESS',
-                profilePictureUrl: profile.picture,
-                displayName: profile.name,
-              })
-              
-              console.log('✅ Instagram auto-connected (delayed) for user:', convexUser._id)
-            } else {
-              console.warn('⚠️ Failed to find Convex user after retries for NextAuth ID:', user.id)
-            }
-          } catch (error) {
-            console.error('❌ Failed to auto-connect Instagram (delayed):', error)
-          }
-        }, 0)
-        
-        console.log('📝 Instagram auto-connection scheduled for NextAuth ID:', user.id)
+        try {
+          const username = profile.username || profile.preferred_username || profile.instagram_user_id || 'unknown'
+          await convex.mutation(api.instagram.saveConnectionFromAuth, {
+            userId: user.id as Id<"users">,
+            instagramUserId: profile.sub,
+            username: username,
+            accessToken: account.access_token || '',
+            accountType: profile.account_type || 'BUSINESS',
+            profilePictureUrl: profile.picture,
+            displayName: profile.name,
+          })
+          console.log('✅ Instagram connected for user:', user.id)
+        } catch (error) {
+          console.error('❌ Failed to connect Instagram:', error)
+        }
       }
       
       return true
-    },
-    async session({ session, user, token }) {
-      if (session?.user) {
-        // Use user.id for database sessions, token.sub for JWT sessions
-        session.user.id = user?.id || token?.sub || ''
-      }
-      return session
     },
   },
   pages: {
     signIn: '/auth/signin',
     error: '/auth/error',
-  },
-  session: {
-    // Use JWT when no adapter is available, database when Convex is connected
-    strategy: convex ? 'database' : 'jwt',
   },
   experimental: {
     enableWebAuthn: false,
