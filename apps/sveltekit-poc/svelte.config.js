@@ -6,11 +6,7 @@ const config = {
 	preprocess: vitePreprocess(),
 	kit: {
 		adapter: adapter({
-			// Cloudflare Pages Functions configuration
-			routes: {
-				include: ['/*'],
-				exclude: ['<build>/*', '<files>/*']
-			}
+			// Cloudflare Workers configuration
 		}),
 		alias: {
 			'@rite/backend': '../../packages/backend'
