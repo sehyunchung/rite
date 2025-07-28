@@ -60,16 +60,16 @@ export default async function AuthErrorPage({
             </div>
             
             <div className="flex flex-col gap-2">
-              <Link href="/auth/signin">
-                <Button className="w-full">
+              <Button asChild className="w-full">
+                <Link href="/auth/signin">
                   Try Again
-                </Button>
-              </Link>
-              <Link href="/">
-                <Button variant="outline" className="w-full">
+                </Link>
+              </Button>
+              <Button asChild variant="outline" className="w-full">
+                <Link href="/">
                   Back to Home
-                </Button>
-              </Link>
+                </Link>
+              </Button>
             </div>
           </CardContent>
         </Card>

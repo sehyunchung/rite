@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState } from 'react';
 import { useQuery, useMutation } from 'convex/react';
 import { api } from '@rite/backend/convex/_generated/api';

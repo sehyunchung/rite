@@ -279,7 +279,6 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
 
       const result = await createEvent(eventData);
       
-      console.log('Event created successfully:', result);
       alert('Event created successfully!');
       
       // Reset form
