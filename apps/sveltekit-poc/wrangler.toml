@@ -1,20 +1,15 @@
-# Cloudflare Workers configuration
+# Cloudflare Workers configuration (matches working local deployment)
 name = "rite-sveltekit"
 main = ".svelte-kit/cloudflare/_worker.js"
+assets = { directory = ".svelte-kit/cloudflare", binding = "ASSETS" }
 compatibility_date = "2025-01-27"
 compatibility_flags = ["nodejs_compat"]
 workers_dev = true
 
-# Workers Versions configuration
-[versions]
-compatibility_date = "2025-01-27"
-compatibility_flags = ["nodejs_compat"]
-
-# Build configuration
+# Build configuration that runs before wrangler versions upload
 [build]
-command = "pnpm run build"
-cwd = "apps/sveltekit-poc"
-watch_paths = ["src/**/*.{js,jsx,ts,tsx,svelte}"]
+command = "pnpm --filter=sveltekit-poc run build"
+cwd = "../.."
 
 # Environment variables
 [vars]
