@@ -12,22 +12,17 @@ export default async function SignInPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white flex items-center justify-center py-12 px-4">
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4">
       <div className="max-w-md w-full space-y-12">
         <div className="text-center">
-          <h1 className="text-6xl font-extralight mb-8">Ⓡ</h1>
-          <p className="text-sm text-gray-600">Organizer login</p>
+          <h1 className="text-6xl font-extralight">Ⓡ</h1>
         </div>
         
         <Card>
           <CardHeader className="text-center">
-            <CardTitle>Welcome Back</CardTitle>
-            <CardDescription>
-              Sign in to manage your DJ events and submissions
-            </CardDescription>
+            <CardTitle>Sign In</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-6">
-            {/* Instagram Login - Featured for DJ/Organizer audience */}
+          <CardContent className="space-y-4">
             <form
               action={async () => {
                 'use server'
@@ -47,26 +42,11 @@ export default async function SignInPage() {
               </Button>
             </form>
 
-            <p className="text-xs text-center text-gray-600">
-              Requires Instagram Business or Creator account
-            </p>
             <p className="text-xs text-center text-gray-500">
-              Personal accounts need to{' '}
-              <a 
-                href="https://help.instagram.com/502981923235522" 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                className="underline"
-              >
-                switch to professional
-              </a>
+              Business or Creator account required
             </p>
           </CardContent>
         </Card>
-        
-        <div className="text-center text-sm text-gray-600">
-          <p>New organizer? <a href="/auth/signin" className="text-blue-600 hover:text-blue-800">Create an account</a></p>
-        </div>
       </div>
     </div>
   )
