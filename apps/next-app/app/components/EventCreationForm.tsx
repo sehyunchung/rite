@@ -33,8 +33,12 @@ interface EventCreationFormProps {
 const MAX_TIMESLOTS_PER_EVENT = 12; // Maximum number of DJ timeslots allowed
 
 export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
-  const createEvent = useMutation(api.events.createEvent);
-  const { data: session } = useSession();
+  const createEvent = useMutation(api.events.createEventTemp); // Using temp version for testing
+  const { data: session, status } = useSession();
+
+  // Debug session data
+  console.log('EventCreationForm session:', session);
+  console.log('Session status:', status);
   
   const [formData, setFormData] = useState<EventFormData>({
     name: '',
@@ -267,6 +271,21 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
     
     try {
       // Prepare data for Convex (organizerId will be set automatically from auth)
+      // Check if session is still loading
+      if (status === 'loading') {
+        alert('Please wait for authentication to complete.');
+        return;
+      }
+
+      // Check if user is authenticated
+      if (!session?.user?.id) {
+        alert('You must be logged in to create an event.');
+        return;
+      }
+
+      console.log('Session data:', session);
+      console.log('User ID:', session.user.id);
+
       const eventData = {
         name: formData.name,
         date: formData.date,
@@ -279,6 +298,7 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
         timeslots: timeslots.map(({ id: _id, ...slot }) => slot), // Remove the temporary id
       };
 
+      console.log('Event data being sent:', eventData);
       const result = await createEvent(eventData);
       
       alert('Event created successfully!');
