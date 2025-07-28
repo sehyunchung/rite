@@ -5,8 +5,8 @@ export const TimeslotValidation = type({
   id: 'string',
   startTime: 'string',
   endTime: 'string',
-  djName: 'string>0',
-  djInstagram: 'string>0',
+  djName: 'string',
+  djInstagram: 'string',
 });
 
 export const EventValidation = type({
@@ -73,8 +73,9 @@ export function validateTimeRange(startTime: string, endTime: string): string | 
 }
 
 export function validateInstagramHandle(handle: string): string | null {
-  if (!handle) {
-    return 'Instagram handle is required';
+  // If handle is empty, it's valid (optional field)
+  if (!handle || handle.trim() === '') {
+    return null;
   }
   
   if (!handle.startsWith('@')) {

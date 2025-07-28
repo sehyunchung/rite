@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useMutation } from 'convex/react';
 import { api } from '@rite/backend/convex/_generated/api';
+import { useSession } from 'next-auth/react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -33,6 +34,7 @@ const MAX_TIMESLOTS_PER_EVENT = 12; // Maximum number of DJ timeslots allowed
 
 export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
   const createEvent = useMutation(api.events.createEvent);
+  const { data: session } = useSession();
   
   const [formData, setFormData] = useState<EventFormData>({
     name: '',
@@ -275,6 +277,8 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
         payment: formData.payment,
         guestLimitPerDJ: formData.guestLimitPerDJ,
         timeslots: timeslots.map(({ id: _id, ...slot }) => slot), // Remove the temporary id
+        // Temporary: pass the NextAuth user ID until auth is properly integrated
+        organizerId: session?.user?.id,
       };
 
       const result = await createEvent(eventData);
@@ -330,7 +334,7 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
                 <Label htmlFor="eventName">Event Name</Label>
                 <Input
                   id="eventName"
-                  placeholder="Seoul Underground Night"
+                  placeholder="NO CLUB #53"
                   value={formData.name}
                   onChange={(e) => {
                     setFormData({ ...formData, name: e.target.value });
@@ -377,11 +381,11 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
               <Label htmlFor="hashtags">Instagram Hashtags</Label>
               <Input
                 id="hashtags"
-                placeholder="#seouldj #underground #techno"
+                placeholder="seouldj underground techno"
                 value={formData.hashtags}
                 onChange={(e) => setFormData({ ...formData, hashtags: e.target.value })}
               />
-              <p className="text-sm text-muted-foreground">Hashtags for Instagram promotion</p>
+              <p className="text-sm text-muted-foreground">Separate with spaces (# will be added automatically)</p>
             </div>
           </CardContent>
         </Card>
@@ -397,7 +401,7 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
               <Label htmlFor="venueName">Venue Name</Label>
               <Input
                 id="venueName"
-                placeholder="Club VERA"
+                placeholder="Cakeshop Seoul"
                 value={formData.venue.name}
                 onChange={(e) => setFormData({ 
                   ...formData, 
@@ -410,7 +414,7 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
               <Label htmlFor="venueAddress">Address</Label>
               <Input
                 id="venueAddress"
-                placeholder="123 Hongdae Street, Mapo-gu, Seoul"
+                placeholder="34 Noksapyeong-daero 54-gil, Yongsan-gu, Seoul"
                 value={formData.venue.address}
                 onChange={(e) => setFormData({ 
                   ...formData, 
@@ -625,20 +629,18 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
                   <div className="space-y-2">
                     <Label>DJ Name</Label>
                     <Input
-                      placeholder="DJ Hansol"
+                      placeholder="DJ Placeholder"
                       value={slot.djName}
                       onChange={(e) => updateTimeslot(slot.id, 'djName', e.target.value)}
-                      required
                     />
                   </div>
                   <div className="space-y-2">
                     <Label>Instagram Handle</Label>
                     <Input
-                      placeholder="@dj_hansol"
+                      placeholder="@dj_placeholder"
                       value={slot.djInstagram}
                       onChange={(e) => updateTimeslot(slot.id, 'djInstagram', e.target.value)}
                       className={errors[`timeslot-${slot.id}-instagram`] ? 'border-red-500' : ''}
-                      required
                     />
                     {errors[`timeslot-${slot.id}-instagram`] && (
                       <p className="text-xs text-red-500 mt-1">{errors[`timeslot-${slot.id}-instagram`]}</p>

@@ -48,7 +48,7 @@ export function DashboardClient({ userId, fallbackDisplayName }: DashboardClient
           <div className="flex justify-between items-center mb-8">
             <div>
               <h1 className="text-3xl font-light text-gray-900">Dashboard</h1>
-              <p className="text-gray-600 mt-2">Welcome back! Your DJ event management platform is ready.</p>
+              <p className="text-gray-600 mt-2">Welcome back!</p>
             </div>
             <Button asChild>
               <Link href="/events/create">Create New Event</Link>

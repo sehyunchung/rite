@@ -36,7 +36,7 @@ export default async function HomePage() {
             RITE
           </h1>
           <p className="text-xl text-gray-600 mb-12 max-w-2xl mx-auto">
-            Streamline your event workflow with Instagram integration
+            Streamline your event workflow
           </p>
           <Button size="lg" asChild>
             <Link href="/auth/signin">Get Started</Link>

@@ -16,7 +16,7 @@ export default async function SignInPage() {
       <div className="max-w-md w-full space-y-12">
         <div className="text-center">
           <h1 className="text-5xl font-bold">RITE</h1>
-          <p className="text-lg text-gray-600 mt-4">Streamline your event workflow with Instagram integration</p>
+          <p className="text-lg text-gray-600 mt-4">Streamline your event workflow</p>
         </div>
         
         <Card>
