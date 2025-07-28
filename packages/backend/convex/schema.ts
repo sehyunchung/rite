@@ -73,8 +73,8 @@ export default defineSchema({
   users: defineTable({
     email: v.string(),
     name: v.optional(v.string()),
-    clerkId: v.optional(v.string()), // Legacy Clerk support
-    nextAuthId: v.optional(v.string()), // NextAuth user ID
+    clerkId: v.optional(v.string()), // Legacy Clerk support - can be removed in future
+    nextAuthId: v.optional(v.string()), // Legacy NextAuth ID mapping - can be removed after data migration
     organizerProfile: v.object({
       companyName: v.optional(v.string()),
       phone: v.optional(v.string()),
@@ -85,7 +85,6 @@ export default defineSchema({
     image: v.optional(v.string()),
   })
     .index("by_clerk_id", ["clerkId"])
-    .index("by_nextauth_id", ["nextAuthId"])
     .index("by_email", ["email"]),
 
   // NextAuth.js required tables
