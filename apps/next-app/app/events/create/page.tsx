@@ -9,6 +9,8 @@ import Link from 'next/link';
 import { UserDisplay } from '@/components/UserDisplay';
 import { signOut } from 'next-auth/react';
 
+export const dynamic = 'force-dynamic'
+
 export default function CreateEventPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
