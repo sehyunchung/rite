@@ -1,5 +1,5 @@
 # Cloudflare Pages configuration
-name = "rite-sveltekit-poc"
+name = "rite-sveltekit"
 compatibility_date = "2025-01-27"
 compatibility_flags = ["nodejs_compat"]
 
