@@ -10,9 +10,10 @@ interface UserDisplayProps {
 }
 
 export function UserDisplay({ userId, fallbackName }: UserDisplayProps) {
+  // Only query if we have a valid userId
   const instagramConnection = useQuery(
-    api.instagram.getConnectionByUserId, 
-    { userId: userId as Id<"users"> }
+    api.instagram.getInstagramConnection, 
+    userId ? { userId: userId as Id<"users"> } : "skip"
   );
 
   const displayName = instagramConnection?.username 

@@ -2,13 +2,13 @@
 
 import { useQuery } from 'convex/react';
 import { api } from '@rite/backend/convex/_generated/api';
+import { Id } from '@rite/backend/convex/_generated/dataModel';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { SubmissionLinks } from './SubmissionLinks';
 import { useSession } from 'next-auth/react';
-import { Id } from '@rite/backend/convex/_generated/dataModel';
 
 interface DashboardContentProps {
   userId: string;
@@ -19,7 +19,10 @@ export function DashboardContent({ userId }: DashboardContentProps) {
   
   // Use the public query for now until we implement proper Convex auth
   const events = useQuery(api.events.listEventsPublic) || [];
-  const instagramConnection = useQuery(api.instagram.getConnectionByUserId, { userId: userId as Id<"users"> });
+  const instagramConnection = useQuery(
+    api.instagram.getInstagramConnection, 
+    userId ? { userId: userId as Id<"users"> } : "skip"
+  );
   
   // Show loading state while session is loading
   if (status === 'loading') {

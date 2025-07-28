@@ -277,8 +277,6 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
         payment: formData.payment,
         guestLimitPerDJ: formData.guestLimitPerDJ,
         timeslots: timeslots.map(({ id: _id, ...slot }) => slot), // Remove the temporary id
-        // Temporary: pass the NextAuth user ID until auth is properly integrated
-        organizerId: session?.user?.id,
       };
 
       const result = await createEvent(eventData);
