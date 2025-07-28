@@ -5,7 +5,7 @@
   "description": "Rite DJ event management platform - Next.js application",
   "type": "module",
   "scripts": {
-    "dev": "NODE_OPTIONS='--inspect' next dev --turbopack",
+    "dev": "NODE_OPTIONS='--inspect' next dev --turbopack --port 8000",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
