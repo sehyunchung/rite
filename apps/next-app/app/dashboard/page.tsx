@@ -1,73 +1,22 @@
-import { auth, signOut } from '@/lib/auth'
-import { Button } from '@/components/ui/button'
+import { auth } from '@/lib/auth'
 import { redirect } from 'next/navigation'
-import { convex } from '@/lib/convex'
-import { api } from '@rite/backend/convex/_generated/api'
+import { DashboardClient } from './DashboardClient'
 
 export default async function DashboardPage() {
   const session = await auth()
-  
-  if (!session) {
+
+  if (!session || !session.user?.id) {
     redirect('/auth/signin')
   }
 
-  // Get Instagram connection data if available
-  let instagramConnection = null
-  try {
-    if (convex && session.user?.id) {
-      // Use session user ID directly (should be Convex ID for database sessions)
-      instagramConnection = await convex.query(api.instagram.getConnectionByUserId, { userId: session.user.id as any })
-    }
-  } catch (error) {
-    console.error('Failed to fetch Instagram connection:', error)
-  }
-
-  // Debug logging
-  console.log('Dashboard debug:', {
-    sessionUserId: session.user?.id,
-    sessionUserName: session.user?.name,
-    sessionUserEmail: session.user?.email,
-    instagramConnection: instagramConnection,
-    instagramUsername: instagramConnection?.username
-  })
-
-  // Display priority: Instagram handle > user name > email > fallback
-  const displayName = instagramConnection?.username 
-    ? `@${instagramConnection.username}`
-    : session.user?.name || session.user?.email || 'User'
+  // Display priority: user name > email > fallback
+  // Instagram handle will be fetched client-side
+  const displayName = session.user.name || session.user.email || 'User'
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Navigation */}
-      <nav className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16 items-center">
-            <div className="flex items-center">
-              <h1 className="text-2xl font-extralight">Ⓡ</h1>
-              <span className="ml-2 text-xl font-medium">Rite</span>
-            </div>
-            <div className="flex items-center space-x-4">
-              <span className="text-sm text-gray-700">
-                Welcome, {displayName}
-              </span>
-              <form
-                action={async () => {
-                  'use server'
-                  await signOut({ redirectTo: '/' })
-                }}
-              >
-                <Button variant="outline" type="submit">
-                  Sign Out
-                </Button>
-              </form>
-            </div>
-          </div>
-        </div>
-      </nav>
-      <div className="p-8">
-        <h1 className="text-3xl font-light text-gray-900">Dashboard</h1>
-        <p className="text-gray-600 mt-2">Welcome back! Your DJ event management platform is ready.</p>
-      </div>
-    </div>
+    <DashboardClient 
+      userId={session.user.id} 
+      fallbackDisplayName={displayName} 
+    />
   )
 }
