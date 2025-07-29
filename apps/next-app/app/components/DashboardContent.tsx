@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
+import { CopyButton } from './CopyButton';
 
 interface DashboardContentProps {
   userId: string;
@@ -15,6 +16,7 @@ interface DashboardContentProps {
 
 export function DashboardContent({ userId }: DashboardContentProps) {
   const { status } = useSession();
+  const baseUrl = typeof window !== 'undefined' ? window.location.origin : '';
   
   // Use the public query for now until we implement proper Convex auth
   const events = useQuery(api.events.listEventsPublic) || [];
@@ -140,11 +142,10 @@ export function DashboardContent({ userId }: DashboardContentProps) {
                     View Details
                   </Link>
                 </Button>
-                <Button variant="outline" size="sm">
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m9.632 4.658C18.886 16.938 19 17.482 19 18c0 .482-.114.938-.316 1.342m0-2.684a3 3 0 110 2.684M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                  </svg>
-                </Button>
+                <CopyButton 
+                  text={`${baseUrl}/events/${event._id}`}
+                  className="px-3"
+                />
               </CardFooter>
             </Card>
           ))
