@@ -41,10 +41,10 @@ export function EventCreationClient({ userId, fallbackDisplayName, locale }: Eve
               </nav>
             </div>
             <div className="flex items-center space-x-4">
-              <LanguageSwitcher />
               <ErrorBoundary fallback={<span className="text-gray-600">{fallbackDisplayName}</span>}>
                 <UserDisplay userId={userId} fallbackName={fallbackDisplayName} />
               </ErrorBoundary>
+              <LanguageSwitcher />
               <Button 
                 variant="outline" 
                 onClick={() => signOut({ callbackUrl: '/' })}
