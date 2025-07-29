@@ -15,7 +15,7 @@ export function SubmissionLinks({ events }: SubmissionLinksProps) {
   }
 
   return (
-    <div className="mt-12">
+    <div className="mt-6">
       <h2 className="text-xl font-semibold text-gray-900 mb-4">DJ Submission Links</h2>
       <Card>
         <CardContent className="pt-6">

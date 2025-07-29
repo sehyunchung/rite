@@ -7,7 +7,6 @@ import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/componen
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { SubmissionLinks } from './SubmissionLinks';
 import { useSession } from 'next-auth/react';
 
 interface DashboardContentProps {
@@ -151,9 +150,6 @@ export function DashboardContent({ userId }: DashboardContentProps) {
           ))
         )}
       </div>
-
-      {/* DJ Submission Links Section */}
-      <SubmissionLinks events={events} />
     </>
   );
 }

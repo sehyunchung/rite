@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
+import { SubmissionLinks } from '@/components/SubmissionLinks';
 
 interface EventDetailClientProps {
   eventId: string;
@@ -138,6 +139,11 @@ export function EventDetailClient({ eventId, userId }: EventDetailClientProps) {
                   )}
                 </CardContent>
               </Card>
+
+              {/* DJ Submission Links */}
+              <ErrorBoundary>
+                <SubmissionLinks events={[event]} />
+              </ErrorBoundary>
             </div>
 
             {/* Event Sidebar */}
