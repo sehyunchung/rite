@@ -63,10 +63,12 @@ export function validateTimeRange(startTime: string, endTime: string): string | 
   }
   
   const start = new Date(`2000-01-01T${startTime}:00`);
-  const end = new Date(`2000-01-01T${endTime}:00`);
+  let end = new Date(`2000-01-01T${endTime}:00`);
   
-  if (start >= end) {
-    return 'End time must be after start time';
+  // Handle cross-midnight timeslots (e.g., 11:00 PM - 1:00 AM)
+  // If end time appears to be "before" start time, assume it's next day
+  if (end <= start) {
+    end = new Date(`2000-01-02T${endTime}:00`);
   }
   
   return null;
@@ -157,19 +159,7 @@ export function validateDeadlineOrder(guestListDeadline: string, promoDeadline: 
 }
 
 export function validateTimeslotDuration(startTime: string, endTime: string, minMinutes: number = 30): string | null {
-  if (!startTime || !endTime) {
-    return null; // Skip validation if times are not provided
-  }
-  
-  const start = new Date(`2000-01-01T${startTime}:00`);
-  const end = new Date(`2000-01-01T${endTime}:00`);
-  
-  const durationMinutes = (end.getTime() - start.getTime()) / (1000 * 60);
-  
-  if (durationMinutes < minMinutes) {
-    return `Timeslot must be at least ${minMinutes} minutes long`;
-  }
-  
+  // No duration restrictions for DJ timeslots - organizers know their event needs best
   return null;
 }
 
@@ -206,6 +196,50 @@ export function getDefaultEndTime(startTime: string): string {
   start.setHours(start.getHours() + 1); // Default 1-hour slot
   
   return start.toTimeString().slice(0, 5);
+}
+
+// Helper function to format timeslot for display with proper cross-midnight handling
+export function formatTimeslotDisplay(startTime: string, endTime: string): string {
+  if (!startTime || !endTime) return '';
+  
+  const start = new Date(`2000-01-01T${startTime}:00`);
+  const end = new Date(`2000-01-01T${endTime}:00`);
+  
+  // Check if it's a cross-midnight timeslot
+  const isCrossMidnight = end <= start;
+  
+  const startFormatted = start.toLocaleTimeString('en-US', { 
+    hour: 'numeric', 
+    minute: '2-digit', 
+    hour12: true 
+  });
+  
+  const endFormatted = end.toLocaleTimeString('en-US', { 
+    hour: 'numeric', 
+    minute: '2-digit', 
+    hour12: true 
+  });
+  
+  if (isCrossMidnight) {
+    return `${startFormatted} - ${endFormatted} (+1 day)`;
+  }
+  
+  return `${startFormatted} - ${endFormatted}`;
+}
+
+// Helper function to calculate timeslot duration in minutes (handles cross-midnight)
+export function getTimeslotDurationMinutes(startTime: string, endTime: string): number {
+  if (!startTime || !endTime) return 0;
+  
+  const start = new Date(`2000-01-01T${startTime}:00`);
+  let end = new Date(`2000-01-01T${endTime}:00`);
+  
+  // Handle cross-midnight timeslots
+  if (end <= start) {
+    end = new Date(`2000-01-02T${endTime}:00`);
+  }
+  
+  return (end.getTime() - start.getTime()) / (1000 * 60);
 }
 
 // Enhanced validation with business rule suggestions
