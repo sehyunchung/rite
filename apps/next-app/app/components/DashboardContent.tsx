@@ -136,8 +136,10 @@ export function DashboardContent({ userId }: DashboardContentProps) {
                 )}
               </CardContent>
               <CardFooter className="pt-4 space-x-2">
-                <Button variant="outline" size="sm" className="flex-1">
-                  View Details
+                <Button variant="outline" size="sm" className="flex-1" asChild>
+                  <Link href={`/events/${event._id}`}>
+                    View Details
+                  </Link>
                 </Button>
                 <Button variant="outline" size="sm">
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
