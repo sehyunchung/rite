@@ -15,8 +15,8 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
-      <body className={`${suit.variable} font-sans`}>
+    <html lang="en" className={suit.variable}>
+      <body className="font-sans">
         <ErrorBoundary>
           <RootProvider>
             {children}
