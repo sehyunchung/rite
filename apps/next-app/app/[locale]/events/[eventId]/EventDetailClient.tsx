@@ -28,6 +28,7 @@ export function EventDetailClient({ eventId, userId, locale }: EventDetailClient
   const t = useTranslations('events.detail');
   const tNav = useTranslations('navigation');
   const tCommon = useTranslations('common');
+  const tStatus = useTranslations('status');
   
   const event = useQuery(
     api.events.getEventPublic,
@@ -92,7 +93,7 @@ export function EventDetailClient({ eventId, userId, locale }: EventDetailClient
                 <div className="flex items-center gap-3 mb-2">
                   <h1 className="text-3xl font-light text-gray-900">{event.name}</h1>
                   <Badge variant={event.status === 'active' ? 'default' : 'secondary'}>
-                    {event.status}
+                    {tStatus(event.status)}
                   </Badge>
                 </div>
                 <p className="text-gray-600">{event.venue.name} • {event.date}</p>

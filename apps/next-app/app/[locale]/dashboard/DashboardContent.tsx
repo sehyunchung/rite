@@ -19,6 +19,7 @@ export function DashboardContent({ userId }: DashboardContentProps) {
   const { status } = useSession();
   const baseUrl = typeof window !== 'undefined' ? window.location.origin : '';
   const t = useTranslations('dashboard');
+  const tStatus = useTranslations('status');
   
   // Use the public query for now until we implement proper Convex auth
   const events = useQuery(api.events.listEventsPublic) || [];
@@ -55,7 +56,7 @@ export function DashboardContent({ userId }: DashboardContentProps) {
                   </svg>
                 </div>
                 <h3 className="font-medium text-gray-900">{t('actions.createEvent')}</h3>
-                <p className="text-sm text-gray-600 mt-1">Set up a new DJ event</p>
+                <p className="text-sm text-gray-600 mt-1">{t('actions.createEventDescription')}</p>
               </div>
             </CardContent>
           </Link>
@@ -70,7 +71,7 @@ export function DashboardContent({ userId }: DashboardContentProps) {
                 </svg>
               </div>
               <h3 className="font-medium text-gray-900">{t('actions.viewSubmissions')}</h3>
-              <p className="text-sm text-gray-600 mt-1">Check DJ submissions</p>
+              <p className="text-sm text-gray-600 mt-1">{t('actions.viewSubmissionsDescription')}</p>
             </div>
           </CardContent>
         </Card>
@@ -84,7 +85,7 @@ export function DashboardContent({ userId }: DashboardContentProps) {
                 </svg>
               </div>
               <h3 className="font-medium text-gray-900">{t('actions.eventCalendar')}</h3>
-              <p className="text-sm text-gray-600 mt-1">View upcoming events</p>
+              <p className="text-sm text-gray-600 mt-1">{t('actions.eventCalendarDescription')}</p>
             </div>
           </CardContent>
         </Card>
@@ -92,7 +93,7 @@ export function DashboardContent({ userId }: DashboardContentProps) {
 
       {/* Events List */}
       <div className="mb-6">
-        <h2 className="text-xl font-semibold text-gray-900 mb-4">Your Events</h2>
+        <h2 className="text-xl font-semibold text-gray-900 mb-4">{t('yourEvents')}</h2>
       </div>
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {events.length === 0 ? (
@@ -114,7 +115,7 @@ export function DashboardContent({ userId }: DashboardContentProps) {
                   <CardTitle className="text-lg">{event.name}</CardTitle>
                   {event.status && (
                     <Badge variant={event.status === 'active' ? 'default' : 'secondary'}>
-                      {event.status}
+                      {tStatus(event.status)}
                     </Badge>
                   )}
                 </div>
