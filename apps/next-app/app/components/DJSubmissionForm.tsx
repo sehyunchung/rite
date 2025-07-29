@@ -11,6 +11,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Dropzone, DropzoneContent, DropzoneEmptyState } from '@/components/ui/kibo-ui/dropzone';
 import { Id } from '@rite/backend/convex/_generated/dataModel';
 import { useTranslations } from 'next-intl';
+import { FullScreenLoading, LoadingIndicator } from '@/components/ui/loading-indicator';
 
 interface DJSubmissionFormProps {
   submissionToken: string;
@@ -132,14 +133,7 @@ export function DJSubmissionForm({ submissionToken }: DJSubmissionFormProps) {
 
   if (timeslotData === undefined) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="animate-pulse">
-          <div className="text-center">
-            <div className="w-8 h-8 bg-blue-500 rounded-full mx-auto mb-4"></div>
-            <p className="text-gray-600">{tCommon('loadingSubmissionForm')}</p>
-          </div>
-        </div>
-      </div>
+      <FullScreenLoading />
     );
   }
 
@@ -266,7 +260,7 @@ export function DJSubmissionForm({ submissionToken }: DJSubmissionFormProps) {
                     <ul className="text-sm text-gray-600 space-y-1">
                       {promoFiles.map((file, index) => (
                         <li key={index} className="flex items-center">
-                          <span className="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
+                          <span className="w-2 h-2 bg-gray-400 rounded-full mr-2"></span>
                           {file.name} ({Math.round(file.size / 1024)} KB)
                         </li>
                       ))}
@@ -305,7 +299,7 @@ export function DJSubmissionForm({ submissionToken }: DJSubmissionFormProps) {
             <CardContent className="space-y-4">
               {guestList.map((guest, index) => (
                 <div key={guest.id} className="flex gap-4 items-end">
-                  <div className="flex-1">
+                  <div className="flex-1 space-y-2">
                     <Label htmlFor={`guest-name-${guest.id}`}>{t('guestName', { number: index + 1 })}</Label>
                     <Input
                       id={`guest-name-${guest.id}`}
@@ -315,7 +309,7 @@ export function DJSubmissionForm({ submissionToken }: DJSubmissionFormProps) {
                       required
                     />
                   </div>
-                  <div className="flex-1">
+                  <div className="flex-1 space-y-2">
                     <Label htmlFor={`guest-phone-${guest.id}`}>{t('guestPhone')}</Label>
                     <Input
                       id={`guest-phone-${guest.id}`}

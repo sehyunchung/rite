@@ -2,6 +2,7 @@ import { Suspense } from 'react';
 import { DJSubmissionClient } from './DJSubmissionClient';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { getTranslations } from 'next-intl/server';
+import { FullScreenLoading } from '@/components/ui/loading-indicator';
 
 // Disable static generation for this page since it uses search params
 export const dynamic = 'force-dynamic';
@@ -42,19 +43,11 @@ async function DJSubmissionContent({ token, locale }: DJSubmissionContentProps) 
 export default async function DJSubmissionPage({ params, searchParams }: PageProps) {
   const { locale } = await params;
   const searchParamsData = await searchParams;
-  const tCommon = await getTranslations('common');
   
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen flex items-center justify-center">
-          <div className="animate-pulse">
-            <div className="text-center">
-              <div className="w-8 h-8 bg-blue-500 rounded-full mx-auto mb-4"></div>
-              <p className="text-gray-600">{tCommon('loading')}</p>
-            </div>
-          </div>
-        </div>
+        <FullScreenLoading />
       }
     >
       <DJSubmissionContent token={searchParamsData.token} locale={locale} />

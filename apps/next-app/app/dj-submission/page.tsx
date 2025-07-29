@@ -1,6 +1,7 @@
 import { Suspense } from 'react';
 import { DJSubmissionForm } from '@/components/DJSubmissionForm';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
+import { FullScreenLoading } from '@/components/ui/loading-indicator';
 
 // Disable static generation for this page since it uses search params
 export const dynamic = 'force-dynamic';
@@ -36,14 +37,7 @@ export default async function DJSubmissionPage({ searchParams }: PageProps) {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen flex items-center justify-center">
-          <div className="animate-pulse">
-            <div className="text-center">
-              <div className="w-8 h-8 bg-blue-500 rounded-full mx-auto mb-4"></div>
-              <p className="text-gray-600">Loading submission form...</p>
-            </div>
-          </div>
-        </div>
+        <FullScreenLoading />
       }
     >
       <DJSubmissionContent token={params.token} />

@@ -10,6 +10,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { SubmissionLinks } from '@/components/SubmissionLinks';
+import { FullScreenLoading } from '@/components/ui/loading-indicator';
 import { QRCode } from '@/components/ui/kibo-ui/qr-code';
 import { useState } from 'react';
 import { EditIcon, ClipboardListIcon, QrCodeIcon } from 'lucide-react';
@@ -31,12 +32,7 @@ export function EventDetailClient({ eventId, userId }: EventDetailClientProps) {
 
   if (event === undefined) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="animate-pulse text-center">
-          <div className="w-8 h-8 bg-blue-500 rounded-full mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading event details...</p>
-        </div>
-      </div>
+      <FullScreenLoading />
     );
   }
 

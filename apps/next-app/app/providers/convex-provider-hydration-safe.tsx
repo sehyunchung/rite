@@ -1,7 +1,8 @@
 'use client'
 
 import { ConvexProvider as ConvexReactProvider, ConvexReactClient } from 'convex/react'
-import { ReactNode, useRef, useSyncExternalStore } from 'react'
+import { ReactNode, useRef, useState, useEffect } from 'react'
+import { FullScreenLoading } from '@/components/ui/loading-indicator'
 
 // Singleton pattern for Convex client instance
 let convexClient: ConvexReactClient | null = null
@@ -29,11 +30,6 @@ function getConvexClient(): ConvexReactClient | null {
   }
 }
 
-// Hydration-safe hooks for client detection
-const subscribe = () => () => {}
-const getSnapshot = () => typeof window !== 'undefined'
-const getServerSnapshot = () => false
-
 interface ConvexProviderHydrationSafeProps {
   children: ReactNode
   fallback?: ReactNode
@@ -43,23 +39,25 @@ export function ConvexProviderHydrationSafe({
   children, 
   fallback 
 }: ConvexProviderHydrationSafeProps) {
-  // Use useSyncExternalStore for hydration-safe client detection
-  const isClient = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot)
-  
-  // Use ref to maintain stable client reference
+  const [isClient, setIsClient] = useState(false)
   const clientRef = useRef<ConvexReactClient | null>(null)
   
-  // Only get client on browser
-  if (isClient && !clientRef.current) {
-    clientRef.current = getConvexClient()
-  }
+  useEffect(() => {
+    // Mark as client-side after hydration
+    setIsClient(true)
+    
+    // Initialize Convex client
+    if (!clientRef.current) {
+      clientRef.current = getConvexClient()
+    }
+  }, [])
   
-  // Server-side or initial client render
+  // Show consistent loading state during SSR and initial hydration
   if (!isClient) {
     return (
       fallback || (
-        <div className="min-h-screen flex items-center justify-center">
-          <div className="animate-pulse text-gray-600">⏳</div>
+        <div suppressHydrationWarning>
+          <FullScreenLoading />
         </div>
       )
     )

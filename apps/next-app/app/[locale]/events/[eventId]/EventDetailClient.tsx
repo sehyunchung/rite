@@ -6,6 +6,7 @@ import { Id } from '@rite/backend/convex/_generated/dataModel';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { FullScreenLoading } from '@/components/ui/loading-indicator';
 import { Link } from '../../../../i18n/routing';
 import { useRouter } from 'next/navigation';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
@@ -37,12 +38,7 @@ export function EventDetailClient({ eventId, userId, locale }: EventDetailClient
 
   if (event === undefined) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="animate-pulse text-center">
-          <div className="w-8 h-8 bg-blue-500 rounded-full mx-auto mb-4"></div>
-          <p className="text-gray-600">{tCommon('loadingEventDetails')}</p>
-        </div>
-      </div>
+      <FullScreenLoading />
     );
   }
 

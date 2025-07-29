@@ -10,6 +10,7 @@ import { Link } from '../../../i18n/routing';
 import { useSession } from 'next-auth/react';
 import { CopyButton } from '@/components/CopyButton';
 import { useTranslations } from 'next-intl';
+import { LoadingIndicator } from '@/components/ui/loading-indicator';
 
 interface DashboardContentProps {
   userId: string;
@@ -31,12 +32,17 @@ export function DashboardContent({ userId }: DashboardContentProps) {
   // Show loading state while session is loading
   if (status === 'loading') {
     return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <div className="animate-pulse">
-          <div className="text-center">
-            <div className="w-8 h-8 bg-blue-500 rounded-full mx-auto mb-4"></div>
-            <p className="text-gray-600">{t('loadingEvents')}</p>
-          </div>
+      <div className="space-y-8">
+        {/* Placeholder for action cards grid */}
+        <div className="grid gap-4 md:grid-cols-3 mb-8 opacity-0">
+          <div className="h-32"></div>
+          <div className="h-32"></div>  
+          <div className="h-32"></div>
+        </div>
+        
+        {/* Loading indicator in center */}
+        <div className="flex items-center justify-center py-16">
+          <LoadingIndicator />
         </div>
       </div>
     );
