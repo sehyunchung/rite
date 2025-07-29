@@ -1,4 +1,4 @@
-import { routing } from '@/i18n/routing';
+import { routing } from '../../i18n/routing';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
 import { notFound } from 'next/navigation';
@@ -10,7 +10,7 @@ interface Props {
 }
 
 export function generateStaticParams() {
-  return routing.locales.map((locale) => ({ locale }));
+  return routing.locales.map((locale: string) => ({ locale }));
 }
 
 export default async function LocaleLayout({ children, params }: Props) {
