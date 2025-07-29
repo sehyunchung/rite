@@ -24,6 +24,7 @@ interface GuestListEntry {
 
 export function DJSubmissionForm({ submissionToken }: DJSubmissionFormProps) {
   const t = useTranslations('djSubmission');
+  const tCommon = useTranslations('common');
   const timeslotData = useQuery(api.timeslots.getTimeslotByToken, { submissionToken });
   const generateUploadUrl = useMutation(api.submissions.generateUploadUrl);
   const saveSubmission = useMutation(api.submissions.saveSubmission);
@@ -135,7 +136,7 @@ export function DJSubmissionForm({ submissionToken }: DJSubmissionFormProps) {
         <div className="animate-pulse">
           <div className="text-center">
             <div className="w-8 h-8 bg-blue-500 rounded-full mx-auto mb-4"></div>
-            <p className="text-gray-600">Loading submission form...</p>
+            <p className="text-gray-600">{tCommon('loadingSubmissionForm')}</p>
           </div>
         </div>
       </div>
@@ -281,10 +282,10 @@ export function DJSubmissionForm({ submissionToken }: DJSubmissionFormProps) {
               </Dropzone>
 
               <div className="space-y-2">
-                <Label htmlFor="promoDescription">Description (Optional)</Label>
+                <Label htmlFor="promoDescription">{t('description')}</Label>
                 <Textarea
                   id="promoDescription"
-                  placeholder="Brief description of your promo materials..."
+                  placeholder={t('descriptionPlaceholder')}
                   value={promoDescription}
                   onChange={(e) => setPromoDescription(e.target.value)}
                   rows={3}
@@ -356,20 +357,20 @@ export function DJSubmissionForm({ submissionToken }: DJSubmissionFormProps) {
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="accountHolder">Account Holder Name</Label>
+                  <Label htmlFor="accountHolder">{t('accountHolder')}</Label>
                   <Input
                     id="accountHolder"
-                    placeholder="김디제이"
+                    placeholder={t('accountHolderPlaceholder')}
                     value={paymentInfo.accountHolder}
                     onChange={(e) => setPaymentInfo({ ...paymentInfo, accountHolder: e.target.value })}
                     required
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="bankName">Bank Name</Label>
+                  <Label htmlFor="bankName">{t('bankName')}</Label>
                   <Input
                     id="bankName"
-                    placeholder="국민은행"
+                    placeholder={t('bankNamePlaceholder')}
                     value={paymentInfo.bankName}
                     onChange={(e) => setPaymentInfo({ ...paymentInfo, bankName: e.target.value })}
                     required
@@ -378,10 +379,10 @@ export function DJSubmissionForm({ submissionToken }: DJSubmissionFormProps) {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="accountNumber">Account Number</Label>
+                <Label htmlFor="accountNumber">{t('accountNumber')}</Label>
                 <Input
                   id="accountNumber"
-                  placeholder="123456-78-901234"
+                  placeholder={t('accountNumberPlaceholder')}
                   value={paymentInfo.accountNumber}
                   onChange={(e) => setPaymentInfo({ ...paymentInfo, accountNumber: e.target.value })}
                   required
@@ -389,10 +390,10 @@ export function DJSubmissionForm({ submissionToken }: DJSubmissionFormProps) {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="residentNumber">Resident Registration Number</Label>
+                <Label htmlFor="residentNumber">{t('residentNumber')}</Label>
                 <Input
                   id="residentNumber"
-                  placeholder="901234-1******"
+                  placeholder={t('residentNumberPlaceholder')}
                   value={paymentInfo.residentNumber}
                   onChange={(e) => setPaymentInfo({ ...paymentInfo, residentNumber: e.target.value })}
                   required
@@ -407,14 +408,13 @@ export function DJSubmissionForm({ submissionToken }: DJSubmissionFormProps) {
                   onChange={(e) => setPaymentInfo({ ...paymentInfo, preferDirectContact: e.target.checked })}
                 />
                 <Label htmlFor="preferDirectContact" className="text-sm">
-                  I prefer direct contact for payment arrangements
+                  {t('preferDirectContact')}
                 </Label>
               </div>
 
               <div className="bg-gray-50 p-4 rounded-lg">
                 <p className="text-sm text-gray-600">
-                  <strong>Privacy Notice:</strong> Your payment information will be encrypted and stored securely. 
-                  It will only be used for event payment processing and will not be shared with third parties.
+                  {t('privacyNotice')}
                 </p>
               </div>
             </CardContent>
@@ -428,7 +428,7 @@ export function DJSubmissionForm({ submissionToken }: DJSubmissionFormProps) {
               className="px-8"
               disabled={isSubmitting}
             >
-              {isSubmitting ? 'Submitting...' : 'Submit Materials'}
+              {isSubmitting ? t('submitting') : t('submitMaterials')}
             </Button>
           </div>
         </form>

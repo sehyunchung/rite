@@ -387,10 +387,10 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="description">Description</Label>
+              <Label htmlFor="description">{t('description')}</Label>
               <Textarea
                 id="description"
-                placeholder="Brief description of your event..."
+                placeholder={t('descriptionPlaceholder')}
                 value={formData.description}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                 rows={3}
@@ -398,14 +398,14 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="hashtags">Instagram Hashtags</Label>
+              <Label htmlFor="hashtags">{t('hashtags')}</Label>
               <Input
                 id="hashtags"
-                placeholder="seouldj underground techno"
+                placeholder={t('hashtagsPlaceholder')}
                 value={formData.hashtags}
                 onChange={(e) => setFormData({ ...formData, hashtags: e.target.value })}
               />
-              <p className="text-sm text-muted-foreground">Separate with spaces (# will be added automatically)</p>
+              <p className="text-sm text-muted-foreground">{t('hashtagsDescription')}</p>
             </div>
           </CardContent>
         </Card>
@@ -414,14 +414,14 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
         <Card>
           <CardHeader>
             <CardTitle>Venue Information</CardTitle>
-            <CardDescription>Where will the event take place?</CardDescription>
+            <CardDescription>{t('venueDescription')}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="venueName">Venue Name</Label>
+              <Label htmlFor="venueName">{t('venueName')}</Label>
               <Input
                 id="venueName"
-                placeholder="Cakeshop Seoul"
+                placeholder={t('venueNamePlaceholder')}
                 value={formData.venue.name}
                 onChange={(e) => setFormData({ 
                   ...formData, 
@@ -431,10 +431,10 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="venueAddress">Address</Label>
+              <Label htmlFor="venueAddress">{t('venueAddress')}</Label>
               <Input
                 id="venueAddress"
-                placeholder="34 Noksapyeong-daero 54-gil, Yongsan-gu, Seoul"
+                placeholder={t('venueAddressPlaceholder')}
                 value={formData.venue.address}
                 onChange={(e) => setFormData({ 
                   ...formData, 
@@ -450,12 +450,12 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
         <Card>
           <CardHeader>
             <CardTitle>Payment Details</CardTitle>
-            <CardDescription>DJ payment information and guest limits</CardDescription>
+            <CardDescription>{t('paymentDescription')}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="paymentAmount">Total Budget</Label>
+                <Label htmlFor="paymentAmount">{t('totalAmount')}</Label>
                 <Input
                   id="paymentAmount"
                   type="number"
@@ -469,7 +469,7 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="paymentPerDJ">Amount per DJ</Label>
+                <Label htmlFor="paymentPerDJ">{t('paymentPerDJ')}</Label>
                 <Input
                   id="paymentPerDJ"
                   type="number"
@@ -483,7 +483,7 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="currency">Currency</Label>
+                <Label htmlFor="currency">{t('currency')}</Label>
                 <Select
                   value={formData.payment.currency}
                   onValueChange={(value) => setFormData({ 
@@ -502,7 +502,7 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="paymentDue">Payment Due Date</Label>
+                <Label htmlFor="paymentDue">{t('paymentDueDate')}</Label>
                 <Input
                   id="paymentDue"
                   type="date"
@@ -518,7 +518,7 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="guestLimit">Guest Limit per DJ</Label>
+                <Label htmlFor="guestLimit">{t('guestLimitPerDJ')}</Label>
                 <Input
                   id="guestLimit"
                   type="number"
@@ -531,7 +531,7 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
                   min="0"
                   required
                 />
-                <p className="text-sm text-muted-foreground">Maximum number of guests each DJ can add</p>
+                <p className="text-sm text-muted-foreground">{t('guestLimitDescription')}</p>
               </div>
             </div>
           </CardContent>
@@ -541,12 +541,12 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
         <Card>
           <CardHeader>
             <CardTitle>Submission Deadlines</CardTitle>
-            <CardDescription>When do DJs need to submit their materials?</CardDescription>
+            <CardDescription>{t('deadlinesDescription')}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="guestListDeadline">Guest List Deadline</Label>
+                <Label htmlFor="guestListDeadline">{t('guestListDeadline')}</Label>
                 <Input
                   id="guestListDeadline"
                   type="date"
@@ -570,7 +570,7 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
                 )}
               </div>
               <div className="space-y-2">
-                <Label htmlFor="promoDeadline">Promo Materials Deadline</Label>
+                <Label htmlFor="promoDeadline">{t('promoMaterialsDeadline')}</Label>
                 <Input
                   id="promoDeadline"
                   type="date"
@@ -604,7 +604,7 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
         <Card>
           <CardHeader>
             <CardTitle>DJ Timeslots</CardTitle>
-            <CardDescription>Add time slots for each DJ performing at your event</CardDescription>
+            <CardDescription>{t('timeslotsDescription')}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             {timeslots.map((slot, index) => (
@@ -617,13 +617,13 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
                     size="sm"
                     onClick={() => removeTimeslot(slot.id)}
                   >
-                    Remove
+                    {t('removeTimeslot')}
                   </Button>
                 </div>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                   <div className="space-y-2">
-                    <Label>Start Time</Label>
+                    <Label>{t('startTime')}</Label>
                     <Input
                       type="time"
                       value={slot.startTime}
@@ -638,7 +638,7 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
                     )}
                   </div>
                   <div className="space-y-2">
-                    <Label>End Time</Label>
+                    <Label>{t('endTime')}</Label>
                     <Input
                       type="time"
                       value={slot.endTime}
@@ -647,17 +647,17 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label>DJ Name</Label>
+                    <Label>{t('djName')}</Label>
                     <Input
-                      placeholder="DJ Placeholder"
+                      placeholder="DJ Name"
                       value={slot.djName}
                       onChange={(e) => updateTimeslot(slot.id, 'djName', e.target.value)}
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label>Instagram Handle</Label>
+                    <Label>{t('djInstagram')}</Label>
                     <Input
-                      placeholder="@dj_placeholder"
+                      placeholder="@username"
                       value={slot.djInstagram}
                       onChange={(e) => updateTimeslot(slot.id, 'djInstagram', e.target.value)}
                       className={errors[`timeslot-${slot.id}-instagram`] ? 'border-red-500' : ''}
@@ -676,7 +676,7 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
               onClick={addTimeslot}
               className="w-full"
             >
-              + Add Timeslot
+              {t('addTimeslot')}
             </Button>
             
             {(errors.timeslots || errors.maxTimeslots) && (
@@ -709,7 +709,7 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
             className="px-8"
             disabled={isSubmitting}
           >
-            {isSubmitting ? 'Creating Event...' : 'Create Event'}
+            {isSubmitting ? t('creating') : t('createEvent')}
           </Button>
         </div>
       </form>

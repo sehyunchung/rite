@@ -27,6 +27,7 @@ export function EventDetailClient({ eventId, userId, locale }: EventDetailClient
   const [showQRCode, setShowQRCode] = useState(false);
   const t = useTranslations('events.detail');
   const tNav = useTranslations('navigation');
+  const tCommon = useTranslations('common');
   
   const event = useQuery(
     api.events.getEventPublic,
@@ -38,7 +39,7 @@ export function EventDetailClient({ eventId, userId, locale }: EventDetailClient
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="animate-pulse text-center">
           <div className="w-8 h-8 bg-blue-500 rounded-full mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading event details...</p>
+          <p className="text-gray-600">{tCommon('loadingEventDetails')}</p>
         </div>
       </div>
     );
