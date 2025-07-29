@@ -13,9 +13,9 @@ export default async function HomePage() {
 
   // Redirect authenticated users to dashboard
   if (session) {
-    redirect('/dashboard')
+    redirect('/en/dashboard')
   }
 
-  // Redirect unauthenticated users to login
-  redirect('/auth/signin')
+  // Redirect unauthenticated users to login  
+  redirect('/en/auth/signin')
 }

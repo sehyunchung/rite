@@ -1,9 +1,10 @@
 'use client';
 
-import { useRouter, usePathname } from 'next/navigation';
+import { useRouter, usePathname } from '../i18n/routing';
 import { Button } from '@/components/ui/button';
 import { GlobeIcon } from 'lucide-react';
 import { useState } from 'react';
+import { useParams } from 'next/navigation';
 
 const languages = [
   { code: 'en', name: 'English', flag: '🇺🇸' },
@@ -13,19 +14,14 @@ const languages = [
 export function LanguageSwitcher() {
   const router = useRouter();
   const pathname = usePathname();
+  const params = useParams();
   const [isOpen, setIsOpen] = useState(false);
   
-  // Extract current locale from pathname
-  const currentLocale = pathname.split('/')[1] || 'en';
+  const currentLocale = params.locale as string;
   const currentLanguage = languages.find(lang => lang.code === currentLocale) || languages[0];
 
   const switchLanguage = (newLocale: string) => {
-    // Replace the locale in the current pathname
-    const segments = pathname.split('/');
-    segments[1] = newLocale;
-    const newPath = segments.join('/');
-    
-    router.push(newPath);
+    router.replace(pathname, { locale: newLocale });
     setIsOpen(false);
   };
 
