@@ -1,5 +1,6 @@
 import { Suspense } from 'react';
 import { DJSubmissionForm } from '@/components/DJSubmissionForm';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
 
 // Disable static generation for this page since it uses search params
 export const dynamic = 'force-dynamic';
@@ -22,7 +23,11 @@ function DJSubmissionContent({ token }: { token?: string }) {
     );
   }
 
-  return <DJSubmissionForm submissionToken={token} />;
+  return (
+    <ErrorBoundary>
+      <DJSubmissionForm submissionToken={token} />
+    </ErrorBoundary>
+  );
 }
 
 export default async function DJSubmissionPage({ searchParams }: PageProps) {

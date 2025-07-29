@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { DashboardContent } from '@/components/DashboardContent';
 import { UserDisplay } from '@/components/UserDisplay';
 import { signOut } from 'next-auth/react';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
 
 interface DashboardClientProps {
   userId: string;
@@ -32,7 +33,9 @@ export function DashboardClient({ userId, fallbackDisplayName }: DashboardClient
               </nav>
             </div>
             <div className="flex items-center space-x-4">
-              <UserDisplay userId={userId} fallbackName={fallbackDisplayName} />
+              <ErrorBoundary fallback={<span className="text-gray-600">{fallbackDisplayName}</span>}>
+                <UserDisplay userId={userId} fallbackName={fallbackDisplayName} />
+              </ErrorBoundary>
               <Button 
                 variant="outline" 
                 onClick={() => signOut({ callbackUrl: '/' })}
@@ -55,7 +58,9 @@ export function DashboardClient({ userId, fallbackDisplayName }: DashboardClient
             </Button>
           </div>
 
-          <DashboardContent userId={userId} />
+          <ErrorBoundary>
+            <DashboardContent userId={userId} />
+          </ErrorBoundary>
         </div>
       </div>
     </div>

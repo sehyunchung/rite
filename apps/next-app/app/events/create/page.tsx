@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { UserDisplay } from '@/components/UserDisplay';
 import { signOut } from 'next-auth/react';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
 
 export const dynamic = 'force-dynamic'
 
@@ -78,9 +79,11 @@ export default function CreateEventPage() {
             <p className="text-gray-600 mt-2">Set up your DJ event with all the necessary details.</p>
           </div>
           
-          <EventCreationForm 
-            onEventCreated={() => router.push('/dashboard')} 
-          />
+          <ErrorBoundary>
+            <EventCreationForm 
+              onEventCreated={() => router.push('/dashboard')} 
+            />
+          </ErrorBoundary>
         </div>
       </div>
     </div>
