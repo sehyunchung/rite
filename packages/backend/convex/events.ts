@@ -34,6 +34,37 @@ export const listEventsPublic = query({
   },
 });
 
+// Public query to get a single event by ID (temporary until auth is fixed)
+export const getEventPublic = query({
+  args: {
+    eventId: v.id("events"),
+  },
+  handler: async (ctx, args) => {
+    const event = await ctx.db.get(args.eventId);
+    if (!event) {
+      return null;
+    }
+    
+    // Also get the timeslots for this event
+    const timeslots = await ctx.db
+      .query("timeslots")
+      .filter((q) => q.eq(q.field("eventId"), args.eventId))
+      .collect();
+    
+    // Provide defaults for optional fields for backward compatibility
+    return {
+      ...event,
+      guestLimitPerDJ: event.guestLimitPerDJ ?? 2, // Default to 2 guests per DJ
+      payment: {
+        ...event.payment,
+        perDJ: event.payment.perDJ ?? event.payment.amount, // Default perDJ to total amount
+      },
+      hashtags: event.hashtags ?? '', // Default to empty string
+      timeslots,
+    };
+  },
+});
+
 // Query to list all events for the authenticated organizer
 export const listEvents = query({
   args: {},
