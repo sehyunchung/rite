@@ -44,7 +44,7 @@ export function SubmissionLinks({ events }: SubmissionLinksProps) {
                         value={submissionUrl}
                         className="flex-1 px-3 py-2 text-sm border rounded-md bg-white"
                       />
-                      <CopyButton text={submissionUrl} />
+                      <CopyButton text={submissionUrl} iconOnly={true} />
                     </div>
                   </div>
                 );
