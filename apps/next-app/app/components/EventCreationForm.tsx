@@ -25,6 +25,7 @@ import {
   validateGuestListDeadline,
   validatePromoDeadline
 } from '@/lib/validation';
+import { useTranslations } from 'next-intl';
 
 interface EventCreationFormProps {
   onEventCreated?: () => void;
@@ -33,6 +34,7 @@ interface EventCreationFormProps {
 const MAX_TIMESLOTS_PER_EVENT = 12; // Maximum number of DJ timeslots allowed
 
 export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
+  const t = useTranslations('events.create');
   const createEvent = useMutation(api.events.createEventTemp); // Using temp version for testing
   const { data: session, status } = useSession();
 
@@ -343,16 +345,16 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
         {/* Basic Event Information */}
         <Card>
           <CardHeader>
-            <CardTitle>Event Details</CardTitle>
-            <CardDescription>Basic information about your event</CardDescription>
+            <CardTitle>{t('basicInfo')}</CardTitle>
+            <CardDescription>{t('subtitle')}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="eventName">Event Name</Label>
+                <Label htmlFor="eventName">{t('eventName')}</Label>
                 <Input
                   id="eventName"
-                  placeholder="NO CLUB #53"
+                  placeholder={t('eventNamePlaceholder')}
                   value={formData.name}
                   onChange={(e) => {
                     setFormData({ ...formData, name: e.target.value });
@@ -366,7 +368,7 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
                 )}
               </div>
               <div className="space-y-2">
-                <Label htmlFor="eventDate">Event Date</Label>
+                <Label htmlFor="eventDate">{t('eventDate')}</Label>
                 <Input
                   id="eventDate"
                   type="date"

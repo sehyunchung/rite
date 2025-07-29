@@ -10,6 +10,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Dropzone, DropzoneContent, DropzoneEmptyState } from '@/components/ui/kibo-ui/dropzone';
 import { Id } from '@rite/backend/convex/_generated/dataModel';
+import { useTranslations } from 'next-intl';
 
 interface DJSubmissionFormProps {
   submissionToken: string;
@@ -22,6 +23,7 @@ interface GuestListEntry {
 }
 
 export function DJSubmissionForm({ submissionToken }: DJSubmissionFormProps) {
+  const t = useTranslations('djSubmission');
   const timeslotData = useQuery(api.timeslots.getTimeslotByToken, { submissionToken });
   const generateUploadUrl = useMutation(api.submissions.generateUploadUrl);
   const saveSubmission = useMutation(api.submissions.saveSubmission);
@@ -198,14 +200,14 @@ export function DJSubmissionForm({ submissionToken }: DJSubmissionFormProps) {
       <div className="max-w-4xl mx-auto p-6 space-y-8">
         {/* Header */}
         <div className="text-center">
-          <h1 className="text-3xl font-bold mb-2">DJ Submission Form</h1>
-          <p className="text-gray-600">Submit your materials for the upcoming event</p>
+          <h1 className="text-3xl font-bold mb-2">{t('title')}</h1>
+          <p className="text-gray-600">{t('subtitle')}</p>
         </div>
 
         {/* Event & DJ Info */}
         <Card>
           <CardHeader>
-            <CardTitle>Event Details</CardTitle>
+            <CardTitle>{t('eventDetails')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -216,7 +218,7 @@ export function DJSubmissionForm({ submissionToken }: DJSubmissionFormProps) {
                 <p className="text-gray-600">{event.date}</p>
               </div>
               <div className="bg-blue-50 p-4 rounded-lg">
-                <h4 className="font-semibold text-blue-800">Your Time Slot</h4>
+                <h4 className="font-semibold text-blue-800">{t('yourTimeSlot')}</h4>
                 <p className="text-blue-600">{startTime} - {endTime}</p>
                 <p className="text-blue-600">DJ: {djName}</p>
                 <p className="text-blue-600">Instagram: {djInstagram}</p>
@@ -224,13 +226,13 @@ export function DJSubmissionForm({ submissionToken }: DJSubmissionFormProps) {
             </div>
 
             <div className="bg-yellow-50 p-4 rounded-lg">
-              <h4 className="font-semibold text-yellow-800">Important Deadlines</h4>
+              <h4 className="font-semibold text-yellow-800">{t('importantDeadlines')}</h4>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-2">
                 <p className="text-yellow-700">
-                  <strong>Guest List:</strong> {event.deadlines.guestList}
+                  <strong>{t('guestList')}:</strong> {event.deadlines.guestList}
                 </p>
                 <p className="text-yellow-700">
-                  <strong>Promo Materials:</strong> {event.deadlines.promoMaterials}
+                  <strong>{t('promoMaterials')}:</strong> {event.deadlines.promoMaterials}
                 </p>
               </div>
             </div>
@@ -241,9 +243,9 @@ export function DJSubmissionForm({ submissionToken }: DJSubmissionFormProps) {
           {/* Promo Materials */}
           <Card>
             <CardHeader>
-              <CardTitle>Promo Materials</CardTitle>
+              <CardTitle>{t('promoMaterials')}</CardTitle>
               <CardDescription>
-                Upload your promotional materials (images, videos, flyers)
+                {t('promoMaterialsDescription')}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -294,29 +296,29 @@ export function DJSubmissionForm({ submissionToken }: DJSubmissionFormProps) {
           {/* Guest List */}
           <Card>
             <CardHeader>
-              <CardTitle>Guest List</CardTitle>
+              <CardTitle>{t('guestList')}</CardTitle>
               <CardDescription>
-                Add your guests for the event
+                {t('guestListDescription')}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               {guestList.map((guest, index) => (
                 <div key={guest.id} className="flex gap-4 items-end">
                   <div className="flex-1">
-                    <Label htmlFor={`guest-name-${guest.id}`}>Guest {index + 1} Name</Label>
+                    <Label htmlFor={`guest-name-${guest.id}`}>{t('guestName', { number: index + 1 })}</Label>
                     <Input
                       id={`guest-name-${guest.id}`}
-                      placeholder="Full name"
+                      placeholder={t('guestNamePlaceholder')}
                       value={guest.name}
                       onChange={(e) => updateGuestEntry(guest.id, 'name', e.target.value)}
                       required
                     />
                   </div>
                   <div className="flex-1">
-                    <Label htmlFor={`guest-phone-${guest.id}`}>Phone (Optional)</Label>
+                    <Label htmlFor={`guest-phone-${guest.id}`}>{t('guestPhone')}</Label>
                     <Input
                       id={`guest-phone-${guest.id}`}
-                      placeholder="010-1234-5678"
+                      placeholder={t('guestPhonePlaceholder')}
                       value={guest.phone}
                       onChange={(e) => updateGuestEntry(guest.id, 'phone', e.target.value)}
                     />
@@ -327,7 +329,7 @@ export function DJSubmissionForm({ submissionToken }: DJSubmissionFormProps) {
                     size="sm"
                     onClick={() => removeGuestEntry(guest.id)}
                   >
-                    Remove
+                    {t('removeGuest')}
                   </Button>
                 </div>
               ))}
@@ -338,7 +340,7 @@ export function DJSubmissionForm({ submissionToken }: DJSubmissionFormProps) {
                 onClick={addGuestEntry}
                 className="w-full"
               >
-                + Add Guest
+                {t('addGuest')}
               </Button>
             </CardContent>
           </Card>
@@ -346,9 +348,9 @@ export function DJSubmissionForm({ submissionToken }: DJSubmissionFormProps) {
           {/* Payment Information */}
           <Card>
             <CardHeader>
-              <CardTitle>Payment Information</CardTitle>
+              <CardTitle>{t('paymentInformation')}</CardTitle>
               <CardDescription>
-                Your payment details for the event (Amount: {event.payment.amount.toLocaleString()} {event.payment.currency})
+                {t('paymentDescription', { amount: event.payment.amount.toLocaleString(), currency: event.payment.currency })}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">

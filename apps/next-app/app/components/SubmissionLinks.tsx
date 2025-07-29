@@ -2,6 +2,7 @@
 
 import { Card, CardContent } from '@/components/ui/card';
 import { CopyButton } from './CopyButton';
+import { useTranslations } from 'next-intl';
 
 interface SubmissionLinksProps {
   events: any[];
@@ -9,6 +10,7 @@ interface SubmissionLinksProps {
 
 export function SubmissionLinks({ events }: SubmissionLinksProps) {
   const baseUrl = typeof window !== 'undefined' ? window.location.origin : '';
+  const t = useTranslations('events.detail.submissionLinks');
 
   if (!events.some((event: any) => event.timeslots?.length > 0)) {
     return null;
@@ -16,11 +18,11 @@ export function SubmissionLinks({ events }: SubmissionLinksProps) {
 
   return (
     <div className="mt-6">
-      <h2 className="text-xl font-semibold text-gray-900 mb-4">DJ Submission Links</h2>
+      <h2 className="text-xl font-semibold text-gray-900 mb-4">{t('title')}</h2>
       <Card>
         <CardContent className="pt-6">
           <p className="text-sm text-gray-600 mb-4">
-            Share these links with your DJs for them to submit their materials:
+            {t('description')}
           </p>
           <div className="space-y-4">
             {events.flatMap((event: any) => 
