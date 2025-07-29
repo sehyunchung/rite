@@ -413,7 +413,7 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
         {/* Venue Information */}
         <Card>
           <CardHeader>
-            <CardTitle>Venue Information</CardTitle>
+            <CardTitle>{t('venue')}</CardTitle>
             <CardDescription>{t('venueDescription')}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -449,7 +449,7 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
         {/* Payment Information */}
         <Card>
           <CardHeader>
-            <CardTitle>Payment Details</CardTitle>
+            <CardTitle>{t('payment')}</CardTitle>
             <CardDescription>{t('paymentDescription')}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -540,7 +540,7 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
         {/* Deadlines */}
         <Card>
           <CardHeader>
-            <CardTitle>Submission Deadlines</CardTitle>
+            <CardTitle>{t('deadlines')}</CardTitle>
             <CardDescription>{t('deadlinesDescription')}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -603,7 +603,7 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
         {/* Timeslots */}
         <Card>
           <CardHeader>
-            <CardTitle>DJ Timeslots</CardTitle>
+            <CardTitle>{t('timeslots')}</CardTitle>
             <CardDescription>{t('timeslotsDescription')}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
