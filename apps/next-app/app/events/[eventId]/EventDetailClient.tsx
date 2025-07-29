@@ -84,8 +84,13 @@ export function EventDetailClient({ eventId, userId }: EventDetailClientProps) {
           <div className="mb-8">
             <div className="flex justify-between items-start mb-4">
               <div className="flex-1">
-                <h1 className="text-3xl font-light text-gray-900">{event.name}</h1>
-                <p className="text-gray-600 mt-2">{event.venue.name} • {event.date}</p>
+                <div className="flex items-center gap-3 mb-2">
+                  <h1 className="text-3xl font-light text-gray-900">{event.name}</h1>
+                  <Badge variant={event.status === 'active' ? 'default' : 'secondary'}>
+                    {event.status}
+                  </Badge>
+                </div>
+                <p className="text-gray-600">{event.venue.name} • {event.date}</p>
               </div>
               <div className="flex items-center space-x-3">
                 {/* Action Buttons */}
@@ -108,9 +113,6 @@ export function EventDetailClient({ eventId, userId }: EventDetailClientProps) {
                 >
                   <QrCodeIcon className="w-4 h-4" />
                 </Button>
-                <Badge variant={event.status === 'active' ? 'default' : 'secondary'}>
-                  {event.status}
-                </Badge>
               </div>
             </div>
             {event.description && (
