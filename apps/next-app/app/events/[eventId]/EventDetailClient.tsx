@@ -10,6 +10,9 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { SubmissionLinks } from '@/components/SubmissionLinks';
+import { QRCode } from '@/components/ui/kibo-ui/qr-code';
+import { useState } from 'react';
+import { EditIcon, ClipboardListIcon, QrCodeIcon } from 'lucide-react';
 
 interface EventDetailClientProps {
   eventId: string;
@@ -18,6 +21,8 @@ interface EventDetailClientProps {
 
 export function EventDetailClient({ eventId, userId }: EventDetailClientProps) {
   const router = useRouter();
+  const baseUrl = typeof window !== 'undefined' ? window.location.origin : '';
+  const [showQRCode, setShowQRCode] = useState(false);
   
   const event = useQuery(
     api.events.getEventPublic,
@@ -78,13 +83,35 @@ export function EventDetailClient({ eventId, userId }: EventDetailClientProps) {
           {/* Event Header */}
           <div className="mb-8">
             <div className="flex justify-between items-start mb-4">
-              <div>
+              <div className="flex-1">
                 <h1 className="text-3xl font-light text-gray-900">{event.name}</h1>
                 <p className="text-gray-600 mt-2">{event.venue.name} • {event.date}</p>
               </div>
-              <Badge variant={event.status === 'active' ? 'default' : 'secondary'}>
-                {event.status}
-              </Badge>
+              <div className="flex items-center space-x-3">
+                {/* Action Buttons */}
+                <Button variant="outline" size="sm" asChild>
+                  <Link href={`/events/${event._id}/edit`}>
+                    <EditIcon className="w-4 h-4" />
+                  </Link>
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => router.push(`/events/${event._id}/submissions`)}
+                >
+                  <ClipboardListIcon className="w-4 h-4" />
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => setShowQRCode(!showQRCode)}
+                >
+                  <QrCodeIcon className="w-4 h-4" />
+                </Button>
+                <Badge variant={event.status === 'active' ? 'default' : 'secondary'}>
+                  {event.status}
+                </Badge>
+              </div>
             </div>
             {event.description && (
               <p className="text-gray-700 mb-4">{event.description}</p>
@@ -194,23 +221,6 @@ export function EventDetailClient({ eventId, userId }: EventDetailClientProps) {
                 </CardContent>
               </Card>
 
-              {/* Actions */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>Actions</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  <Button className="w-full" variant="outline">
-                    Edit Event
-                  </Button>
-                  <Button className="w-full" variant="outline">
-                    View Submissions
-                  </Button>
-                  <Button className="w-full" variant="outline">
-                    Generate QR Code
-                  </Button>
-                </CardContent>
-              </Card>
 
               {/* Instagram Hashtags */}
               {event.hashtags && (
@@ -227,6 +237,28 @@ export function EventDetailClient({ eventId, userId }: EventDetailClientProps) {
               )}
             </div>
           </div>
+
+          {/* QR Code Section */}
+          {showQRCode && (
+            <div className="mt-8">
+              <Card className="max-w-md mx-auto">
+                <CardHeader>
+                  <CardTitle className="text-center">Event QR Code</CardTitle>
+                </CardHeader>
+                <CardContent className="text-center">
+                  <div className="flex justify-center mb-4">
+                    <QRCode
+                      data={`${baseUrl}/events/${event._id}`}
+                      className="w-48 h-48 border rounded-lg p-4 bg-white"
+                    />
+                  </div>
+                  <p className="text-sm text-gray-600">
+                    Scan to view event details
+                  </p>
+                </CardContent>
+              </Card>
+            </div>
+          )}
         </div>
       </div>
     </div>
