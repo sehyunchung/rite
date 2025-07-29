@@ -1,23 +1,26 @@
-import { useTranslations } from 'next-intl';
-import Link from 'next/link';
+import { auth } from '@/lib/auth'
+import { redirect } from 'next/navigation'
 
-export default function HomePage() {
-  const t = useTranslations('dashboard');
+export const dynamic = 'force-dynamic'
 
-  return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-      <div className="text-center">
-        <h1 className="text-3xl font-bold mb-4">{t('welcome')}</h1>
-        <p className="text-gray-600 mb-8">{t('title')}</p>
-        <div className="space-x-4">
-          <Link 
-            href="/dashboard"
-            className="inline-block px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
-          >
-            {t('createNewEvent')}
-          </Link>
-        </div>
-      </div>
-    </div>
-  );
+interface Props {
+  params: Promise<{ locale: string }>
+}
+
+export default async function HomePage({ params }: Props) {
+  const { locale } = await params
+  let session = null
+  try {
+    session = await auth()
+  } catch (error) {
+    console.error('Auth error in HomePage:', error)
+  }
+
+  // Redirect authenticated users to dashboard
+  if (session) {
+    redirect(`/${locale}/dashboard`)
+  }
+
+  // Redirect unauthenticated users to login  
+  redirect(`/${locale}/auth/signin`)
 }

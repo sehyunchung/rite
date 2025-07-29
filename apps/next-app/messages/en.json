@@ -173,6 +173,12 @@
       ]
     }
   },
+  "auth": {
+    "tagline": "Streamline your event workflow",
+    "signIn": "Sign In",
+    "continueWithInstagram": "Continue with Instagram",
+    "accountRequirement": "Business or Creator account required"
+  },
   "validation": {
     "required": "This field is required",
     "invalidEmail": "Invalid email address",
