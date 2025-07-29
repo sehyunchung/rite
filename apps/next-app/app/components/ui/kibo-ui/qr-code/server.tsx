@@ -25,6 +25,7 @@ export const QRCode = async ({
     },
     width: 200,
     errorCorrectionLevel: robustness,
+    margin: 0,
   });
 
   if (!svg) {
