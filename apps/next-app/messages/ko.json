@@ -20,8 +20,9 @@
   "navigation": {
     "dashboard": "대시보드",
     "events": "이벤트",
-    "createEvent": "이벤트 생성",
-    "signOut": "로그아웃"
+    "createEvent": "이벤트 생성", 
+    "signOut": "로그아웃",
+    "welcomeUser": "환영합니다, {name}"
   },
   "dashboard": {
     "title": "대시보드",

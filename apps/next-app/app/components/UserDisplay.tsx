@@ -3,6 +3,7 @@
 import { useQuery } from 'convex/react';
 import { api } from '@rite/backend/convex/_generated/api';
 import { Id } from '@rite/backend/convex/_generated/dataModel';
+import { useTranslations } from 'next-intl';
 
 interface UserDisplayProps {
   userId: string;
@@ -10,6 +11,8 @@ interface UserDisplayProps {
 }
 
 export function UserDisplay({ userId, fallbackName }: UserDisplayProps) {
+  const t = useTranslations('navigation');
+  
   // Only query if we have a valid userId
   const instagramConnection = useQuery(
     api.instagram.getInstagramConnection, 
@@ -22,7 +25,7 @@ export function UserDisplay({ userId, fallbackName }: UserDisplayProps) {
 
   return (
     <span className="text-sm text-gray-700">
-      Welcome, {displayName}
+      {t('welcomeUser', { name: displayName })}
     </span>
   );
 }

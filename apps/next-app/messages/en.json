@@ -19,9 +19,10 @@
   },
   "navigation": {
     "dashboard": "Dashboard",
-    "events": "Events",
+    "events": "Events", 
     "createEvent": "Create Event",
-    "signOut": "Sign Out"
+    "signOut": "Sign Out",
+    "welcomeUser": "Welcome, {name}"
   },
   "dashboard": {
     "title": "Dashboard",
