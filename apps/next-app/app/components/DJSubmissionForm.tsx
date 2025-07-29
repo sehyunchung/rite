@@ -8,7 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Dropzone } from '@/components/ui/kibo-ui/dropzone';
+import { Dropzone, DropzoneContent, DropzoneEmptyState } from '@/components/ui/kibo-ui/dropzone';
 import { Id } from '@rite/backend/convex/_generated/dataModel';
 
 interface DJSubmissionFormProps {
@@ -248,6 +248,7 @@ export function DJSubmissionForm({ submissionToken }: DJSubmissionFormProps) {
             </CardHeader>
             <CardContent className="space-y-4">
               <Dropzone
+                src={promoFiles}
                 onDrop={(files) => setPromoFiles(files)}
                 maxFiles={10}
                 accept={{
@@ -256,22 +257,26 @@ export function DJSubmissionForm({ submissionToken }: DJSubmissionFormProps) {
                   'application/pdf': ['.pdf']
                 }}
               >
-                Drop your promo materials here or click to browse
+                <DropzoneContent>
+                  <div className="space-y-2">
+                    <h4 className="font-medium">Selected Files:</h4>
+                    <ul className="text-sm text-gray-600 space-y-1">
+                      {promoFiles.map((file, index) => (
+                        <li key={index} className="flex items-center">
+                          <span className="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
+                          {file.name} ({Math.round(file.size / 1024)} KB)
+                        </li>
+                      ))}
+                    </ul>
+                    <p className="text-center text-muted-foreground text-xs mt-2">
+                      Drop more files or click to add
+                    </p>
+                  </div>
+                </DropzoneContent>
+                <DropzoneEmptyState>
+                  Drop your promo materials here or click to browse
+                </DropzoneEmptyState>
               </Dropzone>
-              
-              {promoFiles.length > 0 && (
-                <div className="space-y-2">
-                  <h4 className="font-medium">Selected Files:</h4>
-                  <ul className="text-sm text-gray-600 space-y-1">
-                    {promoFiles.map((file, index) => (
-                      <li key={index} className="flex items-center">
-                        <span className="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
-                        {file.name} ({Math.round(file.size / 1024)} KB)
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
 
               <div className="space-y-2">
                 <Label htmlFor="promoDescription">Description (Optional)</Label>
