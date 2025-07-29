@@ -1,0 +1,168 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "create": "Create",
+    "copy": "Copy",
+    "copied": "Copied!",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "submit": "Submit",
+    "close": "Close"
+  },
+  "navigation": {
+    "dashboard": "Dashboard",
+    "events": "Events",
+    "createEvent": "Create Event",
+    "signOut": "Sign Out"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "welcome": "Welcome back!",
+    "createNewEvent": "Create New Event",
+    "noEvents": "No events yet. Create your first event to get started!",
+    "loadingEvents": "Loading events...",
+    "actions": {
+      "createEvent": "Create Event",
+      "viewSubmissions": "View Submissions",
+      "eventCalendar": "Event Calendar"
+    },
+    "eventCard": {
+      "viewDetails": "View Details",
+      "djs": "{count} DJ",
+      "djs_plural": "{count} DJs",
+      "guestListDue": "Guest list due: {date}"
+    }
+  },
+  "events": {
+    "create": {
+      "title": "Create New Event",
+      "subtitle": "Set up your DJ event with all the details",
+      "basicInfo": "Basic Information",
+      "eventName": "Event Name",
+      "eventNamePlaceholder": "Summer Music Festival",
+      "description": "Description",
+      "descriptionPlaceholder": "Describe your event...",
+      "hashtags": "Instagram Hashtags",
+      "hashtagsPlaceholder": "#music #dj #festival #seoul",
+      "venue": "Venue Information",
+      "venueName": "Venue Name",
+      "venueNamePlaceholder": "Club Octagon",
+      "venueAddress": "Address",
+      "venueAddressPlaceholder": "123 Gangnam-gu, Seoul",
+      "eventDate": "Event Date",
+      "deadlines": "Deadlines",
+      "guestListDeadline": "Guest List Deadline",
+      "promoMaterialsDeadline": "Promo Materials Deadline",
+      "payment": "Payment Information",
+      "totalAmount": "Total Amount",
+      "paymentPerDJ": "Payment per DJ",
+      "currency": "Currency",
+      "paymentDueDate": "Payment Due Date",
+      "guestLimitPerDJ": "Guest Limit per DJ",
+      "timeslots": "DJ Timeslots",
+      "addTimeslot": "Add DJ Timeslot",
+      "djName": "DJ Name",
+      "djInstagram": "Instagram Handle",
+      "startTime": "Start Time",
+      "endTime": "End Time",
+      "removeTimeslot": "Remove",
+      "createEvent": "Create Event",
+      "creating": "Creating..."
+    },
+    "detail": {
+      "notFound": "Event Not Found",
+      "notFoundMessage": "The event you're looking for doesn't exist or you don't have access to it.",
+      "backToDashboard": "Back to Dashboard",
+      "venueInformation": "Venue Information",
+      "djLineup": "DJ Lineup ({count})",
+      "noDJsScheduled": "No DJs scheduled yet.",
+      "importantDates": "Important Dates",
+      "eventDate": "Event Date",
+      "guestListDeadline": "Guest List Deadline",
+      "promoMaterialsDeadline": "Promo Materials Deadline",
+      "paymentDue": "Payment Due",
+      "paymentDetails": "Payment Details",
+      "totalAmount": "Total Amount",
+      "perDJ": "Per DJ",
+      "guestLimitPerDJ": "Guest Limit per DJ",
+      "guests": "guests",
+      "instagramHashtags": "Instagram Hashtags",
+      "qrCode": {
+        "title": "Event QR Code",
+        "description": "Scan to view event details"
+      },
+      "submissionLinks": {
+        "title": "DJ Submission Links",
+        "description": "Share these links with your DJs for them to submit their materials:"
+      },
+      "status": {
+        "submitted": "Submitted",
+        "pending": "Pending"
+      }
+    }
+  },
+  "djSubmission": {
+    "title": "DJ Submission Form",
+    "subtitle": "Submit your materials for the upcoming event",
+    "invalidLink": "Invalid Link",
+    "invalidLinkMessage": "This submission link is invalid or has expired.",
+    "eventDetails": "Event Details",
+    "yourTimeSlot": "Your Time Slot",
+    "importantDeadlines": "Important Deadlines",
+    "promoMaterials": "Promo Materials",
+    "promoMaterialsDescription": "Upload your promotional materials (images, videos, flyers)",
+    "dropFilesHere": "Drop your promo materials here or click to browse",
+    "selectedFiles": "Selected Files:",
+    "description": "Description (Optional)",
+    "descriptionPlaceholder": "Brief description of your promo materials...",
+    "guestList": "Guest List",
+    "guestListDescription": "Add your guests for the event",
+    "guestName": "Guest {number} Name",
+    "guestNamePlaceholder": "Full name",
+    "guestPhone": "Phone (Optional)",
+    "guestPhonePlaceholder": "010-1234-5678",
+    "addGuest": "+ Add Guest",
+    "removeGuest": "Remove",
+    "paymentInformation": "Payment Information",
+    "paymentDescription": "Your payment details for the event (Amount: {amount} {currency})",
+    "accountHolder": "Account Holder Name",
+    "accountHolderPlaceholder": "김디제이",
+    "bankName": "Bank Name",
+    "bankNamePlaceholder": "국민은행",
+    "accountNumber": "Account Number",
+    "accountNumberPlaceholder": "123456-78-901234",
+    "residentNumber": "Resident Registration Number",
+    "residentNumberPlaceholder": "901234-1******",
+    "preferDirectContact": "I prefer direct contact for payment arrangements",
+    "privacyNotice": "Privacy Notice: Your payment information will be encrypted and stored securely. It will only be used for event payment processing and will not be shared with third parties.",
+    "submitMaterials": "Submit Materials",
+    "submitting": "Submitting...",
+    "success": {
+      "title": "Submission Complete!",
+      "message": "Your materials have been successfully submitted for {eventName}.",
+      "whatNext": "What happens next?",
+      "steps": [
+        "The organizer will review your submission",
+        "You'll receive confirmation via Instagram DM",
+        "Payment will be processed after the event"
+      ]
+    }
+  },
+  "validation": {
+    "required": "This field is required",
+    "invalidEmail": "Invalid email address",
+    "invalidInstagram": "Instagram handle must start with @ and contain only letters, numbers, dots, and underscores",
+    "timeRange": "End time must be after start time",
+    "dateInPast": "Date cannot be in the past",
+    "deadlineAfterEvent": "Deadline must be before the event date",
+    "promoBeforeGuest": "Promo materials deadline must be before guest list deadline",
+    "fileTooLarge": "File {filename} is too large. Maximum size is {maxSize}.",
+    "uploadFailed": "Failed to upload {filename}"
+  }
+}

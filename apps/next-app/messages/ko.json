@@ -1,0 +1,168 @@
+{
+  "common": {
+    "loading": "로딩 중...",
+    "error": "오류",
+    "save": "저장",
+    "cancel": "취소",
+    "delete": "삭제",
+    "edit": "편집",
+    "create": "생성",
+    "copy": "복사",
+    "copied": "복사됨!",
+    "back": "뒤로",
+    "next": "다음",
+    "previous": "이전",
+    "submit": "제출",
+    "close": "닫기"
+  },
+  "navigation": {
+    "dashboard": "대시보드",
+    "events": "이벤트",
+    "createEvent": "이벤트 생성",
+    "signOut": "로그아웃"
+  },
+  "dashboard": {
+    "title": "대시보드",
+    "welcome": "환영합니다!",
+    "createNewEvent": "새 이벤트 생성",
+    "noEvents": "아직 이벤트가 없습니다. 첫 번째 이벤트를 생성해보세요!",
+    "loadingEvents": "이벤트 로딩 중...",
+    "actions": {
+      "createEvent": "이벤트 생성",
+      "viewSubmissions": "제출물 보기",
+      "eventCalendar": "이벤트 캘린더"
+    },
+    "eventCard": {
+      "viewDetails": "자세히 보기",
+      "djs": "DJ {count}명",
+      "djs_plural": "DJ {count}명",
+      "guestListDue": "게스트 리스트 마감: {date}"
+    }
+  },
+  "events": {
+    "create": {
+      "title": "새 이벤트 생성",
+      "subtitle": "DJ 이벤트의 모든 세부사항을 설정하세요",
+      "basicInfo": "기본 정보",
+      "eventName": "이벤트 이름",
+      "eventNamePlaceholder": "여름 음악 페스티벌",
+      "description": "설명",
+      "descriptionPlaceholder": "이벤트를 설명해주세요...",
+      "hashtags": "인스타그램 해시태그",
+      "hashtagsPlaceholder": "#음악 #DJ #페스티벌 #서울",
+      "venue": "장소 정보",
+      "venueName": "장소 이름",
+      "venueNamePlaceholder": "클럽 옥타곤",
+      "venueAddress": "주소",
+      "venueAddressPlaceholder": "서울시 강남구 123",
+      "eventDate": "이벤트 날짜",
+      "deadlines": "마감일",
+      "guestListDeadline": "게스트 리스트 마감일",
+      "promoMaterialsDeadline": "홍보 자료 마감일",
+      "payment": "결제 정보",
+      "totalAmount": "총 금액",
+      "paymentPerDJ": "DJ당 결제 금액",
+      "currency": "통화",
+      "paymentDueDate": "결제 마감일",
+      "guestLimitPerDJ": "DJ당 게스트 제한",
+      "timeslots": "DJ 타임슬롯",
+      "addTimeslot": "DJ 타임슬롯 추가",
+      "djName": "DJ 이름",
+      "djInstagram": "인스타그램 핸들",
+      "startTime": "시작 시간",
+      "endTime": "종료 시간",
+      "removeTimeslot": "삭제",
+      "createEvent": "이벤트 생성",
+      "creating": "생성 중..."
+    },
+    "detail": {
+      "notFound": "이벤트를 찾을 수 없음",
+      "notFoundMessage": "찾고 계신 이벤트가 존재하지 않거나 접근 권한이 없습니다.",
+      "backToDashboard": "대시보드로 돌아가기",
+      "venueInformation": "장소 정보",
+      "djLineup": "DJ 라인업 ({count}명)",
+      "noDJsScheduled": "아직 예정된 DJ가 없습니다.",
+      "importantDates": "중요한 날짜",
+      "eventDate": "이벤트 날짜",
+      "guestListDeadline": "게스트 리스트 마감일",
+      "promoMaterialsDeadline": "홍보 자료 마감일",
+      "paymentDue": "결제 마감일",
+      "paymentDetails": "결제 세부사항",
+      "totalAmount": "총 금액",
+      "perDJ": "DJ당",
+      "guestLimitPerDJ": "DJ당 게스트 제한",
+      "guests": "명",
+      "instagramHashtags": "인스타그램 해시태그",
+      "qrCode": {
+        "title": "이벤트 QR 코드",
+        "description": "스캔하여 이벤트 세부사항 보기"
+      },
+      "submissionLinks": {
+        "title": "DJ 제출 링크",
+        "description": "DJ들이 자료를 제출할 수 있도록 이 링크들을 공유하세요:"
+      },
+      "status": {
+        "submitted": "제출됨",
+        "pending": "대기 중"
+      }
+    }
+  },
+  "djSubmission": {
+    "title": "DJ 제출 폼",
+    "subtitle": "다가오는 이벤트를 위한 자료를 제출하세요",
+    "invalidLink": "유효하지 않은 링크",
+    "invalidLinkMessage": "이 제출 링크가 유효하지 않거나 만료되었습니다.",
+    "eventDetails": "이벤트 세부사항",
+    "yourTimeSlot": "귀하의 타임슬롯",
+    "importantDeadlines": "중요한 마감일",
+    "promoMaterials": "홍보 자료",
+    "promoMaterialsDescription": "홍보 자료를 업로드하세요 (이미지, 비디오, 전단지)",
+    "dropFilesHere": "홍보 자료를 여기에 드롭하거나 클릭하여 찾아보세요",
+    "selectedFiles": "선택된 파일:",
+    "description": "설명 (선택사항)",
+    "descriptionPlaceholder": "홍보 자료에 대한 간단한 설명...",
+    "guestList": "게스트 리스트",
+    "guestListDescription": "이벤트 게스트를 추가하세요",
+    "guestName": "게스트 {number} 이름",
+    "guestNamePlaceholder": "전체 이름",
+    "guestPhone": "전화번호 (선택사항)",
+    "guestPhonePlaceholder": "010-1234-5678",
+    "addGuest": "+ 게스트 추가",
+    "removeGuest": "삭제",
+    "paymentInformation": "결제 정보",
+    "paymentDescription": "이벤트 결제 세부사항 (금액: {amount} {currency})",
+    "accountHolder": "계좌 소유자 이름",
+    "accountHolderPlaceholder": "김디제이",
+    "bankName": "은행 이름",
+    "bankNamePlaceholder": "국민은행",
+    "accountNumber": "계좌 번호",
+    "accountNumberPlaceholder": "123456-78-901234",
+    "residentNumber": "주민등록번호",
+    "residentNumberPlaceholder": "901234-1******",
+    "preferDirectContact": "결제 방법에 대한 직접 연락을 선호합니다",
+    "privacyNotice": "개인정보 처리방침: 귀하의 결제 정보는 암호화되어 안전하게 저장됩니다. 이벤트 결제 처리에만 사용되며 제3자와 공유되지 않습니다.",
+    "submitMaterials": "자료 제출",
+    "submitting": "제출 중...",
+    "success": {
+      "title": "제출 완료!",
+      "message": "{eventName}에 대한 자료가 성공적으로 제출되었습니다.",
+      "whatNext": "다음 단계는?",
+      "steps": [
+        "주최자가 제출물을 검토합니다",
+        "인스타그램 DM으로 확인을 받게 됩니다",
+        "이벤트 후 결제가 처리됩니다"
+      ]
+    }
+  },
+  "validation": {
+    "required": "이 필드는 필수입니다",
+    "invalidEmail": "유효하지 않은 이메일 주소",
+    "invalidInstagram": "인스타그램 핸들은 @로 시작하고 문자, 숫자, 점, 밑줄만 포함해야 합니다",
+    "timeRange": "종료 시간은 시작 시간 이후여야 합니다",
+    "dateInPast": "날짜는 과거일 수 없습니다",
+    "deadlineAfterEvent": "마감일은 이벤트 날짜 이전이어야 합니다",
+    "promoBeforeGuest": "홍보 자료 마감일은 게스트 리스트 마감일 이전이어야 합니다",
+    "fileTooLarge": "파일 {filename}이 너무 큽니다. 최대 크기는 {maxSize}입니다.",
+    "uploadFailed": "{filename} 업로드에 실패했습니다"
+  }
+}
