@@ -36,21 +36,10 @@ The application uses NextAuth v5 for authentication with a streamlined, direct a
 **Current Status**: Authentication system is fully functional with NextAuth v5 integration and clean, simplified architecture.
 
 ### Social OAuth Providers
-To enable social login options:
-
-#### Quick Setup (Clerk Dashboard Only)
-1. **Google OAuth**:
-   - Go to Clerk Dashboard → SSO Connections
-   - Enable Google provider
-   - Configure OAuth credentials from Google Cloud Console
-
-2. **Facebook OAuth**:
-   - Go to Clerk Dashboard → SSO Connections  
-   - Enable Facebook provider
-   - Configure OAuth credentials from Facebook Developer Console
+The application currently supports Instagram OAuth through NextAuth v5 with a custom proxy service.
 
 #### Instagram OAuth (Custom Implementation)
-Instagram login requires a custom OAuth proxy service since Instagram is not natively supported by Clerk.
+Instagram login uses a custom OAuth proxy service for NextAuth compatibility.
 
 **Important Update (2024)**: Instagram Basic Display API was deprecated on December 4, 2024. Now using Instagram API with Instagram Login.
 
@@ -121,12 +110,13 @@ rite/
   - Next.js 15 with React 18, TypeScript, Turbopack
   - SvelteKit with Cloudflare adapter (POC)
 - **Typography**: SUIT Variable font with Korean/English support (weights 100-900)
+- **Internationalization**: next-intl with locale-based routing ([locale] structure)
 - **UI Libraries**: 
   - shadcn/ui - Base component library with Radix UI primitives
   - Kibo UI - Advanced components (Dropzone, QR Code, Code Block)
 - **Backend**: Convex (real-time database and file storage, shared across apps)
 - **Authentication**: NextAuth v5 with streamlined Instagram OAuth integration and direct Convex ID usage
-- **Routing**: Next.js App Router / SvelteKit file-based routing
+- **Routing**: Next.js App Router with [locale] dynamic routing / SvelteKit file-based routing
 - **Validation**: ArkType (high-performance TypeScript schema validation)
 - **File Handling**: Convex file storage for promo materials
 - **AI Integration**: Model Context Protocol (MCP) for Kibo UI
@@ -140,9 +130,9 @@ rite/
 - **Auto-Connection**: Seamless Instagram profile linking during signup without temporary workarounds
 
 **Key Files:**
-- `/app/lib/auth.ts` - NextAuth configuration with Instagram provider and Convex adapter
-- `/app/providers/root-provider.tsx` - Main provider wrapper with proper SSR handling
-- `/app/providers/convex-provider-client.tsx` - Client-side Convex initialization with hydration safety
+- `/apps/next-app/app/lib/auth.ts` - NextAuth configuration with Instagram provider and Convex adapter
+- `/apps/next-app/app/providers/root-provider.tsx` - Main provider wrapper with proper SSR handling
+- `/apps/next-app/app/providers/convex-provider-hydration-safe.tsx` - Client-side Convex initialization with hydration safety
 - `/packages/backend/convex/auth.ts` - Convex authentication functions with direct ID handling
 - `/packages/backend/convex/instagram.ts` - Instagram connection management
 
@@ -152,36 +142,48 @@ rite/
 export function RootProvider({ children }: { children: ReactNode }) {
   return (
     <AuthProvider>
-      <ConvexProviderClient>{children}</ConvexProviderClient>
+      <ConvexProviderHydrationSafe>{children}</ConvexProviderHydrationSafe>
     </AuthProvider>
   );
 }
 
-// Client-side Convex provider with hydration safety
-export function ConvexProviderClient({ children }: { children: ReactNode }) {
+// Hydration-safe Convex provider with singleton pattern
+export function ConvexProviderHydrationSafe({ 
+  children, 
+  fallback 
+}: ConvexProviderHydrationSafeProps) {
   const [isClient, setIsClient] = useState(false)
-  const [convex, setConvex] = useState<ConvexReactClient | null>(null)
-
+  const clientRef = useRef<ConvexReactClient | null>(null)
+  
   useEffect(() => {
-    // Client-side only initialization prevents hydration mismatches
-    const convexUrl = process.env.NEXT_PUBLIC_CONVEX_URL
-    if (convexUrl) {
-      const client = new ConvexReactClient(convexUrl)
-      setConvex(client)
-    }
+    // Mark as client-side after hydration
     setIsClient(true)
+    
+    // Initialize Convex client using singleton pattern
+    if (!clientRef.current) {
+      clientRef.current = getConvexClient()
+    }
   }, [])
-
-  // Proper loading states prevent "Objects are not valid as a React child" errors
+  
+  // Show consistent loading state during SSR and initial hydration
   if (!isClient) {
-    return <div className="min-h-screen flex items-center justify-center">
-      <div className="animate-pulse text-gray-600">Loading...</div>
-    </div>
+    return (
+      fallback || (
+        <div suppressHydrationWarning>
+          <FullScreenLoading />
+        </div>
+      )
+    )
   }
-
-  return convex ? 
-    <ConvexReactProvider client={convex}>{children}</ConvexReactProvider> : 
+  
+  // Client-side with Convex
+  return clientRef.current ? (
+    <ConvexReactProvider client={clientRef.current}>
+      {children}
+    </ConvexReactProvider>
+  ) : (
     <>{children}</>
+  )
 }
 ```
 
@@ -194,40 +196,53 @@ export function ConvexProviderClient({ children }: { children: ReactNode }) {
 ### Core Architecture
 
 **Frontend Structure:**
-- `/app/` - Next.js App Router pages and layouts
-  - `/app/layout.tsx` - Root layout with providers
-  - `/app/page.tsx` - Landing page
-  - `/app/dashboard/page.tsx` - Organizer dashboard
-  - `/app/events/create/page.tsx` - Event creation page
-  - `/app/dj-submission/page.tsx` - Public DJ submission with token params
-  - `/app/auth/signin/page.tsx` - NextAuth authentication page
-- `/app/components/` - React components
-  - `/app/components/ui/` - shadcn/ui base components
-  - `/app/components/ui/kibo-ui/` - Kibo UI advanced components
-  - `/app/components/EventCreationForm.tsx` - Event creation form with validation
-  - `/app/components/DJSubmissionForm.tsx` - Public DJ submission form with token access
-  - `/app/components/Footer.tsx` - Development status footer
-- `/app/lib/` - Utility functions and configuration
-  - `/app/lib/utils.ts` - Utility functions for component styling
-  - `/app/lib/validation.ts` - ArkType validation schemas and helpers
-  - `/app/lib/auth.ts` - NextAuth configuration
-  - `/app/lib/convex.ts` - Convex client setup
-- `/app/types/` - TypeScript type definitions matching Convex schema
-- `/public/` - Static assets
+- `/apps/next-app/app/` - Next.js App Router pages and layouts
+  - `/apps/next-app/app/layout.tsx` - Root layout with providers
+  - `/apps/next-app/app/[locale]/` - Internationalized routes with dynamic locale
+    - `/apps/next-app/app/[locale]/layout.tsx` - Locale-specific layout with NextIntlClientProvider
+    - `/apps/next-app/app/[locale]/page.tsx` - Localized landing page
+    - `/apps/next-app/app/[locale]/dashboard/page.tsx` - Organizer dashboard
+    - `/apps/next-app/app/[locale]/events/create/page.tsx` - Event creation page
+    - `/apps/next-app/app/[locale]/dj-submission/page.tsx` - Public DJ submission with token params
+    - `/apps/next-app/app/[locale]/auth/signin/page.tsx` - NextAuth authentication page
+  - `/apps/next-app/app/api/auth/[...nextauth]/route.ts` - NextAuth API route
+- `/apps/next-app/app/components/` - React components
+  - `/apps/next-app/app/components/ui/` - shadcn/ui base components
+  - `/apps/next-app/app/components/ui/kibo-ui/` - Kibo UI advanced components
+  - `/apps/next-app/app/components/ui/loading-indicator.tsx` - Unified loading components
+  - `/apps/next-app/app/components/EventCreationForm.tsx` - Event creation form with validation
+  - `/apps/next-app/app/components/DJSubmissionForm.tsx` - Public DJ submission form with token access
+  - `/apps/next-app/app/components/LanguageSwitcher.tsx` - Internationalization language switcher
+  - `/apps/next-app/app/components/UserDisplay.tsx` - User profile display component
+- `/apps/next-app/app/lib/` - Utility functions and configuration
+  - `/apps/next-app/app/lib/utils.ts` - Utility functions for component styling
+  - `/apps/next-app/app/lib/validation.ts` - ArkType validation schemas and helpers
+  - `/apps/next-app/app/lib/auth.ts` - NextAuth configuration
+  - `/apps/next-app/app/lib/convex.ts` - Convex client setup
+  - `/apps/next-app/app/lib/fonts.ts` - SUIT Variable font configuration
+- `/apps/next-app/i18n/` - Internationalization configuration
+  - `/apps/next-app/i18n/routing.ts` - next-intl routing configuration
+  - `/apps/next-app/i18n/request.ts` - Request locale handling
+- `/apps/next-app/messages/` - Translation files
+  - `/apps/next-app/messages/en.json` - English translations
+  - `/apps/next-app/messages/ko.json` - Korean translations
+- `/apps/next-app/app/providers/` - React context providers
+- `/apps/next-app/public/` - Static assets
 
 **Backend Structure (Convex):**
-- `/convex/` - Convex backend functions and schema
-- `/convex/schema.ts` - Database schema definition with tables:
+- `/packages/backend/convex/` - Shared Convex backend functions and schema
+- `/packages/backend/convex/schema.ts` - Database schema definition with tables:
   - `events` - Event information with venue, deadlines, payment configuration
   - `timeslots` - DJ time slots with unique submission tokens and Instagram handles
   - `submissions` - DJ submissions with promo materials, guest lists, payment info
   - `users` - User authentication and profile data
   - `instagramConnections` - Instagram account connections with complete profile data
-- `/convex/_generated/` - Auto-generated Convex API files
-- `/convex/events.ts` - Event management API functions (create, list, get, update status)
-- `/convex/timeslots.ts` - Timeslot management and token-based access functions
-- `/convex/instagram.ts` - Instagram OAuth and connection management functions
-- `/convex/auth.ts` - User authentication and NextAuth integration functions
+- `/packages/backend/convex/_generated/` - Auto-generated Convex API files
+- `/packages/backend/convex/events.ts` - Event management API functions (create, list, get, update status)
+- `/packages/backend/convex/timeslots.ts` - Timeslot management and token-based access functions
+- `/packages/backend/convex/instagram.ts` - Instagram OAuth and connection management functions
+- `/packages/backend/convex/auth.ts` - User authentication and NextAuth integration functions
+- `/packages/backend/convex/submissions.ts` - DJ submission management functions
 
 ### Key Features
 
@@ -252,7 +267,9 @@ export function ConvexProviderClient({ children }: { children: ReactNode }) {
 - **Instagram Profile Display**: Dashboard shows Instagram handles (@username format) with profile pictures
 - **Instagram Data Storage**: Complete profile data saved to Convex (username, display name, profile picture, account type)
 - **Clean Authentication Flow**: Direct Convex ID usage eliminates complex mapping and temporary workarounds
-- **Hydration-Safe Providers**: ConvexProvider with proper SSR handling and client-side initialization
+- **Hydration-Safe Providers**: ConvexProviderHydrationSafe with singleton pattern and proper SSR handling
+- **Internationalization System**: Complete next-intl integration with [locale] routing, LanguageSwitcher, and Korean/English translations
+- **Unified Loading System**: LoadingIndicator and FullScreenLoading components with consistent RITE branding
 
 **📋 Planned:**
 - **File Upload Integration**: Connect Dropzone to Convex file storage for actual uploads
@@ -291,12 +308,211 @@ export function ConvexProviderClient({ children }: { children: ReactNode }) {
 - `QRCode` - QR code generation for event links and check-in (with robust canvas validation)
 - `CodeBlock` - Syntax-highlighted code display with copy functionality
 
+**Loading System Components:**
+- `LoadingIndicator` - Branded loading component with RITE logo and pulse animation
+- `FullScreenLoading` - Full-screen loading state with consistent styling
+
+### Loading System
+
+**Location:** `/apps/next-app/app/components/ui/loading-indicator.tsx`
+
+The application uses a unified loading system with consistent RITE branding:
+
+**Components:**
+```typescript
+interface LoadingIndicatorProps {
+  className?: string
+}
+
+export function LoadingIndicator({ className = '' }: LoadingIndicatorProps) {
+  return (
+    <div className={`animate-pulse text-center ${className}`}>
+      <div className="font-medium text-gray-300 text-4xl">
+        RITE
+      </div>
+    </div>
+  )
+}
+
+export function FullScreenLoading() {
+  return (
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <LoadingIndicator />
+    </div>
+  )
+}
+```
+
+**Usage Patterns:**
+- **Full Screen Loading:** Used during SSR/hydration in ConvexProviderHydrationSafe
+- **Component Loading:** Used for specific loading states within components
+- **Branded Experience:** Consistent RITE logo maintains brand identity during loading states
+- **Hydration Safety:** `suppressHydrationWarning` prevents SSR/client mismatches
+
 ### MCP (Model Context Protocol) Integration
 
 This project is configured with Kibo UI MCP server for AI-assisted development:
 - **Configuration**: `.claude.json` in project root
 - **Capabilities**: Claude Code can access Kibo UI component documentation
 - **Benefits**: Real-time component recommendations and usage guidance
+
+## Internationalization System
+
+The application uses **next-intl** for comprehensive internationalization support with Korean and English languages.
+
+### Locale-based Routing Structure
+
+The application uses Next.js dynamic routing with `[locale]` segments for internationalization:
+
+```
+/apps/next-app/app/[locale]/
+├── layout.tsx          # Locale-specific layout with NextIntlClientProvider  
+├── page.tsx           # Localized landing page
+├── dashboard/page.tsx # Localized dashboard
+├── events/
+│   ├── create/page.tsx
+│   └── [eventId]/page.tsx
+├── dj-submission/page.tsx
+└── auth/signin/page.tsx
+```
+
+### Configuration Files
+
+**Routing Configuration (`/apps/next-app/i18n/routing.ts`):**
+```typescript
+import { defineRouting } from 'next-intl/routing';
+import { createNavigation } from 'next-intl/navigation';
+
+export const routing = defineRouting({
+  locales: ['en', 'ko'],    // Supported locales
+  defaultLocale: 'en'       // Fallback locale
+});
+
+// Internationalized navigation functions
+export const { Link, redirect, usePathname, useRouter, getPathname } =
+  createNavigation(routing);
+```
+
+**Locale Layout (`/apps/next-app/app/[locale]/layout.tsx`):**
+```typescript
+export default async function LocaleLayout({ children, params }: Props) {
+  const { locale } = await params;
+  
+  // Locale validation
+  if (!routing.locales.includes(locale as any)) {
+    notFound();
+  }
+  
+  // Enable static rendering
+  setRequestLocale(locale);
+  
+  // Load locale-specific messages
+  const messages = await getMessages();
+  
+  return (
+    <NextIntlClientProvider messages={messages}>
+      {children}
+    </NextIntlClientProvider>
+  );
+}
+```
+
+### Translation Files
+
+**Structure:**
+- `/apps/next-app/messages/en.json` - English translations
+- `/apps/next-app/messages/ko.json` - Korean translations
+
+**Example Usage:**
+```typescript
+// In components
+import { useTranslations } from 'next-intl';
+
+function Dashboard() {
+  const t = useTranslations('dashboard');
+  
+  return (
+    <div>
+      <h1>{t('title')}</h1>
+      <p>{t('welcome')}</p>
+      <button>{t('actions.createEvent')}</button>
+    </div>
+  );
+}
+```
+
+### Language Switcher Component
+
+**Location:** `/apps/next-app/app/components/LanguageSwitcher.tsx`
+
+**Features:**
+- Globe icon with current language display
+- Dropdown menu with flag indicators
+- Preserves current route when switching languages
+- Mobile-responsive design (shows flags on small screens)
+- Click-outside-to-close functionality
+
+**Usage:**
+```typescript
+import { LanguageSwitcher } from '@/components/LanguageSwitcher';
+
+// Add to navigation or header
+<LanguageSwitcher />
+```
+
+### Navigation Patterns
+
+**For internationalized routes:**
+```typescript
+import { Link, useRouter } from '@/i18n/routing';
+
+// Links automatically include current locale
+<Link href="/dashboard">Dashboard</Link>
+
+// Router navigation preserves locale
+const router = useRouter();
+router.push('/events/create');
+```
+
+**For standard Next.js features:**
+```typescript
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+
+// Use when locale handling isn't needed
+```
+
+### URL Structure
+
+- **English (default):** `http://localhost:8000/en/dashboard`
+- **Korean:** `http://localhost:8000/ko/dashboard`
+- **Root redirect:** `http://localhost:8000/` → `http://localhost:8000/en/`
+
+### Translation Management
+
+**JSON Structure:**
+```json
+{
+  "common": {
+    "loading": "Loading...",
+    "save": "Save",
+    "cancel": "Cancel"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "welcome": "Welcome back!",
+    "actions": {
+      "createEvent": "Create Event"
+    }
+  }
+}
+```
+
+**Best Practices:**
+- Use nested objects for logical grouping
+- Keep keys descriptive and consistent
+- Include pluralization for dynamic content
+- Use interpolation for dynamic values: `{name}`, `{count}`
 
 ### Development Setup
 - Run `npm run predev` to initialize Convex development environment and open dashboard
@@ -403,13 +619,21 @@ import { Dropzone } from "@/components/ui/kibo-ui/dropzone"
 import { QRCode } from "@/components/ui/kibo-ui/qr-code"
 import { CodeBlock } from "@/components/ui/kibo-ui/code-block"
 
-// Next.js navigation
+// Loading components
+import { LoadingIndicator, FullScreenLoading } from "@/components/ui/loading-indicator"
+
+// Next.js navigation (standard)
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 
+// Internationalized navigation (next-intl)
+import { Link as IntlLink, useRouter as useIntlRouter, usePathname } from "@/i18n/routing"
+import { useTranslations } from "next-intl"
+import { LanguageSwitcher } from "@/components/LanguageSwitcher"
+
 // Convex integration
 import { useQuery, useMutation } from "convex/react"
-import { api } from "../convex/_generated/api"
+import { api } from "@rite/backend/convex/_generated/api"
 
 // NextAuth authentication
 import { useSession } from "next-auth/react"
@@ -417,6 +641,9 @@ import { signIn, signOut } from "next-auth/react"
 
 // Validation
 import { validateEvent, validateTimeslot } from "@/lib/validation"
+
+// Providers
+import { ConvexProviderHydrationSafe } from "@/providers/convex-provider-hydration-safe"
 ```
 
 ### SvelteKit POC Imports
@@ -446,6 +673,10 @@ import type { Event, Timeslot } from '@rite/shared-types'
 - DJ submission system with token-based access, guest lists, payment collection
 - NextAuth v5 with Instagram OAuth proxy, Convex integration, hydration fixes
 - SUIT Variable font system, professional UI/UX
+- Complete internationalization system with next-intl (Korean/English support)
+- Unified loading system with consistent RITE branding
+- ConvexProviderHydrationSafe with singleton pattern for SSR compatibility
+- Language switcher with mobile-responsive design and route preservation
 
 **🚧 In Progress:**
 - File upload integration with Convex storage
@@ -454,14 +685,17 @@ import type { Event, Timeslot } from '@rite/shared-types'
 **📋 Planned:**
 - Submission status dashboard, Instagram message templates
 - Email notifications, form persistence
+- Additional locale support expansion
 
 ## Troubleshooting
 
 ### Common Issues
-1. **"Objects are not valid as a React child"** - Use client-side ConvexProvider initialization with useEffect
+1. **"Objects are not valid as a React child"** - Use ConvexProviderHydrationSafe with proper client-side initialization
 2. **NextAuth Prerender Errors** - Add `export const dynamic = 'force-dynamic'` to pages using auth()
-3. **Hydration Mismatches** - Use dynamic imports with `{ ssr: false }` for providers
-4. **Missing Environment Variables** - Check NEXT_PUBLIC_CONVEX_URL is set, add graceful fallbacks
+3. **Hydration Mismatches** - ConvexProviderHydrationSafe uses `suppressHydrationWarning` and singleton pattern
+4. **Missing Environment Variables** - Check NEXT_PUBLIC_CONVEX_URL is set, ConvexProviderHydrationSafe includes graceful fallbacks
+5. **Locale Route Issues** - Ensure [locale] dynamic segment is properly configured in routing structure
+6. **Translation Missing Errors** - Verify translation keys exist in both en.json and ko.json files
 
 ### Authentication Debugging
 - Verify all environment variables (Instagram OAuth proxy, client ID/secret)
