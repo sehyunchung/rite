@@ -29,10 +29,14 @@
     "createNewEvent": "새 이벤트 생성",
     "noEvents": "아직 이벤트가 없습니다. 첫 번째 이벤트를 생성해보세요!",
     "loadingEvents": "이벤트 로딩 중...",
+    "yourEvents": "내 이벤트",
     "actions": {
       "createEvent": "이벤트 생성",
+      "createEventDescription": "새로운 DJ 이벤트 설정",
       "viewSubmissions": "제출물 보기",
-      "eventCalendar": "이벤트 캘린더"
+      "viewSubmissionsDescription": "DJ 제출물 확인",
+      "eventCalendar": "이벤트 캘린더",
+      "eventCalendarDescription": "예정된 이벤트 보기"
     },
     "eventCard": {
       "viewDetails": "자세히 보기",
@@ -114,6 +118,13 @@
         "pending": "대기 중"
       }
     }
+  },
+  "status": {
+    "active": "활성",
+    "inactive": "비활성", 
+    "draft": "초안",
+    "completed": "완료"
+  }
   },
   "djSubmission": {
     "title": "DJ 제출 폼",

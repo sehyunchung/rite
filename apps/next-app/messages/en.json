@@ -29,10 +29,14 @@
     "createNewEvent": "Create New Event",
     "noEvents": "No events yet. Create your first event to get started!",
     "loadingEvents": "Loading events...",
+    "yourEvents": "Your Events",
     "actions": {
       "createEvent": "Create Event",
-      "viewSubmissions": "View Submissions",
-      "eventCalendar": "Event Calendar"
+      "createEventDescription": "Set up a new DJ event",
+      "viewSubmissions": "View Submissions", 
+      "viewSubmissionsDescription": "Check DJ submissions",
+      "eventCalendar": "Event Calendar",
+      "eventCalendarDescription": "View upcoming events"
     },
     "eventCard": {
       "viewDetails": "View Details",
@@ -114,6 +118,13 @@
         "pending": "Pending"
       }
     }
+  },
+  "status": {
+    "active": "Active",
+    "inactive": "Inactive",
+    "draft": "Draft", 
+    "completed": "Completed"
+  }
   },
   "djSubmission": {
     "title": "DJ Submission Form",
