@@ -2,13 +2,15 @@
 
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
+import { LinkIcon, CheckIcon } from 'lucide-react';
 
 interface CopyButtonProps {
   text: string;
   className?: string;
+  iconOnly?: boolean;
 }
 
-export function CopyButton({ text, className }: CopyButtonProps) {
+export function CopyButton({ text, className, iconOnly = false }: CopyButtonProps) {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = async () => {
@@ -28,7 +30,15 @@ export function CopyButton({ text, className }: CopyButtonProps) {
       onClick={handleCopy}
       className={className}
     >
-      {copied ? 'Copied!' : 'Copy'}
+      {iconOnly ? (
+        copied ? (
+          <CheckIcon className="w-4 h-4" />
+        ) : (
+          <LinkIcon className="w-4 h-4" />
+        )
+      ) : (
+        copied ? 'Copied!' : 'Copy'
+      )}
     </Button>
   );
 }

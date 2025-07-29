@@ -144,6 +144,7 @@ export function DashboardContent({ userId }: DashboardContentProps) {
                 </Button>
                 <CopyButton 
                   text={`${baseUrl}/events/${event._id}`}
+                  iconOnly={true}
                   className="px-3"
                 />
               </CardFooter>
