@@ -6,7 +6,7 @@ import { Id } from '@rite/backend/convex/_generated/dataModel';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Link } from '@/i18n/routing';
+import { Link } from '../../../i18n/routing';
 import { useSession } from 'next-auth/react';
 import { CopyButton } from '@/components/CopyButton';
 import { useTranslations } from 'next-intl';

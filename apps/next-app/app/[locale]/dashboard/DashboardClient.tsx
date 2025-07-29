@@ -1,7 +1,7 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { Link } from '@/i18n/routing';
+import { Link } from '../../../i18n/routing';
 import { DashboardContent } from './DashboardContent';
 import { UserDisplay } from '@/components/UserDisplay';
 import { signOut } from 'next-auth/react';
