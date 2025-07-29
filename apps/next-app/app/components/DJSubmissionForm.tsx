@@ -262,7 +262,7 @@ export function DJSubmissionForm({ submissionToken }: DJSubmissionFormProps) {
               >
                 <DropzoneContent>
                   <div className="space-y-2">
-                    <h4 className="font-medium">Selected Files:</h4>
+                    <h4 className="font-medium">{t('selectedFiles')}</h4>
                     <ul className="text-sm text-gray-600 space-y-1">
                       {promoFiles.map((file, index) => (
                         <li key={index} className="flex items-center">
@@ -272,12 +272,12 @@ export function DJSubmissionForm({ submissionToken }: DJSubmissionFormProps) {
                       ))}
                     </ul>
                     <p className="text-center text-muted-foreground text-xs mt-2">
-                      Drop more files or click to add
+                      {t('dropFilesHere')}
                     </p>
                   </div>
                 </DropzoneContent>
                 <DropzoneEmptyState>
-                  Drop your promo materials here or click to browse
+                  {t('dropFilesHere')}
                 </DropzoneEmptyState>
               </Dropzone>
 
