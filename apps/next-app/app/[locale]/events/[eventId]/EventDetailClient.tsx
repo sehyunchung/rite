@@ -33,7 +33,10 @@ export function EventDetailClient({ eventId, userId, locale }: EventDetailClient
   
   const event = useQuery(
     api.events.getEvent,
-    { eventId: eventId as Id<"events"> }
+    { 
+      eventId: eventId as Id<"events">,
+      userId: userId as Id<"users">
+    }
   );
 
   if (event === undefined) {

@@ -23,7 +23,10 @@ export function DashboardContent({ userId }: DashboardContentProps) {
   const tStatus = useTranslations('status');
   
   // Query events for the authenticated user
-  const events = useQuery(api.events.listEvents) || [];
+  const events = useQuery(
+    api.events.listEvents,
+    userId ? { userId: userId as Id<"users"> } : "skip"
+  ) || [];
   const instagramConnection = useQuery(
     api.instagram.getInstagramConnection, 
     userId ? { userId: userId as Id<"users"> } : "skip"

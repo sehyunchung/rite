@@ -67,12 +67,13 @@ export const getEventPublic = query({
 
 // Query to list all events for the authenticated organizer
 export const listEvents = query({
-  args: {},
-  handler: async (ctx) => {
-    const userId = await requireAuth(ctx);
+  args: {
+    userId: v.id("users"),
+  },
+  handler: async (ctx, args) => {
     const events = await ctx.db
       .query("events")
-      .filter((q) => q.eq(q.field("organizerId"), userId))
+      .filter((q) => q.eq(q.field("organizerId"), args.userId))
       .order("desc")
       .collect();
     
@@ -93,16 +94,16 @@ export const listEvents = query({
 export const getEvent = query({
   args: {
     eventId: v.id("events"),
+    userId: v.id("users"),
   },
   handler: async (ctx, args) => {
-    const userId = await requireAuth(ctx);
     const event = await ctx.db.get(args.eventId);
     if (!event) {
       throw new Error("Event not found");
     }
     
     // Ensure the event belongs to the authenticated user
-    if (event.organizerId !== userId) {
+    if (event.organizerId !== args.userId) {
       throw new Error("Access denied");
     }
     
@@ -264,16 +265,15 @@ export const updateEventStatus = mutation({
   args: {
     eventId: v.id("events"),
     status: v.union(v.literal("draft"), v.literal("active"), v.literal("completed")),
+    userId: v.id("users"),
   },
   handler: async (ctx, args) => {
-    const userId = await requireAuth(ctx);
-    
     // Verify the event belongs to the authenticated user
     const event = await ctx.db.get(args.eventId);
     if (!event) {
       throw new Error("Event not found");
     }
-    if (event.organizerId !== userId) {
+    if (event.organizerId !== args.userId) {
       throw new Error("Access denied");
     }
     
