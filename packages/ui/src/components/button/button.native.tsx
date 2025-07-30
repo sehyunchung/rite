@@ -40,15 +40,23 @@ export function Button({
   children,
   ...props
 }: ButtonProps) {
+  const buttonClass = `${buttonVariants({ variant, size })} ${className}`;
+  
   return (
     <Pressable
       onPress={onPress}
       disabled={disabled}
-      className={`${buttonVariants({ variant, size })} ${className}`}
+      // @ts-ignore - NativeWind className support
+      className={buttonClass}
       {...props}
     >
       {typeof children === 'string' ? (
-        <Text className="text-center font-medium">{children}</Text>
+        <Text 
+          // @ts-ignore - NativeWind className support
+          className="text-center font-medium"
+        >
+          {children}
+        </Text>
       ) : (
         children
       )}
