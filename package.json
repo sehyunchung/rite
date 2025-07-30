@@ -7,6 +7,7 @@
     "dev": "turbo run dev",
     "dev:next": "turbo run dev --filter=next-app",
     "dev:sveltekit": "turbo run dev --filter=sveltekit-poc",
+    "dev:mobile": "turbo run start --filter=mobile",
     "dev:backend": "turbo run dev --filter=@rite/backend",
     "predev": "pnpm --filter=@rite/backend run dev --until-success && pnpm --filter=@rite/backend convex dashboard",
     "build": "turbo run build",

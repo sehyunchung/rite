@@ -805,3 +805,100 @@ import type { Event, Timeslot } from '@rite/shared-types'
 - **Mobile Flow Tracking**: Detailed logs for mobile-specific parameters and redirects
 
 **Deploy:** `cd instagram-oauth-proxy && npx wrangler deploy`
+
+## Mobile App (Expo)
+
+### Overview
+The RITE mobile app is built with Expo and React Native, integrated into the monorepo structure. It shares the Convex backend and can reuse components between web and mobile platforms.
+
+### Setup & Development
+- **Location**: `/apps/mobile`
+- **Start development**: `pnpm run dev:mobile` (from root)
+- **Direct start**: `cd apps/mobile && pnpm start`
+- **Platform-specific**: `pnpm ios` or `pnpm android`
+
+### Tech Stack
+- **Framework**: Expo SDK 53 with React Native 0.79.5
+- **Navigation**: Expo Router (file-based routing)
+- **Styling**: NativeWind (Tailwind for React Native)
+- **Backend**: Shared Convex backend via `@rite/backend`
+- **UI Components**: Shared UI package with platform-specific implementations
+
+### Architecture
+
+#### Monorepo Integration
+```
+apps/
+├── mobile/              # Expo app
+├── next-app/           # Web app
+└── sveltekit-poc/      # SvelteKit POC
+packages/
+├── backend/            # Shared Convex backend
+├── shared-types/       # Shared TypeScript types
+└── ui/                 # Shared UI components (web + mobile)
+```
+
+#### Key Configuration Files
+- **`.npmrc`**: `node-linker=hoisted` (required for React Native)
+- **`metro.config.js`**: Configured for monorepo with NativeWind
+- **`tailwind.config.js`**: Includes shared UI package paths
+- **`babel.config.js`**: NativeWind integration
+
+#### Shared UI Components
+The `@rite/ui` package provides platform-specific components:
+```typescript
+// packages/ui/src/components/button/
+├── button.web.tsx      # Web version (existing shadcn/ui)
+├── button.native.tsx   # Native version (NativeWind styled)
+└── index.tsx          # Platform-specific exports
+```
+
+### Authentication Strategy
+**Recommended**: Convex Auth (Beta) or Clerk
+- Native mobile support
+- Direct Convex integration
+- Secure token storage with expo-secure-store
+- Magic Links/OTP for mobile-friendly auth
+
+**Not Recommended**: NextAuth bridge (adds complexity)
+
+### Current Status
+- ✅ Expo app created and configured
+- ✅ Monorepo integration with pnpm workspaces
+- ✅ Metro configured for monorepo + NativeWind
+- ✅ Convex backend integration
+- ✅ Shared UI package structure
+- ✅ Basic event listing from Convex
+- 🚧 Authentication implementation pending
+- 📋 Instagram OAuth mobile flow planning
+
+### Development Commands
+```bash
+# Install dependencies
+pnpm install
+
+# Start mobile dev server
+pnpm run dev:mobile
+
+# Run on iOS simulator
+cd apps/mobile && pnpm ios
+
+# Run on Android emulator
+cd apps/mobile && pnpm android
+
+# Add mobile dependencies
+cd apps/mobile && pnpm add [package-name]
+```
+
+### Environment Variables
+For local development, the Convex URL is hardcoded. For production:
+```javascript
+// app.json or app.config.js
+{
+  "expo": {
+    "extra": {
+      "convexUrl": process.env.EXPO_PUBLIC_CONVEX_URL
+    }
+  }
+}
+```
