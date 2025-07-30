@@ -27,10 +27,6 @@ export function DashboardContent({ userId }: DashboardContentProps) {
     api.events.listEvents,
     userId ? { userId: userId as Id<"users"> } : "skip"
   ) || [];
-  const instagramConnection = useQuery(
-    api.instagram.getInstagramConnection, 
-    userId ? { userId: userId as Id<"users"> } : "skip"
-  );
   
   // Show loading state while session is loading
   if (status === 'loading') {

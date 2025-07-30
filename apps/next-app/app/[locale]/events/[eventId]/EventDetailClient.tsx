@@ -28,7 +28,6 @@ export function EventDetailClient({ eventId, userId, locale }: EventDetailClient
   const [showQRCode, setShowQRCode] = useState(false);
   const t = useTranslations('events.detail');
   const tNav = useTranslations('navigation');
-  const tCommon = useTranslations('common');
   const tStatus = useTranslations('status');
   
   const event = useQuery(
@@ -149,7 +148,7 @@ export function EventDetailClient({ eventId, userId, locale }: EventDetailClient
                 <CardContent>
                   {event.timeslots && event.timeslots.length > 0 ? (
                     <div className="space-y-4">
-                      {event.timeslots.map((slot: any, index: number) => (
+                      {event.timeslots.map((slot: any) => (
                         <div key={slot._id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                           <div className="flex-1">
                             <div className="flex items-center space-x-3">

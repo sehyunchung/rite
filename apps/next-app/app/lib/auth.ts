@@ -1,6 +1,5 @@
 import NextAuth from 'next-auth'
 import Google from 'next-auth/providers/google'
-import Apple from 'next-auth/providers/apple'
 import { ConvexAdapter } from './convex-adapter'
 import { convex } from './convex'
 import { api } from '@rite/backend/convex/_generated/api'

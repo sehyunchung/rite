@@ -303,7 +303,7 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
       };
 
       console.log('Event data being sent:', eventData);
-      const result = await createEvent(eventData);
+      await createEvent(eventData);
       
       alert('Event created successfully!');
       

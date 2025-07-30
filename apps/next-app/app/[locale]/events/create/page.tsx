@@ -1,7 +1,6 @@
 import { EventCreationClient } from './EventCreationClient';
 import { auth } from '@/lib/auth';
 import { redirect } from 'next/navigation';
-import { getTranslations } from 'next-intl/server';
 
 export const dynamic = 'force-dynamic';
 
@@ -12,7 +11,6 @@ interface Props {
 export default async function CreateEventPage({ params }: Props) {
   const { locale } = await params;
   const session = await auth();
-  const t = await getTranslations('events.create');
   
   // Redirect if not authenticated
   if (!session) {

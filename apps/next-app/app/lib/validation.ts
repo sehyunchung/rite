@@ -158,7 +158,7 @@ export function validateDeadlineOrder(guestListDeadline: string, promoDeadline: 
   return null;
 }
 
-export function validateTimeslotDuration(startTime: string, endTime: string, minMinutes: number = 30): string | null {
+export function validateTimeslotDuration(startTime: string, endTime: string, _minMinutes: number = 30): string | null {
   // No duration restrictions for DJ timeslots - organizers know their event needs best
   return null;
 }

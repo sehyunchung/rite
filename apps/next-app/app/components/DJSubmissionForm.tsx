@@ -11,7 +11,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Dropzone, DropzoneContent, DropzoneEmptyState } from '@/components/ui/kibo-ui/dropzone';
 import { Id } from '@rite/backend/convex/_generated/dataModel';
 import { useTranslations } from 'next-intl';
-import { FullScreenLoading, LoadingIndicator } from '@/components/ui/loading-indicator';
+import { FullScreenLoading } from '@/components/ui/loading-indicator';
 
 interface DJSubmissionFormProps {
   submissionToken: string;
@@ -25,7 +25,6 @@ interface GuestListEntry {
 
 export function DJSubmissionForm({ submissionToken }: DJSubmissionFormProps) {
   const t = useTranslations('djSubmission');
-  const tCommon = useTranslations('common');
   const timeslotData = useQuery(api.timeslots.getTimeslotByToken, { submissionToken });
   const generateUploadUrl = useMutation(api.submissions.generateUploadUrl);
   const saveSubmission = useMutation(api.submissions.saveSubmission);

@@ -7,6 +7,6 @@ interface DJSubmissionClientProps {
   locale: string;
 }
 
-export function DJSubmissionClient({ submissionToken, locale }: DJSubmissionClientProps) {
+export function DJSubmissionClient({ submissionToken, locale: _locale }: DJSubmissionClientProps) {
   return <DJSubmissionForm submissionToken={submissionToken} />;
 }
