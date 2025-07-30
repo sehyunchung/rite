@@ -3,16 +3,22 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { CopyButton } from './CopyButton';
 import { useTranslations } from 'next-intl';
+import { Doc } from '@rite/backend/convex/_generated/dataModel';
+
+// Type for events that includes timeslots from query results
+type EventWithTimeslots = Doc<"events"> & {
+  timeslots: Doc<"timeslots">[];
+};
 
 interface SubmissionLinksProps {
-  events: any[];
+  events: EventWithTimeslots[];
 }
 
 export function SubmissionLinks({ events }: SubmissionLinksProps) {
   const baseUrl = typeof window !== 'undefined' ? window.location.origin : '';
   const t = useTranslations('events.detail.submissionLinks');
 
-  if (!events.some((event: any) => event.timeslots?.length > 0)) {
+  if (!events.some((event) => event.timeslots.length > 0)) {
     return null;
   }
 
@@ -25,8 +31,8 @@ export function SubmissionLinks({ events }: SubmissionLinksProps) {
             {t('description')}
           </p>
           <div className="space-y-4">
-            {events.flatMap((event: any) => 
-              (event.timeslots || []).map((slot: any) => {
+            {events.flatMap((event) => 
+              event.timeslots.map((slot) => {
                 const submissionUrl = `${baseUrl}/dj-submission?token=${slot.submissionToken}`;
                 
                 return (

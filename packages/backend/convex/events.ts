@@ -19,58 +19,6 @@ function generateSubmissionToken(): string {
   return token;
 }
 
-// Public query to list all events (for demo purposes)
-export const listEventsPublic = query({
-  args: {},
-  handler: async (ctx) => {
-    const events = await ctx.db
-      .query("events")
-      .order("desc")
-      .collect();
-    
-    // Provide defaults for optional fields for backward compatibility
-    return events.map(event => ({
-      ...event,
-      guestLimitPerDJ: event.guestLimitPerDJ ?? 2, // Default to 2 guests per DJ
-      payment: {
-        ...event.payment,
-        perDJ: event.payment.perDJ ?? event.payment.amount, // Default perDJ to total amount
-      },
-      hashtags: event.hashtags ?? '', // Default to empty string
-    }));
-  },
-});
-
-// Public query to get a single event by ID (temporary until auth is fixed)
-export const getEventPublic = query({
-  args: {
-    eventId: v.id("events"),
-  },
-  handler: async (ctx, args) => {
-    const event = await ctx.db.get(args.eventId);
-    if (!event) {
-      return null;
-    }
-    
-    // Also get the timeslots for this event
-    const timeslots = await ctx.db
-      .query("timeslots")
-      .filter((q) => q.eq(q.field("eventId"), args.eventId))
-      .collect();
-    
-    // Provide defaults for optional fields for backward compatibility
-    return {
-      ...event,
-      guestLimitPerDJ: event.guestLimitPerDJ ?? 2, // Default to 2 guests per DJ
-      payment: {
-        ...event.payment,
-        perDJ: event.payment.perDJ ?? event.payment.amount, // Default perDJ to total amount
-      },
-      hashtags: event.hashtags ?? '', // Default to empty string
-      timeslots,
-    };
-  },
-});
 
 // Query to list all events for the authenticated organizer
 export const listEvents = query({
@@ -84,16 +32,28 @@ export const listEvents = query({
       .order("desc")
       .collect();
     
-    // Provide defaults for optional fields for backward compatibility
-    return events.map(event => ({
-      ...event,
-      guestLimitPerDJ: event.guestLimitPerDJ ?? 2, // Default to 2 guests per DJ
-      payment: {
-        ...event.payment,
-        perDJ: event.payment.perDJ ?? event.payment.amount, // Default perDJ to total amount
-      },
-      hashtags: event.hashtags ?? '', // Default to empty string
-    }));
+    // Get timeslots for each event
+    const eventsWithTimeslots = await Promise.all(
+      events.map(async (event) => {
+        const timeslots = await ctx.db
+          .query("timeslots")
+          .filter((q) => q.eq(q.field("eventId"), event._id))
+          .collect();
+        
+        return {
+          ...event,
+          guestLimitPerDJ: event.guestLimitPerDJ ?? 2, // Default to 2 guests per DJ
+          payment: {
+            ...event.payment,
+            perDJ: event.payment.perDJ ?? event.payment.amount, // Default perDJ to total amount
+          },
+          hashtags: event.hashtags ?? '', // Default to empty string
+          timeslots,
+        };
+      })
+    );
+    
+    return eventsWithTimeslots;
   },
 });
 
@@ -134,73 +94,6 @@ export const getEvent = query({
   },
 });
 
-// Temporary mutation for testing without authentication
-export const createEventTemp = mutation({
-  args: {
-    name: v.string(),
-    date: v.string(),
-    venue: v.object({
-      name: v.string(),
-      address: v.string(),
-    }),
-    description: v.optional(v.string()),
-    hashtags: v.optional(v.string()),
-    deadlines: v.object({
-      guestList: v.string(),
-      promoMaterials: v.string(),
-    }),
-    payment: v.object({
-      amount: v.number(),
-      perDJ: v.number(),
-      currency: v.string(),
-      dueDate: v.string(),
-    }),
-    guestLimitPerDJ: v.number(),
-    timeslots: v.array(v.object({
-      startTime: v.string(),
-      endTime: v.string(),
-      djName: v.string(),
-      djInstagram: v.string(),
-    })),
-  },
-  handler: async (ctx, args) => {
-    const { timeslots, ...eventData } = args;
-    
-    // For testing: use a dummy user ID
-    const dummyUserId = "k572n0z8kk3n8y8jnq4n5w26zf6z9hr6" as any; // dummy Convex ID format
-    
-    // Create the event with dummy organizer
-    const eventId = await ctx.db.insert("events", {
-      ...eventData,
-      organizerId: dummyUserId,
-      createdAt: new Date().toISOString(),
-      status: "draft" as const,
-    });
-    
-    // Create timeslots for the event with unique submission tokens
-    const timeslotResults = await Promise.all(
-      timeslots.map(async (slot) => {
-        const submissionToken = generateSubmissionToken();
-        const timeslotId = await ctx.db.insert("timeslots", {
-          eventId,
-          startTime: slot.startTime,
-          endTime: slot.endTime,
-          djName: slot.djName,
-          djInstagram: slot.djInstagram,
-          submissionToken,
-        });
-        
-        return { timeslotId, submissionToken };
-      })
-    );
-    
-    return { 
-      eventId, 
-      timeslots: timeslotResults,
-      message: 'Event created successfully with temp auth!' 
-    };
-  },
-});
 
 // Mutation to create a new event with timeslots
 export const createEvent = mutation({

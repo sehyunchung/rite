@@ -7,6 +7,7 @@ import { LoadingIndicator } from '@/components/ui/loading-indicator';
 import { useEventStatus } from '@/hooks/useEventStatus';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
+import type { EventAction } from '@rite/backend/convex/eventStatus';
 import * as AlertDialogPrimitive from "@radix-ui/react-alert-dialog";
 import {
   AlertDialogAction,
@@ -59,7 +60,7 @@ export function EventStatusCard({ eventId, userId }: EventStatusCardProps) {
   } = useEventStatus({ eventId, userId });
   
   const [confirmDialog, setConfirmDialog] = useState<{
-    action: any;
+    action: EventAction;
     open: boolean;
   } | null>(null);
   
@@ -79,7 +80,7 @@ export function EventStatusCard({ eventId, userId }: EventStatusCardProps) {
   
   const Icon = IconMap[phaseInfo.icon as keyof typeof IconMap] || Calendar;
   
-  const handleAction = (action: any) => {
+  const handleAction = (action: EventAction) => {
     if (action.confirmRequired) {
       setConfirmDialog({ action, open: true });
     } else {

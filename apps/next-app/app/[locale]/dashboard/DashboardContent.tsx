@@ -2,7 +2,7 @@
 
 import { useQuery } from 'convex/react';
 import { api } from '@rite/backend/convex/_generated/api';
-import { Id } from '@rite/backend/convex/_generated/dataModel';
+import { Id, Doc } from '@rite/backend/convex/_generated/dataModel';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -11,6 +11,11 @@ import { useSession } from 'next-auth/react';
 import { CopyButton } from '@/components/CopyButton';
 import { useTranslations } from 'next-intl';
 import { LoadingIndicator } from '@/components/ui/loading-indicator';
+
+// Type for events that includes timeslots from query results
+type EventWithTimeslots = Doc<"events"> & {
+  timeslots: Doc<"timeslots">[];
+};
 
 interface DashboardContentProps {
   userId: string;
@@ -26,7 +31,9 @@ export function DashboardContent({ userId }: DashboardContentProps) {
   const events = useQuery(
     api.events.listEvents,
     userId ? { userId: userId as Id<"users"> } : "skip"
-  ) || [];
+  ) as EventWithTimeslots[] | undefined;
+  
+  const eventsData = events || [];
   
   // Show loading state while session is loading
   if (status === 'loading') {
@@ -101,7 +108,7 @@ export function DashboardContent({ userId }: DashboardContentProps) {
         <h2 className="text-xl font-semibold text-gray-900 mb-4">{t('yourEvents')}</h2>
       </div>
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {events.length === 0 ? (
+        {eventsData.length === 0 ? (
           <Card className="col-span-full">
             <CardContent className="pt-6">
               <div className="text-center text-gray-500">
@@ -113,7 +120,7 @@ export function DashboardContent({ userId }: DashboardContentProps) {
             </CardContent>
           </Card>
         ) : (
-          events.map((event: any) => (
+          eventsData.map((event) => (
             <Card key={event._id} className="hover:shadow-lg transition-shadow">
               <CardHeader>
                 <div className="flex justify-between items-start">
@@ -133,7 +140,7 @@ export function DashboardContent({ userId }: DashboardContentProps) {
                 <div className="flex justify-between items-center text-sm">
                   <span className="text-gray-600">{event.date}</span>
                   <span className="font-medium text-blue-600">
-                    {t(event.timeslots?.length !== 1 ? 'eventCard.djs_plural' : 'eventCard.djs', { count: event.timeslots?.length || 0 })}
+                    {t(event.timeslots.length !== 1 ? 'eventCard.djs_plural' : 'eventCard.djs', { count: event.timeslots.length })}
                   </span>
                 </div>
                 {event.deadlines && (

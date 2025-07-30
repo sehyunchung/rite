@@ -96,10 +96,24 @@ export const saveSubmission = mutation({
   },
 });
 
-// Get submission by timeslot ID
+// Get submission by timeslot ID (requires authentication)
 export const getSubmissionByTimeslot = query({
-  args: { timeslotId: v.id("timeslots") },
+  args: { 
+    timeslotId: v.id("timeslots"),
+    userId: v.id("users"),
+  },
   handler: async (ctx, args) => {
+    // Verify the timeslot belongs to an event owned by the user
+    const timeslot = await ctx.db.get(args.timeslotId);
+    if (!timeslot) {
+      throw new Error("Timeslot not found");
+    }
+    
+    const event = await ctx.db.get(timeslot.eventId);
+    if (!event || event.organizerId !== args.userId) {
+      throw new Error("Access denied");
+    }
+    
     return await ctx.db
       .query("submissions")
       .filter((q) => q.eq(q.field("timeslotId"), args.timeslotId))

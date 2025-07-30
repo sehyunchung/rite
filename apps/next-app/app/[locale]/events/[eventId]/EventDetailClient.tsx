@@ -2,7 +2,7 @@
 
 import { useQuery } from 'convex/react';
 import { api } from '@rite/backend/convex/_generated/api';
-import { Id } from '@rite/backend/convex/_generated/dataModel';
+import { Id, Doc } from '@rite/backend/convex/_generated/dataModel';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -148,7 +148,7 @@ export function EventDetailClient({ eventId, userId, locale }: EventDetailClient
                 <CardContent>
                   {event.timeslots && event.timeslots.length > 0 ? (
                     <div className="space-y-4">
-                      {event.timeslots.map((slot: any) => (
+                      {event.timeslots.map((slot: Doc<"timeslots">) => (
                         <div key={slot._id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                           <div className="flex-1">
                             <div className="flex items-center space-x-3">
