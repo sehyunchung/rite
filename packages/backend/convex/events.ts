@@ -286,7 +286,6 @@ export const createEvent = mutation({
       await ctx.db.patch(eventId, { capabilities });
     }
     
-    console.log("Created new event with id:", eventId, "and timeslots:", timeslotResults);
     return { 
       eventId, 
       timeslots: timeslotResults 

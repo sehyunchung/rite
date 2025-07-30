@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useMutation } from 'convex/react';
 import { api } from '@rite/backend/convex/_generated/api';
+import { Id } from '@rite/backend/convex/_generated/dataModel';
 import { useSession } from 'next-auth/react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -35,7 +36,7 @@ const MAX_TIMESLOTS_PER_EVENT = 12; // Maximum number of DJ timeslots allowed
 
 export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
   const t = useTranslations('events.create');
-  const createEvent = useMutation(api.events.createEventTemp); // Using temp version for testing
+  const createEvent = useMutation(api.events.createEvent);
   const { data: session, status } = useSession();
 
   // Debug session data
@@ -289,6 +290,7 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
       console.log('User ID:', session.user.id);
 
       const eventData = {
+        userId: session.user.id as Id<"users">,
         name: formData.name,
         date: formData.date,
         venue: formData.venue,
