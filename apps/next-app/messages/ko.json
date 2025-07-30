@@ -8,7 +8,7 @@
     "cancel": "취소",
     "delete": "삭제",
     "edit": "편집",
-    "create": "생성",
+    "create": "만들기",
     "copy": "복사",
     "copied": "복사됨!",
     "back": "뒤로",
@@ -20,19 +20,19 @@
   "navigation": {
     "dashboard": "대시보드",
     "events": "이벤트",
-    "createEvent": "이벤트 생성", 
+    "createEvent": "이벤트 만들기", 
     "signOut": "로그아웃",
     "welcomeUser": "환영합니다, {name}"
   },
   "dashboard": {
     "title": "대시보드",
     "welcome": "환영합니다!",
-    "createNewEvent": "새 이벤트 생성",
-    "noEvents": "아직 이벤트가 없습니다. 첫 번째 이벤트를 생성해보세요!",
+    "createNewEvent": "새 이벤트 만들기",
+    "noEvents": "아직 이벤트가 없습니다. 첫 번째 이벤트를 만들어보세요!",
     "loadingEvents": "이벤트 로딩 중...",
     "yourEvents": "내 이벤트",
     "actions": {
-      "createEvent": "이벤트 생성",
+      "createEvent": "이벤트 만들기",
       "createEventDescription": "새로운 DJ 이벤트 설정",
       "viewSubmissions": "제출물 보기",
       "viewSubmissionsDescription": "DJ 제출물 확인",
@@ -48,7 +48,7 @@
   },
   "events": {
     "create": {
-      "title": "새 이벤트 생성",
+      "title": "새 이벤트 만들기",
       "subtitle": "DJ 이벤트의 모든 세부사항을 설정하세요",
       "basicInfo": "기본 정보",
       "eventName": "이벤트 이름",
@@ -85,8 +85,8 @@
       "startTime": "시작 시간",
       "endTime": "종료 시간",
       "removeTimeslot": "삭제",
-      "createEvent": "이벤트 생성",
-      "creating": "생성 중..."
+      "createEvent": "이벤트 만들기",
+      "creating": "만드는 중..."
     },
     "detail": {
       "notFound": "이벤트를 찾을 수 없음",
@@ -240,7 +240,7 @@
       "canEdit": "편집 가능",
       "canPublish": "게시 가능",
       "canAcceptSubmissions": "제출 받는 중",
-      "canGenerateContent": "콘텐츠 생성 가능",
+      "canGenerateContent": "콘텐츠 만들기 가능",
       "canFinalize": "확정 가능",
       "dayOfFeaturesActive": "당일 기능 활성화"
     },
