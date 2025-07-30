@@ -13,7 +13,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ### Individual App Commands
 - **Next.js App**: `pnpm run dev:next` or `pnpm --filter=next-app run dev`
-- **SvelteKit POC**: `pnpm run dev:sveltekit` or `pnpm --filter=sveltekit-poc run dev`
+- **Mobile App**: `pnpm run dev:mobile` or `pnpm --filter=mobile run start`
 - **Shared Types**: `pnpm --filter=@rite/shared-types run build`
 
 ### Legacy Commands (for reference)
@@ -133,7 +133,7 @@ This is Rite, a DJ event management platform with a **monorepo structure** conta
 rite/
 ├── apps/
 │   ├── next-app/          # Main Next.js application (production)
-│   └── sveltekit-poc/     # SvelteKit POC for framework evaluation
+│   └── mobile/            # Expo mobile application
 ├── packages/
 │   ├── backend/           # Shared Convex backend package (@rite/backend)
 │   └── shared-types/      # Shared TypeScript types across apps
@@ -147,7 +147,7 @@ rite/
 - **Build System**: Turborepo for optimized builds and caching
 - **Frontend Apps**: 
   - Next.js 15 with React 18, TypeScript, Turbopack
-  - SvelteKit with Cloudflare adapter (POC)
+  - Expo mobile app with React Native
 - **Typography**: SUIT Variable font with Korean/English support (weights 100-900)
 - **Internationalization**: next-intl with locale-based routing ([locale] structure)
 - **UI Libraries**: 
@@ -155,7 +155,7 @@ rite/
   - Kibo UI - Advanced components (Dropzone, QR Code, Code Block)
 - **Backend**: Convex (real-time database and file storage, shared across apps)
 - **Authentication**: NextAuth v5 with streamlined Instagram OAuth integration and direct Convex ID usage
-- **Routing**: Next.js App Router with [locale] dynamic routing / SvelteKit file-based routing
+- **Routing**: Next.js App Router with [locale] dynamic routing / Expo Router file-based routing
 - **Validation**: ArkType (high-performance TypeScript schema validation)
 - **File Handling**: Convex file storage for promo materials
 - **AI Integration**: Model Context Protocol (MCP) for Kibo UI
@@ -561,24 +561,6 @@ import { useRouter } from 'next/navigation';
 - Turbopack provides fast bundling and hot module replacement
 - MCP integration provides AI-assisted component development
 
-## SvelteKit POC - Framework Evaluation
-
-**Purpose:** Evaluate SvelteKit vs Next.js for optimal developer experience and deployment velocity.
-
-**Current Status:**
-- ✅ Monorepo integration, Cloudflare Workers deployment, shared Convex backend
-- ✅ Performance metrics: <50KB bundles vs Next.js ~200KB+, <100ms load time
-- 📋 Missing: Instagram OAuth, dashboard, DJ submission system
-
-**Framework Comparison:**
-- **SvelteKit**: 4x smaller bundles, faster builds, Cloudflare Workers optimization
-- **Next.js**: Mature ecosystem, rich component libraries, production-ready
-
-**Development Commands:**
-```bash
-pnpm run dev:sveltekit  # Start SvelteKit POC
-pnpm --filter=sveltekit-poc run deploy  # Deploy to Cloudflare Workers
-```
 
 ## Typography Configuration
 
@@ -609,22 +591,10 @@ export const suit = localFont({
 // Usage: className="font-suit" or style={{ fontFamily: 'var(--font-suit)' }}
 ```
 
-**SvelteKit Setup:**
-```css
-/* /apps/sveltekit-poc/src/routes/app.css */
-@font-face {
-  font-family: 'SUIT';
-  src: url('/fonts/SUIT-Variable.woff2') format('woff2-variations');
-  font-weight: 100 900;
-  font-display: swap;
-}
-body { font-family: 'SUIT', -apple-system, BlinkMacSystemFont, sans-serif; }
-```
-
 ### Font Benefits
 - **Variable Font**: Single file, all weights (100-900), ~50KB vs ~200KB+ for multiple files
 - **Performance**: `font-display: swap`, system font fallbacks
-- **Loading**: Next.js auto-optimization, SvelteKit manual optimization
+- **Loading**: Next.js auto-optimization with localFont
 
 ## Code Style Guidelines
 - Formatting: Follow Prettier defaults, 2-space indentation
@@ -685,23 +655,21 @@ import { validateEvent, validateTimeslot } from "@/lib/validation"
 import { ConvexProviderHydrationSafe } from "@/providers/convex-provider-hydration-safe"
 ```
 
-### SvelteKit POC Imports
+### Mobile App Imports
 ```typescript
-// Svelte lifecycle and reactivity
-import { onMount, onDestroy } from 'svelte'
+// React Native and Expo
+import { View, Text, ScrollView } from 'react-native'
+import { useRouter } from 'expo-router'
+import { StatusBar } from 'expo-status-bar'
 
 // Shared Convex backend
-import { convex } from '$lib/convex'
+import { useQuery, useMutation } from 'convex/react'
 import { api } from '@rite/backend/convex/_generated/api'
 
-// SvelteKit navigation
-import { goto } from '$app/navigation'
-import { page } from '$app/stores'
+// NativeWind styling
+import { styled } from 'nativewind'
 
-// Environment variables
-import { env } from '$env/dynamic/public'
-
-// Shared types (when available)
+// Shared types
 import type { Event, Timeslot } from '@rite/shared-types'
 ```
 
@@ -830,8 +798,7 @@ The RITE mobile app is built with Expo and React Native, integrated into the mon
 ```
 apps/
 ├── mobile/              # Expo app
-├── next-app/           # Web app
-└── sveltekit-poc/      # SvelteKit POC
+└── next-app/           # Web app
 packages/
 ├── backend/            # Shared Convex backend
 ├── shared-types/       # Shared TypeScript types
