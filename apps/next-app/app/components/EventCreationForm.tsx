@@ -341,15 +341,15 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
   };
 
   return (
-    <form onSubmit={(e) => void handleSubmit(e)} className="space-y-8">
+    <form onSubmit={(e) => void handleSubmit(e)} className="space-y-4 sm:space-y-6 lg:space-y-8">
         {/* Basic Event Information */}
         <Card>
           <CardHeader>
             <CardTitle>{t('basicInfo')}</CardTitle>
             <CardDescription>{t('subtitle')}</CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <CardContent className="space-y-3 sm:space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
               <div className="space-y-2">
                 <Label htmlFor="eventName">{t('eventName')}</Label>
                 <Input
@@ -416,7 +416,7 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
             <CardTitle>{t('venue')}</CardTitle>
             <CardDescription>{t('venueDescription')}</CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-3 sm:space-y-4">
             <div className="space-y-2">
               <Label htmlFor="venueName">{t('venueName')}</Label>
               <Input
@@ -452,8 +452,8 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
             <CardTitle>{t('payment')}</CardTitle>
             <CardDescription>{t('paymentDescription')}</CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <CardContent className="space-y-3 sm:space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
               <div className="space-y-2">
                 <Label htmlFor="paymentAmount">{t('totalAmount')}</Label>
                 <Input
@@ -516,7 +516,7 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
               </div>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
               <div className="space-y-2">
                 <Label htmlFor="guestLimit">{t('guestLimitPerDJ')}</Label>
                 <Input
@@ -543,8 +543,8 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
             <CardTitle>{t('deadlines')}</CardTitle>
             <CardDescription>{t('deadlinesDescription')}</CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <CardContent className="space-y-3 sm:space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
               <div className="space-y-2">
                 <Label htmlFor="guestListDeadline">{t('guestListDeadline')}</Label>
                 <Input
@@ -606,9 +606,9 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
             <CardTitle>{t('timeslots')}</CardTitle>
             <CardDescription>{t('timeslotsDescription')}</CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-3 sm:space-y-4">
             {timeslots.map((slot, index) => (
-              <div key={slot.id} className="border rounded-lg p-4 space-y-4">
+              <div key={slot.id} className="border rounded-lg p-3 sm:p-4 space-y-3 sm:space-y-4">
                 <div className="flex justify-between items-center">
                   <h4 className="font-medium">Timeslot {index + 1}</h4>
                   <Button
@@ -621,7 +621,7 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
                   </Button>
                 </div>
                 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
                   <div className="space-y-2">
                     <Label>{t('startTime')}</Label>
                     <Input

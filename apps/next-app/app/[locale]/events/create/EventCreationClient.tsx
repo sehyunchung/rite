@@ -25,11 +25,11 @@ export function EventCreationClient({ userId, fallbackDisplayName, locale }: Eve
     <div className="min-h-screen bg-gray-50">
       {/* Navigation */}
       <nav className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16 items-center">
-            <div className="flex items-center space-x-8">
+            <div className="flex items-center space-x-4 sm:space-x-8">
               <div className="flex items-center">
-                <span className="ml-2 text-xl font-medium">RITE</span>
+                <span className="text-xl font-medium">RITE</span>
               </div>
               <nav className="hidden md:flex space-x-6">
                 <Link href="/dashboard" className="text-sm font-medium text-gray-900 hover:text-gray-700">
@@ -40,13 +40,17 @@ export function EventCreationClient({ userId, fallbackDisplayName, locale }: Eve
                 </Link>
               </nav>
             </div>
-            <div className="flex items-center space-x-4">
-              <ErrorBoundary fallback={<span className="text-gray-600">{fallbackDisplayName}</span>}>
-                <UserDisplay userId={userId} fallbackName={fallbackDisplayName} />
-              </ErrorBoundary>
+            <div className="flex items-center space-x-2 sm:space-x-4">
+              <div className="hidden sm:block">
+                <ErrorBoundary fallback={<span className="text-gray-600">{fallbackDisplayName}</span>}>
+                  <UserDisplay userId={userId} fallbackName={fallbackDisplayName} />
+                </ErrorBoundary>
+              </div>
               <LanguageSwitcher />
               <Button 
                 variant="outline" 
+                size="sm"
+                className="text-xs sm:text-sm"
                 onClick={() => signOut({ callbackUrl: '/' })}
               >
                 {t('signOut')}
@@ -55,11 +59,11 @@ export function EventCreationClient({ userId, fallbackDisplayName, locale }: Eve
           </div>
         </div>
       </nav>
-      <div className="p-8">
+      <div className="p-3 sm:p-6 lg:p-8">
         <div className="max-w-7xl mx-auto">
-          <div className="mb-8">
-            <h1 className="text-3xl font-light text-gray-900">{tEvents('title')}</h1>
-            <p className="text-gray-600 mt-2">{tEvents('subtitle')}</p>
+          <div className="mb-4 sm:mb-8">
+            <h1 className="text-2xl sm:text-3xl font-light text-gray-900">{tEvents('title')}</h1>
+            <p className="text-gray-600 mt-1 sm:mt-2">{tEvents('subtitle')}</p>
           </div>
           
           <ErrorBoundary>
