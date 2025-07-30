@@ -1,0 +1,8 @@
+{
+  "functions": {
+    "apps/next-app/**": {
+      "runtime": "nodejs20.x"
+    }
+  },
+  "buildCommand": "cd apps/next-app && pnpm run build"
+}
