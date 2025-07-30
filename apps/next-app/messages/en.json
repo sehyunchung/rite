@@ -177,7 +177,23 @@
     "tagline": "Streamline your event workflow",
     "signIn": "Sign In",
     "continueWithInstagram": "Continue with Instagram",
-    "accountRequirement": "Business or Creator account required"
+    "accountRequirement": "Business or Creator account required",
+    "mobileGuidance": {
+      "title": "📱 Mobile Users:",
+      "message": "If redirected to Instagram app, tap \"Open in Browser\" or use a desktop browser for best results."
+    },
+    "error": {
+      "title": "Authentication Error",
+      "heading": "Something went wrong",
+      "tryAgain": "Try Again",
+      "goHome": "Go Home"
+    },
+    "errors": {
+      "configuration": "There is a problem with the server configuration.",
+      "accessDenied": "Access denied. You do not have permission to sign in.",
+      "verification": "The verification link is invalid or has expired.",
+      "default": "An unexpected error occurred during authentication."
+    }
   },
   "validation": {
     "required": "This field is required",

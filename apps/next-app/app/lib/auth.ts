@@ -42,6 +42,17 @@ if (process.env.INSTAGRAM_OAUTH_PROXY_URL && process.env.INSTAGRAM_CLIENT_ID && 
     client: {
       id_token_signed_response_alg: 'none',
       token_endpoint_auth_method: 'client_secret_post',
+      // Add mobile-specific OAuth configuration
+      response_mode: 'query',
+      use_pkce: false,
+    },
+    // Override authorization URL to include mobile-friendly parameters
+    authorization: {
+      params: {
+        display: 'web',
+        platform: 'web',
+        force_authentication: 'true',
+      }
     },
     profile(profile: InstagramProfile) {
       const username = profile.username || profile.preferred_username || profile.instagram_user_id || 'unknown'
@@ -106,8 +117,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     },
   },
   pages: {
-    signIn: '/auth/signin',
-    error: '/auth/error',
+    signIn: '/en/auth/signin', // Use localized path for consistency
+    error: '/en/auth/error',   // Use localized path for consistency
   },
   experimental: {
     enableWebAuthn: false,

@@ -23,10 +23,10 @@ interface InstagramUserResponse {
 
 const app = new Hono<{ Bindings: Env }>()
 
-// Enable CORS for Clerk
+// Enable CORS for NextAuth and mobile browsers
 app.use('*', cors({
-  origin: ['https://clerk.com', 'https://*.clerk.accounts.dev', 'https://*.accounts.dev'],
-  allowHeaders: ['Authorization', 'Content-Type'],
+  origin: ['https://clerk.com', 'https://*.clerk.accounts.dev', 'https://*.accounts.dev', 'https://rite.party', 'https://*.rite.party', 'http://localhost:*'],
+  allowHeaders: ['Authorization', 'Content-Type', 'User-Agent', 'X-Requested-With'],
   allowMethods: ['GET', 'POST', 'OPTIONS'],
   credentials: true,
 }))
@@ -67,14 +67,21 @@ app.get('/oauth/authorize', (c) => {
   const state = c.req.query('state') || ''
   const clerkRedirectUri = c.req.query('redirect_uri') || ''
   
-  // Store Clerk's redirect URI in state for later use
+  // Detect mobile user agent
+  const userAgent = c.req.header('User-Agent') || ''
+  const isMobile = /Mobile|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(userAgent)
+  
+  // Store Clerk's redirect URI and mobile info in state for later use
   const stateData = {
     originalState: state,
-    clerkRedirectUri: clerkRedirectUri
+    clerkRedirectUri: clerkRedirectUri,
+    isMobile: isMobile
   }
   const encodedState = btoa(JSON.stringify(stateData))
   
-  // Redirect to Instagram OAuth
+  console.log(`OAuth authorize: User-Agent: ${userAgent}, isMobile: ${isMobile}`)
+  
+  // Redirect to Instagram OAuth with mobile web forcing parameters
   const instagramAuthUrl = new URL('https://api.instagram.com/oauth/authorize')
   instagramAuthUrl.searchParams.set('client_id', clientId)
   instagramAuthUrl.searchParams.set('redirect_uri', redirectUri)
@@ -82,6 +89,17 @@ app.get('/oauth/authorize', (c) => {
   instagramAuthUrl.searchParams.set('scope', 'instagram_business_basic,instagram_business_content_publish')
   instagramAuthUrl.searchParams.set('response_type', 'code')
   instagramAuthUrl.searchParams.set('state', encodedState)
+  
+  // Force web browser display on mobile devices
+  // These parameters help prevent mobile app redirects
+  if (isMobile) {
+    instagramAuthUrl.searchParams.set('display', 'web')
+    instagramAuthUrl.searchParams.set('force_authentication', 'true')
+    instagramAuthUrl.searchParams.set('force_classic_login', 'true')
+    // Add mobile-specific parameters to force web browser
+    instagramAuthUrl.searchParams.set('platform', 'web')
+    instagramAuthUrl.searchParams.set('device', 'desktop')
+  }
   
   return c.redirect(instagramAuthUrl.toString())
 })
@@ -97,19 +115,32 @@ app.get('/oauth/callback', async (c) => {
   
   try {
     // Decode state to get Clerk's redirect URI
-    let stateData: { originalState: string; clerkRedirectUri: string }
+    let stateData: { originalState: string; clerkRedirectUri: string; isMobile?: boolean }
     try {
       stateData = JSON.parse(atob(encodedState))
-    } catch {
+    } catch (error) {
+      console.error('State decoding error:', error)
       // Fallback for old state format
       stateData = { originalState: encodedState, clerkRedirectUri: '' }
     }
+    
+    console.log(`OAuth callback: Received code, state data:`, { 
+      hasClerkRedirect: !!stateData.clerkRedirectUri,
+      isMobile: stateData.isMobile,
+      originalState: stateData.originalState ? 'present' : 'missing'
+    })
     
     // If we have a Clerk redirect URI, redirect back to Clerk with the code
     if (stateData.clerkRedirectUri) {
       const clerkCallbackUrl = new URL(stateData.clerkRedirectUri)
       clerkCallbackUrl.searchParams.set('code', code)
       clerkCallbackUrl.searchParams.set('state', stateData.originalState)
+      
+      // Add mobile-specific debugging info
+      if (stateData.isMobile) {
+        console.log('Mobile OAuth callback: Redirecting to NextAuth with code')
+      }
+      
       return c.redirect(clerkCallbackUrl.toString())
     }
     
