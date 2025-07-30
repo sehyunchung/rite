@@ -176,7 +176,10 @@
   "auth": {
     "tagline": "이벤트 워크플로우를 간소화하세요",
     "signIn": "로그인",
+    "continueWithGoogle": "구글로 계속하기",
+    "continueWithApple": "Apple로 계속하기",
     "continueWithInstagram": "인스타그램으로 계속하기",
+    "or": "또는",
     "accountRequirement": "비즈니스 또는 크리에이터 계정이 필요합니다",
     "mobileGuidance": {
       "title": "📱 모바일 사용자:",

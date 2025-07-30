@@ -25,18 +25,57 @@ The application uses NextAuth v5 for authentication with a streamlined, direct a
 
 1. In `.env.local`, set the required environment variables:
    ```
-   INSTAGRAM_CLIENT_ID=your_instagram_client_id
-   INSTAGRAM_CLIENT_SECRET=your_instagram_client_secret
-   INSTAGRAM_OAUTH_PROXY_URL=https://rite-instagram-oauth-proxy.sehyunchung.workers.dev
+   # NextAuth Configuration
    NEXTAUTH_URL=http://localhost:8000
    NEXTAUTH_SECRET=your_nextauth_secret_here
    NEXT_PUBLIC_CONVEX_URL=your_convex_url
+   
+   # Instagram OAuth (via proxy)
+   INSTAGRAM_CLIENT_ID=your_instagram_client_id
+   INSTAGRAM_CLIENT_SECRET=your_instagram_client_secret
+   INSTAGRAM_OAUTH_PROXY_URL=https://rite-instagram-oauth-proxy.sehyunchung.workers.dev
+   
+   # Google OAuth
+   GOOGLE_CLIENT_ID=your_google_client_id
+   GOOGLE_CLIENT_SECRET=your_google_client_secret
+   
+   # Apple OAuth
+   APPLE_ID=your_apple_id
+   APPLE_SECRET=your_apple_secret
    ```
 
-**Current Status**: Authentication system is fully functional with NextAuth v5 integration and clean, simplified architecture.
+**Current Status**: Authentication system is fully functional with NextAuth v5 integration supporting Google, Apple, and Instagram OAuth providers.
 
 ### Social OAuth Providers
-The application currently supports Instagram OAuth through NextAuth v5 with a custom proxy service.
+The application supports multiple OAuth providers through NextAuth v5:
+
+#### Google OAuth
+1. **Create Google OAuth App**:
+   - Go to Google Cloud Console (console.cloud.google.com)
+   - Create a new project or select existing
+   - Enable Google+ API
+   - Create OAuth 2.0 credentials
+   - Add authorized redirect URIs:
+     - `http://localhost:8000/api/auth/callback/google` (development)
+     - `https://your-domain.com/api/auth/callback/google` (production)
+
+2. **Configure Environment Variables**:
+   - `GOOGLE_CLIENT_ID`: Your Google OAuth client ID
+   - `GOOGLE_CLIENT_SECRET`: Your Google OAuth client secret
+
+#### Apple OAuth
+1. **Create Apple OAuth App**:
+   - Go to Apple Developer Portal (developer.apple.com)
+   - Create a new App ID with Sign in with Apple capability
+   - Create a Service ID and configure it
+   - Generate a private key for authentication
+   - Add authorized redirect URIs:
+     - `http://localhost:8000/api/auth/callback/apple` (development)
+     - `https://your-domain.com/api/auth/callback/apple` (production)
+
+2. **Configure Environment Variables**:
+   - `APPLE_ID`: Your Apple Service ID
+   - `APPLE_SECRET`: Generated from your private key (JWT format)
 
 #### Instagram OAuth (Custom Implementation)
 Instagram login uses a custom OAuth proxy service for NextAuth compatibility.

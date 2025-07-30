@@ -176,7 +176,10 @@
   "auth": {
     "tagline": "Streamline your event workflow",
     "signIn": "Sign In",
+    "continueWithGoogle": "Continue with Google",
+    "continueWithApple": "Continue with Apple",
     "continueWithInstagram": "Continue with Instagram",
+    "or": "or",
     "accountRequirement": "Business or Creator account required",
     "mobileGuidance": {
       "title": "📱 Mobile Users:",

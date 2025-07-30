@@ -1,4 +1,6 @@
 import NextAuth from 'next-auth'
+import Google from 'next-auth/providers/google'
+import Apple from 'next-auth/providers/apple'
 import { ConvexAdapter } from './convex-adapter'
 import { convex } from './convex'
 import { api } from '@rite/backend/convex/_generated/api'
@@ -71,6 +73,32 @@ if (process.env.INSTAGRAM_OAUTH_PROXY_URL && process.env.INSTAGRAM_CLIENT_ID && 
 } else {
   console.warn('Instagram OAuth configuration not found. Instagram login will be disabled.')
 }
+
+// Add Google provider if configured
+if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
+  providers.push(
+    Google({
+      clientId: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      allowDangerousEmailAccountLinking: true,
+    })
+  )
+} else {
+  console.warn('Google OAuth configuration not found. Google login will be disabled.')
+}
+
+// Add Apple provider if configured (commented out for future use)
+// if (process.env.APPLE_ID && process.env.APPLE_SECRET) {
+//   providers.push(
+//     Apple({
+//       clientId: process.env.APPLE_ID,
+//       clientSecret: process.env.APPLE_SECRET,
+//       allowDangerousEmailAccountLinking: true,
+//     })
+//   )
+// } else {
+//   console.warn('Apple OAuth configuration not found. Apple login will be disabled.')
+// }
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   adapter: convex ? ConvexAdapter(convex) : undefined,
