@@ -1,6 +1,7 @@
 import React from 'react';
 import { Pressable, Text, View } from 'react-native';
 import { cva, type VariantProps } from 'class-variance-authority';
+import '../../types/nativewind';
 
 const buttonVariants = cva(
   'flex items-center justify-center rounded-md font-medium disabled:opacity-50',
@@ -46,15 +47,11 @@ export function Button({
     <Pressable
       onPress={onPress}
       disabled={disabled}
-      // @ts-ignore - NativeWind className support
       className={buttonClass}
       {...props}
     >
       {typeof children === 'string' ? (
-        <Text 
-          // @ts-ignore - NativeWind className support
-          className="text-center font-medium"
-        >
+        <Text className="text-center font-medium">
           {children}
         </Text>
       ) : (

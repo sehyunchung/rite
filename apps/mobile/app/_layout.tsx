@@ -7,6 +7,7 @@ import '../global.css';
 
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { ConvexProvider } from '../providers/ConvexProvider';
+import ErrorBoundary from '../components/ErrorBoundary';
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
@@ -20,14 +21,16 @@ export default function RootLayout() {
   }
 
   return (
-    <ConvexProvider>
-      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-        <Stack>
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="+not-found" />
-        </Stack>
-        <StatusBar style="auto" />
-      </ThemeProvider>
-    </ConvexProvider>
+    <ErrorBoundary>
+      <ConvexProvider>
+        <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+          <Stack>
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen name="+not-found" />
+          </Stack>
+          <StatusBar style="auto" />
+        </ThemeProvider>
+      </ConvexProvider>
+    </ErrorBoundary>
   );
 }
