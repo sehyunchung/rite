@@ -677,6 +677,9 @@ import type { Event, Timeslot } from '@rite/shared-types'
 - Unified loading system with consistent RITE branding
 - ConvexProviderHydrationSafe with singleton pattern for SSR compatibility
 - Language switcher with mobile-responsive design and route preservation
+- **Mobile OAuth Support**: Fixed mobile browser redirects and consent page issues
+- **Enhanced Debugging**: Comprehensive logging system with Cloudflare Workers observability
+- **i18n Route Stability**: Resolved NextAuth conflicts and 404 errors on localized routes
 
 **🚧 In Progress:**
 - File upload integration with Convex storage
@@ -696,11 +699,24 @@ import type { Event, Timeslot } from '@rite/shared-types'
 4. **Missing Environment Variables** - Check NEXT_PUBLIC_CONVEX_URL is set, ConvexProviderHydrationSafe includes graceful fallbacks
 5. **Locale Route Issues** - Ensure [locale] dynamic segment is properly configured in routing structure
 6. **Translation Missing Errors** - Verify translation keys exist in both en.json and ko.json files
+7. **Mobile OAuth Redirects to Instagram App** - Fixed with force web parameters in OAuth proxy
+8. **Users Stuck on Instagram Consent Page** - Fixed with enhanced state handling and error recovery
 
 ### Authentication Debugging
-- Verify all environment variables (Instagram OAuth proxy, client ID/secret)
-- Check Convex deployment is active and schema matches
-- Test Instagram OAuth proxy endpoints independently
+- **Environment Variables**: Verify Instagram OAuth proxy, client ID/secret, and NextAuth configuration
+- **Convex Connection**: Check Convex deployment is active and schema matches
+- **OAuth Proxy Health**: Test endpoints at `https://rite-instagram-oauth-proxy.sehyunchung.workers.dev`
+- **Mobile OAuth Issues**: Check Cloudflare Workers logs for mobile user-agent detection and parameter handling
+- **Logs Access**: 
+  - Cloudflare Dashboard: Workers & Pages → rite-instagram-oauth-proxy → Logs
+  - CLI: `npx wrangler tail` from instagram-oauth-proxy directory
+- **Common Log Events**: `OAUTH_AUTHORIZE`, `MOBILE_PARAMS_ADDED`, `TOKEN_ENDPOINT`, `USER_DATA_FETCHED`
+
+### Mobile OAuth Troubleshooting
+1. **Instagram App Redirect**: Look for `MOBILE_PARAMS_ADDED` logs showing force web parameters
+2. **Consent Page Stuck**: Check `STATE_DECODE_ERROR` or `OAUTH_ERROR` logs for state handling issues
+3. **Token Exchange Failures**: Monitor `INSTAGRAM_TOKEN_ERROR` logs for Instagram API responses
+4. **User Profile Issues**: Check `USER_INFO_ERROR` logs for Business/Creator account validation
 
 ## Deployment
 
@@ -722,13 +738,31 @@ import type { Event, Timeslot } from '@rite/shared-types'
 **Service:** `rite-instagram-oauth-proxy.sehyunchung.workers.dev` (Hono.js on Cloudflare Workers)
 **Purpose:** Transform Instagram OAuth to OIDC format for NextAuth compatibility
 
-**Features:** Dual flow support (login/dashboard), JWT token generation, complete profile fetching, Business/Creator account validation, auto-connection during signup
+**Features:** 
+- Dual flow support (login/dashboard connection)
+- JWT token generation with complete Instagram profile data
+- Business/Creator account validation
+- Auto-connection during signup with direct Convex ID usage
+- **Mobile OAuth Support**: Force web authentication on mobile browsers
+- **Enhanced Logging**: Comprehensive debugging with structured logs
 
 **Key Endpoints:**
 - `/.well-known/openid-configuration` - OIDC discovery
-- `/oauth/authorize` - Instagram authorization
-- `/oauth/callback` - OAuth callback with profile data
-- `/oauth/token` - Token exchange
+- `/oauth/authorize` - Instagram authorization with mobile detection
+- `/oauth/callback` - OAuth callback with enhanced error handling
+- `/oauth/token` - Token exchange with detailed logging
 - `/oauth/userinfo` - User info for NextAuth
+
+**Mobile OAuth Fixes:**
+- **User-Agent Detection**: Automatically detects mobile browsers
+- **Force Web Parameters**: `display=web`, `platform=web`, `force_authentication=true`
+- **State Handling**: Enhanced state encoding/decoding with fallback support
+- **Error Recovery**: Comprehensive error logging for debugging mobile flows
+
+**Logging & Debugging:**
+- **Structured Logging**: Timestamped JSON logs for all OAuth events
+- **Cloudflare Dashboard**: Logs visible in Workers dashboard with `[observability.logs] enabled = true`
+- **Real-time Monitoring**: `npx wrangler tail` for live debugging
+- **Mobile Flow Tracking**: Detailed logs for mobile-specific parameters and redirects
 
 **Deploy:** `cd instagram-oauth-proxy && npx wrangler deploy`
