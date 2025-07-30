@@ -22,8 +22,8 @@ export function DashboardContent({ userId }: DashboardContentProps) {
   const t = useTranslations('dashboard');
   const tStatus = useTranslations('status');
   
-  // Use the public query for now until we implement proper Convex auth
-  const events = useQuery(api.events.listEventsPublic) || [];
+  // Query events for the authenticated user
+  const events = useQuery(api.events.listEvents) || [];
   const instagramConnection = useQuery(
     api.instagram.getInstagramConnection, 
     userId ? { userId: userId as Id<"users"> } : "skip"

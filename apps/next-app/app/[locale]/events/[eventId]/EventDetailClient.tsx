@@ -32,7 +32,7 @@ export function EventDetailClient({ eventId, userId, locale }: EventDetailClient
   const tStatus = useTranslations('status');
   
   const event = useQuery(
-    api.events.getEventPublic,
+    api.events.getEvent,
     { eventId: eventId as Id<"events"> }
   );
 
