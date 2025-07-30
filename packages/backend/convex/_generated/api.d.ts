@@ -14,6 +14,7 @@ import type {
   FunctionReference,
 } from "convex/server";
 import type * as auth from "../auth.js";
+import type * as eventStatus from "../eventStatus.js";
 import type * as events from "../events.js";
 import type * as instagram from "../instagram.js";
 import type * as submissions from "../submissions.js";
@@ -30,6 +31,7 @@ import type * as timeslots from "../timeslots.js";
  */
 declare const fullApi: ApiFromModules<{
   auth: typeof auth;
+  eventStatus: typeof eventStatus;
   events: typeof events;
   instagram: typeof instagram;
   submissions: typeof submissions;

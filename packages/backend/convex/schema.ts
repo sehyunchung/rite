@@ -24,7 +24,39 @@ export default defineSchema({
     }),
     guestLimitPerDJ: v.optional(v.number()), // Maximum guests each DJ can add (optional for backward compatibility)
     createdAt: v.string(),
-    status: v.union(v.literal("draft"), v.literal("active"), v.literal("completed")),
+    status: v.union(v.literal("draft"), v.literal("active"), v.literal("completed")), // Legacy - will be migrated to phase
+    
+    // New flexible status system
+    phase: v.optional(v.string()), // 'draft', 'planning', 'finalized', 'day_of', 'completed', 'cancelled'
+    phaseMetadata: v.optional(v.object({
+      enteredAt: v.string(),
+      enteredBy: v.id("users"),
+      reason: v.optional(v.string()),
+    })),
+    
+    // UI capabilities
+    capabilities: v.optional(v.object({
+      canEdit: v.boolean(),
+      canPublish: v.boolean(),
+      canAcceptSubmissions: v.boolean(),
+      canGenerateContent: v.boolean(),
+      canFinalize: v.boolean(),
+      showUrgentBanner: v.boolean(),
+      showDayOfFeatures: v.boolean(),
+    })),
+    
+    // Event milestones
+    milestones: v.optional(v.object({
+      createdAt: v.string(),
+      publishedAt: v.optional(v.string()),
+      finalizedAt: v.optional(v.string()),
+      dayOfStartedAt: v.optional(v.string()),
+      completedAt: v.optional(v.string()),
+      cancelledAt: v.optional(v.string()),
+    })),
+    
+    // Version for migrations
+    stateVersion: v.optional(v.number()),
   }),
 
   timeslots: defineTable({

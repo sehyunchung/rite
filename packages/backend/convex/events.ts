@@ -1,6 +1,13 @@
 import { v } from "convex/values";
 import { query, mutation } from "./_generated/server";
 import { requireAuth } from "./auth";
+import { 
+  EventPhase, 
+  computeEventCapabilities, 
+  computeEventPhase,
+  isValidTransition,
+  type EventPhaseType 
+} from "./eventStatus";
 
 // Generate a unique submission token for a timeslot
 function generateSubmissionToken(): string {
@@ -229,11 +236,31 @@ export const createEvent = mutation({
     const { userId, timeslots, ...eventData } = args;
     
     // Create the event with authenticated user as organizer
+    const now = new Date().toISOString();
     const eventId = await ctx.db.insert("events", {
       ...eventData,
       organizerId: userId,
-      createdAt: new Date().toISOString(),
+      createdAt: now,
       status: "draft" as const,
+      // Initialize new phase system
+      phase: EventPhase.DRAFT,
+      phaseMetadata: {
+        enteredAt: now,
+        enteredBy: userId,
+      },
+      stateVersion: 1,
+      milestones: {
+        createdAt: now,
+      },
+      capabilities: {
+        canEdit: true,
+        canPublish: false, // Will be updated after timeslots are created
+        canAcceptSubmissions: false,
+        canGenerateContent: false,
+        canFinalize: false,
+        showUrgentBanner: false,
+        showDayOfFeatures: false,
+      },
     });
     
     // Create timeslots for the event with unique submission tokens
@@ -251,6 +278,13 @@ export const createEvent = mutation({
         return { timeslotId, submissionToken };
       })
     );
+    
+    // Update capabilities now that timeslots are created
+    const event = await ctx.db.get(eventId);
+    if (event && timeslots.length > 0) {
+      const capabilities = computeEventCapabilities(event, timeslots as any, []);
+      await ctx.db.patch(eventId, { capabilities });
+    }
     
     console.log("Created new event with id:", eventId, "and timeslots:", timeslotResults);
     return { 
@@ -279,6 +313,181 @@ export const updateEventStatus = mutation({
     
     await ctx.db.patch(args.eventId, {
       status: args.status,
+    });
+  },
+});
+
+// Query to get event with computed capabilities
+export const getEventWithCapabilities = query({
+  args: {
+    eventId: v.id("events"),
+    userId: v.optional(v.id("users")),
+  },
+  handler: async (ctx, args) => {
+    const event = await ctx.db.get(args.eventId);
+    if (!event) {
+      throw new Error("Event not found");
+    }
+    
+    // Check access if userId provided
+    if (args.userId && event.organizerId !== args.userId) {
+      throw new Error("Access denied");
+    }
+    
+    // Get related data
+    const timeslots = await ctx.db
+      .query("timeslots")
+      .filter((q) => q.eq(q.field("eventId"), args.eventId))
+      .collect();
+      
+    const submissions = await ctx.db
+      .query("submissions")
+      .filter((q) => q.eq(q.field("eventId"), args.eventId))
+      .collect();
+    
+    // Compute current phase and capabilities
+    const phase = computeEventPhase(event, timeslots, submissions);
+    const capabilities = computeEventCapabilities(event, timeslots, submissions);
+    
+    // Provide defaults for optional fields
+    return {
+      ...event,
+      phase,
+      capabilities,
+      guestLimitPerDJ: event.guestLimitPerDJ ?? 2,
+      payment: {
+        ...event.payment,
+        perDJ: event.payment.perDJ ?? event.payment.amount,
+      },
+      hashtags: event.hashtags ?? '',
+      timeslots,
+      submissionCount: submissions.length,
+    };
+  },
+});
+
+// Mutation to transition event phase
+export const transitionEventPhase = mutation({
+  args: {
+    eventId: v.id("events"),
+    userId: v.id("users"),
+    toPhase: v.string(),
+    reason: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    // Verify ownership
+    const event = await ctx.db.get(args.eventId);
+    if (!event) {
+      throw new Error("Event not found");
+    }
+    if (event.organizerId !== args.userId) {
+      throw new Error("Access denied");
+    }
+    
+    // Get current phase
+    const timeslots = await ctx.db
+      .query("timeslots")
+      .filter((q) => q.eq(q.field("eventId"), args.eventId))
+      .collect();
+    const submissions = await ctx.db
+      .query("submissions")
+      .filter((q) => q.eq(q.field("eventId"), args.eventId))
+      .collect();
+      
+    const currentPhase = computeEventPhase(event, timeslots, submissions);
+    const newPhase = args.toPhase as EventPhaseType;
+    
+    // Validate transition
+    if (!isValidTransition(currentPhase, newPhase)) {
+      throw new Error(`Invalid transition from ${currentPhase} to ${newPhase}`);
+    }
+    
+    // Update event with new phase
+    const now = new Date().toISOString();
+    const updates: any = {
+      phase: newPhase,
+      phaseMetadata: {
+        enteredAt: now,
+        enteredBy: args.userId,
+        reason: args.reason,
+      },
+      stateVersion: (event.stateVersion || 0) + 1,
+    };
+    
+    // Update milestones based on transition
+    const milestones = event.milestones || {
+      createdAt: event.createdAt,
+    };
+    
+    switch (newPhase) {
+      case EventPhase.PLANNING:
+        updates.status = "active"; // Update legacy status
+        milestones.publishedAt = now;
+        break;
+      case EventPhase.FINALIZED:
+        milestones.finalizedAt = now;
+        break;
+      case EventPhase.DAY_OF:
+        milestones.dayOfStartedAt = now;
+        break;
+      case EventPhase.COMPLETED:
+        updates.status = "completed"; // Update legacy status
+        milestones.completedAt = now;
+        break;
+      case EventPhase.CANCELLED:
+        milestones.cancelledAt = now;
+        break;
+    }
+    
+    updates.milestones = milestones;
+    
+    // Compute and update capabilities
+    const capabilities = computeEventCapabilities(
+      { ...event, phase: newPhase },
+      timeslots,
+      submissions
+    );
+    updates.capabilities = capabilities;
+    
+    await ctx.db.patch(args.eventId, updates);
+    
+    return {
+      success: true,
+      fromPhase: currentPhase,
+      toPhase: newPhase,
+    };
+  },
+});
+
+// Mutation to update event phase when creating
+export const initializeEventPhase = mutation({
+  args: {
+    eventId: v.id("events"),
+  },
+  handler: async (ctx, args) => {
+    const event = await ctx.db.get(args.eventId);
+    if (!event || event.phase) return; // Already initialized
+    
+    const timeslots = await ctx.db
+      .query("timeslots")
+      .filter((q) => q.eq(q.field("eventId"), args.eventId))
+      .collect();
+    const submissions = await ctx.db
+      .query("submissions")
+      .filter((q) => q.eq(q.field("eventId"), args.eventId))
+      .collect();
+    
+    // Initialize with phase system
+    const phase = computeEventPhase(event, timeslots, submissions);
+    const capabilities = computeEventCapabilities(event, timeslots, submissions);
+    
+    await ctx.db.patch(args.eventId, {
+      phase,
+      capabilities,
+      stateVersion: 1,
+      milestones: {
+        createdAt: event.createdAt,
+      },
     });
   },
 });

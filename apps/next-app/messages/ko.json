@@ -208,5 +208,47 @@
     "promoBeforeGuest": "홍보 자료 마감일은 게스트 리스트 마감일 이전이어야 합니다",
     "fileTooLarge": "파일 {filename}이 너무 큽니다. 최대 크기는 {maxSize}입니다.",
     "uploadFailed": "{filename} 업로드에 실패했습니다"
+  },
+  "eventStatus": {
+    "phases": {
+      "draft": {
+        "label": "초안",
+        "description": "이벤트 계획 중"
+      },
+      "planning": {
+        "label": "진행 중",
+        "description": "DJ 제출 받는 중"
+      },
+      "finalized": {
+        "label": "확정됨",
+        "description": "라인업 확정, 이벤트 준비 중"
+      },
+      "day_of": {
+        "label": "이벤트 당일",
+        "description": "오늘이 이벤트 날입니다!"
+      },
+      "completed": {
+        "label": "완료됨",
+        "description": "이벤트가 종료되었습니다"
+      },
+      "cancelled": {
+        "label": "취소됨",
+        "description": "이벤트가 취소되었습니다"
+      }
+    },
+    "capabilities": {
+      "canEdit": "편집 가능",
+      "canPublish": "게시 가능",
+      "canAcceptSubmissions": "제출 받는 중",
+      "canGenerateContent": "콘텐츠 생성 가능",
+      "canFinalize": "확정 가능",
+      "dayOfFeaturesActive": "당일 기능 활성화"
+    },
+    "urgentBanner": "오늘이 이벤트 날입니다! 모든 준비가 완료되었는지 확인하세요.",
+    "submissionStatus": "{total}명 중 {count}명의 DJ가 제출 완료",
+    "confirmAction": "작업 확인",
+    "confirmActionMessage": "이 작업을 수행하시겠습니까?",
+    "confirm": "확인",
+    "cancel": "취소"
   }
 }

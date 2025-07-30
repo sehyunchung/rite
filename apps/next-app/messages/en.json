@@ -208,5 +208,47 @@
     "promoBeforeGuest": "Promo materials deadline must be before guest list deadline",
     "fileTooLarge": "File {filename} is too large. Maximum size is {maxSize}.",
     "uploadFailed": "Failed to upload {filename}"
+  },
+  "eventStatus": {
+    "phases": {
+      "draft": {
+        "label": "Draft",
+        "description": "Event is being planned"
+      },
+      "planning": {
+        "label": "Planning",
+        "description": "Accepting DJ submissions"
+      },
+      "finalized": {
+        "label": "Finalized",
+        "description": "Lineup locked, preparing for event"
+      },
+      "day_of": {
+        "label": "Event Day",
+        "description": "The event is happening today!"
+      },
+      "completed": {
+        "label": "Completed",
+        "description": "Event has ended"
+      },
+      "cancelled": {
+        "label": "Cancelled",
+        "description": "Event was cancelled"
+      }
+    },
+    "capabilities": {
+      "canEdit": "Can Edit",
+      "canPublish": "Can Publish",
+      "canAcceptSubmissions": "Accepting Submissions",
+      "canGenerateContent": "Can Generate Content",
+      "canFinalize": "Can Finalize",
+      "dayOfFeaturesActive": "Day-of Features Active"
+    },
+    "urgentBanner": "This event is happening today! Make sure all preparations are complete.",
+    "submissionStatus": "{count} of {total} DJs have submitted",
+    "confirmAction": "Confirm Action",
+    "confirmActionMessage": "Are you sure you want to perform this action?",
+    "confirm": "Confirm",
+    "cancel": "Cancel"
   }
 }
