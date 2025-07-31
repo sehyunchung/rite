@@ -62,8 +62,8 @@ export function EventCreationClient({ userId, fallbackDisplayName, locale }: Eve
       <div className="p-3 sm:p-6 lg:p-8">
         <div className="max-w-7xl mx-auto">
           <div className="mb-4 sm:mb-8">
-            <h1 className="text-2xl sm:text-3xl font-light text-gray-900">{tEvents('title')}</h1>
-            <p className="text-gray-600 mt-1 sm:mt-2">{tEvents('subtitle')}</p>
+            <Typography variant="h1" className="text-2xl sm:text-3xl">{tEvents('title')}</Typography>
+            <Typography variant="body-lg" color="secondary" className="mt-1 sm:mt-2">{tEvents('subtitle')}</Typography>
           </div>
           
           <ErrorBoundary>

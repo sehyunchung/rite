@@ -4,6 +4,7 @@ import { useQuery } from 'convex/react';
 import { api } from '@rite/backend/convex/_generated/api';
 import { Id } from '@rite/backend/convex/_generated/dataModel';
 import { useTranslations } from 'next-intl';
+import { Typography } from '@rite/ui';
 
 interface UserDisplayProps {
   userId: string;
@@ -24,8 +25,8 @@ export function UserDisplay({ userId, fallbackName }: UserDisplayProps) {
     : fallbackName;
 
   return (
-    <span className="text-sm text-gray-700">
+    <Typography variant="body-sm" color="secondary">
       {t('welcomeUser', { name: displayName })}
-    </span>
+    </Typography>
   );
 }

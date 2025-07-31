@@ -39,13 +39,13 @@ export function LanguageSwitcher() {
       </Button>
 
       {isOpen && (
-        <div className="absolute right-0 top-full mt-1 bg-white border border-gray-200 rounded-md shadow-lg z-50 min-w-[140px]">
+        <div className="absolute right-0 top-full mt-1 bg-neutral-700 border border-neutral-600 rounded-md shadow-lg z-50 min-w-[140px]">
           {languages.map((language) => (
             <button
               key={language.code}
               onClick={() => switchLanguage(language.code)}
-              className={`w-full px-3 py-2 text-left text-sm hover:bg-gray-50 flex items-center gap-2 ${
-                currentLocale === language.code ? 'bg-gray-50 font-medium' : ''
+              className={`w-full px-3 py-2 text-left text-sm text-white hover:bg-neutral-600 flex items-center gap-2 ${
+                currentLocale === language.code ? 'bg-neutral-600 font-medium' : ''
               }`}
             >
               <span>{language.flag}</span>
