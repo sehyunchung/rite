@@ -204,28 +204,28 @@ export function DJSubmissionForm({ submissionToken }: DJSubmissionFormProps) {
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <h3 className="font-semibold text-lg">{event.name}</h3>
-                <p className="text-gray-600">{event.venue.name}</p>
-                <p className="text-gray-600">{event.venue.address}</p>
-                <p className="text-gray-600">{event.date}</p>
+                <Typography variant="h4">{event.name}</Typography>
+                <Typography variant="body" color="secondary">{event.venue.name}</Typography>
+                <Typography variant="body" color="secondary">{event.venue.address}</Typography>
+                <Typography variant="body" color="secondary">{event.date}</Typography>
               </div>
-              <div className="bg-blue-50 p-4 rounded-lg">
-                <h4 className="font-semibold text-blue-800">{t('yourTimeSlot')}</h4>
-                <p className="text-blue-600">{startTime} - {endTime}</p>
-                <p className="text-blue-600">DJ: {djName}</p>
-                <p className="text-blue-600">Instagram: {djInstagram}</p>
+              <div className="bg-neutral-700 p-4 rounded-lg">
+                <Typography variant="h6" className="text-brand-primary mb-2">{t('yourTimeSlot')}</Typography>
+                <Typography variant="body" className="text-brand-primary-light">{startTime} - {endTime}</Typography>
+                <Typography variant="body" className="text-brand-primary-light">DJ: {djName}</Typography>
+                <Typography variant="body" className="text-brand-primary-light">Instagram: {djInstagram}</Typography>
               </div>
             </div>
 
-            <div className="bg-yellow-50 p-4 rounded-lg">
-              <h4 className="font-semibold text-yellow-800">{t('importantDeadlines')}</h4>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-2">
-                <p className="text-yellow-700">
-                  <strong>{t('guestList')}:</strong> {event.deadlines.guestList}
-                </p>
-                <p className="text-yellow-700">
-                  <strong>{t('promoMaterials')}:</strong> {event.deadlines.promoMaterials}
-                </p>
+            <div className="bg-yellow-500/10 border border-yellow-500/20 p-4 rounded-lg">
+              <Typography variant="h6" className="text-warning mb-2">{t('importantDeadlines')}</Typography>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                <Typography variant="body" className="text-warning">
+                  <span className="font-semibold">{t('guestList')}:</span> {event.deadlines.guestList}
+                </Typography>
+                <Typography variant="body" className="text-warning">
+                  <span className="font-semibold">{t('promoMaterials')}:</span> {event.deadlines.promoMaterials}
+                </Typography>
               </div>
             </div>
           </CardContent>
@@ -253,11 +253,11 @@ export function DJSubmissionForm({ submissionToken }: DJSubmissionFormProps) {
               >
                 <DropzoneContent>
                   <div className="space-y-2">
-                    <h4 className="font-medium">{t('selectedFiles')}</h4>
-                    <ul className="text-sm text-gray-600 space-y-1">
+                    <Typography variant="h6">{t('selectedFiles')}</Typography>
+                    <ul className="text-sm text-neutral-400 space-y-1">
                       {promoFiles.map((file, index) => (
                         <li key={index} className="flex items-center">
-                          <span className="w-2 h-2 bg-gray-400 rounded-full mr-2"></span>
+                          <span className="w-2 h-2 bg-neutral-500 rounded-full mr-2"></span>
                           {file.name} ({Math.round(file.size / 1024)} KB)
                         </li>
                       ))}
@@ -403,10 +403,10 @@ export function DJSubmissionForm({ submissionToken }: DJSubmissionFormProps) {
                 </Label>
               </div>
 
-              <div className="bg-gray-50 p-4 rounded-lg">
-                <p className="text-sm text-gray-600">
+              <div className="bg-neutral-700/50 border border-neutral-600 p-4 rounded-lg">
+                <Typography variant="body-sm" color="secondary">
                   {t('privacyNotice')}
-                </p>
+                </Typography>
               </div>
             </CardContent>
           </Card>
