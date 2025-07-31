@@ -1,12 +1,11 @@
 import { Tabs } from 'expo-router';
 import React from 'react';
-import { Platform } from 'react-native';
+import { Platform, View } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 
 import { HapticTab } from '@/components/HapticTab';
-import { IconSymbol } from '@/components/ui/IconSymbol';
 import TabBarBackground from '@/components/ui/TabBarBackground';
 import { Colors } from '@/constants/Colors';
-import { useColorScheme } from '@/hooks/useColorScheme';
 
 export default function TabLayout() {
   return (
@@ -21,9 +20,10 @@ export default function TabLayout() {
           backgroundColor: Colors.dark.surface,
           borderTopColor: Colors.dark.border,
           borderTopWidth: 1,
-          height: Platform.OS === 'ios' ? 88 : 60,
-          paddingBottom: Platform.OS === 'ios' ? 28 : 8,
-          paddingTop: 8,
+          height: Platform.OS === 'ios' ? 84 : 64,
+          paddingBottom: Platform.OS === 'ios' ? 24 : 8,
+          paddingTop: 12,
+          paddingHorizontal: 24,
           ...Platform.select({
             ios: {
               position: 'absolute',
@@ -32,47 +32,90 @@ export default function TabLayout() {
           }),
         },
         tabBarLabelStyle: {
-          fontSize: 12,
+          fontSize: 11,
           fontFamily: 'SUIT-Medium',
-          marginTop: -4,
+          marginTop: 4,
+          letterSpacing: -0.2,
         },
         tabBarIconStyle: {
-          marginBottom: -4,
+          marginBottom: 0,
+        },
+        tabBarItemStyle: {
+          paddingTop: 8,
         },
       }}>
       <Tabs.Screen
         name="index"
         options={{
           title: 'Dashboard',
-          tabBarIcon: ({ color }) => <IconSymbol size={24} name="house.fill" color={color} />,
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons 
+              name={focused ? "home" : "home-outline"} 
+              size={24} 
+              color={color} 
+            />
+          ),
         }}
       />
       <Tabs.Screen
         name="events"
         options={{
           title: 'Events',
-          tabBarIcon: ({ color }) => <IconSymbol size={24} name="calendar" color={color} />,
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons 
+              name={focused ? "calendar" : "calendar-outline"} 
+              size={24} 
+              color={color} 
+            />
+          ),
         }}
       />
       <Tabs.Screen
         name="create"
         options={{
           title: 'Create',
-          tabBarIcon: ({ color }) => <IconSymbol size={24} name="plus.square.fill" color={color} />,
+          tabBarIcon: ({ color, focused }) => (
+            <View style={{
+              width: 24,
+              height: 24,
+              backgroundColor: color,
+              borderRadius: 6,
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}>
+              <Ionicons 
+                name="add" 
+                size={20} 
+                color={Colors.dark.background}
+              />
+            </View>
+          ),
         }}
       />
       <Tabs.Screen
         name="explore"
         options={{
           title: 'Profile',
-          tabBarIcon: ({ color }) => <IconSymbol size={24} name="person.fill" color={color} />,
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons 
+              name={focused ? "person" : "person-outline"} 
+              size={24} 
+              color={color} 
+            />
+          ),
         }}
       />
       <Tabs.Screen
         name="demo"
         options={{
           title: 'DOM Demo',
-          tabBarIcon: ({ color }) => <IconSymbol size={24} name="code.square" color={color} />,
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons 
+              name={focused ? "code-slash" : "code-slash-outline"} 
+              size={24} 
+              color={color} 
+            />
+          ),
         }}
       />
     </Tabs>
