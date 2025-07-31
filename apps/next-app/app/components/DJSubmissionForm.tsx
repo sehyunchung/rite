@@ -397,6 +397,7 @@ export function DJSubmissionForm({ submissionToken }: DJSubmissionFormProps) {
                   id="preferDirectContact"
                   checked={paymentInfo.preferDirectContact}
                   onChange={(e) => setPaymentInfo({ ...paymentInfo, preferDirectContact: e.target.checked })}
+                  className="h-4 w-4 rounded border-neutral-600 bg-neutral-700/50 text-brand-primary focus:ring-[3px] focus:ring-brand-primary/20 focus:ring-offset-0"
                 />
                 <Label htmlFor="preferDirectContact" className="text-sm">
                   {t('preferDirectContact')}
