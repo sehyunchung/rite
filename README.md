@@ -1,30 +1,33 @@
 # Rite - DJ Event Management Platform
 
-A monorepo containing DJ event management platform implementations with [Next.js](https://nextjs.org/) and [SvelteKit](https://kit.svelte.dev/) frontends sharing a [Convex](https://convex.dev/) backend.
+A monorepo containing DJ event management platform with [Next.js](https://nextjs.org/) web app and [Expo](https://expo.dev/) mobile app, sharing a [Convex](https://convex.dev/) backend and UI components.
 
 ## Monorepo Structure
 
 ```
 rite/
 ├── apps/
-│   ├── next-app/          # Next.js 15 implementation (primary)
-│   └── sveltekit-poc/     # SvelteKit implementation (POC)
+│   ├── next-app/          # Next.js 15 web application
+│   └── mobile/            # Expo React Native mobile app
 ├── packages/
 │   ├── backend/           # Shared Convex backend (@rite/backend)
-│   └── shared-types/      # Shared TypeScript types
+│   ├── shared-types/      # Shared TypeScript types
+│   └── ui/                # Shared UI components (@rite/ui)
 └── package.json           # Root workspace configuration
 ```
 
 ## Tech Stack
 
 - **Monorepo**: [pnpm workspaces](https://pnpm.io/workspaces) + [Turborepo](https://turbo.build/)
-- **Frontend**: [Next.js 15](https://nextjs.org/) with React 18, TypeScript, and Turbopack
-- **Alternative Frontend**: [SvelteKit](https://kit.svelte.dev/) with Cloudflare adapter
+- **Web App**: [Next.js 15](https://nextjs.org/) with React 19, TypeScript, and Turbopack
+- **Mobile App**: [Expo](https://expo.dev/) with React Native and NativeWind
+- **UI Components**: Shared [@rite/ui](./packages/ui) package with platform-specific implementations
 - **Backend**: [Convex](https://convex.dev/) for real-time database and file storage
 - **Authentication**: [NextAuth v5](https://authjs.dev/) with Instagram OAuth integration
 - **Typography**: [SUIT Variable](https://sunn.us/suit/) font with Korean/English support
-- **Styling**: [Tailwind CSS](https://tailwindcss.com/) with shadcn/ui components
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/) with platform-specific implementations
 - **Validation**: [ArkType](https://arktype.io/) for high-performance schema validation
+- **i18n**: [next-intl](https://next-intl-docs.vercel.app/) for internationalization (Korean/English)
 - **Package Manager**: pnpm
 
 ## Get Started
@@ -40,14 +43,14 @@ pnpm run dev
 
 # Or start specific apps
 pnpm run dev:next        # Next.js app only
-pnpm run dev:sveltekit   # SvelteKit app only
+pnpm run dev:mobile      # Mobile app only
 pnpm run dev:backend     # Convex backend only
 ```
 
 ## Development URLs
 
 - **Next.js App**: http://localhost:8000
-- **SvelteKit POC**: http://localhost:8001
+- **Mobile App**: Expo Go app or simulator
 - **Convex Dashboard**: Opens automatically when running backend
 
 ## Environment Setup
@@ -89,11 +92,9 @@ Both applications use the **SUIT Variable font**, a modern Korean/English typefa
 - CSS Variable: `--font-suit` available globally
 - Tailwind Class: `font-suit` available in components
 
-**SvelteKit POC** (`apps/sveltekit-poc/`):
-- Font file: `/static/fonts/SUIT-Variable.woff2`
-- Configuration: `/src/routes/app.css` with `@font-face`
-- Global Application: Applied to `body` element
-- Usage: Direct CSS `font-family: 'SUIT'`
+**Mobile App** (`apps/mobile/`):
+- System fonts with Korean/English support
+- NativeWind for consistent styling with web
 
 ### Usage Examples
 
@@ -110,16 +111,13 @@ Both applications use the **SUIT Variable font**, a modern Korean/English typefa
 </div>
 ```
 
-**SvelteKit with CSS:**
-```svelte
-<style>
-  .heading {
-    font-family: 'SUIT', sans-serif;
-    font-weight: 700;
-  }
-</style>
+**React Native with NativeWind:**
+```tsx
+import { Text } from 'react-native';
 
-<h1 class="heading">한국어 + English Heading</h1>
+<Text className="text-2xl font-bold">
+  한국어 + English Heading
+</Text>
 ```
 
 ### Performance Benefits
@@ -129,14 +127,43 @@ Both applications use the **SUIT Variable font**, a modern Korean/English typefa
 - **Faster Loading**: `font-display: swap` prevents invisible text
 - **Better UX**: Smooth weight transitions and custom intermediate weights
 
+## Shared UI Components
+
+The `@rite/ui` package provides cross-platform UI components with platform-specific implementations:
+
+### Component Structure
+```
+packages/ui/src/components/
+├── button/
+│   ├── button.web.tsx      # Web implementation
+│   ├── button.native.tsx   # Native implementation
+│   └── index.ts           # Platform-specific exports
+└── ... (other components)
+```
+
+### Available Components
+- **Basic**: Button, Input, Label, Textarea, Badge, Card
+- **Layout**: Select, Alert, AlertDialog
+- **Feedback**: LoadingIndicator, FullScreenLoading
+- **Advanced**: Dropzone (file upload), QRCode
+
+### Usage
+```tsx
+// Same import works for both web and mobile
+import { Button, Card, LoadingIndicator } from '@rite/ui';
+
+// Components automatically use platform-specific implementation
+<Button variant="primary" onPress={handlePress}>
+  Submit
+</Button>
+```
+
 ## Font Assets
 
-The SUIT Variable font files are included in both applications:
-
-- **Next.js**: `/apps/next-app/app/lib/SUIT-Variable.woff2`
-- **SvelteKit**: `/apps/sveltekit-poc/static/fonts/SUIT-Variable.woff2`
-
-Both files are identical and optimized for web performance with variable font technology.
+The SUIT Variable font is used in the Next.js web app:
+- **Location**: `/apps/next-app/app/lib/SUIT-Variable.woff2`
+- **Size**: ~50KB with variable weights (100-900)
+- **Support**: Full Korean Hangul + Latin characters
 
 ## Learn more
 
