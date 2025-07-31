@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter, usePathname } from '../../i18n/routing';
-import { Button } from '@/components/ui/button';
+import { Button } from '@rite/ui';
 import { GlobeIcon } from 'lucide-react';
 import { useState } from 'react';
 import { useParams } from 'next/navigation';

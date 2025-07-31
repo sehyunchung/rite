@@ -1,6 +1,6 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
+import { Button } from '@rite/ui';
 import { Link } from '../../../i18n/routing';
 import { DashboardContent } from './DashboardContent';
 import { UserDisplay } from '@/components/UserDisplay';

@@ -2,7 +2,7 @@
 
 import { EventCreationForm } from '@/components/EventCreationForm';
 import { useRouter } from 'next/navigation';
-import { Button } from '@/components/ui/button';
+import { Button } from '@rite/ui';
 import { Link } from '../../../../i18n/routing';
 import { UserDisplay } from '@/components/UserDisplay';
 import { signOut } from 'next-auth/react';

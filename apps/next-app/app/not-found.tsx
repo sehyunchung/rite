@@ -1,4 +1,4 @@
-import { Button } from '@/components/ui/button'
+import { Button } from '@rite/ui'
 import Link from 'next/link'
 
 export const dynamic = 'force-dynamic'

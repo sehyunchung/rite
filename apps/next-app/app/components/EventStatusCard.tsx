@@ -2,7 +2,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Badge } from '@rite/ui';
-import { Button } from '@/components/ui/button';
+import { Button } from '@rite/ui';
 import { LoadingIndicator } from '@/components/ui/loading-indicator';
 import { useEventStatus } from '@/hooks/useEventStatus';
 import { useTranslations } from 'next-intl';

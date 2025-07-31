@@ -1,6 +1,6 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
+import { Button } from '@rite/ui';
 import { useState } from 'react';
 import { LinkIcon, CheckIcon } from 'lucide-react';
 

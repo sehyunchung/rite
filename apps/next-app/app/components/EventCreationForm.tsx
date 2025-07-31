@@ -3,7 +3,7 @@ import { useMutation } from 'convex/react';
 import { api } from '@rite/backend/convex/_generated/api';
 import { Id } from '@rite/backend/convex/_generated/dataModel';
 import { useSession } from 'next-auth/react';
-import { Button } from '@/components/ui/button';
+import { Button } from '@rite/ui';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input, Label, Textarea } from '@rite/ui';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';

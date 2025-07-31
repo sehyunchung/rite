@@ -98,7 +98,7 @@ import {
   type CodeOptionsMultipleThemes,
   codeToHtml,
 } from 'shiki';
-import { Button } from '@/components/ui/button';
+import { Button } from '@rite/ui';
 import {
   Select,
   SelectContent,
