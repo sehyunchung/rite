@@ -49,7 +49,7 @@ export default function CreateEventScreen() {
           headerTintColor: riteColors.neutral[0],
           headerTitleStyle: typography.h5,
           headerLeft: () => (
-            <TouchableOpacity onPress={() => router.back()}>
+            <TouchableOpacity onPress={() => router.replace('/(tabs)')}>
               <Ionicons name="close" size={24} color={riteColors.neutral[0]} />
             </TouchableOpacity>
           ),
