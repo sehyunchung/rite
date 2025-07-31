@@ -7,6 +7,7 @@ import * as AuthSession from 'expo-auth-session';
 import * as SecureStore from 'expo-secure-store';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Platform } from 'react-native';
+import Constants from 'expo-constants';
 
 interface User {
   _id: Id<"users">;
@@ -64,15 +65,9 @@ const googleConfig = {
   scopes: ['openid', 'profile', 'email'],
   additionalParameters: {},
   customOAuthParameters: {},
-  // Use bundle identifier as redirect URI for iOS
-  redirectUri: Platform.select({
-    ios: 'com.rite.mobile:/',
-    android: AuthSession.makeRedirectUri({
-      scheme: 'com.rite.mobile',
-    }),
-    default: AuthSession.makeRedirectUri({
-      scheme: 'exp',
-    }),
+  // For development with Expo Go, we need to use the Expo auth proxy
+  redirectUri: AuthSession.makeRedirectUri({
+    useProxy: true,
   }),
 };
 
@@ -86,12 +81,15 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const convex = useConvex();
 
   // Debug: Log the OAuth configuration being used
+  const isExpoGo = Constants.appOwnership === 'expo';
   console.log('Google OAuth Config:', {
     platform: Platform.OS,
+    isExpoGo,
     iosClientId: googleConfig.iosClientId ? 'Set' : 'Not set',
     androidClientId: googleConfig.androidClientId ? 'Set' : 'Not set', 
     webClientId: googleConfig.webClientId ? 'Set' : 'Not set',
     redirectUri: googleConfig.redirectUri,
+    usingClientId: isExpoGo ? 'webClientId' : 'platform-specific',
   });
 
   // Only initialize Google auth if client IDs are available
@@ -101,12 +99,16 @@ export function AuthProvider({ children }: AuthProviderProps) {
     googleConfig.webClientId
   );
 
-  // For web, we need to use webClientId
+  // For Expo Go on iOS/Android, we need to use webClientId
+  // Only use platform-specific IDs for standalone builds
+  
   const authConfig = hasGoogleConfig ? {
     ...googleConfig,
-    // On web, use webClientId as clientId
-    ...(Platform.OS === 'web' && googleConfig.webClientId ? {
+    // Use webClientId for web platform or Expo Go
+    ...((Platform.OS === 'web' || isExpoGo) && googleConfig.webClientId ? {
       clientId: googleConfig.webClientId,
+      iosClientId: undefined,
+      androidClientId: undefined,
     } : {}),
   } : {
     iosClientId: '',
