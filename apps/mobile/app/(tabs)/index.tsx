@@ -61,7 +61,7 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: 24,
-    paddingBottom: Platform.OS === 'ios' ? 100 : 80, // Account for tab bar
+    paddingBottom: Platform.OS === 'ios' ? 124 : 104, // Account for tab bar + extra spacing
   },
   title: {
     ...typography.h3,
