@@ -8,8 +8,8 @@ import { useEventStatus } from '@/hooks/useEventStatus';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 import type { EventAction } from '@rite/backend/convex/eventStatus';
-import * as AlertDialogPrimitive from "@radix-ui/react-alert-dialog";
 import {
+  AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
@@ -17,7 +17,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+} from "@rite/ui";
 import { Alert, AlertDescription } from "@rite/ui";
 import { AlertCircle, Calendar, CheckCircle, Edit, Lock, Music, XCircle } from 'lucide-react';
 
@@ -187,7 +187,7 @@ export function EventStatusCard({ eventId, userId }: EventStatusCardProps) {
       </Card>
       
       {/* Confirmation Dialog */}
-      <AlertDialogPrimitive.Root open={!!confirmDialog} onOpenChange={(open) => !open && setConfirmDialog(null)}>
+      <AlertDialog open={!!confirmDialog} onOpenChange={(open) => !open && setConfirmDialog(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>{t('confirmAction')}</AlertDialogTitle>
@@ -202,7 +202,7 @@ export function EventStatusCard({ eventId, userId }: EventStatusCardProps) {
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
-      </AlertDialogPrimitive.Root>
+      </AlertDialog>
     </>
   );
 }

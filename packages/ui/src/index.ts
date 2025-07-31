@@ -8,6 +8,7 @@ export * from './components/badge';
 export * from './components/select';
 export * from './components/alert';
 export * from './components/loading-indicator';
+export * from './components/alert-dialog';
 
 // Export utilities
 export * from './utils';

@@ -345,7 +345,6 @@ export function ConvexProviderHydrationSafe({
 **Kibo UI Advanced Components:**
 - `Dropzone` - Drag-and-drop file upload with multi-file support
 - `QRCode` - QR code generation for event links and check-in (with robust canvas validation)
-- `CodeBlock` - Syntax-highlighted code display with copy functionality
 
 **Loading System Components:**
 - `LoadingIndicator` - Branded loading component with RITE logo and pulse animation
@@ -626,7 +625,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 // Kibo UI components  
 import { Dropzone } from "@/components/ui/kibo-ui/dropzone"
 import { QRCode } from "@/components/ui/kibo-ui/qr-code"
-import { CodeBlock } from "@/components/ui/kibo-ui/code-block"
 
 // Loading components
 import { LoadingIndicator, FullScreenLoading } from "@/components/ui/loading-indicator"

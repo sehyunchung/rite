@@ -17,6 +17,7 @@
     "./utils/*": "./src/utils/*/index.ts"
   },
   "dependencies": {
+    "@radix-ui/react-alert-dialog": "^1.1.5",
     "@radix-ui/react-label": "^2.1.1",
     "@radix-ui/react-select": "^2.1.5",
     "@radix-ui/react-slot": "^1.1.1",
