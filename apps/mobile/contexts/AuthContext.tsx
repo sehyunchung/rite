@@ -236,12 +236,25 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   // Handle authentication response
   useEffect(() => {
+    if (!response) return;
+    
     console.log('OAuth Response:', response);
-    if (response?.type === 'success') {
-      console.log('OAuth Success - Access Token:', response.authentication?.accessToken ? 'Present' : 'Missing');
-      handleGoogleAuth(response.authentication?.accessToken);
-    } else if (response?.type === 'error') {
+    console.log('Response Type:', response.type);
+    
+    if (response.type === 'success') {
+      console.log('OAuth Success - Full Response:', response);
+      const accessToken = response.authentication?.accessToken;
+      console.log('OAuth Success - Access Token:', accessToken ? 'Present' : 'Missing');
+      
+      if (accessToken) {
+        handleGoogleAuth(accessToken);
+      } else {
+        console.error('No access token received in OAuth response');
+      }
+    } else if (response.type === 'error') {
       console.error('OAuth Error:', response.error);
+    } else if (response.type === 'cancel') {
+      console.log('OAuth was cancelled by user');
     }
   }, [response, handleGoogleAuth]);
 
