@@ -13,7 +13,6 @@ import {
   validateEvent, 
   validateTimeslot,
   validateTimeRange,
-  validateInstagramHandle,
   validateDate,
   validateDeadlineOrder,
   validateTimeslotDuration,

@@ -3,15 +3,13 @@
 import { useQuery } from 'convex/react';
 import { api } from '@rite/backend/convex/_generated/api';
 import { Id, Doc } from '@rite/backend/convex/_generated/dataModel';
-import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@rite/ui';
-import { Badge } from '@rite/ui';
+import { Card, CardContent } from '@rite/ui';
 import { Button } from '@rite/ui';
 import { ActionCard } from '@rite/ui';
 import { EventCard } from '@rite/ui';
 import { Typography } from '@rite/ui';
 import { Link } from '../../../i18n/routing';
 import { useSession } from 'next-auth/react';
-import { CopyButton } from '@/components/CopyButton';
 import { useTranslations } from 'next-intl';
 import { LoadingIndicator } from '@rite/ui';
 
@@ -28,7 +26,6 @@ export function DashboardContent({ userId }: DashboardContentProps) {
   const { status } = useSession();
   const baseUrl = typeof window !== 'undefined' ? window.location.origin : '';
   const t = useTranslations('dashboard');
-  const tStatus = useTranslations('status');
   
   // Query events for the authenticated user
   const events = useQuery(
