@@ -17,7 +17,7 @@ export default function HomeScreen() {
         {/* Create Event Button */}
         <TouchableOpacity 
           style={styles.createEventButton} 
-          onPress={() => router.push('/create-event')}
+          onPress={() => router.push('/(tabs)/create')}
         >
           <Ionicons name="add-circle" size={24} color="#FFFFFF" />
           <Text style={styles.createEventText}>Create New Event</Text>
