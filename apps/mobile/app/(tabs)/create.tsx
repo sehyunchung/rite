@@ -55,6 +55,7 @@ export default function CreateTab() {
                 placeholderTextColor={riteColors.functional.textMuted}
                 value={eventName}
                 onChangeText={setEventName}
+                autoCapitalize="words"
               />
             </View>
           </View>
@@ -160,6 +161,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 16,
+    paddingVertical: 0,
     borderWidth: 1,
     borderColor: riteColors.functional.border,
     ...shadows.sm,
@@ -168,14 +170,31 @@ const styles = StyleSheet.create({
     ...typography.body,
     color: riteColors.neutral[0],
     flex: 1,
-    height: '100%',
+    height: 48,
+    paddingVertical: 0,
+    paddingHorizontal: 0,
+    textAlignVertical: 'center',
     ...Platform.select({
-      web: { outlineStyle: 'none' },
-      default: {},
+      web: { 
+        outlineStyle: 'none',
+        lineHeight: '48px',
+      },
+      ios: {
+        paddingTop: 12,
+        paddingBottom: 16,
+      },
+      default: {
+        paddingTop: 12,
+        paddingBottom: 16,
+      },
     }),
   },
   inputText: {
+    height: 48,
     paddingVertical: 0,
+    paddingTop: 12,
+    paddingBottom: 16,
+    textAlignVertical: 'center',
   },
   addButton: {
     flexDirection: 'row',
