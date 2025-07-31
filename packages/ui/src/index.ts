@@ -14,6 +14,7 @@ export * from './components/qr-code';
 export * from './components/list-item';
 export * from './components/action-card';
 export * from './components/event-card';
+export * from './components/typography';
 
 // Export utilities
 export * from './utils';

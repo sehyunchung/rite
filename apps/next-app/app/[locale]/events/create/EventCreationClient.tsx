@@ -2,7 +2,7 @@
 
 import { EventCreationForm } from '@/components/EventCreationForm';
 import { useRouter } from 'next/navigation';
-import { Button } from '@rite/ui';
+import { Button, Typography } from '@rite/ui';
 import { Link } from '../../../../i18n/routing';
 import { UserDisplay } from '@/components/UserDisplay';
 import { signOut } from 'next-auth/react';
@@ -22,20 +22,20 @@ export function EventCreationClient({ userId, fallbackDisplayName, locale }: Eve
   const tEvents = useTranslations('events.create');
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-neutral-800">
       {/* Navigation */}
-      <nav className="bg-white border-b border-gray-200">
+      <nav className="bg-neutral-700 border-b border-neutral-600">
         <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16 items-center">
             <div className="flex items-center space-x-4 sm:space-x-8">
               <div className="flex items-center">
-                <span className="text-xl font-medium">RITE</span>
+                <Typography variant="h5" className="text-brand-primary">RITE</Typography>
               </div>
               <nav className="hidden md:flex space-x-6">
-                <Link href="/dashboard" className="text-sm font-medium text-gray-900 hover:text-gray-700">
+                <Link href="/dashboard" className="text-sm font-medium text-white hover:text-brand-primary transition-colors">
                   {t('dashboard')}
                 </Link>
-                <Link href="/events/create" className="text-sm font-medium text-gray-900 hover:text-gray-700">
+                <Link href="/events/create" className="text-sm font-medium text-white hover:text-brand-primary transition-colors">
                   {t('createEvent')}
                 </Link>
               </nav>
