@@ -15,6 +15,13 @@ import { shadows } from '../utils/shadow';
 
 export default function AuthScreen() {
   const { signIn, isLoading } = useAuth();
+  
+  // Check if Google OAuth is configured
+  const hasGoogleConfig = Boolean(
+    process.env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID || 
+    process.env.EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID || 
+    process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID
+  );
 
   return (
     <SafeAreaView style={styles.container}>
@@ -31,15 +38,26 @@ export default function AuthScreen() {
         {/* Auth Buttons */}
         <View style={styles.authSection}>
           <TouchableOpacity 
-            style={styles.googleButton}
+            style={[styles.googleButton, !hasGoogleConfig && styles.disabledButton]}
             onPress={signIn}
-            disabled={isLoading}
+            disabled={isLoading || !hasGoogleConfig}
           >
             <Ionicons name="logo-google" size={20} color={riteColors.neutral[800]} />
             <Text style={styles.googleButtonText}>
-              {isLoading ? 'Signing in...' : 'Continue with Google'}
+              {!hasGoogleConfig 
+                ? 'Google OAuth Not Configured' 
+                : isLoading 
+                  ? 'Signing in...' 
+                  : 'Continue with Google'
+              }
             </Text>
           </TouchableOpacity>
+
+          {!hasGoogleConfig && (
+            <Text style={styles.configText}>
+              Add Google OAuth credentials to .env file to enable authentication
+            </Text>
+          )}
 
           {/* Instagram OAuth - Coming Soon */}
           <TouchableOpacity 
@@ -144,5 +162,15 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     lineHeight: 20,
     maxWidth: 280,
+  },
+  disabledButton: {
+    opacity: 0.5,
+  },
+  configText: {
+    ...typography.caption,
+    color: riteColors.functional.textMuted,
+    textAlign: 'center',
+    fontStyle: 'italic',
+    marginTop: -8,
   },
 });

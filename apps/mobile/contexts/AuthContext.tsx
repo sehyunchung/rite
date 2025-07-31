@@ -30,11 +30,9 @@ const AuthContext = createContext<AuthContextType | null>(null);
 
 // Google OAuth configuration
 const googleConfig = {
-  clientId: Platform.select({
-    ios: process.env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID,
-    android: process.env.EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID,
-    web: process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID,
-  }),
+  iosClientId: process.env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID,
+  androidClientId: process.env.EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID,
+  webClientId: process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID,
   scopes: ['openid', 'profile', 'email'],
   additionalParameters: {},
   customOAuthParameters: {},
@@ -49,7 +47,21 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [isLoading, setIsLoading] = useState(true);
   const convex = useConvex();
 
-  const [request, response, promptAsync] = Google.useAuthRequest(googleConfig);
+  // Only initialize Google auth if client IDs are available
+  const hasGoogleConfig = Boolean(
+    googleConfig.iosClientId || 
+    googleConfig.androidClientId || 
+    googleConfig.webClientId
+  );
+
+  const [request, response, promptAsync] = Google.useAuthRequest(
+    hasGoogleConfig ? googleConfig : {
+      iosClientId: '',
+      androidClientId: '',
+      webClientId: '',
+      scopes: ['openid', 'profile', 'email'],
+    }
+  );
 
   // Handle authentication response
   useEffect(() => {
@@ -137,6 +149,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
   };
 
   const signIn = async () => {
+    if (!hasGoogleConfig) {
+      console.warn('Google OAuth not configured. Please add Google client IDs to your .env file.');
+      return;
+    }
+    
     try {
       await promptAsync();
     } catch (error) {
