@@ -80,15 +80,16 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const isExpoGo = Constants.appOwnership === 'expo';
   const isWeb = Platform.OS === 'web';
   
-  // Set redirect URI based on platform
-  const redirectUri = isExpoGo 
-    ? `https://auth.expo.io/@sehyun_chung/rite`
-    : isWeb
+  // Set redirect URI based on platform - prioritize web over Expo Go
+  const redirectUri = isWeb
     ? 'http://localhost:8081'
+    : isExpoGo 
+    ? `https://auth.expo.io/@sehyun_chung/rite`
     : AuthSession.makeRedirectUri();
   
   console.log('Google OAuth Config:', {
     platform: Platform.OS,
+    appOwnership: Constants.appOwnership,
     isExpoGo,
     isWeb,
     iosClientId: googleConfig.iosClientId ? 'Set' : 'Not set',
