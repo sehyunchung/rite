@@ -121,9 +121,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     redirectUri: redirectUri,
   };
 
-  const [request, response, promptAsync] = Google.useAuthRequest(authConfig, {
-    useProxy: isExpoGo
-  });
+  const [request, response, promptAsync] = Google.useAuthRequest(authConfig);
 
   // Handle authentication response
   useEffect(() => {
