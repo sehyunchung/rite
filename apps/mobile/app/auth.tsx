@@ -18,7 +18,7 @@ export default function AuthScreen() {
   
   // Check if Google OAuth is configured
   const hasGoogleConfig = Boolean(
-    process.env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID || 
+    process.env.EXPO_PUBLIC_GOOGLE_OAUTH_CLIENT_ID_IOS || 
     process.env.EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID || 
     process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID
   );
