@@ -36,6 +36,11 @@ const googleConfig = {
   scopes: ['openid', 'profile', 'email'],
   additionalParameters: {},
   customOAuthParameters: {},
+  // Expo development redirect URI
+  redirectUri: AuthSession.makeRedirectUri({
+    scheme: 'exp',
+    path: undefined,
+  }),
 };
 
 interface AuthProviderProps {
@@ -46,6 +51,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const convex = useConvex();
+
+  // Debug: Log the redirect URI being used
+  console.log('Google OAuth Redirect URI:', googleConfig.redirectUri);
 
   // Only initialize Google auth if client IDs are available
   const hasGoogleConfig = Boolean(
