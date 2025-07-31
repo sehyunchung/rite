@@ -5,6 +5,7 @@ import { Id } from '@rite/backend/convex/_generated/dataModel';
 import * as Google from 'expo-auth-session/providers/google';
 import * as AuthSession from 'expo-auth-session';
 import * as SecureStore from 'expo-secure-store';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Platform } from 'react-native';
 
 interface User {
@@ -27,6 +28,33 @@ interface AuthContextType {
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
+
+// Platform-specific secure storage helpers
+const secureStorage = {
+  async getItem(key: string): Promise<string | null> {
+    if (Platform.OS === 'web') {
+      // Use AsyncStorage for web
+      return await AsyncStorage.getItem(key);
+    } else {
+      // Use SecureStore for mobile
+      return await SecureStore.getItemAsync(key);
+    }
+  },
+  async setItem(key: string, value: string): Promise<void> {
+    if (Platform.OS === 'web') {
+      await AsyncStorage.setItem(key, value);
+    } else {
+      await SecureStore.setItemAsync(key, value);
+    }
+  },
+  async removeItem(key: string): Promise<void> {
+    if (Platform.OS === 'web') {
+      await AsyncStorage.removeItem(key);
+    } else {
+      await SecureStore.deleteItemAsync(key);
+    }
+  }
+};
 
 // Google OAuth configuration
 const googleConfig = {
@@ -90,7 +118,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const checkExistingSession = async () => {
     try {
-      const sessionToken = await SecureStore.getItemAsync('sessionToken');
+      const sessionToken = await secureStorage.getItem('sessionToken');
       if (sessionToken) {
         // Verify session with Convex
         const session = await convex.query(api.auth.getSession, { sessionToken });
@@ -101,7 +129,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
           }
         } else {
           // Session expired, clean up
-          await SecureStore.deleteItemAsync('sessionToken');
+          await secureStorage.removeItem('sessionToken');
         }
       }
     } catch (error) {
@@ -151,7 +179,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         });
 
         // Store session securely
-        await SecureStore.setItemAsync('sessionToken', sessionToken);
+        await secureStorage.setItem('sessionToken', sessionToken);
         setUser(userData);
       }
     } catch (error) {
@@ -179,12 +207,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
       setIsLoading(true);
       
       // Get current session token
-      const sessionToken = await SecureStore.getItemAsync('sessionToken');
+      const sessionToken = await secureStorage.getItem('sessionToken');
       if (sessionToken) {
         // Delete session from Convex
         await convex.mutation(api.auth.deleteSession, { sessionToken });
         // Remove from secure storage
-        await SecureStore.deleteItemAsync('sessionToken');
+        await secureStorage.removeItem('sessionToken');
       }
       
       setUser(null);
