@@ -125,8 +125,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   // Handle authentication response
   useEffect(() => {
+    console.log('OAuth Response:', response);
     if (response?.type === 'success') {
+      console.log('OAuth Success - Access Token:', response.authentication?.accessToken ? 'Present' : 'Missing');
       handleGoogleAuth(response.authentication?.accessToken);
+    } else if (response?.type === 'error') {
+      console.error('OAuth Error:', response.error);
     }
   }, [response]);
 
@@ -159,31 +163,48 @@ export function AuthProvider({ children }: AuthProviderProps) {
   };
 
   const handleGoogleAuth = async (accessToken?: string) => {
-    if (!accessToken) return;
+    console.log('handleGoogleAuth called with token:', accessToken ? 'Present' : 'Missing');
+    if (!accessToken) {
+      console.error('No access token provided to handleGoogleAuth');
+      return;
+    }
 
     try {
       setIsLoading(true);
 
       // Get user info from Google
+      console.log('Fetching user info from Google...');
       const userInfoResponse = await fetch(
         `https://www.googleapis.com/oauth2/v2/userinfo?access_token=${accessToken}`
       );
+      
+      if (!userInfoResponse.ok) {
+        console.error('Google API response not ok:', userInfoResponse.status, userInfoResponse.statusText);
+        return;
+      }
+      
       const googleUser = await userInfoResponse.json();
+      console.log('Google user info received:', { email: googleUser.email, name: googleUser.name });
 
       // Check if user exists in Convex
+      console.log('Checking if user exists in Convex...');
       let userData = await convex.query(api.auth.getUserByEmail, { 
         email: googleUser.email 
       });
 
       // Create user if doesn't exist
       if (!userData) {
+        console.log('User not found, creating new user...');
         const userId = await convex.mutation(api.auth.createUser, {
           email: googleUser.email,
           name: googleUser.name,
           image: googleUser.picture,
           emailVerified: Date.now(),
         });
+        console.log('New user created with ID:', userId);
         userData = await convex.query(api.auth.getUser, { userId });
+      } else {
+        console.log('Existing user found:', userData._id);
       }
 
       if (userData) {
@@ -198,8 +219,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
         });
 
         // Store session securely
+        console.log('Storing session and setting user...');
         await secureStorage.setItem('sessionToken', sessionToken);
         setUser(userData);
+        console.log('Authentication completed successfully!');
       }
     } catch (error) {
       console.error('Error during Google authentication:', error);
