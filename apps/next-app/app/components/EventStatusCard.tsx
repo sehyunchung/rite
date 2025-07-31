@@ -1,7 +1,7 @@
 'use client';
 
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import { Badge } from '@rite/ui';
 import { Button } from '@/components/ui/button';
 import { LoadingIndicator } from '@/components/ui/loading-indicator';
 import { useEventStatus } from '@/hooks/useEventStatus';
