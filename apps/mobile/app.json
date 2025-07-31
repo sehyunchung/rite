@@ -10,7 +10,15 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.rite.mobile"
+      "bundleIdentifier": "com.rite.mobile",
+      "infoPlist": {
+        "CFBundleURLTypes": [
+          {
+            "CFBundleURLName": "google-oauth",
+            "CFBundleURLSchemes": ["com.rite.mobile"]
+          }
+        ]
+      }
     },
     "android": {
       "adaptiveIcon": {

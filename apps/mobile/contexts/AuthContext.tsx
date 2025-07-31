@@ -36,10 +36,15 @@ const googleConfig = {
   scopes: ['openid', 'profile', 'email'],
   additionalParameters: {},
   customOAuthParameters: {},
-  // Expo development redirect URI
-  redirectUri: AuthSession.makeRedirectUri({
-    scheme: 'exp',
-    path: undefined,
+  // Use bundle identifier as redirect URI for iOS
+  redirectUri: Platform.select({
+    ios: 'com.rite.mobile:/',
+    android: AuthSession.makeRedirectUri({
+      scheme: 'com.rite.mobile',
+    }),
+    default: AuthSession.makeRedirectUri({
+      scheme: 'exp',
+    }),
   }),
 };
 
