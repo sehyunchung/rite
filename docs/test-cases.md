@@ -2,17 +2,33 @@
 
 ## Overview
 
-This document contains comprehensive test cases for the DJ Event Booking System, organized by functional areas. Each test case is written as a natural sentence to ensure clarity for both technical and non-technical team members.
+This document contains comprehensive test cases for the RITE DJ Event Management Platform, organized by functional areas. Each test case is written as a natural sentence to ensure clarity for both technical and non-technical team members.
+
+## Authentication Flow
+
+### Implemented Scenarios
+- Users can sign in using Instagram OAuth through the custom proxy service
+- Instagram Business/Creator accounts are validated during authentication
+- Personal Instagram accounts receive an appropriate error message
+- Users can sign in using Google OAuth as an alternative
+- Instagram profiles are automatically connected during signup
+- User sessions persist across page refreshes
+
+### TBD Scenarios
+- Apple OAuth authentication (planned but not implemented)
 
 ## Event Creation Flow
 
 ### Happy Path Scenarios
-- An organizer can create a new event with all required fields filled correctly
+- An organizer can create a new event with basic information (venue, date, time)
 - The system saves event details including venue name and address to the database
 - Event deadlines for guest lists and promo materials are properly stored
-- Payment information including amount and due date is correctly recorded
 - The event status defaults to "draft" when first created
 - Multiple events can be created by the same organizer without conflicts
+
+### TBD Features
+- Payment information including amount per DJ (not yet implemented)
+- Guest limits per DJ configuration (not yet implemented)
 
 ### Validation Scenarios
 - The system prevents creating events with empty or whitespace-only names
@@ -33,20 +49,25 @@ This document contains comprehensive test cases for the DJ Event Booking System,
 
 ### Core Functionality
 - Organizers can add multiple DJ timeslots to an event
-- Each timeslot has a start time, end time, and assigned DJ
-- DJ Instagram handles are validated to include the @ symbol
+- Each timeslot has a start time, end time, and assigned DJ name
 - Timeslots cannot overlap with each other for the same event
-- Timeslots can be reordered by dragging and dropping
 - Individual timeslots can be edited after creation
-- Timeslots can be removed from an event before submission links are sent
+- Timeslots can be removed from an event
+- Unique submission tokens are generated for each timeslot
+
+### TBD Features
+- DJ Instagram handle validation (currently just DJ names)
+- Timeslot reordering by drag and drop (not yet implemented)
 
 ### Validation and Constraints
 - Start times must be before end times for each timeslot
-- Instagram handles must follow proper @username format
 - DJ names cannot be empty or contain only whitespace
 - Minimum timeslot duration is enforced (e.g., 30 minutes)
 - Maximum number of timeslots per event is respected
-- Duplicate Instagram handles within the same event are prevented
+
+### TBD Validations
+- Instagram handle format validation (@username)
+- Duplicate Instagram handle prevention
 
 ### Token Generation
 - Each timeslot automatically generates a unique 16-character submission token
@@ -54,7 +75,7 @@ This document contains comprehensive test cases for the DJ Event Booking System,
 - Tokens remain consistent once generated for a timeslot
 - Token collisions are prevented across all events
 
-## DJ Submission Process
+## DJ Info Submission Process
 
 ### Access and Authentication
 - DJs can access their submission form using the unique token URL
@@ -66,7 +87,7 @@ This document contains comprehensive test cases for the DJ Event Booking System,
 ### Form Functionality
 - DJs can view their assigned event details and timeslot information
 - Guest list section allows adding and removing guest entries dynamically
-- Name and phone number fields are available for each guest
+- Name fields are available for each guest (phone numbers TBD)
 - Payment information form collects all required banking details
 - Alternative "contact me directly" option works for payment preferences
 - Form remembers progress if DJ navigates away and returns

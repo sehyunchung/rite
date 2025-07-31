@@ -83,8 +83,9 @@ INSTAGRAM_OAUTH_PROXY_URL=https://rite-instagram-oauth-proxy.sehyunchung.workers
 # Optional
 GOOGLE_CLIENT_ID=your_google_client_id
 GOOGLE_CLIENT_SECRET=your_google_client_secret
-APPLE_ID=your_apple_id
-APPLE_SECRET=your_apple_secret
+# Apple OAuth - TBD
+# APPLE_ID=your_apple_id
+# APPLE_SECRET=your_apple_secret
 ```
 
 ### Getting Started
@@ -164,7 +165,7 @@ NextAuth v5 with multiple providers:
 
 - **Instagram**: Primary provider with custom OAuth proxy
 - **Google**: Optional secondary provider
-- **Apple**: Optional secondary provider
+- **Apple**: TBD - Planned for future implementation
 
 ### Instagram OAuth Flow
 1. User clicks "Sign in with Instagram"

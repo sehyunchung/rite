@@ -63,19 +63,8 @@ The application supports multiple OAuth providers through NextAuth v5:
    - `GOOGLE_CLIENT_ID`: Your Google OAuth client ID
    - `GOOGLE_CLIENT_SECRET`: Your Google OAuth client secret
 
-#### Apple OAuth
-1. **Create Apple OAuth App**:
-   - Go to Apple Developer Portal (developer.apple.com)
-   - Create a new App ID with Sign in with Apple capability
-   - Create a Service ID and configure it
-   - Generate a private key for authentication
-   - Add authorized redirect URIs:
-     - `http://localhost:8000/api/auth/callback/apple` (development)
-     - `https://your-domain.com/api/auth/callback/apple` (production)
-
-2. **Configure Environment Variables**:
-   - `APPLE_ID`: Your Apple Service ID
-   - `APPLE_SECRET`: Generated from your private key (JWT format)
+#### Apple OAuth (TBD)
+- Apple OAuth integration is planned but not yet implemented
 
 #### Instagram OAuth (Custom Implementation)
 Instagram login uses a custom OAuth proxy service for NextAuth compatibility.
@@ -286,16 +275,14 @@ export function ConvexProviderHydrationSafe({
 ### Key Features
 
 **✅ Implemented:**
-- **Event Creation**: Complete form with venue, dates, payment details, and DJ timeslots
-- **Enhanced Event Fields**: Instagram hashtags, payment per DJ, guest limits
+- **Event Creation**: Complete form with venue, dates, and DJ timeslots
 - **Advanced Validation**: ArkType-powered validation with deadline ordering and duration limits
 - **Timeslot Management**: Add/remove DJ slots with overlap detection and time validation
-- **Instagram Handle Validation**: Enforces @username format with character validation
 - **Database Integration**: Events and timeslots saved to Convex with atomic operations
 - **Dynamic UI**: Responsive forms with loading states and error boundaries
 - **Unique Submission Links**: Each DJ gets a unique 16-character token for material submission
-- **DJ Submission Form**: Public form accessible via URL parameters (?token=ABC123)
-- **Guest List Management**: Dynamic add/remove guest entries with name and phone fields
+- **DJ Info Submission Form**: Public form accessible via URL parameters (?token=ABC123)
+- **Guest List Management**: Dynamic add/remove guest entries with name fields only
 - **Payment Info Collection**: Secure form for DJ payment details with privacy notice
 - **Token-based Access**: URL routing system for seamless DJ submission experience
 - **Robust QR Code Generation**: Canvas validation and error handling for reliable QR codes
@@ -311,6 +298,11 @@ export function ConvexProviderHydrationSafe({
 - **Unified Loading System**: LoadingIndicator and FullScreenLoading components with consistent RITE branding
 
 **📋 Planned:**
+- **Apple OAuth**: Third authentication provider option
+- **Event Payment Details**: Payment per DJ and guest limits configuration
+- **Instagram Handle Validation**: Validate DJ Instagram handles in timeslots
+- **Guest Phone Numbers**: Collect phone numbers for guest list entries
+- **QR Code Generation**: Generate QR codes for event check-in
 - **File Upload Integration**: Connect Dropzone to Convex file storage for actual uploads
 - **Submission Data Storage**: Save guest lists and payment info to database with encryption
 - **Submission Status Tracking**: Dashboard for organizers to monitor submission progress

@@ -36,20 +36,20 @@
 
 ### Core Event Management Platform
 **Primary Features:**
-- **Event Creation**: Simple forms for venue, dates, DJ timeslots, payment details
-- **DJ Submission System**: Token-based links for guest lists, payment info, file uploads
+- **Event Creation**: Simple forms for venue, dates, DJ timeslots
+- **DJ Info Submission System**: Token-based links for guest lists, payment info, file uploads
 - **Real-time Dashboard**: Live tracking of submission progress and deadlines
 - **Korean Market Optimization**: Local payment methods, timezone handling, cultural awareness
 
 **Technical Foundation:**
 - **Frontend**: React 19 + TypeScript, Vite, Tailwind CSS, shadcn/ui
 - **Backend**: Convex (real-time database + file storage)
-- **Authentication**: Clerk with Instagram OAuth integration
+- **Authentication**: NextAuth v5 with Instagram OAuth integration
 - **Validation**: ArkType for high-performance schema validation
 
 ### Current Development Status
 - ✅ **Phase 1 Complete**: Core event creation and validation system
-- 🚧 **Phase 2 (85% done)**: DJ submission forms and token system
+- ✅ **Phase 2 Complete**: DJ info submission forms and token system
 - 📋 **Phase 3 Planned**: Event history and template reuse system
 
 ---
@@ -87,7 +87,15 @@
 
 ## 🎨 **Feature Roadmap**
 
-### Phase 3: Event History & Templates (Next 8 weeks)
+### Phase 3: Core Feature Completion (Next 4 weeks)
+**TBD Features to Complete:**
+- Apple OAuth authentication option
+- Event payment details (payment per DJ, guest limits)
+- Instagram handle validation for DJ timeslots
+- Guest phone number collection
+- QR code generation for events
+
+### Phase 4: Event History & Templates (Following 8 weeks)
 **Core Features:**
 - Save completed events as reusable templates
 - Quick copy from previous events (venue, DJ contacts, timeslots)
@@ -100,7 +108,7 @@
 - Advanced analytics on past events
 - Custom template organization
 
-### Phase 4: Polish & Community (Following 8 weeks)
+### Phase 5: Polish & Community (Following 8 weeks)
 **Refinements:**
 - Korean language interface improvements
 - Mobile-optimized responsive design
