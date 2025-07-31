@@ -3,6 +3,10 @@
   "version": "0.0.1",
   "private": true,
   "exports": {
+    "./convex/_generated/api": "./convex/_generated/api.js",
+    "./convex/_generated/api.js": "./convex/_generated/api.js",
+    "./convex/_generated/dataModel": "./convex/_generated/dataModel.d.ts",
+    "./convex/_generated/server": "./convex/_generated/server.js",
     "./convex/_generated/*": "./convex/_generated/*"
   },
   "scripts": {

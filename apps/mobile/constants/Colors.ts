@@ -3,7 +3,7 @@
  * Dark-first color palette for mobile app
  */
 
-import { colors } from '@rite/ui/src/design-tokens/colors';
+import { colors } from '@rite/ui/design-tokens/colors';
 
 // RITE is dark-first, so we use dark colors for both themes
 export const Colors = {
