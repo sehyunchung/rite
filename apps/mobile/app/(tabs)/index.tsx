@@ -2,6 +2,7 @@ import { View, Text, ScrollView, ActivityIndicator, StyleSheet } from 'react-nat
 import { useQuery } from 'convex/react';
 import { api } from '@rite/backend/convex/_generated/api';
 import { shadows } from '../../utils/shadow';
+import { typography } from '../../constants/Typography';
 
 export default function HomeScreen() {
   const pingResult = useQuery(api.test.ping);
@@ -30,8 +31,10 @@ export default function HomeScreen() {
           <Text style={styles.statusItem}>{pingResult ? '✅' : '⏳'} Convex {pingResult ? 'connected' : 'connecting...'}</Text>
           <Text style={styles.statusItem}>✅ Shared backend package</Text>
           <Text style={styles.statusItem}>✅ NativeWind styling</Text>
+          <Text style={styles.statusItem}>✅ Dark theme applied</Text>
+          <Text style={styles.statusItem}>✅ SUIT fonts configured</Text>
           <Text style={styles.statusItem}>🚧 Authentication pending</Text>
-          <Text style={styles.statusItem}>🚧 Dark theme pending</Text>
+          <Text style={styles.statusItem}>🚧 @rite/ui components pending</Text>
         </View>
       </View>
     </ScrollView>
@@ -47,13 +50,12 @@ const styles = StyleSheet.create({
     padding: 24,
   },
   title: {
-    fontSize: 30,
-    fontWeight: 'bold',
+    ...typography.h3,
     color: '#E946FF', // brand.primary
     marginBottom: 8,
   },
   subtitle: {
-    fontSize: 18,
+    ...typography.body,
     color: '#A8A8B3', // neutral.300
     marginBottom: 24,
   },
@@ -61,8 +63,7 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   sectionTitle: {
-    fontSize: 20,
-    fontWeight: '600',
+    ...typography.h5,
     color: '#FFFFFF',
     marginBottom: 16,
   },
@@ -73,6 +74,7 @@ const styles = StyleSheet.create({
     ...shadows.sm,
   },
   emptyText: {
+    ...typography.body,
     color: '#A8A8B3', // neutral.300
     textAlign: 'center',
   },
@@ -86,12 +88,12 @@ const styles = StyleSheet.create({
     ...shadows.sm,
   },
   eventName: {
-    fontWeight: '600',
-    fontSize: 18,
+    ...typography.h6,
     color: '#FFFFFF',
     marginBottom: 4,
   },
   eventDetail: {
+    ...typography.bodySmall,
     color: '#A8A8B3', // neutral.300
     marginBottom: 2,
   },
@@ -103,11 +105,12 @@ const styles = StyleSheet.create({
     borderColor: '#E946FF', // brand.primary
   },
   statusTitle: {
+    ...typography.label,
     color: '#E946FF', // brand.primary
-    fontWeight: '500',
     marginBottom: 8,
   },
   statusItem: {
+    ...typography.caption,
     color: '#A8A8B3', // neutral.300
     marginBottom: 4,
   },
