@@ -4,18 +4,21 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import '../../types/nativewind';
 
 const buttonVariants = cva(
-  'flex items-center justify-center rounded-md font-medium disabled:opacity-50',
+  'flex items-center justify-center rounded-lg font-medium disabled:opacity-50',
   {
     variants: {
       variant: {
-        default: 'bg-gray-900 text-white active:bg-gray-700',
-        outline: 'border border-gray-300 bg-white text-gray-900 active:bg-gray-100',
-        ghost: 'text-gray-900 active:bg-gray-100',
+        default: 'bg-brand-primary active:bg-brand-primary-dark',
+        destructive: 'bg-error active:bg-error/90',
+        outline: 'border-2 border-neutral-600 bg-transparent active:bg-neutral-700',
+        secondary: 'bg-neutral-700 active:bg-neutral-600',
+        ghost: 'active:bg-neutral-700/50',
       },
       size: {
-        default: 'h-10 px-4 py-2',
-        sm: 'h-9 rounded-md px-3',
-        lg: 'h-11 rounded-md px-8',
+        default: 'h-12 px-6',
+        sm: 'h-10 px-4 rounded-md',
+        lg: 'h-14 px-8 rounded-xl',
+        icon: 'w-12 h-12',
       },
     },
     defaultVariants: {
@@ -51,7 +54,17 @@ export function Button({
       {...props}
     >
       {typeof children === 'string' ? (
-        <Text className="text-center font-medium">
+        <Text className={`text-center font-medium ${
+          variant === 'default' || variant === 'destructive' || variant === 'secondary' 
+            ? 'text-white' 
+            : variant === 'outline' 
+            ? 'text-white'
+            : variant === 'ghost'
+            ? 'text-white'
+            : 'text-brand-primary'
+        } ${
+          size === 'sm' ? 'text-sm' : size === 'lg' ? 'text-lg' : 'text-base'
+        }`}>
           {children}
         </Text>
       ) : (

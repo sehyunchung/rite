@@ -17,8 +17,8 @@ export const Input = React.forwardRef<TextInput, InputProps>(
     return (
       <TextInput
         ref={ref}
-        className={`h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-base text-gray-900 placeholder:text-gray-400 disabled:opacity-50 ${className}`}
-        placeholderTextColor="#9ca3af"
+        className={`h-12 w-full rounded-lg bg-neutral-700 px-4 py-3 text-base text-white placeholder:text-neutral-400 disabled:opacity-50 ${className}`}
+        placeholderTextColor="#7A7A88"
         keyboardType={keyboardType}
         secureTextEntry={secureTextEntry}
         style={style}

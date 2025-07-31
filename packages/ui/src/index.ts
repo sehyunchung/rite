@@ -11,6 +11,7 @@ export * from './components/loading-indicator';
 export * from './components/alert-dialog';
 export * from './components/dropzone';
 export * from './components/qr-code';
+export * from './components/list-item';
 
 // Export utilities
 export * from './utils';
