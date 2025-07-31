@@ -1,5 +1,5 @@
 import { signIn, auth } from '@/lib/auth'
-import { Button } from '@rite/ui'
+import { Button, Typography } from '@rite/ui'
 import { Card, CardContent, CardHeader, CardTitle } from '@rite/ui'
 import { redirect } from 'next/navigation'
 import { getTranslations } from 'next-intl/server'
@@ -21,11 +21,11 @@ export default async function SignInPage({ params }: Props) {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4">
+    <div className="min-h-screen bg-neutral-800 flex items-center justify-center py-12 px-4">
       <div className="max-w-md w-full space-y-12">
         <div className="text-center">
-          <h1 className="text-5xl font-medium">RITE</h1>
-          <p className="text-lg text-gray-600 mt-4">{t('tagline')}</p>
+          <Typography variant="h1" className="text-5xl text-brand-primary">RITE</Typography>
+          <Typography variant="body-lg" color="secondary" className="mt-4">{t('tagline')}</Typography>
         </div>
         
         <Card>
@@ -59,10 +59,10 @@ export default async function SignInPage({ params }: Props) {
 
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
-                <span className="w-full border-t" />
+                <span className="w-full border-t border-neutral-600" />
               </div>
               <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-white px-2 text-gray-500">{t('or')}</span>
+                <span className="bg-neutral-700 px-2 text-neutral-400">{t('or')}</span>
               </div>
             </div>
 
@@ -87,12 +87,12 @@ export default async function SignInPage({ params }: Props) {
             </form>
 
             {/* Mobile OAuth guidance - only show for Instagram */}
-            <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg text-sm text-blue-800">
-              <p className="font-medium mb-1">{t('mobileGuidance.title')}</p>
-              <p>{t('mobileGuidance.message')}</p>
-              <p className="text-xs mt-2 text-gray-600">
+            <div className="mt-4 p-3 bg-blue-500/10 border border-blue-500/20 rounded-lg">
+              <Typography variant="body-sm" className="text-blue-400 font-medium mb-1">{t('mobileGuidance.title')}</Typography>
+              <Typography variant="body-sm" className="text-blue-400">{t('mobileGuidance.message')}</Typography>
+              <Typography variant="body-xs" color="secondary" className="mt-2">
                 {t('accountRequirement')}
-              </p>
+              </Typography>
             </div>
           </CardContent>
         </Card>
