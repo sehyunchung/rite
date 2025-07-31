@@ -78,19 +78,24 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   // Debug: Log the OAuth configuration being used
   const isExpoGo = Constants.appOwnership === 'expo';
-  // Force Expo proxy URL for development
+  const isWeb = Platform.OS === 'web';
+  
+  // Set redirect URI based on platform
   const redirectUri = isExpoGo 
     ? `https://auth.expo.io/@sehyun_chung/rite`
+    : isWeb
+    ? 'http://localhost:8081'
     : AuthSession.makeRedirectUri();
   
   console.log('Google OAuth Config:', {
     platform: Platform.OS,
     isExpoGo,
+    isWeb,
     iosClientId: googleConfig.iosClientId ? 'Set' : 'Not set',
     androidClientId: googleConfig.androidClientId ? 'Set' : 'Not set', 
     webClientId: googleConfig.webClientId ? 'Set' : 'Not set',
     redirectUri,
-    usingClientId: isExpoGo ? 'webClientId' : 'platform-specific',
+    usingClientId: (isWeb || isExpoGo) ? 'webClientId' : 'platform-specific',
   });
 
   // Only initialize Google auth if client IDs are available
@@ -106,7 +111,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const authConfig = hasGoogleConfig ? {
     ...googleConfig,
     // Use webClientId for web platform or Expo Go
-    ...((Platform.OS === 'web' || isExpoGo) && googleConfig.webClientId ? {
+    ...((isWeb || isExpoGo) && googleConfig.webClientId ? {
       clientId: googleConfig.webClientId,
       iosClientId: undefined,
       androidClientId: undefined,
@@ -212,6 +217,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
       setIsLoading(false);
     }
   }, [convex]);
+
+  console.log('Final authConfig:', {
+    clientId: authConfig.clientId,
+    iosClientId: authConfig.iosClientId,
+    webClientId: authConfig.webClientId,
+    redirectUri: authConfig.redirectUri,
+  });
 
   const [request, response, promptAsync] = Google.useAuthRequest(authConfig);
 
