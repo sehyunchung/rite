@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
 import { useConvex } from 'convex/react';
 import { api } from '@rite/backend/convex/_generated/api';
 import { Id } from '@rite/backend/convex/_generated/dataModel';
@@ -132,14 +132,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
     } else if (response?.type === 'error') {
       console.error('OAuth Error:', response.error);
     }
-  }, [response]);
+  }, [response, handleGoogleAuth]);
 
   // Check for existing session on app start
   useEffect(() => {
     checkExistingSession();
-  }, []);
+  }, [checkExistingSession]);
 
-  const checkExistingSession = async () => {
+  const checkExistingSession = useCallback(async () => {
     try {
       const sessionToken = await secureStorage.getItem('sessionToken');
       if (sessionToken) {
@@ -160,9 +160,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [convex]);
 
-  const handleGoogleAuth = async (accessToken?: string) => {
+  const handleGoogleAuth = useCallback(async (accessToken?: string) => {
     console.log('handleGoogleAuth called with token:', accessToken ? 'Present' : 'Missing');
     if (!accessToken) {
       console.error('No access token provided to handleGoogleAuth');
@@ -229,7 +229,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [convex]);
 
   const signIn = async () => {
     if (!hasGoogleConfig) {
