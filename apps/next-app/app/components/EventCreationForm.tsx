@@ -190,8 +190,9 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
       newErrors.promoDeadline = promoValidation.error;
     }
 
-    const paymentError = validateDate(formData.payment.dueDate);
-    if (paymentError) newErrors.paymentDue = paymentError;
+    // Skip payment validation when payment section is hidden
+    // const paymentError = validateDate(formData.payment.dueDate);
+    // if (paymentError) newErrors.paymentDue = paymentError;
 
     // Validate deadline order
     const deadlineOrderError = validateDeadlineOrder(formData.deadlines.guestList, formData.deadlines.promoMaterials);
@@ -230,11 +231,11 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
         newErrors[`timeslot-${slot.id}-duration`] = durationError;
       }
 
-      // Validate Instagram handle
-      const instagramError = validateInstagramHandle(slot.djInstagram);
-      if (instagramError) {
-        newErrors[`timeslot-${slot.id}-instagram`] = instagramError;
-      }
+      // Skip Instagram handle validation for now (TBD feature)
+      // const instagramError = validateInstagramHandle(slot.djInstagram);
+      // if (instagramError) {
+      //   newErrors[`timeslot-${slot.id}-instagram`] = instagramError;
+      // }
     });
 
     // Check for overlapping timeslots
@@ -295,7 +296,11 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
         description: formData.description || '',
         hashtags: formData.hashtags || '',
         deadlines: formData.deadlines,
-        payment: formData.payment,
+        payment: {
+          ...formData.payment,
+          // Provide default values for hidden payment section
+          dueDate: formData.payment.dueDate || formData.date, // Default to event date if not set
+        },
         guestLimitPerDJ: formData.guestLimitPerDJ,
         timeslots: timeslots.map(({ id: _id, ...slot }) => slot), // Remove the temporary id
       };
@@ -446,7 +451,8 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
           </CardContent>
         </Card>
 
-        {/* Payment Information */}
+        {/* Payment Information - Hidden for now */}
+        {false && (
         <Card>
           <CardHeader>
             <CardTitle>{t('payment')}</CardTitle>
@@ -536,6 +542,7 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
             </div>
           </CardContent>
         </Card>
+        )}
 
         {/* Deadlines */}
         <Card>
