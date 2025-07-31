@@ -332,10 +332,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
     try {
       const result = await promptAsync();
       console.log('promptAsync result:', result);
-      return result;
     } catch (error) {
       console.error('Error signing in:', error);
-      throw error;
     }
   };
 
