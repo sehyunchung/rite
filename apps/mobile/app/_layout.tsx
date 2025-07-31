@@ -52,6 +52,34 @@ export default function RootLayout() {
         <ThemeProvider value={RiteDarkTheme}>
           <Stack>
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen 
+              name="create-event" 
+              options={{ 
+                headerShown: true,
+                title: 'Create Event',
+                headerStyle: {
+                  backgroundColor: '#2A1F3F',
+                },
+                headerTintColor: '#FFFFFF',
+                headerTitleStyle: {
+                  fontFamily: 'SUIT-SemiBold',
+                },
+              }} 
+            />
+            <Stack.Screen 
+              name="settings" 
+              options={{ 
+                headerShown: true,
+                title: 'Settings',
+                headerStyle: {
+                  backgroundColor: '#2A1F3F',
+                },
+                headerTintColor: '#FFFFFF',
+                headerTitleStyle: {
+                  fontFamily: 'SUIT-SemiBold',
+                },
+              }} 
+            />
             <Stack.Screen name="+not-found" />
           </Stack>
           <StatusBar style="light" />

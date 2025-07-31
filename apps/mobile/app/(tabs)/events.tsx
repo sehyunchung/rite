@@ -1,18 +1,63 @@
-import { View } from 'react-native';
-
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+import { View, Text, ScrollView, StyleSheet, SafeAreaView } from 'react-native';
+import { typography } from '../../constants/Typography';
+import { riteColors } from '../../constants/Colors';
+import { shadows } from '../../utils/shadow';
 
 export default function EventsScreen() {
   return (
-    <ThemedView style={{ flex: 1, padding: 20 }}>
-      <ThemedText type="title">Events</ThemedText>
-      <ThemedText style={{ marginTop: 20 }}>
-        Event listing functionality will be implemented here.
-      </ThemedText>
-      <ThemedText style={{ marginTop: 10, opacity: 0.7 }}>
-        This screen will match the functionality from the Next.js app's events listing.
-      </ThemedText>
-    </ThemedView>
+    <SafeAreaView style={styles.container}>
+      <ScrollView style={styles.scrollView}>
+        <View style={styles.content}>
+          <Text style={styles.title}>Events</Text>
+          <Text style={styles.subtitle}>Discover upcoming events</Text>
+          
+          <View style={styles.emptyCard}>
+            <Text style={styles.emptyText}>No events available</Text>
+            <Text style={styles.emptySubtext}>Check back later for upcoming events</Text>
+          </View>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: riteColors.neutral[800],
+  },
+  scrollView: {
+    flex: 1,
+  },
+  content: {
+    padding: 24,
+  },
+  title: {
+    ...typography.h3,
+    color: riteColors.neutral[0],
+    marginBottom: 8,
+  },
+  subtitle: {
+    ...typography.body,
+    color: riteColors.functional.textSecondary,
+    marginBottom: 32,
+  },
+  emptyCard: {
+    backgroundColor: riteColors.neutral[700],
+    borderRadius: 16,
+    padding: 24,
+    alignItems: 'center',
+    ...shadows.md,
+  },
+  emptyText: {
+    ...typography.body,
+    color: riteColors.neutral[0],
+    textAlign: 'center',
+    marginBottom: 4,
+  },
+  emptySubtext: {
+    ...typography.caption,
+    color: riteColors.functional.textSecondary,
+    textAlign: 'center',
+  },
+});

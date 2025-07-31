@@ -17,52 +17,62 @@ export default function TabLayout() {
         headerShown: false,
         tabBarButton: HapticTab,
         tabBarBackground: TabBarBackground,
-        tabBarStyle: Platform.select({
-          ios: {
-            // Use a transparent background on iOS to show the blur effect
-            position: 'absolute',
-            backgroundColor: 'transparent',
-          },
-          default: {
-            backgroundColor: Colors.dark.surface,
-            borderTopColor: Colors.dark.border,
-            borderTopWidth: 1,
-          },
-        }),
+        tabBarStyle: {
+          backgroundColor: Colors.dark.surface,
+          borderTopColor: Colors.dark.border,
+          borderTopWidth: 1,
+          height: Platform.OS === 'ios' ? 88 : 60,
+          paddingBottom: Platform.OS === 'ios' ? 28 : 8,
+          paddingTop: 8,
+          ...Platform.select({
+            ios: {
+              position: 'absolute',
+            },
+            default: {},
+          }),
+        },
+        tabBarLabelStyle: {
+          fontSize: 12,
+          fontFamily: 'SUIT-Medium',
+          marginTop: -4,
+        },
+        tabBarIconStyle: {
+          marginBottom: -4,
+        },
       }}>
       <Tabs.Screen
         name="index"
         options={{
           title: 'Dashboard',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="create"
-        options={{
-          title: 'Create Event',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="calendar.badge.plus" color={color} />,
+          tabBarIcon: ({ color }) => <IconSymbol size={24} name="house.fill" color={color} />,
         }}
       />
       <Tabs.Screen
         name="events"
         options={{
           title: 'Events',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="calendar" color={color} />,
+          tabBarIcon: ({ color }) => <IconSymbol size={24} name="calendar" color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="create"
+        options={{
+          title: 'Create',
+          tabBarIcon: ({ color }) => <IconSymbol size={24} name="plus.square.fill" color={color} />,
         }}
       />
       <Tabs.Screen
         name="explore"
         options={{
           title: 'Profile',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="person.fill" color={color} />,
+          tabBarIcon: ({ color }) => <IconSymbol size={24} name="person.fill" color={color} />,
         }}
       />
       <Tabs.Screen
         name="demo"
         options={{
           title: 'DOM Demo',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="code.square" color={color} />,
+          tabBarIcon: ({ color }) => <IconSymbol size={24} name="code.square" color={color} />,
         }}
       />
     </Tabs>

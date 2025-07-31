@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, TouchableOpacity, SafeAreaView } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { typography } from '../../constants/Typography';
@@ -9,7 +9,8 @@ export default function ProfileScreen() {
   const router = useRouter();
 
   return (
-    <ScrollView style={styles.container}>
+    <SafeAreaView style={styles.container}>
+      <ScrollView style={styles.scrollView}>
       <View style={styles.content}>
         {/* Profile Header */}
         <View style={styles.profileHeader}>
@@ -62,7 +63,8 @@ export default function ProfileScreen() {
           </View>
         </View>
       </View>
-    </ScrollView>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 

@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, TouchableOpacity, SafeAreaView } from 'react-native';
 import { shadows } from '../../utils/shadow';
 import { typography } from '../../constants/Typography';
 import { useRouter } from 'expo-router';
@@ -8,7 +8,8 @@ export default function HomeScreen() {
   const router = useRouter();
   
   return (
-    <ScrollView style={styles.container}>
+    <SafeAreaView style={styles.container}>
+      <ScrollView style={styles.scrollView}>
       <View style={styles.content}>
         <Text style={styles.title}>RITE</Text>
         <Text style={styles.subtitle}>DJ Event Management</Text>
@@ -45,7 +46,8 @@ export default function HomeScreen() {
           <Text style={styles.statusItem}>🚧 @rite/ui components pending</Text>
         </View>
       </View>
-    </ScrollView>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
@@ -53,6 +55,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#1A0F2F', // neutral.800
+  },
+  scrollView: {
+    flex: 1,
   },
   content: {
     padding: 24,
