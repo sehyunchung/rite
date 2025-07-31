@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { typography } from '../../constants/Typography';
 import { riteColors } from '../../constants/Colors';
 import { shadows } from '../../utils/shadow';
@@ -18,8 +19,10 @@ import { shadows } from '../../utils/shadow';
 export default function CreateTab() {
   const router = useRouter();
   const [eventName, setEventName] = useState('');
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  const [startTime, setStartTime] = useState<Date | null>(null);
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const [startTime, setStartTime] = useState<Date>(new Date());
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [showTimePicker, setShowTimePicker] = useState(false);
   const [djSlots, setDjSlots] = useState([
     { id: 1, name: 'DJ 1', startTime: '8:00 PM', endTime: '9:00 PM' },
     { id: 2, name: 'DJ 2', startTime: '9:00 PM', endTime: '10:00 PM' },
@@ -37,6 +40,37 @@ export default function CreateTab() {
     });
     // After successful creation, navigate to events tab
     router.replace('/(tabs)/events');
+  };
+
+  const formatDate = (date: Date) => {
+    return date.toLocaleDateString('en-US', {
+      weekday: 'short',
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+    });
+  };
+
+  const formatTime = (date: Date) => {
+    return date.toLocaleTimeString('en-US', {
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true,
+    });
+  };
+
+  const onDateChange = (event: DateTimePickerEvent, date?: Date) => {
+    setShowDatePicker(false);
+    if (date) {
+      setSelectedDate(date);
+    }
+  };
+
+  const onTimeChange = (event: DateTimePickerEvent, date?: Date) => {
+    setShowTimePicker(false);
+    if (date) {
+      setStartTime(date);
+    }
   };
 
   return (
@@ -63,9 +97,12 @@ export default function CreateTab() {
           {/* Date */}
           <View style={styles.section}>
             <Text style={styles.label}>Date</Text>
-            <TouchableOpacity style={styles.inputContainer}>
+            <TouchableOpacity 
+              style={styles.inputContainer}
+              onPress={() => setShowDatePicker(true)}
+            >
               <Text style={[styles.input, styles.inputText]}>
-                {selectedDate ? selectedDate.toDateString() : 'Select date'}
+                {formatDate(selectedDate)}
               </Text>
               <Ionicons name="calendar-outline" size={20} color={riteColors.functional.textMuted} />
             </TouchableOpacity>
@@ -74,9 +111,12 @@ export default function CreateTab() {
           {/* Start Time */}
           <View style={styles.section}>
             <Text style={styles.label}>Start Time</Text>
-            <TouchableOpacity style={styles.inputContainer}>
+            <TouchableOpacity 
+              style={styles.inputContainer}
+              onPress={() => setShowTimePicker(true)}
+            >
               <Text style={[styles.input, styles.inputText]}>
-                {startTime ? startTime.toLocaleTimeString() : 'Select time'}
+                {formatTime(startTime)}
               </Text>
               <Ionicons name="time-outline" size={20} color={riteColors.functional.textMuted} />
             </TouchableOpacity>
@@ -119,6 +159,30 @@ export default function CreateTab() {
           </TouchableOpacity>
         </View>
       </ScrollView>
+      
+      {/* Date Picker Modal */}
+      {showDatePicker && (
+        <DateTimePicker
+          value={selectedDate}
+          mode="date"
+          display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+          onChange={onDateChange}
+          textColor={riteColors.neutral[0]}
+          themeVariant="dark"
+        />
+      )}
+      
+      {/* Time Picker Modal */}
+      {showTimePicker && (
+        <DateTimePicker
+          value={startTime}
+          mode="time"
+          display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+          onChange={onTimeChange}
+          textColor={riteColors.neutral[0]}
+          themeVariant="dark"
+        />
+      )}
     </SafeAreaView>
   );
 }
