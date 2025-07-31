@@ -263,6 +263,59 @@ export function AuthProvider({ children }: AuthProviderProps) {
     checkExistingSession();
   }, [checkExistingSession]);
 
+  // Handle web platform OAuth redirect on page load
+  useEffect(() => {
+    if (Platform.OS === 'web') {
+      const urlParams = new URLSearchParams(window.location.search);
+      const code = urlParams.get('code');
+      const state = urlParams.get('state');
+      
+      if (code && state) {
+        console.log('Web OAuth redirect detected with code:', code ? 'Present' : 'Missing');
+        // Clear URL parameters
+        window.history.replaceState({}, document.title, window.location.pathname);
+        
+        // Exchange code for token manually since expo-auth-session isn't handling it
+        exchangeCodeForToken(code);
+      }
+    }
+  }, []);
+
+  const exchangeCodeForToken = async (code: string) => {
+    try {
+      console.log('Exchanging authorization code for access token...');
+      const tokenResponse = await fetch('https://oauth2.googleapis.com/token', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+          client_id: googleConfig.webClientId!,
+          client_secret: '', // Web apps don't need client secret for PKCE
+          code: code,
+          grant_type: 'authorization_code',
+          redirect_uri: 'http://localhost:8081',
+        }),
+      });
+
+      if (!tokenResponse.ok) {
+        console.error('Token exchange failed:', tokenResponse.status, tokenResponse.statusText);
+        return;
+      }
+
+      const tokenData = await tokenResponse.json();
+      console.log('Token exchange successful');
+      
+      if (tokenData.access_token) {
+        handleGoogleAuth(tokenData.access_token);
+      } else {
+        console.error('No access token in response:', tokenData);
+      }
+    } catch (error) {
+      console.error('Error exchanging code for token:', error);
+    }
+  };
+
   const signIn = async () => {
     console.log('signIn called');
     if (!hasGoogleConfig) {
@@ -270,12 +323,19 @@ export function AuthProvider({ children }: AuthProviderProps) {
       return;
     }
     
+    if (!request) {
+      console.error('OAuth request not ready. Please wait and try again.');
+      return;
+    }
+    
     console.log('Initiating OAuth flow with promptAsync...');
     try {
       const result = await promptAsync();
       console.log('promptAsync result:', result);
+      return result;
     } catch (error) {
       console.error('Error signing in:', error);
+      throw error;
     }
   };
 
