@@ -8,7 +8,9 @@ import '../global.css';
 
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { ConvexProvider } from '../providers/ConvexProvider';
+import { AuthProvider } from '../contexts/AuthContext';
 import ErrorBoundary from '../components/ErrorBoundary';
+import AppNavigator from '../components/AppNavigator';
 
 export default function RootLayout() {
   const [loaded, error] = useFonts({
@@ -49,27 +51,12 @@ export default function RootLayout() {
   return (
     <ErrorBoundary>
       <ConvexProvider>
-        <ThemeProvider value={RiteDarkTheme}>
-          <Stack>
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            <Stack.Screen 
-              name="settings" 
-              options={{ 
-                headerShown: true,
-                title: 'Settings',
-                headerStyle: {
-                  backgroundColor: '#2A1F3F',
-                },
-                headerTintColor: '#FFFFFF',
-                headerTitleStyle: {
-                  fontFamily: 'SUIT-SemiBold',
-                },
-              }} 
-            />
-            <Stack.Screen name="+not-found" />
-          </Stack>
-          <StatusBar style="light" />
-        </ThemeProvider>
+        <AuthProvider>
+          <ThemeProvider value={RiteDarkTheme}>
+            <AppNavigator />
+            <StatusBar style="light" />
+          </ThemeProvider>
+        </AuthProvider>
       </ConvexProvider>
     </ErrorBoundary>
   );

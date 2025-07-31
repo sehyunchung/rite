@@ -1,12 +1,14 @@
 import { View, Text, ScrollView, StyleSheet, TouchableOpacity, SafeAreaView, Platform } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import { useAuth } from '../../contexts/AuthContext';
 import { typography } from '../../constants/Typography';
 import { riteColors } from '../../constants/Colors';
 import { shadows } from '../../utils/shadow';
 
 export default function ProfileScreen() {
   const router = useRouter();
+  const { user, signOut } = useAuth();
 
   return (
     <SafeAreaView style={styles.container}>
@@ -17,8 +19,8 @@ export default function ProfileScreen() {
           <View style={styles.avatarContainer}>
             <Ionicons name="person" size={40} color={riteColors.functional.textSecondary} />
           </View>
-          <Text style={styles.userName}>User Name</Text>
-          <Text style={styles.userEmail}>user@example.com</Text>
+          <Text style={styles.userName}>{user?.name || 'Anonymous User'}</Text>
+          <Text style={styles.userEmail}>{user?.email || 'No email'}</Text>
         </View>
 
         {/* Quick Actions */}
@@ -61,6 +63,17 @@ export default function ProfileScreen() {
             <Text style={styles.statNumber}>0</Text>
             <Text style={styles.statLabel}>DJ Sets</Text>
           </View>
+        </View>
+
+        {/* Sign Out */}
+        <View style={styles.section}>
+          <TouchableOpacity 
+            style={styles.signOutButton}
+            onPress={signOut}
+          >
+            <Ionicons name="log-out-outline" size={24} color={riteColors.functional.danger} />
+            <Text style={styles.signOutText}>Sign Out</Text>
+          </TouchableOpacity>
         </View>
       </View>
       </ScrollView>
@@ -151,5 +164,21 @@ const styles = StyleSheet.create({
   statLabel: {
     ...typography.caption,
     color: riteColors.functional.textSecondary,
+  },
+  signOutButton: {
+    backgroundColor: riteColors.neutral[700],
+    borderRadius: 16,
+    padding: 24,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 12,
+    borderWidth: 1,
+    borderColor: riteColors.functional.danger,
+    ...shadows.md,
+  },
+  signOutText: {
+    ...typography.button,
+    color: riteColors.functional.danger,
   },
 });
