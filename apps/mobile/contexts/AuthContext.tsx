@@ -78,10 +78,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   // Debug: Log the OAuth configuration being used
   const isExpoGo = Constants.appOwnership === 'expo';
-  const redirectUri = AuthSession.makeRedirectUri({
-    useProxy: true,
-    projectNameForProxy: '@sehyun_chung/rite'
-  });
+  // Force Expo proxy URL for development
+  const redirectUri = isExpoGo 
+    ? `https://auth.expo.io/@sehyun_chung/rite`
+    : AuthSession.makeRedirectUri();
   
   console.log('Google OAuth Config:', {
     platform: Platform.OS,
@@ -111,16 +111,18 @@ export function AuthProvider({ children }: AuthProviderProps) {
       iosClientId: undefined,
       androidClientId: undefined,
     } : {}),
+    // Add explicit redirect URI
+    redirectUri: redirectUri,
   } : {
     iosClientId: '',
     androidClientId: '',
     webClientId: '',
     scopes: ['openid', 'profile', 'email'],
+    redirectUri: redirectUri,
   };
 
   const [request, response, promptAsync] = Google.useAuthRequest(authConfig, {
-    useProxy: true,
-    projectNameForProxy: '@sehyun_chung/rite'
+    useProxy: isExpoGo
   });
 
   // Handle authentication response
