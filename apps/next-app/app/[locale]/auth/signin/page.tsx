@@ -90,7 +90,7 @@ export default async function SignInPage({ params }: Props) {
             <div className="mt-4 p-3 bg-blue-500/10 border border-blue-500/20 rounded-lg">
               <Typography variant="body-sm" className="text-blue-400 font-medium mb-1">{t('mobileGuidance.title')}</Typography>
               <Typography variant="body-sm" className="text-blue-400">{t('mobileGuidance.message')}</Typography>
-              <Typography variant="body-xs" color="secondary" className="mt-2">
+              <Typography variant="caption" color="secondary" className="mt-2">
                 {t('accountRequirement')}
               </Typography>
             </div>

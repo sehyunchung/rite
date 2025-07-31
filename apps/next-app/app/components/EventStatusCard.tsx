@@ -37,13 +37,13 @@ const IconMap = {
 } as const;
 
 // Color to variant mapping
-const colorToVariant: Record<string, 'default' | 'secondary' | 'destructive' | 'outline'> = {
-  'primary': 'default',
-  'secondary': 'secondary',
-  'destructive': 'destructive',
-  'warning': 'secondary',
-  'info': 'secondary',
-  'success': 'default',
+const colorToVariant: Record<string, 'default' | 'primary' | 'success' | 'warning' | 'error' | 'outline'> = {
+  'primary': 'primary',
+  'secondary': 'default',
+  'destructive': 'error',
+  'warning': 'warning',
+  'info': 'default',
+  'success': 'success',
 };
 
 export function EventStatusCard({ eventId, userId }: EventStatusCardProps) {
