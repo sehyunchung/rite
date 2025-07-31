@@ -9,7 +9,7 @@ export function LoadingIndicator({
 }: LoadingIndicatorProps) {
   return (
     <div className={`animate-pulse text-center ${className}`}>
-      <div className="font-medium text-gray-300 text-4xl">
+      <div className="font-medium text-brand-primary text-4xl">
         RITE
       </div>
     </div>
@@ -18,7 +18,7 @@ export function LoadingIndicator({
 
 export function FullScreenLoading() {
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+    <div className="min-h-screen bg-neutral-800 flex items-center justify-center">
       <LoadingIndicator />
     </div>
   )
