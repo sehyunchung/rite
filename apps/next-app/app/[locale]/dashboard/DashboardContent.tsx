@@ -3,7 +3,7 @@
 import { useQuery } from 'convex/react';
 import { api } from '@rite/backend/convex/_generated/api';
 import { Id, Doc } from '@rite/backend/convex/_generated/dataModel';
-import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@rite/ui';
 import { Badge } from '@rite/ui';
 import { Button } from '@rite/ui';
 import { Link } from '../../../i18n/routing';

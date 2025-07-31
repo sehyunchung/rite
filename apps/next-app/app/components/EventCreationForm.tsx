@@ -4,9 +4,9 @@ import { api } from '@rite/backend/convex/_generated/api';
 import { Id } from '@rite/backend/convex/_generated/dataModel';
 import { useSession } from 'next-auth/react';
 import { Button } from '@rite/ui';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@rite/ui';
 import { Input, Label, Textarea } from '@rite/ui';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@rite/ui';
 import { 
   type EventFormData, 
   type Timeslot, 

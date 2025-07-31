@@ -1,6 +1,6 @@
 'use client';
 
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent } from '@rite/ui';
 import { CopyButton } from './CopyButton';
 import { useTranslations } from 'next-intl';
 import { Doc } from '@rite/backend/convex/_generated/dataModel';

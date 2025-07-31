@@ -105,7 +105,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from '@rite/ui';
 import { cn } from '@/lib/utils';
 
 export type { BundledLanguage } from 'shiki';

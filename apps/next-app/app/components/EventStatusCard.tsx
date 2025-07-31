@@ -1,6 +1,6 @@
 'use client';
 
-import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@rite/ui';
 import { Badge } from '@rite/ui';
 import { Button } from '@rite/ui';
 import { LoadingIndicator } from '@/components/ui/loading-indicator';

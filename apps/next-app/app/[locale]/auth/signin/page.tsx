@@ -1,6 +1,6 @@
 import { signIn, auth } from '@/lib/auth'
 import { Button } from '@rite/ui'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '@rite/ui'
 import { redirect } from 'next/navigation'
 import { getTranslations } from 'next-intl/server'
 

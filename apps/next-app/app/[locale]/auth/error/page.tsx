@@ -1,4 +1,4 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@rite/ui'
 import { Button } from '@rite/ui'
 import { Link } from '../../../../i18n/routing'
 import { getTranslations } from 'next-intl/server'
