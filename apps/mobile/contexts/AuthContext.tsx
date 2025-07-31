@@ -85,8 +85,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [isLoading, setIsLoading] = useState(true);
   const convex = useConvex();
 
-  // Debug: Log the redirect URI being used
-  console.log('Google OAuth Redirect URI:', googleConfig.redirectUri);
+  // Debug: Log the OAuth configuration being used
+  console.log('Google OAuth Config:', {
+    platform: Platform.OS,
+    iosClientId: googleConfig.iosClientId ? 'Set' : 'Not set',
+    androidClientId: googleConfig.androidClientId ? 'Set' : 'Not set', 
+    webClientId: googleConfig.webClientId ? 'Set' : 'Not set',
+    redirectUri: googleConfig.redirectUri,
+  });
 
   // Only initialize Google auth if client IDs are available
   const hasGoogleConfig = Boolean(
@@ -95,14 +101,21 @@ export function AuthProvider({ children }: AuthProviderProps) {
     googleConfig.webClientId
   );
 
-  const [request, response, promptAsync] = Google.useAuthRequest(
-    hasGoogleConfig ? googleConfig : {
-      iosClientId: '',
-      androidClientId: '',
-      webClientId: '',
-      scopes: ['openid', 'profile', 'email'],
-    }
-  );
+  // For web, we need to use webClientId
+  const authConfig = hasGoogleConfig ? {
+    ...googleConfig,
+    // On web, use webClientId as clientId
+    ...(Platform.OS === 'web' && googleConfig.webClientId ? {
+      clientId: googleConfig.webClientId,
+    } : {}),
+  } : {
+    iosClientId: '',
+    androidClientId: '',
+    webClientId: '',
+    scopes: ['openid', 'profile', 'email'],
+  };
+
+  const [request, response, promptAsync] = Google.useAuthRequest(authConfig);
 
   // Handle authentication response
   useEffect(() => {
