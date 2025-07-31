@@ -19,7 +19,6 @@ import type * as events from "../events.js";
 import type * as instagram from "../instagram.js";
 import type * as migrations_removeDeprecatedFields from "../migrations/removeDeprecatedFields.js";
 import type * as submissions from "../submissions.js";
-import type * as test from "../test.js";
 import type * as timeslots from "../timeslots.js";
 
 /**
@@ -37,7 +36,6 @@ declare const fullApi: ApiFromModules<{
   instagram: typeof instagram;
   "migrations/removeDeprecatedFields": typeof migrations_removeDeprecatedFields;
   submissions: typeof submissions;
-  test: typeof test;
   timeslots: typeof timeslots;
 }>;
 export declare const api: FilterApi<

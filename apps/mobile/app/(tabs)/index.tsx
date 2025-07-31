@@ -1,11 +1,11 @@
-import { View, Text, ScrollView, ActivityIndicator, StyleSheet } from 'react-native';
-import { useQuery } from 'convex/react';
-import { api } from '@rite/backend/convex/_generated/api';
+import { View, Text, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
 import { shadows } from '../../utils/shadow';
 import { typography } from '../../constants/Typography';
+import { useRouter } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
 
 export default function HomeScreen() {
-  const pingResult = useQuery(api.test.ping);
+  const router = useRouter();
   
   return (
     <ScrollView style={styles.container}>
@@ -13,29 +13,35 @@ export default function HomeScreen() {
         <Text style={styles.title}>RITE</Text>
         <Text style={styles.subtitle}>DJ Event Management</Text>
         
+        {/* Create Event Button */}
+        <TouchableOpacity 
+          style={styles.createEventButton} 
+          onPress={() => router.push('/create-event')}
+        >
+          <Ionicons name="add-circle" size={24} color="#FFFFFF" />
+          <Text style={styles.createEventText}>Create New Event</Text>
+        </TouchableOpacity>
+        
+        {/* Your Events Section */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Convex Connection Test</Text>
+          <Text style={styles.sectionTitle}>Your Events</Text>
           
-          {pingResult === undefined ? (
-            <ActivityIndicator size="large" color="#E946FF" />
-          ) : (
-            <View style={styles.eventCard}>
-              <Text style={styles.eventName}>✅ {pingResult.message}</Text>
-              <Text style={styles.eventDetail}>Timestamp: {new Date(pingResult.timestamp).toLocaleTimeString()}</Text>
-            </View>
-          )}
+          <View style={styles.emptyCard}>
+            <Text style={styles.emptyText}>No events yet</Text>
+            <Text style={styles.emptySubtext}>Create your first event to get started</Text>
+          </View>
         </View>
         
+        {/* Status Card */}
         <View style={styles.statusCard}>
           <Text style={styles.statusTitle}>Mobile App Status</Text>
-          <Text style={styles.statusItem}>{pingResult ? '✅' : '⏳'} Convex {pingResult ? 'connected' : 'connecting...'}</Text>
           <Text style={styles.statusItem}>✅ Shared backend package</Text>
           <Text style={styles.statusItem}>✅ NativeWind styling</Text>
           <Text style={styles.statusItem}>✅ Design token integration</Text>
           <Text style={styles.statusItem}>✅ Dark theme applied</Text>
           <Text style={styles.statusItem}>✅ SUIT fonts configured</Text>
           <Text style={styles.statusItem}>✅ Navigation aligned with Next.js</Text>
-          <Text style={styles.statusItem}>🚧 Authentication pending</Text>
+          <Text style={styles.statusItem}>✅ Authentication implemented</Text>
           <Text style={styles.statusItem}>🚧 @rite/ui components pending</Text>
         </View>
       </View>
@@ -77,42 +83,44 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     ...typography.body,
+    color: '#FFFFFF',
+    textAlign: 'center',
+    marginBottom: 4,
+  },
+  emptySubtext: {
+    ...typography.caption,
     color: '#A8A8B3', // neutral.300
     textAlign: 'center',
   },
-  eventCard: {
-    backgroundColor: '#2A1F3F', // neutral.700
-    borderRadius: 8,
+  createEventButton: {
+    backgroundColor: '#E946FF', // brand.primary
+    borderRadius: 12,
     padding: 16,
-    marginBottom: 16,
-    borderWidth: 1,
-    borderColor: '#3A3A4A', // neutral.600
-    ...shadows.sm,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 16,
+    marginBottom: 24,
+    ...shadows.md,
   },
-  eventName: {
-    ...typography.h6,
+  createEventText: {
+    ...typography.button,
     color: '#FFFFFF',
-    marginBottom: 4,
-  },
-  eventDetail: {
-    ...typography.bodySmall,
-    color: '#A8A8B3', // neutral.300
-    marginBottom: 2,
+    marginLeft: 8,
   },
   statusCard: {
     backgroundColor: '#2A1F3F', // neutral.700
     borderRadius: 8,
     padding: 16,
-    borderWidth: 1,
-    borderColor: '#E946FF', // brand.primary
+    ...shadows.sm,
   },
   statusTitle: {
-    ...typography.label,
-    color: '#E946FF', // brand.primary
-    marginBottom: 8,
+    ...typography.h5,
+    color: '#FFFFFF',
+    marginBottom: 12,
   },
   statusItem: {
-    ...typography.caption,
+    ...typography.body,
     color: '#A8A8B3', // neutral.300
     marginBottom: 4,
   },
