@@ -228,6 +228,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const [request, response, promptAsync] = Google.useAuthRequest(authConfig);
 
+  console.log('Google auth request state:', {
+    requestReady: !!request,
+    hasResponse: !!response,
+    promptAsyncReady: !!promptAsync,
+  });
+
   // Handle authentication response
   useEffect(() => {
     console.log('OAuth Response:', response);
@@ -245,13 +251,16 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }, [checkExistingSession]);
 
   const signIn = async () => {
+    console.log('signIn called');
     if (!hasGoogleConfig) {
       console.warn('Google OAuth not configured. Please add Google client IDs to your .env file.');
       return;
     }
     
+    console.log('Initiating OAuth flow with promptAsync...');
     try {
-      await promptAsync();
+      const result = await promptAsync();
+      console.log('promptAsync result:', result);
     } catch (error) {
       console.error('Error signing in:', error);
     }
