@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, StyleSheet, TouchableOpacity, SafeAreaView } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, TouchableOpacity, SafeAreaView, Platform } from 'react-native';
 import { shadows } from '../../utils/shadow';
 import { typography } from '../../constants/Typography';
 import { useRouter } from 'expo-router';
@@ -61,6 +61,7 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: 24,
+    paddingBottom: Platform.OS === 'ios' ? 100 : 80, // Account for tab bar
   },
   title: {
     ...typography.h3,

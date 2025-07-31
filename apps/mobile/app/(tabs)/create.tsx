@@ -132,6 +132,7 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: 24,
+    paddingBottom: Platform.OS === 'ios' ? 100 : 80, // Account for tab bar
   },
   title: {
     ...typography.h3,

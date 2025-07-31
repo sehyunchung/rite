@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, StyleSheet, SafeAreaView } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, SafeAreaView, Platform } from 'react-native';
 import { typography } from '../../constants/Typography';
 import { riteColors } from '../../constants/Colors';
 import { shadows } from '../../utils/shadow';
@@ -31,6 +31,7 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: 24,
+    paddingBottom: Platform.OS === 'ios' ? 100 : 80, // Account for tab bar
   },
   title: {
     ...typography.h3,
