@@ -63,12 +63,8 @@ const googleConfig = {
   androidClientId: process.env.EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID,
   webClientId: process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID,
   scopes: ['openid', 'profile', 'email'],
-  additionalParameters: {},
-  customOAuthParameters: {},
-  // For development with Expo Go, we need to use the Expo auth proxy
-  redirectUri: AuthSession.makeRedirectUri({
-    useProxy: true,
-  }),
+  responseType: 'code',
+  shouldAutoExchangeCode: true,
 };
 
 interface AuthProviderProps {
@@ -82,13 +78,18 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   // Debug: Log the OAuth configuration being used
   const isExpoGo = Constants.appOwnership === 'expo';
+  const redirectUri = AuthSession.makeRedirectUri({
+    useProxy: true,
+    projectNameForProxy: '@sehyun_chung/rite'
+  });
+  
   console.log('Google OAuth Config:', {
     platform: Platform.OS,
     isExpoGo,
     iosClientId: googleConfig.iosClientId ? 'Set' : 'Not set',
     androidClientId: googleConfig.androidClientId ? 'Set' : 'Not set', 
     webClientId: googleConfig.webClientId ? 'Set' : 'Not set',
-    redirectUri: googleConfig.redirectUri,
+    redirectUri,
     usingClientId: isExpoGo ? 'webClientId' : 'platform-specific',
   });
 
@@ -117,7 +118,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
     scopes: ['openid', 'profile', 'email'],
   };
 
-  const [request, response, promptAsync] = Google.useAuthRequest(authConfig);
+  const [request, response, promptAsync] = Google.useAuthRequest(authConfig, {
+    useProxy: true,
+    projectNameForProxy: '@sehyun_chung/rite'
+  });
 
   // Handle authentication response
   useEffect(() => {
