@@ -103,14 +103,14 @@ const styles = StyleSheet.create({
   },
   actionCard: {
     backgroundColor: riteColors.neutral[700],
-    borderRadius: 12,
-    padding: 16,
+    borderRadius: 16, // matches web's rounded-xl for cards
+    padding: 24, // matches web's p-6
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 12,
+    marginBottom: 16, // consistent spacing
     borderWidth: 1,
     borderColor: riteColors.functional.border,
-    ...shadows.sm,
+    ...shadows.md, // matches web's shadow-md for cards
   },
   actionIcon: {
     width: 40,
@@ -133,11 +133,12 @@ const styles = StyleSheet.create({
   statCard: {
     flex: 1,
     backgroundColor: riteColors.neutral[700],
-    borderRadius: 12,
-    padding: 20,
+    borderRadius: 16, // matches web's rounded-xl for cards
+    padding: 24, // matches web's p-6
     alignItems: 'center',
     borderWidth: 1,
     borderColor: riteColors.functional.border,
+    ...shadows.md, // matches web's shadow-md for cards
   },
   statNumber: {
     ...typography.h3,

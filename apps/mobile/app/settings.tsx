@@ -11,6 +11,7 @@ import { Stack, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { typography } from '../constants/Typography';
 import { riteColors } from '../constants/Colors';
+import { shadows } from '../utils/shadow';
 
 interface SettingItemProps {
   icon: keyof typeof Ionicons.glyphMap;
@@ -164,11 +165,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: riteColors.neutral[700],
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 12,
+    borderRadius: 16, // matches web's rounded-xl for cards
+    padding: 24, // matches web's p-6
+    marginBottom: 16, // consistent spacing
     borderWidth: 1,
     borderColor: riteColors.functional.border,
+    ...shadows.md, // matches web's shadow-md for cards
   },
   iconContainer: {
     width: 40,
@@ -198,11 +200,14 @@ const styles = StyleSheet.create({
   },
   logoutButton: {
     backgroundColor: 'transparent',
-    borderRadius: 12,
-    padding: 16,
+    borderRadius: 8, // matches web's rounded-lg for buttons
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    height: 48,
     alignItems: 'center',
-    borderWidth: 1,
-    borderColor: riteColors.brand.primary,
+    justifyContent: 'center',
+    borderWidth: 2, // matches web's border-2 for outline buttons
+    borderColor: riteColors.neutral[600], // matches web's border-neutral-600
   },
   logoutText: {
     ...typography.button,

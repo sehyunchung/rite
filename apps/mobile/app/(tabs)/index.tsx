@@ -77,9 +77,9 @@ const styles = StyleSheet.create({
   },
   emptyCard: {
     backgroundColor: '#2A1F3F', // neutral.700
-    borderRadius: 8,
-    padding: 16,
-    ...shadows.sm,
+    borderRadius: 16, // matches web's rounded-xl for cards
+    padding: 24, // matches web's p-6
+    ...shadows.md, // matches web's shadow-md for cards
   },
   emptyText: {
     ...typography.body,
@@ -94,14 +94,16 @@ const styles = StyleSheet.create({
   },
   createEventButton: {
     backgroundColor: '#E946FF', // brand.primary
-    borderRadius: 12,
-    padding: 16,
+    borderRadius: 8, // matches web's rounded-lg
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    height: 48,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: 16,
-    marginBottom: 24,
-    ...shadows.md,
+    marginBottom: 32, // increased spacing between sections
+    ...shadows.sm,
   },
   createEventText: {
     ...typography.button,

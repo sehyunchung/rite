@@ -154,13 +154,16 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     backgroundColor: riteColors.neutral[700],
-    borderRadius: 12,
-    padding: 16,
+    borderRadius: 12, // matches web's rounded-lg for inputs
+    paddingHorizontal: 16,
+    paddingVertical: 12, // matches web's px-4 py-3
+    height: 48, // matches web's h-12
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     borderWidth: 1,
     borderColor: riteColors.functional.border,
+    ...shadows.sm, // matches web's shadow-sm on inputs
   },
   input: {
     ...typography.body,
@@ -208,10 +211,13 @@ const styles = StyleSheet.create({
   },
   createButton: {
     backgroundColor: riteColors.brand.primary,
-    borderRadius: 12,
-    padding: 16,
+    borderRadius: 8, // matches web's rounded-lg for buttons
+    paddingHorizontal: 24, // matches web's px-6
+    paddingVertical: 12, // matches web's py-3
+    height: 48, // matches web's h-12
     alignItems: 'center',
-    ...shadows.md,
+    justifyContent: 'center',
+    ...shadows.sm, // matches web's shadow-sm on primary buttons
   },
   createButtonText: {
     ...typography.button,
