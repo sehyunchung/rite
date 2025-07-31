@@ -137,12 +137,17 @@ rite/
 - **Frontend Apps**: 
   - Next.js 15 with React 18, TypeScript, Turbopack
   - Expo mobile app with React Native
-- **Typography**: SUIT Variable font with Korean/English support (weights 100-900)
+- **Design System**: Comprehensive design tokens system with:
+  - Dark-first color palette (neutral-800 backgrounds, brand-primary #E946FF)
+  - Typography system with SUIT Variable font (weights 100-900)
+  - Platform-specific implementations (web/native shadows, radius, spacing)
+  - Unified design tokens exported from @rite/ui/design-tokens
+- **Styling**: Tailwind CSS with ES modules configuration and custom design tokens integration
 - **Internationalization**: next-intl with locale-based routing ([locale] structure)
 - **UI Libraries**: 
   - @rite/ui - Shared UI package with platform-specific implementations (web/native)
-  - shadcn/ui - Base patterns for web components
-  - All UI components migrated to @rite/ui for cross-platform reuse
+  - Complete component library with Typography, ActionCard, EventCard, and form components
+  - shadcn/ui patterns adapted for RITE design system
 - **Backend**: Convex (real-time database and file storage, shared across apps)
 - **Authentication**: NextAuth v5 with streamlined Instagram OAuth integration and direct Convex ID usage
 - **Routing**: Next.js App Router with [locale] dynamic routing / Expo Router file-based routing
@@ -328,37 +333,153 @@ export function ConvexProviderHydrationSafe({
 11. Instagram messages auto-generated for event promotion
 12. Email notifications sent for deadlines and confirmations
 
-### Available UI Components
+## RITE Design System
 
-**shadcn/ui Base Components:**
-- Button, Card, Input, Label, Textarea, Select
-- Styled with Tailwind CSS and Radix UI primitives
+The application uses a comprehensive design system with centralized design tokens, dark-first theming, and cross-platform component implementations.
 
-**Advanced Components (now in @rite/ui):**
-- `Dropzone` - Drag-and-drop file upload with multi-file support
-- `QRCode` - QR code generation for event links and check-in (with robust canvas validation)
-- All UI components have been migrated to the shared @rite/ui package for reuse between web and mobile
+### Design Tokens Structure
 
-**Loading System Components:**
-- `LoadingIndicator` - Branded loading component with RITE logo and pulse animation
-- `FullScreenLoading` - Full-screen loading state with consistent styling
+**Location:** `/packages/ui/src/design-tokens/`
 
-### Loading System
+The design system provides unified tokens for:
+- **Colors**: Brand colors (#E946FF primary), neutral palette, semantic colors
+- **Typography**: SUIT Variable font system with semantic variants
+- **Spacing**: Consistent spacing scale (4px base unit)
+- **Shadows**: Platform-specific shadows (web box-shadow, iOS/Android elevation)
+- **Radius**: Border radius scale with component patterns
 
-**Location:** `/apps/next-app/app/components/ui/loading-indicator.tsx`
+### Dark-First Color System
 
-The application uses a unified loading system with consistent RITE branding:
-
-**Components:**
+**Brand Colors:**
 ```typescript
-interface LoadingIndicatorProps {
-  className?: string
+brand: {
+  primary: '#E946FF',      // Vibrant pink/magenta
+  primaryDark: '#D01FFF',  // Darker variant  
+  primaryLight: '#F26FFF', // Lighter variant
 }
+```
 
+**Neutral Palette:**
+- Background: `neutral-800` (#1A0F2F)
+- Surface: `neutral-700` (#2A1F3F) 
+- Text Primary: `#FFFFFF`
+- Text Secondary: `neutral-400` (#A8A8B3)
+- Accent: Brand primary with glow effects
+
+### Typography System
+
+**SUIT Variable Font:**
+- Weights: 100-900 (Thin to Black)
+- Korean/English character sets
+- Optimized WOFF2 format (~50KB)
+- Semantic variants (h1-h6, body, button, label, caption)
+
+**Typography Component:**
+```typescript
+import { Typography } from "@rite/ui"
+
+<Typography variant="h1" color="primary">Heading</Typography>
+<Typography variant="body" color="secondary">Body text</Typography>
+```
+
+### Component Library (@rite/ui)
+
+**Base Components:**
+- `Button` - Primary/secondary/outline variants with focus rings, hover effects, and scale animations
+  ```typescript
+  // Features: shadow-glow-sm on hover, active:scale-[0.98], focus-visible:ring-brand-primary
+  <Button variant="default">Primary Action</Button>
+  <Button variant="outline">Secondary Action</Button>
+  ```
+- `Input` - Refined form inputs with enhanced focus states and interaction design
+  ```typescript
+  // Features: focus:ring-[3px] ring-brand-primary/20, hover:border-neutral-500
+  <Input placeholder="Enter your email" className="focus:bg-neutral-600/50" />
+  ```
+- `Textarea` - Consistent styling with Input component, same focus and hover behaviors
+- `Select` - Form select with matching focus ring effects and brand-primary accents
+- `Card` - Gradient backgrounds with neutral-700/800 surfaces and subtle brand accent overlays
+- `Label`, `Badge` - Form components with unified dark theme styling
+
+**Advanced Components:**
+- `ActionCard` - Interactive cards with icons, hover states, and glow effects
+  ```typescript
+  <ActionCard
+    icon={<Plus className="h-8 w-8" />}
+    title="Create Event"
+    subtitle="Set up a new DJ event"
+    variant="primary"
+    onClick={() => router.push('/events/create')}
+  />
+  ```
+- `EventCard` - Complex event display cards with gradients and status badges
+  ```typescript
+  <EventCard
+    eventName="Summer Vibes 2024"
+    venueName="Club Paradise"
+    date="August 15, 2024"
+    djCount={3}
+    dueDate="August 10, 2024"
+    status="published"
+    onViewDetails={() => handleViewDetails()}
+    onShare={() => handleShare()}
+  />
+  ```
+- `Typography` - Semantic text component with variant system
+  ```typescript
+  <Typography variant="h1" color="primary">Main Heading</Typography>
+  <Typography variant="body" color="secondary">Supporting text</Typography>
+  <Typography variant="button" as="span">Button Text</Typography>
+  ```
+- `Dropzone` - Drag-and-drop file upload with multi-file support
+- `QRCode` - QR code generation with robust canvas validation
+- `AlertDialog` - Modal dialogs with dark theme styling
+
+**Loading System:**
+- `LoadingIndicator` - Branded loading with RITE logo in brand-primary
+- `FullScreenLoading` - Full-screen loading with neutral-800 background
+
+**Platform-Specific Implementations:**
+```
+packages/ui/src/components/button/
+├── button.web.tsx      # Web version with Radix UI primitives
+├── button.native.tsx   # React Native version with NativeWind
+└── index.tsx          # Platform-specific exports
+```
+
+### Design System Integration
+
+**Tailwind Configuration:**
+- ES modules format (`tailwind.config.mjs`)
+- Design tokens imported from `@rite/ui/design-tokens`
+- Custom shadow-glow utilities for brand accent effects
+- Platform-specific color mappings
+
+**Usage Pattern:**
+```typescript
+// Import design tokens
+import { tokens } from '@rite/ui/design-tokens'
+
+// Use in Tailwind classes
+className="bg-neutral-800 text-brand-primary shadow-glow-sm"
+
+// Access programmatically
+const primaryColor = tokens.colors.brand.primary
+```
+
+### Loading System Integration
+
+**Location:** `/packages/ui/src/components/loading-indicator/`
+
+The loading system has been migrated to the shared UI package with dark theme styling:
+
+**Updated Components:**
+```typescript
+// From @rite/ui package
 export function LoadingIndicator({ className = '' }: LoadingIndicatorProps) {
   return (
     <div className={`animate-pulse text-center ${className}`}>
-      <div className="font-medium text-gray-300 text-4xl">
+      <div className="font-medium text-brand-primary text-4xl">
         RITE
       </div>
     </div>
@@ -367,18 +488,18 @@ export function LoadingIndicator({ className = '' }: LoadingIndicatorProps) {
 
 export function FullScreenLoading() {
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+    <div className="min-h-screen bg-neutral-800 flex items-center justify-center">
       <LoadingIndicator />
     </div>
   )
 }
 ```
 
-**Usage Patterns:**
-- **Full Screen Loading:** Used during SSR/hydration in ConvexProviderHydrationSafe
-- **Component Loading:** Used for specific loading states within components
-- **Branded Experience:** Consistent RITE logo maintains brand identity during loading states
-- **Hydration Safety:** `suppressHydrationWarning` prevents SSR/client mismatches
+**Design Updates:**
+- **Brand Color:** RITE logo now uses `text-brand-primary` (#E946FF)
+- **Dark Background:** Full screen loading uses `bg-neutral-800` instead of `bg-gray-50`
+- **Cross-Platform:** Available for both web and mobile with platform-specific implementations
+- **Consistent Theming:** Aligns with overall dark-first design approach
 
 ### MCP (Model Context Protocol) Integration
 
@@ -553,6 +674,20 @@ import { useRouter } from 'next/navigation';
 - Turbopack provides fast bundling and hot module replacement
 - MCP integration provides AI-assisted component development
 
+### Build System Updates
+
+**ES Modules Migration:**
+- Tailwind configuration migrated from CommonJS to ES modules (`tailwind.config.mjs`)
+- Improved compatibility with modern build tools and better tree-shaking
+- Design tokens integration through ES module imports from `@rite/ui/design-tokens`
+- Maintains full TypeScript support with proper type definitions
+
+**Configuration Benefits:**
+- Faster build times with native ES module support
+- Better integration with Turbopack and Next.js 15
+- Cleaner imports and exports for design tokens
+- Future-proof architecture aligned with modern JavaScript standards
+
 
 ## Typography Configuration
 
@@ -589,19 +724,36 @@ export const suit = localFont({
 - **Loading**: Next.js auto-optimization with localFont
 
 ## Code Style Guidelines
-- Formatting: Follow Prettier defaults, 2-space indentation
-- Imports: Group and sort imports (React/Next, external, internal, types)
-- Types: Use TypeScript strictly, avoid `any` types and non-null assertions
-- Naming: Use PascalCase for components, camelCase for variables/functions
-- Typography: SUIT Variable font with full Korean/English support and variable weights 100-900
-- Styling: Use Tailwind CSS for styling with shadcn/ui design tokens
-- Components: 
+- **Formatting**: Follow Prettier defaults, 2-space indentation
+- **Imports**: Group and sort imports (React/Next, external, internal, types)
+- **Types**: Use TypeScript strictly, avoid `any` types and non-null assertions
+- **Naming**: Use PascalCase for components, camelCase for variables/functions
+- **Design System**: 
+  - Use RITE design tokens from `@rite/ui/design-tokens`
+  - Follow dark-first design approach with neutral-800 backgrounds
+  - Apply brand-primary (#E946FF) for accents and focus states
+  - Use semantic color tokens (success, warning, error, info)
+- **Typography**: 
+  - SUIT Variable font with semantic variants (h1-h6, body, button, etc.)
+  - Use Typography component for consistent text rendering
+  - Apply appropriate font weights (100-900 range)
+- **Styling**: 
+  - Tailwind CSS with ES modules configuration
+  - Custom shadow-glow utilities for brand effects
+  - Consistent focus rings with brand-primary color
+  - Platform-specific implementations for web/mobile
+- **Components**: 
+  - Use @rite/ui components exclusively for UI elements
   - Prefer functional components with hooks
-  - Use @rite/ui components for all UI elements
-  - Components have platform-specific implementations (.web.tsx, .native.tsx)
-- Error handling: Use try/catch with appropriate logging
-- State management: Use React Context for global state, hooks for local state
-- Comments: Document complex logic, avoid obvious comments
+  - Implement platform-specific versions (.web.tsx, .native.tsx)
+  - Follow component composition patterns from design system
+- **Form Components**:
+  - Use refined input styling with ring effects on focus
+  - Apply hover states with subtle color transitions
+  - Maintain consistent spacing and border radius patterns
+- **Error handling**: Use try/catch with appropriate logging
+- **State management**: Use React Context for global state, hooks for local state
+- **Comments**: Document complex logic, avoid obvious comments
 
 ## Component Import Examples
 
@@ -620,8 +772,14 @@ import { Alert, AlertDescription } from "@rite/ui"
 import { Badge } from "@rite/ui"
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@rite/ui"
 
-// Loading components
-import { LoadingIndicator, FullScreenLoading } from "@/components/ui/loading-indicator"
+// New components (design system)
+import { Typography } from "@rite/ui"
+import { ActionCard } from "@rite/ui"
+import { EventCard } from "@rite/ui"
+import { LoadingIndicator, FullScreenLoading } from "@rite/ui"
+
+// Design tokens
+import { tokens } from "@rite/ui/design-tokens"
 
 // Next.js navigation (standard)
 import Link from "next/link"
@@ -671,14 +829,18 @@ import type { Event, Timeslot } from '@rite/shared-types'
 - Event creation with validation, timeslot management, Instagram OAuth integration
 - DJ submission system with token-based access, guest lists, payment collection
 - NextAuth v5 with Instagram OAuth proxy, Convex integration, hydration fixes
-- SUIT Variable font system, professional UI/UX
+- **Design System**: Comprehensive design tokens with dark-first theming (#E946FF brand primary)
+- **Component Library**: Complete @rite/ui package with Typography, ActionCard, EventCard components
+- **SUIT Variable Font**: Typography system with semantic variants and 100-900 weight range
+- **Platform Support**: Cross-platform components with web/native implementations
 - Complete internationalization system with next-intl (Korean/English support)
-- Unified loading system with consistent RITE branding
+- Unified loading system with brand-primary theming and dark backgrounds
 - ConvexProviderHydrationSafe with singleton pattern for SSR compatibility
 - Language switcher with mobile-responsive design and route preservation
 - **Mobile OAuth Support**: Fixed mobile browser redirects and consent page issues
 - **Enhanced Debugging**: Comprehensive logging system with Cloudflare Workers observability
 - **i18n Route Stability**: Resolved NextAuth conflicts and 404 errors on localized routes
+- **Build System**: ES modules migration for Tailwind with improved performance and compatibility
 
 **🚧 In Progress:**
 - File upload integration with Convex storage
