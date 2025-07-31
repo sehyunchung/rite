@@ -2,7 +2,7 @@ import { Suspense } from 'react';
 import { DJSubmissionClient } from './DJSubmissionClient';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { getTranslations } from 'next-intl/server';
-import { FullScreenLoading } from '@rite/ui';
+import { FullScreenLoading, Typography } from '@rite/ui';
 
 // Disable static generation for this page since it uses search params
 export const dynamic = 'force-dynamic';
@@ -22,12 +22,12 @@ async function DJSubmissionContent({ token, locale }: DJSubmissionContentProps) 
   
   if (!token) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-neutral-800 flex items-center justify-center">
         <div className="max-w-md mx-auto text-center p-6">
-          <h1 className="text-2xl font-bold text-red-600 mb-4">{t('invalidLink')}</h1>
-          <p className="text-gray-600">
+          <Typography variant="h2" className="text-error mb-4">{t('invalidLink')}</Typography>
+          <Typography variant="body" color="secondary">
             {t('invalidLinkMessage')}
-          </p>
+          </Typography>
         </div>
       </div>
     );

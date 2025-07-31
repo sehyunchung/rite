@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@rite/ui';
 import { Badge } from '@rite/ui';
 import { Button } from '@rite/ui';
 import { FullScreenLoading } from '@rite/ui';
+import { Typography } from '@rite/ui';
 import { Link } from '../../../../i18n/routing';
 import { useRouter } from 'next/navigation';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
@@ -46,10 +47,10 @@ export function EventDetailClient({ eventId, userId, locale }: EventDetailClient
 
   if (event === null) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-neutral-800 flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-semibold text-gray-900 mb-2">{t('notFound')}</h1>
-          <p className="text-gray-600 mb-4">{t('notFoundMessage')}</p>
+          <Typography variant="h2" className="mb-2">{t('notFound')}</Typography>
+          <Typography variant="body" color="secondary" className="mb-4">{t('notFoundMessage')}</Typography>
           <Button onClick={() => router.push(`/${locale}/dashboard`)}>
             {t('backToDashboard')}
           </Button>
@@ -59,20 +60,20 @@ export function EventDetailClient({ eventId, userId, locale }: EventDetailClient
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-neutral-800">
       {/* Navigation */}
-      <nav className="bg-white border-b border-gray-200">
+      <nav className="bg-neutral-700 border-b border-neutral-600">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16 items-center">
             <div className="flex items-center space-x-8">
               <div className="flex items-center">
-                <span className="ml-2 text-xl font-medium">RITE</span>
+                <Typography variant="h5" className="ml-2 text-brand-primary">RITE</Typography>
               </div>
               <nav className="hidden md:flex space-x-6">
-                <Link href="/dashboard" className="text-sm font-medium text-gray-600 hover:text-gray-900">
+                <Link href="/dashboard" className="text-sm font-medium text-neutral-400 hover:text-white transition-colors">
                   {tNav('dashboard')}
                 </Link>
-                <span className="text-sm font-medium text-gray-900">Event Details</span>
+                <span className="text-sm font-medium text-white">Event Details</span>
               </nav>
             </div>
             <Button variant="outline" onClick={() => router.push(`/${locale}/dashboard`)}>
@@ -89,12 +90,12 @@ export function EventDetailClient({ eventId, userId, locale }: EventDetailClient
             <div className="flex justify-between items-start mb-4">
               <div className="flex-1">
                 <div className="flex items-center gap-3 mb-2">
-                  <h1 className="text-3xl font-light text-gray-900">{event.name}</h1>
-                  <Badge variant={event.status === 'active' ? 'default' : 'secondary'}>
+                  <Typography variant="h1">{event.name}</Typography>
+                  <Badge variant={event.status === 'active' ? 'primary' : 'default'}>
                     {tStatus(event.status)}
                   </Badge>
                 </div>
-                <p className="text-gray-600">{event.venue.name} • {event.date}</p>
+                <Typography variant="body" color="secondary">{event.venue.name} • {event.date}</Typography>
               </div>
               <div className="flex items-center space-x-3">
                 {/* Action Buttons */}
@@ -120,7 +121,7 @@ export function EventDetailClient({ eventId, userId, locale }: EventDetailClient
               </div>
             </div>
             {event.description && (
-              <p className="text-gray-700 mb-4">{event.description}</p>
+              <Typography variant="body-lg" color="secondary" className="mb-4">{event.description}</Typography>
             )}
           </div>
 
@@ -134,8 +135,8 @@ export function EventDetailClient({ eventId, userId, locale }: EventDetailClient
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-2">
-                    <p className="font-medium">{event.venue.name}</p>
-                    <p className="text-gray-600">{event.venue.address}</p>
+                    <Typography variant="body" className="font-medium">{event.venue.name}</Typography>
+                    <Typography variant="body" color="secondary">{event.venue.address}</Typography>
                   </div>
                 </CardContent>
               </Card>

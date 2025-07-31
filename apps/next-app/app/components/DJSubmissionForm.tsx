@@ -9,7 +9,7 @@ import { Input, Label, Textarea } from '@rite/ui';
 import { Dropzone, DropzoneContent, DropzoneEmptyState } from '@rite/ui';
 import { Id } from '@rite/backend/convex/_generated/dataModel';
 import { useTranslations } from 'next-intl';
-import { FullScreenLoading } from '@rite/ui';
+import { FullScreenLoading, Typography } from '@rite/ui';
 
 interface DJSubmissionFormProps {
   submissionToken: string;
@@ -136,10 +136,10 @@ export function DJSubmissionForm({ submissionToken }: DJSubmissionFormProps) {
 
   if (timeslotData === null) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-neutral-800 flex items-center justify-center">
         <Card className="w-full max-w-md">
           <CardHeader>
-            <CardTitle className="text-red-600">Invalid Link</CardTitle>
+            <CardTitle className="text-error">Invalid Link</CardTitle>
             <CardDescription>
               This submission link is invalid or has expired.
             </CardDescription>
@@ -154,32 +154,32 @@ export function DJSubmissionForm({ submissionToken }: DJSubmissionFormProps) {
   // Show success confirmation after submission
   if (submissionComplete) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-neutral-800 flex items-center justify-center">
         <Card className="w-full max-w-md text-center">
           <CardHeader>
-            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg className="w-8 h-8 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
               </svg>
             </div>
-            <CardTitle className="text-green-600">Submission Complete!</CardTitle>
+            <CardTitle className="text-success">Submission Complete!</CardTitle>
             <CardDescription>
               Your materials have been successfully submitted for {event.name}.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="bg-green-50 p-4 rounded-lg text-left">
-              <h4 className="font-semibold text-green-800 mb-2">What happens next?</h4>
-              <ul className="text-sm text-green-700 space-y-1">
+            <div className="bg-neutral-700 p-4 rounded-lg text-left">
+              <Typography variant="h6" className="text-success mb-2">What happens next?</Typography>
+              <ul className="text-sm text-neutral-300 space-y-1">
                 <li>• The organizer will review your submission</li>
                 <li>• You&apos;ll receive confirmation via Instagram DM</li>
                 <li>• Payment will be processed after the event</li>
               </ul>
             </div>
-            <div className="text-sm text-gray-600">
-              <p><strong>Event:</strong> {event.name}</p>
-              <p><strong>Your Slot:</strong> {startTime} - {endTime}</p>
-              <p><strong>DJ:</strong> {djName} ({djInstagram})</p>
+            <div className="text-sm space-y-1">
+              <Typography variant="body-sm"><span className="font-medium">Event:</span> {event.name}</Typography>
+              <Typography variant="body-sm"><span className="font-medium">Your Slot:</span> {startTime} - {endTime}</Typography>
+              <Typography variant="body-sm"><span className="font-medium">DJ:</span> {djName} ({djInstagram})</Typography>
             </div>
           </CardContent>
         </Card>
@@ -188,12 +188,12 @@ export function DJSubmissionForm({ submissionToken }: DJSubmissionFormProps) {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-neutral-800 py-8">
       <div className="max-w-4xl mx-auto p-6 space-y-8">
         {/* Header */}
         <div className="text-center">
-          <h1 className="text-3xl font-bold mb-2">{t('title')}</h1>
-          <p className="text-gray-600">{t('subtitle')}</p>
+          <Typography variant="h1" className="mb-2">{t('title')}</Typography>
+          <Typography variant="body-lg" color="secondary">{t('subtitle')}</Typography>
         </div>
 
         {/* Event & DJ Info */}
