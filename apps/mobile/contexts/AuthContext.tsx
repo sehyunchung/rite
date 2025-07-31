@@ -219,7 +219,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }, [convex]);
 
   console.log('Final authConfig:', {
-    clientId: authConfig.clientId,
+    clientId: 'clientId' in authConfig ? authConfig.clientId : 'Not set',
     iosClientId: authConfig.iosClientId,
     webClientId: authConfig.webClientId,
     redirectUri: authConfig.redirectUri,
