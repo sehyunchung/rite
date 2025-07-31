@@ -2,7 +2,7 @@
 
 import { ConvexProvider as ConvexReactProvider, ConvexReactClient } from 'convex/react'
 import { ReactNode, useRef, useState, useEffect } from 'react'
-import { FullScreenLoading } from '@/components/ui/loading-indicator'
+import { FullScreenLoading } from '@rite/ui'
 
 // Singleton pattern for Convex client instance
 let convexClient: ConvexReactClient | null = null

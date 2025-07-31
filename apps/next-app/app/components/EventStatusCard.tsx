@@ -3,7 +3,7 @@
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@rite/ui';
 import { Badge } from '@rite/ui';
 import { Button } from '@rite/ui';
-import { LoadingIndicator } from '@/components/ui/loading-indicator';
+import { LoadingIndicator } from '@rite/ui';
 import { useEventStatus } from '@/hooks/useEventStatus';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
@@ -18,7 +18,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Alert, AlertDescription } from "@rite/ui";
 import { AlertCircle, Calendar, CheckCircle, Edit, Lock, Music, XCircle } from 'lucide-react';
 
 interface EventStatusCardProps {

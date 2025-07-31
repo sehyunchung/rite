@@ -6,7 +6,7 @@ import { Id, Doc } from '@rite/backend/convex/_generated/dataModel';
 import { Card, CardContent, CardHeader, CardTitle } from '@rite/ui';
 import { Badge } from '@rite/ui';
 import { Button } from '@rite/ui';
-import { FullScreenLoading } from '@/components/ui/loading-indicator';
+import { FullScreenLoading } from '@rite/ui';
 import { Link } from '../../../../i18n/routing';
 import { useRouter } from 'next/navigation';
 import { ErrorBoundary } from '@/components/ErrorBoundary';

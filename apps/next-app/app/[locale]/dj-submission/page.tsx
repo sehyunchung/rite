@@ -2,7 +2,7 @@ import { Suspense } from 'react';
 import { DJSubmissionClient } from './DJSubmissionClient';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { getTranslations } from 'next-intl/server';
-import { FullScreenLoading } from '@/components/ui/loading-indicator';
+import { FullScreenLoading } from '@rite/ui';
 
 // Disable static generation for this page since it uses search params
 export const dynamic = 'force-dynamic';

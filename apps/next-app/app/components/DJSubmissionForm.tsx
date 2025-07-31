@@ -9,7 +9,7 @@ import { Input, Label, Textarea } from '@rite/ui';
 import { Dropzone, DropzoneContent, DropzoneEmptyState } from '@/components/ui/kibo-ui/dropzone';
 import { Id } from '@rite/backend/convex/_generated/dataModel';
 import { useTranslations } from 'next-intl';
-import { FullScreenLoading } from '@/components/ui/loading-indicator';
+import { FullScreenLoading } from '@rite/ui';
 
 interface DJSubmissionFormProps {
   submissionToken: string;

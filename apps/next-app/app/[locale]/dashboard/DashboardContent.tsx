@@ -10,7 +10,7 @@ import { Link } from '../../../i18n/routing';
 import { useSession } from 'next-auth/react';
 import { CopyButton } from '@/components/CopyButton';
 import { useTranslations } from 'next-intl';
-import { LoadingIndicator } from '@/components/ui/loading-indicator';
+import { LoadingIndicator } from '@rite/ui';
 
 // Type for events that includes timeslots from query results
 type EventWithTimeslots = Doc<"events"> & {
