@@ -121,24 +121,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
     redirectUri: redirectUri,
   };
 
-  const [request, response, promptAsync] = Google.useAuthRequest(authConfig);
-
-  // Handle authentication response
-  useEffect(() => {
-    console.log('OAuth Response:', response);
-    if (response?.type === 'success') {
-      console.log('OAuth Success - Access Token:', response.authentication?.accessToken ? 'Present' : 'Missing');
-      handleGoogleAuth(response.authentication?.accessToken);
-    } else if (response?.type === 'error') {
-      console.error('OAuth Error:', response.error);
-    }
-  }, [response, handleGoogleAuth]);
-
-  // Check for existing session on app start
-  useEffect(() => {
-    checkExistingSession();
-  }, [checkExistingSession]);
-
   const checkExistingSession = useCallback(async () => {
     try {
       const sessionToken = await secureStorage.getItem('sessionToken');
@@ -230,6 +212,24 @@ export function AuthProvider({ children }: AuthProviderProps) {
       setIsLoading(false);
     }
   }, [convex]);
+
+  const [request, response, promptAsync] = Google.useAuthRequest(authConfig);
+
+  // Handle authentication response
+  useEffect(() => {
+    console.log('OAuth Response:', response);
+    if (response?.type === 'success') {
+      console.log('OAuth Success - Access Token:', response.authentication?.accessToken ? 'Present' : 'Missing');
+      handleGoogleAuth(response.authentication?.accessToken);
+    } else if (response?.type === 'error') {
+      console.error('OAuth Error:', response.error);
+    }
+  }, [response, handleGoogleAuth]);
+
+  // Check for existing session on app start
+  useEffect(() => {
+    checkExistingSession();
+  }, [checkExistingSession]);
 
   const signIn = async () => {
     if (!hasGoogleConfig) {
