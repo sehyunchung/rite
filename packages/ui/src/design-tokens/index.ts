@@ -1,0 +1,43 @@
+// RITE Design System - Main Export
+// Centralized design tokens for web and mobile platforms
+
+export * from './colors'
+export * from './typography'
+export * from './spacing'
+export * from './shadows'
+export * from './radius'
+
+// Re-export as unified tokens object
+import { colors, webColors, mobileColors } from './colors'
+import { typography, typographyVariants } from './typography'
+import { spacing, spacingPatterns } from './spacing'
+import { webShadows, mobileShadows } from './shadows'
+import { radius, radiusPatterns } from './radius'
+
+export const tokens = {
+  colors,
+  typography,
+  spacing,
+  radius,
+  shadows: {
+    web: webShadows,
+    mobile: mobileShadows,
+  },
+  // Platform-specific
+  web: {
+    colors: webColors,
+    shadows: webShadows,
+  },
+  mobile: {
+    colors: mobileColors,
+    shadows: mobileShadows,
+  },
+  // Patterns
+  patterns: {
+    spacing: spacingPatterns,
+    radius: radiusPatterns,
+    typography: typographyVariants,
+  },
+} as const
+
+export type DesignTokens = typeof tokens

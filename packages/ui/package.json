@@ -14,7 +14,9 @@
     ".": "./src/index.ts",
     "./components/*": "./src/components/*/index.ts",
     "./hooks/*": "./src/hooks/*/index.ts",
-    "./utils/*": "./src/utils/*/index.ts"
+    "./utils/*": "./src/utils/*/index.ts",
+    "./design-tokens": "./src/design-tokens/index.ts",
+    "./design-tokens/*": "./src/design-tokens/*"
   },
   "dependencies": {
     "@radix-ui/react-alert-dialog": "^1.1.5",
