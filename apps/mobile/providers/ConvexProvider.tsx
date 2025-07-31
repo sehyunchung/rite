@@ -8,7 +8,7 @@ let convexClient: ConvexReactClient | null = null;
 
 function getConvexClient(): ConvexReactClient | null {
   if (!convexClient) {
-    const convexUrl = Constants.expoConfig?.extra?.convexUrl;
+    const convexUrl = process.env.EXPO_PUBLIC_CONVEX_URL;
     
     if (!convexUrl) {
       console.error('EXPO_PUBLIC_CONVEX_URL is required but not set. Please configure your environment variables.');

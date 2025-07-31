@@ -1,9 +1,10 @@
 import { View, Text, ScrollView, ActivityIndicator, StyleSheet } from 'react-native';
 import { useQuery } from 'convex/react';
 import { api } from '@rite/backend/convex/_generated/api';
+import { shadows } from '../../utils/shadow';
 
 export default function HomeScreen() {
-  const events = useQuery(api.events.list);
+  const pingResult = useQuery(api.test.ping);
   
   return (
     <ScrollView style={styles.container}>
@@ -12,38 +13,25 @@ export default function HomeScreen() {
         <Text style={styles.subtitle}>DJ Event Management</Text>
         
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Events</Text>
+          <Text style={styles.sectionTitle}>Convex Connection Test</Text>
           
-          {events === undefined ? (
-            <ActivityIndicator size="large" color="#000" />
-          ) : events.length === 0 ? (
-            <View style={styles.emptyCard}>
-              <Text style={styles.emptyText}>No events yet</Text>
-            </View>
+          {pingResult === undefined ? (
+            <ActivityIndicator size="large" color="#E946FF" />
           ) : (
-            <View>
-              {events.map((event) => (
-                <View key={event._id} style={styles.eventCard}>
-                  <Text style={styles.eventName}>{event.eventName}</Text>
-                  <Text style={styles.eventDetail}>Venue: {event.venueName}</Text>
-                  <Text style={styles.eventDetail}>
-                    Date: {new Date(event.eventDate).toLocaleDateString()}
-                  </Text>
-                  <Text style={styles.eventDetail}>
-                    Slots: {event.timeslots?.length || 0}
-                  </Text>
-                </View>
-              ))}
+            <View style={styles.eventCard}>
+              <Text style={styles.eventName}>✅ {pingResult.message}</Text>
+              <Text style={styles.eventDetail}>Timestamp: {new Date(pingResult.timestamp).toLocaleTimeString()}</Text>
             </View>
           )}
         </View>
         
         <View style={styles.statusCard}>
           <Text style={styles.statusTitle}>Mobile App Status</Text>
-          <Text style={styles.statusItem}>✅ Convex connected</Text>
+          <Text style={styles.statusItem}>{pingResult ? '✅' : '⏳'} Convex {pingResult ? 'connected' : 'connecting...'}</Text>
           <Text style={styles.statusItem}>✅ Shared backend package</Text>
           <Text style={styles.statusItem}>✅ NativeWind styling</Text>
           <Text style={styles.statusItem}>🚧 Authentication pending</Text>
+          <Text style={styles.statusItem}>🚧 Dark theme pending</Text>
         </View>
       </View>
     </ScrollView>
@@ -53,7 +41,7 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f9fafb',
+    backgroundColor: '#1A0F2F', // neutral.800
   },
   content: {
     padding: 24,
@@ -61,12 +49,12 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 30,
     fontWeight: 'bold',
-    color: '#111827',
+    color: '#E946FF', // brand.primary
     marginBottom: 8,
   },
   subtitle: {
     fontSize: 18,
-    color: '#6b7280',
+    color: '#A8A8B3', // neutral.300
     marginBottom: 24,
   },
   section: {
@@ -75,56 +63,52 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 20,
     fontWeight: '600',
-    color: '#111827',
+    color: '#FFFFFF',
     marginBottom: 16,
   },
   emptyCard: {
-    backgroundColor: 'white',
+    backgroundColor: '#2A1F3F', // neutral.700
     borderRadius: 8,
     padding: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 2,
-    elevation: 1,
+    ...shadows.sm,
   },
   emptyText: {
-    color: '#6b7280',
+    color: '#A8A8B3', // neutral.300
     textAlign: 'center',
   },
   eventCard: {
-    backgroundColor: 'white',
+    backgroundColor: '#2A1F3F', // neutral.700
     borderRadius: 8,
     padding: 16,
     marginBottom: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 2,
-    elevation: 1,
+    borderWidth: 1,
+    borderColor: '#3A3A4A', // neutral.600
+    ...shadows.sm,
   },
   eventName: {
     fontWeight: '600',
     fontSize: 18,
-    color: '#111827',
+    color: '#FFFFFF',
     marginBottom: 4,
   },
   eventDetail: {
-    color: '#6b7280',
+    color: '#A8A8B3', // neutral.300
     marginBottom: 2,
   },
   statusCard: {
-    backgroundColor: '#dbeafe',
+    backgroundColor: '#2A1F3F', // neutral.700
     borderRadius: 8,
     padding: 16,
+    borderWidth: 1,
+    borderColor: '#E946FF', // brand.primary
   },
   statusTitle: {
-    color: '#1e3a8a',
+    color: '#E946FF', // brand.primary
     fontWeight: '500',
     marginBottom: 8,
   },
   statusItem: {
-    color: '#1d4ed8',
+    color: '#A8A8B3', // neutral.300
     marginBottom: 4,
   },
 });

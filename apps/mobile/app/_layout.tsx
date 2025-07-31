@@ -10,7 +10,6 @@ import { ConvexProvider } from '../providers/ConvexProvider';
 import ErrorBoundary from '../components/ErrorBoundary';
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
   const [loaded] = useFonts({
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
   });
@@ -20,15 +19,29 @@ export default function RootLayout() {
     return null;
   }
 
+  // Custom RITE dark theme
+  const RiteDarkTheme = {
+    ...DarkTheme,
+    colors: {
+      ...DarkTheme.colors,
+      primary: '#E946FF',
+      background: '#1A0F2F',
+      card: '#2A1F3F',
+      text: '#FFFFFF',
+      border: '#2A1F3F',
+      notification: '#E946FF',
+    },
+  };
+
   return (
     <ErrorBoundary>
       <ConvexProvider>
-        <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+        <ThemeProvider value={RiteDarkTheme}>
           <Stack>
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
             <Stack.Screen name="+not-found" />
           </Stack>
-          <StatusBar style="auto" />
+          <StatusBar style="light" />
         </ThemeProvider>
       </ConvexProvider>
     </ErrorBoundary>
