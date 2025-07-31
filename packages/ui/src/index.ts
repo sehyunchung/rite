@@ -9,6 +9,8 @@ export * from './components/select';
 export * from './components/alert';
 export * from './components/loading-indicator';
 export * from './components/alert-dialog';
+export * from './components/dropzone';
+export * from './components/qr-code';
 
 // Export utilities
 export * from './utils';

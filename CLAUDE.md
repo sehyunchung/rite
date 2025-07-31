@@ -151,14 +151,15 @@ rite/
 - **Typography**: SUIT Variable font with Korean/English support (weights 100-900)
 - **Internationalization**: next-intl with locale-based routing ([locale] structure)
 - **UI Libraries**: 
-  - shadcn/ui - Base component library with Radix UI primitives
-  - Kibo UI - Advanced components (Dropzone, QR Code, Code Block)
+  - @rite/ui - Shared UI package with platform-specific implementations (web/native)
+  - shadcn/ui - Base patterns for web components
+  - All UI components migrated to @rite/ui for cross-platform reuse
 - **Backend**: Convex (real-time database and file storage, shared across apps)
 - **Authentication**: NextAuth v5 with streamlined Instagram OAuth integration and direct Convex ID usage
 - **Routing**: Next.js App Router with [locale] dynamic routing / Expo Router file-based routing
 - **Validation**: ArkType (high-performance TypeScript schema validation)
 - **File Handling**: Convex file storage for promo materials
-- **AI Integration**: Model Context Protocol (MCP) for Kibo UI
+- **AI Integration**: Model Context Protocol (MCP) for UI components
 
 ### Authentication Architecture
 
@@ -246,8 +247,7 @@ export function ConvexProviderHydrationSafe({
     - `/apps/next-app/app/[locale]/auth/signin/page.tsx` - NextAuth authentication page
   - `/apps/next-app/app/api/auth/[...nextauth]/route.ts` - NextAuth API route
 - `/apps/next-app/app/components/` - React components
-  - `/apps/next-app/app/components/ui/` - shadcn/ui base components
-  - `/apps/next-app/app/components/ui/kibo-ui/` - Kibo UI advanced components
+  - `/apps/next-app/app/components/ui/` - Legacy UI components (migrated to @rite/ui)
   - `/apps/next-app/app/components/ui/loading-indicator.tsx` - Unified loading components
   - `/apps/next-app/app/components/EventCreationForm.tsx` - Event creation form with validation
   - `/apps/next-app/app/components/DJSubmissionForm.tsx` - Public DJ submission form with token access
@@ -342,9 +342,10 @@ export function ConvexProviderHydrationSafe({
 - Button, Card, Input, Label, Textarea, Select
 - Styled with Tailwind CSS and Radix UI primitives
 
-**Kibo UI Advanced Components:**
+**Advanced Components (now in @rite/ui):**
 - `Dropzone` - Drag-and-drop file upload with multi-file support
 - `QRCode` - QR code generation for event links and check-in (with robust canvas validation)
+- All UI components have been migrated to the shared @rite/ui package for reuse between web and mobile
 
 **Loading System Components:**
 - `LoadingIndicator` - Branded loading component with RITE logo and pulse animation
@@ -389,10 +390,10 @@ export function FullScreenLoading() {
 
 ### MCP (Model Context Protocol) Integration
 
-This project is configured with Kibo UI MCP server for AI-assisted development:
+This project is configured with MCP servers for AI-assisted development:
 - **Configuration**: `.claude.json` in project root
-- **Capabilities**: Claude Code can access Kibo UI component documentation
-- **Benefits**: Real-time component recommendations and usage guidance
+- **Capabilities**: Claude Code can access component documentation and other development tools
+- **Benefits**: Real-time recommendations and usage guidance
 
 ## Internationalization System
 
@@ -604,8 +605,8 @@ export const suit = localFont({
 - Styling: Use Tailwind CSS for styling with shadcn/ui design tokens
 - Components: 
   - Prefer functional components with hooks
-  - Use shadcn/ui components for basic UI elements
-  - Use Kibo UI for advanced functionality (file uploads, QR codes, etc.)
+  - Use @rite/ui components for all UI elements
+  - Components have platform-specific implementations (.web.tsx, .native.tsx)
 - Error handling: Use try/catch with appropriate logging
 - State management: Use React Context for global state, hooks for local state
 - Comments: Document complex logic, avoid obvious comments
@@ -614,17 +615,18 @@ export const suit = localFont({
 
 ### Next.js App Imports
 ```typescript
-// shadcn/ui components
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-
-// Kibo UI components  
-import { Dropzone } from "@/components/ui/kibo-ui/dropzone"
-import { QRCode } from "@/components/ui/kibo-ui/qr-code"
+// All UI components from shared package
+import { Button } from "@rite/ui"
+import { Card, CardContent, CardHeader, CardTitle } from "@rite/ui"
+import { Input } from "@rite/ui"
+import { Label } from "@rite/ui"
+import { Textarea } from "@rite/ui"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@rite/ui"
+import { Dropzone, DropzoneContent, DropzoneEmptyState } from "@rite/ui"
+import { QRCode } from "@rite/ui"
+import { Alert, AlertDescription } from "@rite/ui"
+import { Badge } from "@rite/ui"
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@rite/ui"
 
 // Loading components
 import { LoadingIndicator, FullScreenLoading } from "@/components/ui/loading-indicator"

@@ -6,7 +6,7 @@ import { api } from '@rite/backend/convex/_generated/api';
 import { Button } from '@rite/ui';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@rite/ui';
 import { Input, Label, Textarea } from '@rite/ui';
-import { Dropzone, DropzoneContent, DropzoneEmptyState } from '@/components/ui/kibo-ui/dropzone';
+import { Dropzone, DropzoneContent, DropzoneEmptyState } from '@rite/ui';
 import { Id } from '@rite/backend/convex/_generated/dataModel';
 import { useTranslations } from 'next-intl';
 import { FullScreenLoading } from '@rite/ui';

@@ -11,7 +11,7 @@ import { Link } from '../../../../i18n/routing';
 import { useRouter } from 'next/navigation';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { SubmissionLinks } from '@/components/SubmissionLinks';
-import { QRCode } from '@/components/ui/kibo-ui/qr-code';
+import { QRCode } from '@rite/ui';
 import { useState } from 'react';
 import { EditIcon, ClipboardListIcon, QrCodeIcon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
