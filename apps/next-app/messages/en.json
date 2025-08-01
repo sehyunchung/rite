@@ -117,7 +117,10 @@
       "status": {
         "submitted": "Submitted",
         "pending": "Pending"
-      }
+      },
+      "edit": "Edit",
+      "submissions": "Submissions", 
+      "qrCode": "QR Code"
     }
   },
   "status": {

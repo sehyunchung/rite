@@ -117,7 +117,10 @@
       "status": {
         "submitted": "제출됨",
         "pending": "대기 중"
-      }
+      },
+      "edit": "편집",
+      "submissions": "제출물",
+      "qrCode": "QR 코드"
     }
   },
   "status": {

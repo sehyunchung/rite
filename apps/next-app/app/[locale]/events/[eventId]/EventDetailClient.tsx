@@ -61,8 +61,18 @@ export function EventDetailClient({ eventId, userId, locale }: EventDetailClient
 
   return (
     <div className="min-h-screen bg-neutral-800">
-      {/* Navigation */}
-      <nav className="bg-neutral-700 border-b border-neutral-600">
+      {/* Mobile Header */}
+      <header className="bg-neutral-700 border-b border-neutral-600 md:hidden">
+        <div className="flex justify-between items-center px-4 py-3">
+          <Typography variant="h5" className="text-brand-primary">RITE</Typography>
+          <Button variant="outline" size="sm" onClick={() => router.push(`/${locale}/dashboard`)}>
+            {t('backToDashboard')}
+          </Button>
+        </div>
+      </header>
+
+      {/* Desktop Navigation */}
+      <nav className="bg-neutral-700 border-b border-neutral-600 hidden md:block">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16 items-center">
             <div className="flex items-center space-x-8">
@@ -83,25 +93,26 @@ export function EventDetailClient({ eventId, userId, locale }: EventDetailClient
         </div>
       </nav>
 
-      <div className="p-8">
+      <div className="p-4 md:p-8">
         <div className="max-w-7xl mx-auto">
           {/* Event Header */}
-          <div className="mb-8">
-            <div className="flex justify-between items-start mb-4">
+          <div className="mb-6 md:mb-8">
+            <div className="flex flex-col md:flex-row md:justify-between md:items-start mb-4 space-y-4 md:space-y-0">
               <div className="flex-1">
-                <div className="flex items-center gap-3 mb-2">
-                  <Typography variant="h1">{event.name}</Typography>
+                <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-3 mb-2">
+                  <Typography variant="h1" className="text-xl md:text-3xl">{event.name}</Typography>
                   <Badge variant={event.status === 'active' ? 'primary' : 'default'}>
                     {tStatus(event.status)}
                   </Badge>
                 </div>
-                <Typography variant="body" color="secondary">{event.venue.name} • {event.date}</Typography>
+                <Typography variant="body" color="secondary" className="text-sm md:text-base">{event.venue.name} • {event.date}</Typography>
               </div>
-              <div className="flex items-center space-x-3">
+              <div className="flex items-center space-x-2 md:space-x-3">
                 {/* Action Buttons */}
                 <Button variant="outline" size="sm" asChild>
                   <Link href={`/events/${event._id}/edit`}>
                     <EditIcon className="w-4 h-4" />
+                    <span className="ml-1 hidden sm:inline">{t('edit')}</span>
                   </Link>
                 </Button>
                 <Button 
@@ -110,6 +121,7 @@ export function EventDetailClient({ eventId, userId, locale }: EventDetailClient
                   onClick={() => router.push(`/${locale}/events/${event._id}/submissions`)}
                 >
                   <ClipboardListIcon className="w-4 h-4" />
+                  <span className="ml-1 hidden sm:inline">{t('submissions')}</span>
                 </Button>
                 <Button 
                   variant="outline" 
@@ -117,15 +129,16 @@ export function EventDetailClient({ eventId, userId, locale }: EventDetailClient
                   onClick={() => setShowQRCode(!showQRCode)}
                 >
                   <QrCodeIcon className="w-4 h-4" />
+                  <span className="ml-1 hidden sm:inline">{t('qrCode')}</span>
                 </Button>
               </div>
             </div>
             {event.description && (
-              <Typography variant="body-lg" color="secondary" className="mb-4">{event.description}</Typography>
+              <Typography variant="body-lg" color="secondary" className="mb-4 text-sm md:text-base">{event.description}</Typography>
             )}
           </div>
 
-          <div className="grid gap-6 lg:grid-cols-3">
+          <div className="grid gap-4 md:gap-6 lg:grid-cols-3">
             {/* Event Details */}
             <div className="lg:col-span-2 space-y-6">
               {/* Venue Information */}
