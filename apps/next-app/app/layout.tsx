@@ -3,6 +3,8 @@ import './globals.css'
 import { RootProvider } from './providers/root-provider'
 import { suit } from './lib/fonts'
 import { ErrorBoundary } from './components/ErrorBoundary'
+import { Suspense } from 'react'
+import PostHogPageView from './components/PostHogPageView'
 
 export const metadata: Metadata = {
   title: 'Rite - DJ Event Management Platform',
@@ -19,6 +21,9 @@ export default function RootLayout({
       <body className="font-sans">
         <ErrorBoundary>
           <RootProvider>
+            <Suspense>
+              <PostHogPageView />
+            </Suspense>
             {children}
           </RootProvider>
         </ErrorBoundary>

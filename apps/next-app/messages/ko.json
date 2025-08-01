@@ -253,5 +253,10 @@
     "confirmActionMessage": "이 작업을 수행하시겠습니까?",
     "confirm": "확인",
     "cancel": "취소"
+  },
+  "consentBanner": {
+    "message": "RITE 사용 경험을 개선하고 사용 방식을 이해하기 위해 분석 도구를 사용합니다. 계속 진행하시면 쿠키 및 데이터 수집에 동의하는 것으로 간주됩니다.",
+    "decline": "거부",
+    "accept": "분석 동의"
   }
 }

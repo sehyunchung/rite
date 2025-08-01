@@ -7,7 +7,15 @@
     "INSTAGRAM_CLIENT_ID",
     "INSTAGRAM_CLIENT_SECRET",
     "INSTAGRAM_OAUTH_PROXY_URL",
-    "NEXT_PUBLIC_CONVEX_URL"
+    "NEXT_PUBLIC_CONVEX_URL",
+    "NEXT_PUBLIC_POSTHOG_KEY",
+    "NEXT_PUBLIC_POSTHOG_HOST",
+    "EXPO_PUBLIC_POSTHOG_KEY",
+    "EXPO_PUBLIC_POSTHOG_HOST",
+    "POSTHOG_KEY",
+    "POSTHOG_HOST",
+    "GOOGLE_CLIENT_ID",
+    "GOOGLE_CLIENT_SECRET"
   ],
   "tasks": {
     "build": {
@@ -17,6 +25,14 @@
     "@rite/backend#build": {
       "dependsOn": ["^build"],
       "outputs": []
+    },
+    "@rite/posthog-config#build": {
+      "dependsOn": [],
+      "outputs": ["dist/**"]
+    },
+    "next-app#build": {
+      "dependsOn": ["^build", "@rite/posthog-config#build"],
+      "outputs": [".next/**", "!.next/cache/**"]
     },
     "dev": {
       "cache": false,

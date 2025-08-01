@@ -253,5 +253,10 @@
     "confirmActionMessage": "Are you sure you want to perform this action?",
     "confirm": "Confirm",
     "cancel": "Cancel"
+  },
+  "consentBanner": {
+    "message": "We use analytics to improve your experience and understand how you use RITE. By continuing, you agree to our use of cookies and data collection.",
+    "decline": "Decline",
+    "accept": "Accept Analytics"
   }
 }
