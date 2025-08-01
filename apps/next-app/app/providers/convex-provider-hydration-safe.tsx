@@ -2,7 +2,7 @@
 
 import { ConvexProvider as ConvexReactProvider, ConvexReactClient } from 'convex/react'
 import { ReactNode, useRef, useState, useEffect } from 'react'
-import { FullScreenLoading } from '@rite/ui'
+import { FullScreenLoading, Typography } from '@rite/ui'
 
 // Singleton pattern for Convex client instance
 let convexClient: ConvexReactClient | null = null
@@ -65,7 +65,21 @@ export function ConvexProviderHydrationSafe({
   
   // Client-side without Convex URL
   if (!clientRef.current) {
-    return <>{children}</>
+    return (
+      <div className="min-h-screen bg-neutral-800 flex items-center justify-center">
+        <div className="text-center p-8">
+          <Typography variant="h3" className="mb-4 text-red-400">
+            Configuration Error
+          </Typography>
+          <Typography variant="body" color="secondary" className="mb-4">
+            NEXT_PUBLIC_CONVEX_URL is not configured. Please check your environment variables.
+          </Typography>
+          <Typography variant="caption" color="secondary">
+            See CLAUDE.md for setup instructions.
+          </Typography>
+        </div>
+      </div>
+    )
   }
   
   // Client-side with Convex
