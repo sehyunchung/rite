@@ -1,6 +1,5 @@
 'use client';
 
-import { Button } from '@rite/ui';
 import { Link, usePathname } from '../../i18n/routing';
 import { useTranslations } from 'next-intl';
 import { Home, CalendarPlus, Calendar } from 'lucide-react';

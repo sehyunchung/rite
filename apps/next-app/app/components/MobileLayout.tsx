@@ -9,6 +9,7 @@ import { UserDisplay } from './UserDisplay';
 import { useTranslations } from 'next-intl';
 import { Menu, X } from 'lucide-react';
 import { useState } from 'react';
+import { Link } from '../../i18n/routing';
 
 interface MobileLayoutProps {
   children: ReactNode;
@@ -72,12 +73,12 @@ export function MobileLayout({ children, userId, fallbackDisplayName }: MobileLa
                 <Typography variant="h5" className="ml-2 text-brand-primary">RITE</Typography>
               </div>
               <nav className="hidden md:flex space-x-6">
-                <a href="/dashboard" className="text-sm font-medium text-white hover:text-brand-primary transition-colors">
+                <Link href="/dashboard" className="text-sm font-medium text-white hover:text-brand-primary transition-colors">
                   {t('dashboard')}
-                </a>
-                <a href="/events/create" className="text-sm font-medium text-white hover:text-brand-primary transition-colors">
+                </Link>
+                <Link href="/events/create" className="text-sm font-medium text-white hover:text-brand-primary transition-colors">
                   {t('createEvent')}
-                </a>
+                </Link>
               </nav>
             </div>
             <div className="flex items-center space-x-4">
