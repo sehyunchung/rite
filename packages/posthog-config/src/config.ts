@@ -1,6 +1,20 @@
+// Centralized environment variable resolver
+export const getPostHogEnvVars = () => {
+  const key = process.env.NEXT_PUBLIC_POSTHOG_KEY || 
+              process.env.EXPO_PUBLIC_POSTHOG_KEY ||
+              process.env.POSTHOG_KEY
+
+  const host = process.env.NEXT_PUBLIC_POSTHOG_HOST || 
+               process.env.EXPO_PUBLIC_POSTHOG_HOST ||
+               process.env.POSTHOG_HOST ||
+               'https://us.i.posthog.com'
+
+  return { key, host }
+}
+
 export const POSTHOG_CONFIG = {
   web: {
-    api_host: process.env.NEXT_PUBLIC_POSTHOG_HOST || '/ingest',
+    api_host: '/ingest', // Always use proxy for web
     ui_host: 'https://us.i.posthog.com',
     capture_pageview: false,
     person_profiles: 'identified_only',
@@ -61,6 +75,10 @@ export const DJ_PLATFORM_EVENTS = {
   // Instagram Integration
   INSTAGRAM_PROFILE_VIEWED: 'instagram_profile_viewed',
   INSTAGRAM_CONTENT_SHARED: 'instagram_content_shared',
+  
+  // QR Code Features
+  QR_CODE_GENERATED: 'qr_code_generated',
+  QR_CODE_SCANNED: 'qr_code_scanned',
   
   // Navigation
   PAGE_VIEW: '$pageview',

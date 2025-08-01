@@ -1,10 +1,16 @@
 import { PostHog } from 'posthog-node'
-import { POSTHOG_CONFIG } from '@rite/posthog-config'
+import { POSTHOG_CONFIG, getPostHogEnvVars } from '@rite/posthog-config'
 
 // Server-side PostHog client
 export function createServerPostHog() {
-  return new PostHog(process.env.NEXT_PUBLIC_POSTHOG_KEY!, {
-    host: process.env.NEXT_PUBLIC_POSTHOG_HOST || 'https://us.i.posthog.com',
+  const { key, host } = getPostHogEnvVars()
+  
+  if (!key) {
+    throw new Error('PostHog key not found in environment variables')
+  }
+  
+  return new PostHog(key, {
+    host,
     ...POSTHOG_CONFIG.server
   })
 }
@@ -15,14 +21,11 @@ export async function trackServerEvent(
   event: string, 
   properties?: Record<string, any>
 ) {
-  if (!process.env.NEXT_PUBLIC_POSTHOG_KEY) {
-    console.warn('PostHog key not found, skipping server event tracking')
-    return
-  }
-  
-  const posthogServer = createServerPostHog()
+  let posthogServer: PostHog | null = null
   
   try {
+    posthogServer = createServerPostHog()
+    
     posthogServer.capture({
       distinctId,
       event,
@@ -32,9 +35,16 @@ export async function trackServerEvent(
         environment: process.env.NODE_ENV,
       }
     })
-    
-    await posthogServer.shutdown()
   } catch (error) {
     console.error('Failed to track server event:', error)
+  } finally {
+    // Ensure shutdown always happens to prevent memory leaks
+    if (posthogServer) {
+      try {
+        await posthogServer.shutdown()
+      } catch (shutdownError) {
+        console.error('Failed to shutdown PostHog server instance:', shutdownError)
+      }
+    }
   }
 }

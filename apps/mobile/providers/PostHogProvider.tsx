@@ -1,29 +1,36 @@
 import React from 'react'
 import { PostHogProvider } from 'posthog-react-native'
-import { POSTHOG_CONFIG } from '@rite/posthog-config'
+import { POSTHOG_CONFIG, getPostHogEnvVars } from '@rite/posthog-config'
 
 interface PostHogProviderWrapperProps {
   children: React.ReactNode
 }
 
 export function PostHogProviderWrapper({ children }: PostHogProviderWrapperProps) {
-  const posthogKey = process.env.EXPO_PUBLIC_POSTHOG_KEY
-  const posthogHost = process.env.EXPO_PUBLIC_POSTHOG_HOST || 'https://us.i.posthog.com'
+  const { key, host } = getPostHogEnvVars()
 
-  if (!posthogKey) {
+  if (!key) {
     console.warn('PostHog key not found in environment variables')
     return <>{children}</>
   }
 
+  // Get app version from package.json dynamically
+  let appVersion = 'unknown'
+  try {
+    appVersion = require('../../package.json').version
+  } catch (error) {
+    console.warn('Could not load app version from package.json:', error)
+  }
+
   return (
     <PostHogProvider 
-      apiKey={posthogKey}
+      apiKey={key}
       options={{
         ...POSTHOG_CONFIG.mobile,
-        host: posthogHost,
+        host,
         properties: {
           platform: 'mobile',
-          app_version: require('../../package.json').version,
+          app_version: appVersion,
         }
       }}
     >

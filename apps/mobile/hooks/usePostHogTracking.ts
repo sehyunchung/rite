@@ -97,7 +97,7 @@ export function usePostHogTracking() {
   // Feature usage tracking
   const trackFeatureUsage = {
     qrCodeScanned: (eventId: string) => {
-      posthog?.capture('qr_code_scanned', {
+      posthog?.capture(DJ_PLATFORM_EVENTS.QR_CODE_SCANNED, {
         event_id: eventId,
         platform: 'mobile'
       })

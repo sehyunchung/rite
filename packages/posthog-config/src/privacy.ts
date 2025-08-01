@@ -35,10 +35,12 @@ export class PostHogPrivacyManager {
   }
   
   static shouldLoadPostHog(): boolean {
-    // Only load PostHog in production or when explicitly consented
+    // GDPR compliant: Only load PostHog with explicit consent or in development
     const isDev = process.env.NODE_ENV === 'development'
     const hasExplicitConsent = this.hasConsent()
     
-    return !isDev || hasExplicitConsent
+    // In development: allow without consent for testing
+    // In production: require explicit consent
+    return isDev || hasExplicitConsent
   }
 }
