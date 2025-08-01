@@ -3,13 +3,13 @@
 import { usePathname, useSearchParams } from 'next/navigation'
 import { useEffect } from 'react'
 import { usePostHog } from 'posthog-js/react'
-import { useLocale } from 'next-intl'
-
 export default function PostHogPageView() {
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const posthog = usePostHog()
-  const locale = useLocale()
+  
+  // Extract locale from pathname instead of using useLocale hook
+  const locale = pathname?.split('/')[1] || 'en'
 
   useEffect(() => {
     if (pathname && posthog) {

@@ -1,6 +1,7 @@
 export const POSTHOG_CONFIG = {
   web: {
-    api_host: process.env.NEXT_PUBLIC_POSTHOG_HOST || 'https://us.i.posthog.com',
+    api_host: process.env.NEXT_PUBLIC_POSTHOG_HOST || '/ingest',
+    ui_host: 'https://us.i.posthog.com',
     capture_pageview: false,
     person_profiles: 'identified_only',
     sanitize_properties: (properties: any, event: string) => {
