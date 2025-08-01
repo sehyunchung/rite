@@ -114,6 +114,36 @@ button/
 └── index.tsx        # Platform exports
 ```
 
+### "use dom" Components
+Select components support Expo's "use dom" directive for maximum web compatibility:
+
+```
+qr-code/
+├── qr-code.dom.tsx   # DOM-native with "use dom"
+├── qr-code.web.tsx   # Standard web component
+├── qr-code.native.tsx # React Native fallback
+├── index.dom.ts      # DOM exports
+└── index.ts         # Platform exports
+
+dropzone/
+├── dropzone.dom.tsx  # HTML5 drag-and-drop with "use dom"
+├── dropzone.web.tsx  # Standard web component
+├── dropzone.native.tsx # React Native fallback
+├── index.dom.ts     # DOM exports
+└── index.ts        # Platform exports
+```
+
+**Benefits:**
+- Direct access to Web APIs (Canvas, File API, DOM manipulation)
+- Better performance than WebView approach
+- Reduced platform-specific code duplication
+- Access to mature web libraries (qrcode, file validation, etc.)
+
+**Security Features:**
+- Safe SVG rendering using DOMParser (prevents XSS)
+- Dual-layer file validation (MIME type + extension)
+- Input sanitization and validation
+
 ## Internationalization
 
 next-intl with Korean/English support:
@@ -144,6 +174,7 @@ const t = useTranslations('dashboard');
 - Design system with cross-platform components
 - i18n system with language switcher
 - Hydration-safe providers
+- "use dom" example implementations (QR Code, Dropzone)
 
 **🚧 In Progress:**
 - File uploads with Convex
@@ -189,9 +220,11 @@ pnpm android
 ### Status
 - ✅ Monorepo integration
 - ✅ Convex backend access
+- ✅ Basic event listing
 - ✅ Design system integration (colors, typography, spacing)
 - ✅ Navigation aligned with Next.js app (Dashboard, Create Event, Events)
 - ✅ Tailwind configuration with @rite/ui tokens
+- ✅ "use dom" demo with QR Code and Dropzone examples
 - 🚧 Authentication pending
 - 🚧 Full @rite/ui component integration
 
