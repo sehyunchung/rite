@@ -13,8 +13,13 @@ const nextConfig = {
   // PostHog reverse proxy to avoid ad blockers
   async rewrites() {
     return [
+      // Handle both root level and locale-prefixed routes
       {
         source: "/ingest/static/:path*", 
+        destination: "https://us-assets.i.posthog.com/static/:path*",
+      },
+      {
+        source: "/:locale/ingest/static/:path*", 
         destination: "https://us-assets.i.posthog.com/static/:path*",
       },
       {
@@ -22,7 +27,15 @@ const nextConfig = {
         destination: "https://us-assets.i.posthog.com/array/:path*",
       },
       {
+        source: "/:locale/ingest/array/:path*",
+        destination: "https://us-assets.i.posthog.com/array/:path*",
+      },
+      {
         source: "/ingest/:path*",
+        destination: "https://us.i.posthog.com/:path*",
+      },
+      {
+        source: "/:locale/ingest/:path*",
         destination: "https://us.i.posthog.com/:path*",
       },
     ]
