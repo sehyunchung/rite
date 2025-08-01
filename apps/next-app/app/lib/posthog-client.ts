@@ -8,7 +8,8 @@ export function initPostHog() {
   if (typeof window !== 'undefined' && !posthog.__loaded) {
     posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY!, {
       ...POSTHOG_CONFIG.web,
-      api_host: process.env.NEXT_PUBLIC_POSTHOG_HOST || 'https://us.i.posthog.com',
+      api_host: '/ingest', // Always use proxy in browser
+      ui_host: 'https://us.i.posthog.com', // UI host for PostHog interface
     })
   }
   
