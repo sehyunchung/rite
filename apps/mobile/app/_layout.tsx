@@ -8,6 +8,7 @@ import '../global.css';
 
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { ConvexProvider } from '../providers/ConvexProvider';
+import { PostHogProviderWrapper } from '../providers/PostHogProvider';
 import { AuthProvider } from '../contexts/AuthContext';
 import ErrorBoundary from '../components/ErrorBoundary';
 import AppNavigator from '../components/AppNavigator';
@@ -50,14 +51,16 @@ export default function RootLayout() {
 
   return (
     <ErrorBoundary>
-      <ConvexProvider>
-        <AuthProvider>
-          <ThemeProvider value={RiteDarkTheme}>
-            <AppNavigator />
-            <StatusBar style="light" />
-          </ThemeProvider>
-        </AuthProvider>
-      </ConvexProvider>
+      <PostHogProviderWrapper>
+        <ConvexProvider>
+          <AuthProvider>
+            <ThemeProvider value={RiteDarkTheme}>
+              <AppNavigator />
+              <StatusBar style="light" />
+            </ThemeProvider>
+          </AuthProvider>
+        </ConvexProvider>
+      </PostHogProviderWrapper>
     </ErrorBoundary>
   );
 }
