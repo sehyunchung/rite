@@ -29,7 +29,6 @@ export function EventDetailClient({ eventId, userId, locale }: EventDetailClient
   const baseUrl = typeof window !== 'undefined' ? window.location.origin : '';
   const [showQRCode, setShowQRCode] = useState(false);
   const t = useTranslations('events.detail');
-  const tNav = useTranslations('navigation');
   const tStatus = useTranslations('status');
   
   const event = useQuery(
