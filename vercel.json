@@ -1,8 +1,0 @@
-{
-  "functions": {
-    "apps/next-app/**": {
-      "runtime": "nodejs20.x"
-    }
-  },
-  "buildCommand": "pnpm build --filter=next-app"
-}
