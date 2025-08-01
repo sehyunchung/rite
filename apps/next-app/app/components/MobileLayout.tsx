@@ -1,6 +1,6 @@
 'use client';
 
-import { ReactNode } from 'react';
+import { ReactNode, useEffect } from 'react';
 import { BottomNavigation } from './BottomNavigation';
 import { Button, Typography } from '@rite/ui';
 import { signOut } from 'next-auth/react';
@@ -9,7 +9,7 @@ import { UserDisplay } from './UserDisplay';
 import { useTranslations } from 'next-intl';
 import { Menu, X } from 'lucide-react';
 import { useState } from 'react';
-import { Link } from '../../i18n/routing';
+import { Link, usePathname } from '../../i18n/routing';
 
 interface MobileLayoutProps {
   children: ReactNode;
@@ -19,7 +19,13 @@ interface MobileLayoutProps {
 
 export function MobileLayout({ children, userId, fallbackDisplayName }: MobileLayoutProps) {
   const t = useTranslations('navigation');
+  const pathname = usePathname();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  // Reset menu state when pathname changes (navigation occurs)
+  useEffect(() => {
+    setIsMenuOpen(false);
+  }, [pathname]);
 
   return (
     <div className="min-h-screen bg-neutral-800">
@@ -39,7 +45,7 @@ export function MobileLayout({ children, userId, fallbackDisplayName }: MobileLa
         
         {/* Mobile Menu Dropdown */}
         {isMenuOpen && (
-          <div className="absolute top-full left-0 right-0 bg-neutral-700 border-b border-neutral-600 z-40">
+          <div className="absolute top-full left-0 right-0 bg-neutral-700 border-b border-neutral-600 z-40 animate-in slide-in-from-top-2 duration-200">
             <div className="flex flex-col space-y-4 p-4">
               {userId && fallbackDisplayName && (
                 <div className="flex items-center justify-between">
