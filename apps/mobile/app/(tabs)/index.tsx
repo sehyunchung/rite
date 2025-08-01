@@ -31,8 +31,10 @@ export default function HomeScreen() {
           <Text style={styles.statusItem}>{pingResult ? '✅' : '⏳'} Convex {pingResult ? 'connected' : 'connecting...'}</Text>
           <Text style={styles.statusItem}>✅ Shared backend package</Text>
           <Text style={styles.statusItem}>✅ NativeWind styling</Text>
+          <Text style={styles.statusItem}>✅ Design token integration</Text>
           <Text style={styles.statusItem}>✅ Dark theme applied</Text>
           <Text style={styles.statusItem}>✅ SUIT fonts configured</Text>
+          <Text style={styles.statusItem}>✅ Navigation aligned with Next.js</Text>
           <Text style={styles.statusItem}>🚧 Authentication pending</Text>
           <Text style={styles.statusItem}>🚧 @rite/ui components pending</Text>
         </View>

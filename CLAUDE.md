@@ -184,12 +184,16 @@ pnpm android
 - Metro configured for monorepo + NativeWind
 - Shared Convex backend via `@rite/backend`
 - Platform-specific UI components
+- Design tokens fully integrated via Tailwind CSS
 
 ### Status
 - ✅ Monorepo integration
 - ✅ Convex backend access
-- ✅ Basic event listing
+- ✅ Design system integration (colors, typography, spacing)
+- ✅ Navigation aligned with Next.js app (Dashboard, Create Event, Events)
+- ✅ Tailwind configuration with @rite/ui tokens
 - 🚧 Authentication pending
+- 🚧 Full @rite/ui component integration
 
 ## Code Style
 - TypeScript strict mode, no `any` or non-null assertions
