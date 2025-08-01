@@ -2,7 +2,7 @@
 
 import { formatHex, oklch } from 'culori';
 import QR from 'qrcode';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo, useRef } from 'react';
 
 export type QRCodeProps = {
   data: string;
@@ -38,39 +38,59 @@ export const QRCode = ({
   style,
 }: QRCodeProps) => {
   const [svg, setSVG] = useState<string | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // Memoize color processing to avoid recalculating on every render
+  const processedColors = useMemo(() => {
+    const foregroundColor = foreground ?? '#1A0F2F'; // neutral-800
+    const backgroundColor = background ?? '#FFFFFF';
+
+    const foregroundOklch = getOklch(
+      foregroundColor,
+      [0.21, 0.006, 285.885]
+    );
+    const backgroundOklch = getOklch(backgroundColor, [0.985, 0, 0]);
+
+    return {
+      dark: formatHex(oklch({ mode: 'oklch', ...foregroundOklch })),
+      light: formatHex(oklch({ mode: 'oklch', ...backgroundOklch })),
+    };
+  }, [foreground, background]);
 
   useEffect(() => {
     const generateQR = async () => {
       try {
-        // Use provided colors or fallback to RITE brand colors
-        const foregroundColor = foreground ?? '#1A0F2F'; // neutral-800
-        const backgroundColor = background ?? '#FFFFFF';
-
-        const foregroundOklch = getOklch(
-          foregroundColor,
-          [0.21, 0.006, 285.885]
-        );
-        const backgroundOklch = getOklch(backgroundColor, [0.985, 0, 0]);
-
         const newSvg = await QR.toString(data, {
           type: 'svg',
-          color: {
-            dark: formatHex(oklch({ mode: 'oklch', ...foregroundOklch })),
-            light: formatHex(oklch({ mode: 'oklch', ...backgroundOklch })),
-          },
+          color: processedColors,
           width: 200,
           errorCorrectionLevel: robustness,
           margin: 0,
         });
 
-        setSVG(newSvg);
+        // Safely parse and insert SVG using DOMParser
+        if (containerRef.current) {
+          const parser = new DOMParser();
+          const doc = parser.parseFromString(newSvg, 'image/svg+xml');
+          const svgElement = doc.querySelector('svg');
+          
+          if (svgElement && !doc.querySelector('parsererror')) {
+            // Clear previous content
+            containerRef.current.innerHTML = '';
+            // Clone and append the SVG element
+            containerRef.current.appendChild(svgElement.cloneNode(true));
+            setSVG(newSvg);
+          } else {
+            console.error('QR Code generation failed: Invalid SVG');
+          }
+        }
       } catch (err) {
         console.error('QR Code generation failed:', err);
       }
     };
 
     generateQR();
-  }, [data, foreground, background, robustness]);
+  }, [data, processedColors, robustness]);
 
   if (!svg) {
     return (
@@ -85,9 +105,9 @@ export const QRCode = ({
 
   return (
     <div
+      ref={containerRef}
       className={className}
       style={style}
-      dangerouslySetInnerHTML={{ __html: svg }}
     />
   );
 };

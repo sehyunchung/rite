@@ -34,21 +34,34 @@ const validateFile = (
 ): FileRejection | null => {
   const errors: Array<{ code: string; message: string }> = [];
 
-  // Check file type
+  // Check file type and extension
   if (accept) {
     const acceptedTypes = Object.keys(accept).flatMap(key => accept[key]);
     const fileType = file.type;
-    const isAccepted = acceptedTypes.some(type => {
+    const fileName = file.name.toLowerCase();
+    const fileExtension = fileName.substring(fileName.lastIndexOf('.'));
+    
+    const isTypeAccepted = acceptedTypes.some(type => {
       if (type.endsWith('/*')) {
         return fileType.startsWith(type.slice(0, -1));
       }
       return fileType === type;
     });
 
-    if (!isAccepted) {
+    // Also check extensions for enhanced security
+    const acceptedExtensions = Object.keys(accept);
+    const isExtensionAccepted = acceptedExtensions.some(ext => {
+      if (ext.startsWith('.')) {
+        return fileExtension === ext.toLowerCase();
+      }
+      return false;
+    });
+
+    // File is accepted if either MIME type OR extension matches
+    if (!isTypeAccepted && !isExtensionAccepted) {
       errors.push({
         code: 'file-invalid-type',
-        message: `File type ${fileType} is not accepted`
+        message: `File type ${fileType} or extension ${fileExtension} is not accepted`
       });
     }
   }
