@@ -24,6 +24,10 @@
       "dependsOn": ["^build"],
       "outputs": []
     },
+    "@rite/posthog-config#build": {
+      "dependsOn": [],
+      "outputs": ["dist/**"]
+    },
     "dev": {
       "cache": false,
       "persistent": true
