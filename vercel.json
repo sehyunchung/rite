@@ -4,5 +4,5 @@
       "runtime": "nodejs20.x"
     }
   },
-  "buildCommand": "pnpm run build --filter=next-app"
+  "buildCommand": "pnpm build --filter=next-app"
 }
