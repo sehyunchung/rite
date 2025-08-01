@@ -16,6 +16,7 @@ import { QRCode } from '@rite/ui';
 import { useState } from 'react';
 import { EditIcon, ClipboardListIcon, QrCodeIcon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+import { MobileLayout } from '../../../components/MobileLayout';
 
 interface EventDetailClientProps {
   eventId: string;
@@ -60,41 +61,17 @@ export function EventDetailClient({ eventId, userId, locale }: EventDetailClient
   }
 
   return (
-    <div className="min-h-screen bg-neutral-800">
-      {/* Mobile Header */}
-      <header className="bg-neutral-700 border-b border-neutral-600 md:hidden">
-        <div className="flex justify-between items-center px-4 py-3">
-          <Typography variant="h5" className="text-brand-primary">RITE</Typography>
-          <Button variant="outline" size="sm" onClick={() => router.push(`/${locale}/dashboard`)}>
-            {t('backToDashboard')}
-          </Button>
-        </div>
-      </header>
+    <MobileLayout userId={userId} fallbackDisplayName="User">
 
-      {/* Desktop Navigation */}
-      <nav className="bg-neutral-700 border-b border-neutral-600 hidden md:block">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16 items-center">
-            <div className="flex items-center space-x-8">
-              <div className="flex items-center">
-                <Typography variant="h5" className="ml-2 text-brand-primary">RITE</Typography>
-              </div>
-              <nav className="hidden md:flex space-x-6">
-                <Link href="/dashboard" className="text-sm font-medium text-neutral-400 hover:text-white transition-colors">
-                  {tNav('dashboard')}
-                </Link>
-                <span className="text-sm font-medium text-white">Event Details</span>
-              </nav>
-            </div>
+      <div className="p-4 md:p-8">
+        <div className="max-w-7xl mx-auto">
+          {/* Back Button - Desktop only (mobile uses MobileLayout navigation) */}
+          <div className="hidden md:block mb-4">
             <Button variant="outline" onClick={() => router.push(`/${locale}/dashboard`)}>
               {t('backToDashboard')}
             </Button>
           </div>
-        </div>
-      </nav>
-
-      <div className="p-4 md:p-8">
-        <div className="max-w-7xl mx-auto">
+          
           {/* Event Header */}
           <div className="mb-6 md:mb-8">
             <div className="flex flex-col md:flex-row md:justify-between md:items-start mb-4 space-y-4 md:space-y-0">
@@ -281,6 +258,6 @@ export function EventDetailClient({ eventId, userId, locale }: EventDetailClient
           )}
         </div>
       </div>
-    </div>
+    </MobileLayout>
   );
 }

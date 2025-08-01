@@ -25,7 +25,7 @@ export function BottomNavigation() {
       href: '/events',
       label: t('events'),
       icon: Calendar,
-      isActive: pathname.startsWith('/events') && pathname !== '/events/create',
+      isActive: pathname === '/events' || (pathname.startsWith('/events/') && !pathname.startsWith('/events/create')),
     },
   ];
 
