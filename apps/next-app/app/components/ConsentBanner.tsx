@@ -1,12 +1,14 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useTranslations } from 'next-intl'
 import { PostHogPrivacyManager } from '@rite/posthog-config'
 import { initPostHog } from '../lib/posthog-client'
 
 export default function ConsentBanner() {
   const [showBanner, setShowBanner] = useState(false)
   const [loading, setLoading] = useState(true)
+  const t = useTranslations('consentBanner')
 
   useEffect(() => {
     // Check if we should show the banner
@@ -38,8 +40,7 @@ export default function ConsentBanner() {
       <div className="max-w-4xl mx-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div className="flex-1">
           <p className="text-sm text-neutral-300 leading-relaxed">
-            We use analytics to improve your experience and understand how you use RITE. 
-            By continuing, you agree to our use of cookies and data collection.
+            {t('message')}
           </p>
         </div>
         
@@ -48,13 +49,13 @@ export default function ConsentBanner() {
             onClick={handleDecline} 
             className="px-4 py-2 text-sm text-neutral-400 hover:text-neutral-300 transition-colors border border-neutral-600 rounded-md hover:border-neutral-500"
           >
-            Decline
+            {t('decline')}
           </button>
           <button 
             onClick={handleAccept} 
             className="px-4 py-2 bg-primary hover:bg-primary/90 text-white rounded-md text-sm font-medium transition-colors"
           >
-            Accept Analytics
+            {t('accept')}
           </button>
         </div>
       </div>

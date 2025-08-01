@@ -5,7 +5,6 @@ import { suit } from './lib/fonts'
 import { ErrorBoundary } from './components/ErrorBoundary'
 import { Suspense } from 'react'
 import PostHogPageView from './components/PostHogPageView'
-import ConsentBanner from './components/ConsentBanner'
 
 export const metadata: Metadata = {
   title: 'Rite - DJ Event Management Platform',
@@ -26,7 +25,6 @@ export default function RootLayout({
               <PostHogPageView />
             </Suspense>
             {children}
-            <ConsentBanner />
           </RootProvider>
         </ErrorBoundary>
       </body>

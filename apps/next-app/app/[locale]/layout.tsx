@@ -4,6 +4,7 @@ import { getMessages } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { ReactNode } from 'react';
 import { setRequestLocale } from 'next-intl/server';
+import ConsentBanner from '../components/ConsentBanner';
 
 interface Props {
   children: ReactNode;
@@ -32,6 +33,7 @@ export default async function LocaleLayout({ children, params }: Props) {
   return (
     <NextIntlClientProvider messages={messages}>
       {children}
+      <ConsentBanner />
     </NextIntlClientProvider>
   );
 }
