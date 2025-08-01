@@ -34,6 +34,24 @@ vi.mock('convex/react', () => ({
   useAction: vi.fn(() => vi.fn()),
 }))
 
+// Mock next-intl
+vi.mock('next-intl', () => ({
+  useTranslations: () => (key: string) => key,
+  useLocale: () => 'en',
+}))
+
+vi.mock('@/i18n/routing', () => ({
+  Link: ({ children, ...props }: any) => {
+    const React = require('react')
+    return React.createElement('a', props, children)
+  },
+  useRouter: () => ({
+    push: vi.fn(),
+    replace: vi.fn(),
+    back: vi.fn(),
+  }),
+}))
+
 // Cleanup after each test
 afterEach(() => {
   cleanup()

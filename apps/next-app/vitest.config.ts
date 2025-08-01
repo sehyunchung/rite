@@ -10,6 +10,25 @@ export default defineConfig({
     globals: true,
     include: ['__tests__/**/*.test.{ts,tsx}', 'src/**/*.test.{ts,tsx}'],
     exclude: ['e2e/**/*', 'node_modules/**/*'],
+    coverage: {
+      provider: 'c8',
+      reporter: ['text', 'html', 'lcov'],
+      exclude: [
+        'node_modules/**/*',
+        'e2e/**/*',
+        '**/*.config.{ts,js}',
+        '**/*.d.ts',
+        'coverage/**/*',
+      ],
+      thresholds: {
+        global: {
+          branches: 80,
+          functions: 80,
+          lines: 80,
+          statements: 80,
+        },
+      },
+    },
   },
   resolve: {
     alias: {
