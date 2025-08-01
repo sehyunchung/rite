@@ -28,6 +28,10 @@
       "dependsOn": [],
       "outputs": ["dist/**"]
     },
+    "next-app#build": {
+      "dependsOn": ["^build", "@rite/posthog-config#build"],
+      "outputs": [".next/**", "!.next/cache/**"]
+    },
     "dev": {
       "cache": false,
       "persistent": true
