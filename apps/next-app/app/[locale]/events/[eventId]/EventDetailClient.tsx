@@ -47,7 +47,7 @@ export function EventDetailClient({ eventId, userId, locale }: EventDetailClient
 
   if (event === null) {
     return (
-      <div className="min-h-screen bg-neutral-800 flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
           <Typography variant="h2" className="mb-2">{t('notFound')}</Typography>
           <Typography variant="body" color="secondary" className="mb-4">{t('notFoundMessage')}</Typography>
@@ -139,13 +139,13 @@ export function EventDetailClient({ eventId, userId, locale }: EventDetailClient
                   {event.timeslots && event.timeslots.length > 0 ? (
                     <div className="space-y-4">
                       {event.timeslots.map((slot: Doc<"timeslots">) => (
-                        <div key={slot._id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                        <div key={slot._id} className="flex items-center justify-between p-4 bg-muted rounded-lg">
                           <div className="flex-1">
                             <div className="flex items-center space-x-3">
                               <span className="font-medium">{slot.djName}</span>
-                              <span className="text-blue-600">{slot.djInstagram}</span>
+                              <span className="text-brand-primary">{slot.djInstagram}</span>
                             </div>
-                            <p className="text-sm text-gray-600 mt-1">
+                            <p className="text-sm text-muted-foreground mt-1">
                               {slot.startTime} - {slot.endTime}
                             </p>
                           </div>
@@ -158,7 +158,7 @@ export function EventDetailClient({ eventId, userId, locale }: EventDetailClient
                       ))}
                     </div>
                   ) : (
-                    <p className="text-gray-500">{t('noDJsScheduled')}</p>
+                    <p className="text-muted-foreground">{t('noDJsScheduled')}</p>
                   )}
                 </CardContent>
               </Card>
@@ -179,19 +179,19 @@ export function EventDetailClient({ eventId, userId, locale }: EventDetailClient
                 <CardContent className="space-y-3">
                   <div>
                     <p className="font-medium text-sm">{t('eventDate')}</p>
-                    <p className="text-gray-600">{event.date}</p>
+                    <p className="text-muted-foreground">{event.date}</p>
                   </div>
                   <div>
                     <p className="font-medium text-sm">{t('guestListDeadline')}</p>
-                    <p className="text-gray-600">{event.deadlines.guestList}</p>
+                    <p className="text-muted-foreground">{event.deadlines.guestList}</p>
                   </div>
                   <div>
                     <p className="font-medium text-sm">{t('promoMaterialsDeadline')}</p>
-                    <p className="text-gray-600">{event.deadlines.promoMaterials}</p>
+                    <p className="text-muted-foreground">{event.deadlines.promoMaterials}</p>
                   </div>
                   <div>
                     <p className="font-medium text-sm">{t('paymentDue')}</p>
-                    <p className="text-gray-600">{event.payment.dueDate}</p>
+                    <p className="text-muted-foreground">{event.payment.dueDate}</p>
                   </div>
                 </CardContent>
               </Card>
@@ -204,15 +204,15 @@ export function EventDetailClient({ eventId, userId, locale }: EventDetailClient
                 <CardContent className="space-y-3">
                   <div>
                     <p className="font-medium text-sm">{t('totalAmount')}</p>
-                    <p className="text-gray-600">{event.payment.amount.toLocaleString()} {event.payment.currency}</p>
+                    <p className="text-muted-foreground">{event.payment.amount.toLocaleString()} {event.payment.currency}</p>
                   </div>
                   <div>
                     <p className="font-medium text-sm">{t('perDJ')}</p>
-                    <p className="text-gray-600">{event.payment.perDJ.toLocaleString()} {event.payment.currency}</p>
+                    <p className="text-muted-foreground">{event.payment.perDJ.toLocaleString()} {event.payment.currency}</p>
                   </div>
                   <div>
                     <p className="font-medium text-sm">{t('guestLimitPerDJ')}</p>
-                    <p className="text-gray-600">{event.guestLimitPerDJ} {t('guests')}</p>
+                    <p className="text-muted-foreground">{event.guestLimitPerDJ} {t('guests')}</p>
                   </div>
                 </CardContent>
               </Card>
@@ -225,7 +225,7 @@ export function EventDetailClient({ eventId, userId, locale }: EventDetailClient
                     <CardTitle>{t('instagramHashtags')}</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-sm text-gray-700 font-mono bg-gray-50 p-3 rounded">
+                    <p className="text-sm text-foreground font-mono bg-muted p-3 rounded">
                       {event.hashtags}
                     </p>
                   </CardContent>
@@ -245,10 +245,10 @@ export function EventDetailClient({ eventId, userId, locale }: EventDetailClient
                   <div className="flex justify-center mb-4">
                     <QRCode
                       data={`${baseUrl}/${locale}/events/${event._id}`}
-                      className="w-48 h-48 border rounded-lg p-4 bg-white"
+                      className="w-48 h-48 border rounded-lg p-4 bg-neutral-0"
                     />
                   </div>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-muted-foreground">
                     {t('qrCode.description')}
                   </p>
                 </CardContent>

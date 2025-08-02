@@ -24,10 +24,10 @@ export function SubmissionLinks({ events }: SubmissionLinksProps) {
 
   return (
     <div className="mt-6">
-      <h2 className="text-xl font-semibold text-gray-900 mb-4">{t('title')}</h2>
+      <h2 className="text-xl font-semibold text-foreground mb-4">{t('title')}</h2>
       <Card>
         <CardContent className="pt-6">
-          <p className="text-sm text-gray-600 mb-4">
+          <p className="text-sm text-muted-foreground mb-4">
             {t('description')}
           </p>
           <div className="space-y-4">
@@ -36,11 +36,11 @@ export function SubmissionLinks({ events }: SubmissionLinksProps) {
                 const submissionUrl = `${baseUrl}/dj-submission?token=${slot.submissionToken}`;
                 
                 return (
-                  <div key={slot._id} className="border rounded-lg p-4 bg-gray-50">
+                  <div key={slot._id} className="border rounded-lg p-4 bg-muted">
                     <div className="flex justify-between items-start mb-2">
                       <div>
-                        <h4 className="font-medium text-gray-900">{event.name}</h4>
-                        <p className="text-sm text-gray-600">
+                        <h4 className="font-medium text-foreground">{event.name}</h4>
+                        <p className="text-sm text-muted-foreground">
                           {slot.djName} ({slot.djInstagram}) - {slot.startTime} to {slot.endTime}
                         </p>
                       </div>
@@ -50,7 +50,7 @@ export function SubmissionLinks({ events }: SubmissionLinksProps) {
                         type="text"
                         readOnly
                         value={submissionUrl}
-                        className="flex-1 px-3 py-2 text-sm border rounded-md bg-white"
+                        className="flex-1 px-3 py-2 text-sm border rounded-md bg-background text-foreground"
                       />
                       <CopyButton text={submissionUrl} iconOnly={true} />
                     </div>

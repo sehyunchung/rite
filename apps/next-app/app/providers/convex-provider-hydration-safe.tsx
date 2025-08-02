@@ -66,9 +66,9 @@ export function ConvexProviderHydrationSafe({
   // Client-side without Convex URL
   if (!clientRef.current) {
     return (
-      <div className="min-h-screen bg-neutral-800 flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center p-8">
-          <Typography variant="h3" className="mb-4 text-red-400">
+          <Typography variant="h3" className="mb-4 text-error">
             Configuration Error
           </Typography>
           <Typography variant="body" color="secondary" className="mb-4">
