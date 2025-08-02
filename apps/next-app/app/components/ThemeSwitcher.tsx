@@ -23,6 +23,9 @@ export function ThemeSwitcher() {
     if (savedTheme && alternativeThemes[savedTheme]) {
       setCurrentTheme(savedTheme);
       applyTheme(savedTheme);
+    } else {
+      // Apply default theme if no saved theme
+      applyTheme('riteRefined');
     }
   }, []);
 
