@@ -18,7 +18,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Authentication Setup
 
-NextAuth v5 with streamlined approach. Required `.env.local`:
+Dual authentication system supporting both Next.js (NextAuth v5) and mobile platforms with modular architecture.
+
+### Environment Configuration
+
+**Next.js (.env.local):**
 ```
 NEXTAUTH_URL=http://localhost:8000
 NEXTAUTH_SECRET=your_nextauth_secret_here
@@ -38,13 +42,118 @@ APPLE_ID=your_apple_id
 APPLE_SECRET=your_apple_secret
 ```
 
+**Mobile (.env or Expo environment):**
+```
+EXPO_PUBLIC_CONVEX_URL=your_convex_url
+
+# Google OAuth - Platform Specific Client IDs
+EXPO_PUBLIC_GOOGLE_OAUTH_CLIENT_ID_IOS=your_ios_client_id
+EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID=your_android_client_id
+EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID=your_web_client_id
+EXPO_PUBLIC_GOOGLE_WEB_CLIENT_SECRET=your_web_client_secret
+```
+
+### Mobile Authentication Architecture
+
+**Modular Structure** - AuthContext reduced from 365 lines to 47 lines with clean separation:
+
+```
+apps/mobile/
+├── lib/auth/
+│   ├── types.ts           # TypeScript interfaces & AuthError class
+│   ├── oauth-config.ts    # Platform-specific OAuth configuration
+│   ├── secure-storage.ts  # Cross-platform storage abstraction
+│   ├── session-utils.ts   # Session management utilities
+│   └── index.ts          # Centralized exports
+├── hooks/auth/
+│   ├── useGoogleAuth.ts   # Google OAuth flow handling
+│   ├── useSession.ts      # Session state management
+│   └── useOAuthFlow.ts    # Complete OAuth flow orchestration
+└── contexts/
+    └── AuthContext.tsx    # Clean, focused context (47 lines)
+```
+
+**Key Features:**
+- **Cross-platform OAuth**: Works on web, iOS, Android, and Expo Go
+- **Modular hooks**: Specialized hooks for different auth operations
+- **Enhanced type safety**: Comprehensive TypeScript interfaces
+- **Structured error handling**: Custom AuthError class with error codes
+- **Secure storage**: Platform-specific secure storage abstraction
+
+### Google OAuth Configuration
+
+**Google Cloud Console Setup:**
+1. Create OAuth 2.0 Client IDs for each platform:
+   - **Web application**: For Expo web and development
+   - **iOS**: For iOS app and Expo Go
+   - **Android**: For Android app
+
+**Platform-specific Redirect URIs:**
+- **Web**: `http://localhost:8081` (Expo web development)
+- **iOS/Expo Go**: `com.googleusercontent.apps.[CLIENT-ID]://` (Google URL scheme)
+- **Android**: `com.rite.mobile://` (custom scheme)
+
+**Key Breakthrough**: Using simple Google URL scheme format (`com.googleusercontent.apps.[CLIENT-ID]://`) without additional paths for iOS/Expo Go compatibility.
+
+### OAuth Flow Types
+
+**Web Platform (Implicit Flow):**
+- Uses `response_type=token` for direct access token
+- Handles token from URL hash parameters
+- Immediate authentication without server exchange
+
+**Mobile Platform (Authorization Code Flow):**
+- Uses `response_type=code` with `shouldAutoExchangeCode=true`
+- Server-side token exchange for enhanced security
+- Supports both Expo Go and standalone apps
+
 ### OAuth Providers
-- **Google**: Standard OAuth setup via Google Cloud Console
-- **Apple**: Planned but not implemented
-- **Instagram**: Custom OAuth proxy (Cloudflare Worker) transforms to OIDC format
+- **Google**: ✅ **Complete** - Cross-platform OAuth with web/iOS/Android support
+- **Apple**: 📋 Planned but not implemented
+- **Instagram**: ✅ Custom OAuth proxy (Cloudflare Worker) transforms to OIDC format
   - Requires Business/Creator accounts
   - Complete profile data capture
   - Auto-connection during signup
+
+### App Configuration (app.json)
+
+**URL Schemes for OAuth:**
+```json
+{
+  "ios": {
+    "bundleIdentifier": "com.rite.mobile",
+    "infoPlist": {
+      "CFBundleURLTypes": [
+        {
+          "CFBundleURLName": "google-oauth",
+          "CFBundleURLSchemes": [
+            "com.googleusercontent.apps.420827108032-bksn0r122euuio8gfg8pa5ei50kjlkj4"
+          ]
+        },
+        {
+          "CFBundleURLName": "expo-auth-session",
+          "CFBundleURLSchemes": ["mobile"]
+        }
+      ]
+    }
+  },
+  "android": {
+    "package": "com.rite.mobile",
+    "intentFilters": [
+      {
+        "action": "VIEW",
+        "category": ["BROWSABLE", "DEFAULT"],
+        "data": { "scheme": "mobile" }
+      },
+      {
+        "action": "VIEW",
+        "category": ["BROWSABLE", "DEFAULT"],
+        "data": { "scheme": "com.rite.mobile" }
+      }
+    ]
+  }
+}
+```
 
 ## Project Architecture
 
@@ -74,8 +183,18 @@ rite/
 - **Validation**: ArkType
 
 ### Key Files
+**Next.js Authentication:**
 - Auth config: `/apps/next-app/app/lib/auth.ts`
 - Providers: `/apps/next-app/app/providers/`
+
+**Mobile Authentication:**
+- AuthContext: `/apps/mobile/contexts/AuthContext.tsx`
+- Auth utilities: `/apps/mobile/lib/auth/`
+- Auth hooks: `/apps/mobile/hooks/auth/`
+- OAuth config: `/apps/mobile/lib/auth/oauth-config.ts`
+- App configuration: `/apps/mobile/app.json`
+
+**Shared:**
 - Convex functions: `/packages/backend/convex/`
 - UI components: `/packages/ui/src/components/`
 - Design tokens: `/packages/ui/src/design-tokens/`
@@ -303,6 +422,8 @@ Test themes across:
 **✅ Complete:**
 - Core platform with event creation, DJ submissions
 - Instagram OAuth with mobile support
+- **Google OAuth with cross-platform support** (web, iOS, Android, Expo Go)
+- **Modular mobile authentication architecture** (AuthContext: 365→47 lines)
 - Design system with cross-platform components
 - **Dynamic theme system with 5 curated themes**
 - **ThemeSwitcher component with persistence**
@@ -328,6 +449,47 @@ Test themes across:
 3. **Missing env vars**: Check NEXT_PUBLIC_CONVEX_URL
 4. **Mobile OAuth**: Check force web parameters in proxy logs
 
+### Mobile OAuth Troubleshooting
+
+**Google OAuth Setup Issues:**
+
+1. **Missing Client IDs**
+   - Ensure all platform-specific client IDs are configured in environment
+   - Check `EXPO_PUBLIC_GOOGLE_OAUTH_CLIENT_ID_IOS`, `EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID`, `EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID`
+
+2. **Redirect URI Mismatch**
+   - **iOS/Expo Go**: Use Google URL scheme format: `com.googleusercontent.apps.[CLIENT-ID]://`
+   - **Android**: Use custom scheme: `com.rite.mobile://`
+   - **Web**: Use localhost: `http://localhost:8081`
+
+3. **URL Scheme Configuration**
+   - Verify `app.json` contains correct URL schemes for both platforms
+   - iOS bundle identifier must match Google Cloud Console configuration
+   - Android package name must match Google Cloud Console and `app.json`
+
+4. **Platform Detection Issues**
+   - Check `getPlatformInfo()` function returns correct platform/environment
+   - Expo Go vs standalone app detection affects OAuth flow selection
+
+5. **Token Exchange Failures**
+   - Verify `EXPO_PUBLIC_GOOGLE_WEB_CLIENT_SECRET` is configured for code flow
+   - Check network connectivity for token exchange requests
+   - Validate client ID matches between authorization request and token exchange
+
+**Common Error Codes:**
+- `MISSING_ACCESS_TOKEN`: No access token in OAuth response
+- `GOOGLE_API_ERROR`: Failed to fetch user info from Google
+- `TOKEN_EXCHANGE_ERROR`: Authorization code to token exchange failed
+- `USER_CREATION_ERROR`: Failed to create user in Convex
+- `WEB_REDIRECT_ERROR`: Failed to handle web platform redirect
+
+**Debug Steps:**
+1. Enable verbose logging in OAuth config functions
+2. Check browser network tab for failed requests (web platform)
+3. Verify Google Cloud Console OAuth client configuration
+4. Test with different platforms (web, iOS simulator, Android emulator)
+5. Check Convex dashboard for user creation logs
+
 ### Instagram OAuth Proxy
 - Service: `rite-instagram-oauth-proxy.sehyunchung.workers.dev`
 - Deploy: `cd instagram-oauth-proxy && npx wrangler deploy`
@@ -352,6 +514,56 @@ pnpm android
 - Platform-specific UI components
 - Design tokens fully integrated via Tailwind CSS
 
+### Authentication Development Workflow
+
+**Using the Modular Auth System:**
+
+1. **Adding New OAuth Providers**
+   ```typescript
+   // Add provider config to oauth-config.ts
+   export const getProviderConfig = (provider: 'google' | 'apple') => {
+     // Platform-specific configuration logic
+   };
+
+   // Create provider-specific hook in hooks/auth/
+   export const useAppleAuth = (convex: ConvexReactClient) => {
+     // Provider-specific authentication logic
+   };
+
+   // Integrate in useOAuthFlow.ts
+   const { signInWithApple } = useAppleAuth(convex);
+   ```
+
+2. **Extending Authentication Types**
+   ```typescript
+   // Add to lib/auth/types.ts
+   export interface NewAuthConfig {
+     // Provider-specific configuration
+   }
+
+   export interface AuthContextType {
+     // Add new auth methods
+     signInWithApple: () => Promise<void>;
+   }
+   ```
+
+3. **Adding Custom Auth Hooks**
+   ```typescript
+   // Create new hook in hooks/auth/
+   export const useCustomAuth = () => {
+     // Custom authentication logic
+     // Follows same pattern as existing hooks
+   };
+   ```
+
+**Architecture Benefits:**
+- **Clean separation**: Context only orchestrates, hooks handle logic
+- **Testable modules**: Each utility can be tested independently
+- **Type safety**: Comprehensive interfaces prevent runtime errors
+- **Cross-platform**: Same auth logic works across all platforms
+- **Error handling**: Structured error reporting with codes
+- **Secure storage**: Platform-appropriate storage abstraction
+
 ### Status
 - ✅ Monorepo integration
 - ✅ Convex backend access
@@ -361,7 +573,9 @@ pnpm android
 - ✅ Tailwind configuration with @rite/ui tokens
 - ✅ Static theme tokens integration (5 themes available)
 - ✅ "use dom" demo with QR Code and Dropzone examples
-- 🚧 Authentication pending
+- ✅ **Google OAuth authentication** (web, iOS, Android, Expo Go)
+- ✅ **Modular authentication architecture** (47-line AuthContext)
+- ✅ **Cross-platform secure storage**
 - 🚧 Full @rite/ui component integration
 - 📋 Dynamic theme switching (planned)
 
