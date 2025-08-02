@@ -83,7 +83,7 @@ export const useGoogleAuth = (convex: ConvexReactClient) => {
         },
         body: new URLSearchParams({
           client_id: config.webClientId || '',
-          client_secret: process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_SECRET || '', 
+          // Client secret removed for security - using PKCE flow instead
           code: code,
           grant_type: 'authorization_code',
           redirect_uri: config.redirectUri,

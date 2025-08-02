@@ -3,7 +3,15 @@ import Constants from 'expo-constants';
 import * as AuthSession from 'expo-auth-session';
 import { GoogleOAuthConfig, Platform as PlatformType, AppEnvironment } from './types';
 
-const GOOGLE_IOS_SCHEME = 'com.googleusercontent.apps.420827108032-bksn0r122euuio8gfg8pa5ei50kjlkj4';
+// Generate Google iOS scheme from client ID to avoid hardcoding
+const getGoogleIOSScheme = (): string => {
+  const iosClientId = process.env.EXPO_PUBLIC_GOOGLE_OAUTH_CLIENT_ID_IOS;
+  if (iosClientId) {
+    return `com.googleusercontent.apps.${iosClientId.split('-')[0]}-${iosClientId.split('-')[1]}`;
+  }
+  // Fallback - should be replaced with proper environment variable
+  return 'com.googleusercontent.apps.420827108032-bksn0r122euuio8gfg8pa5ei50kjlkj4';
+};
 
 /**
  * Base Google OAuth configuration from environment variables
@@ -37,7 +45,7 @@ export const getRedirectUri = () => {
   if (isWeb) {
     return 'http://localhost:8081';
   } else if (isExpoGo || platform === 'ios') {
-    return `${GOOGLE_IOS_SCHEME}://`;
+    return `${getGoogleIOSScheme()}://`;
   } else {
     return AuthSession.makeRedirectUri({ scheme: 'com.rite.mobile' });
   }

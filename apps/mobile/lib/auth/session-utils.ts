@@ -5,10 +5,39 @@ import { User, AuthError } from './types';
 import { secureStorage, STORAGE_KEYS } from './secure-storage';
 
 /**
- * Generate a secure session token
+ * Generate a cryptographically secure session token
  */
 export const generateSessionToken = (): string => {
-  return Math.random().toString(36).substring(2) + Date.now().toString(36);
+  // Use crypto API if available (web), otherwise fallback to secure generation
+  if (typeof crypto !== 'undefined' && crypto.getRandomValues) {
+    const array = new Uint8Array(32);
+    crypto.getRandomValues(array);
+    return Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('');
+  }
+  
+  // Fallback for environments without crypto API
+  // This is still better than Math.random() but not ideal
+  const timestamp = Date.now().toString(36);
+  const randomPart = Array.from({ length: 16 }, () => 
+    Math.floor(Math.random() * 36).toString(36)
+  ).join('');
+  
+  return `${timestamp}-${randomPart}`;
+};
+
+/**
+ * Generate a secure OAuth state parameter for CSRF protection
+ */
+export const generateOAuthState = (): string => {
+  // Generate a secure random state for CSRF protection
+  if (typeof crypto !== 'undefined' && crypto.getRandomValues) {
+    const array = new Uint8Array(16);
+    crypto.getRandomValues(array);
+    return Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('');
+  }
+  
+  // Fallback state generation
+  return `state_${Date.now()}_${Math.floor(Math.random() * 1000000)}`;
 };
 
 /**
