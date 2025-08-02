@@ -10,10 +10,7 @@ export * from './radius'
 // New theme system exports
 export * from './alternative-themes'
 export * from './colors-refined'
-export * from './colorways'
-export * from './josh-comeau-theme'
 export * from './light-themes'
-export * from './radical-palettes'
 
 // Re-export as unified tokens object
 import { colors, webColors, mobileColors } from './colors'

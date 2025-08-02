@@ -3,9 +3,7 @@
 
 // Import existing theme systems
 import { colorsRefined } from './colors-refined';
-import { radicalPalettes } from './radical-palettes';
 import { lightThemes } from './light-themes';
-import { joshComeauRiteTheme } from './josh-comeau-theme';
 
 export const alternativeThemes = {
   // Original RITE refined (dark)
