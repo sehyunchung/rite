@@ -14,13 +14,6 @@ export function PostHogProviderWrapper({ children }: PostHogProviderWrapperProps
     return <>{children}</>
   }
 
-  // Get app version from package.json dynamically
-  let appVersion = 'unknown'
-  try {
-    appVersion = require('../../package.json').version
-  } catch (error) {
-    console.warn('Could not load app version from package.json:', error)
-  }
 
   return (
     <PostHogProvider 
@@ -28,10 +21,6 @@ export function PostHogProviderWrapper({ children }: PostHogProviderWrapperProps
       options={{
         ...POSTHOG_CONFIG.mobile,
         host,
-        properties: {
-          platform: 'mobile',
-          app_version: appVersion,
-        }
       }}
     >
       {children}
