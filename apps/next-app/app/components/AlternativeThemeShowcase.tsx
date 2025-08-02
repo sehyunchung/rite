@@ -61,8 +61,7 @@ export function AlternativeThemeShowcase() {
                   }}
                 >
                   <span style={{ 
-                    color: themeOption.type === 'light' && (key === 'monochromeLight' || key === 'monochromeDark') ? themeOption.neutral[0] : 
-                           themeOption.type === 'light' ? themeOption.neutral[0] : themeOption.neutral[0]
+                    color: themeOption.neutral[0]
                   }}>
                     {themeOption.type === 'dark' ? '🌙' : '☀️'}
                   </span>
