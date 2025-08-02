@@ -10,7 +10,7 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          "bg-brand-primary text-white shadow-sm hover:bg-brand-primary-dark hover:shadow-glow-sm active:scale-[0.98]",
+          "bg-brand-primary shadow-sm hover:bg-brand-primary-dark hover:shadow-glow-sm active:scale-[0.98] [&]:text-[var(--button-primary-text,_white)]",
         destructive:
           "bg-error text-white shadow-sm hover:bg-error/90 focus-visible:ring-error",
         outline:

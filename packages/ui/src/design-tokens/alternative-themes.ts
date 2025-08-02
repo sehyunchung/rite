@@ -353,6 +353,9 @@ export const generateThemeCSS = (theme: typeof alternativeThemes[AlternativeThem
   --color-error: ${theme.semantic.error};
   --color-info: ${theme.semantic.info};
   
+  /* Button Colors */
+  --button-primary-text: ${theme.name === 'Pure Monochrome Dark' ? theme.neutral[900] : theme.neutral[0]};
+  
   /* Neutral Scale */
   --neutral-0: ${theme.neutral[0]};
   --neutral-50: ${theme.neutral[50]};
