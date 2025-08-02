@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text } from 'react-native';
 import { cva, type VariantProps } from 'class-variance-authority';
-import '../../types/nativewind';
+import '@rite/ui/types/nativewind';
 
 const badgeVariants = cva(
   'inline-flex items-center rounded-full px-2.5 py-0.5',

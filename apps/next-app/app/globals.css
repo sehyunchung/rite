@@ -52,7 +52,9 @@
   
   /* Selection */
   ::selection {
-    @apply bg-brand-primary/30 text-white;
+    background-color: var(--brand-primary, #E946FF);
+    opacity: 0.3;
+    color: var(--text-primary, #FFFFFF);
   }
 }
 

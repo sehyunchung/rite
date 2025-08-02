@@ -1,6 +1,6 @@
 import React from 'react'
 import { Pressable, Text, View } from 'react-native'
-import '../../types/nativewind'
+import '@rite/ui/types/nativewind';
 
 export interface ActionCardProps {
   icon: React.ReactNode

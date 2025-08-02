@@ -1,8 +1,8 @@
 'use dom';
 
-import { useState, useRef, DragEvent, ChangeEvent } from 'react';
+import { useState, useRef, DragEvent, ChangeEvent, createContext, useContext } from 'react';
 
-export type DropzoneProps = {
+type DropzoneProps = {
   onDrop?: (acceptedFiles: File[], fileRejections: FileRejection[]) => void;
   accept?: Record<string, string[]>;
   maxFiles?: number;
@@ -13,7 +13,7 @@ export type DropzoneProps = {
   children?: React.ReactNode;
 };
 
-export type FileRejection = {
+type FileRejection = {
   file: File;
   errors: Array<{ code: string; message: string }>;
 };
@@ -84,7 +84,7 @@ const validateFile = (
   return errors.length > 0 ? { file, errors } : null;
 };
 
-export const Dropzone = ({
+const Dropzone = ({
   onDrop,
   accept,
   maxFiles = 1,
@@ -219,8 +219,6 @@ export const Dropzone = ({
 };
 
 // Context and compound components for consistency with existing API
-import { createContext, useContext } from 'react';
-
 type DropzoneContextType = {
   files?: File[];
   accept?: Record<string, string[]>;
@@ -231,7 +229,7 @@ type DropzoneContextType = {
 
 const DropzoneContext = createContext<DropzoneContextType | undefined>(undefined);
 
-export const DropzoneProvider = ({ 
+const DropzoneProvider = ({ 
   children, 
   files,
   accept,
@@ -251,10 +249,20 @@ export const DropzoneProvider = ({
   </DropzoneContext.Provider>
 );
 
-export const useDropzoneContext = () => {
+const useDropzoneContext = () => {
   const context = useContext(DropzoneContext);
   if (!context) {
     throw new Error('useDropzoneContext must be used within a DropzoneProvider');
   }
   return context;
+};
+
+// Default export with all components and types
+export default {
+  Dropzone,
+  DropzoneProvider,
+  useDropzoneContext,
+  // Export types as properties for compatibility
+  DropzoneProps: {} as DropzoneProps,
+  FileRejection: {} as FileRejection,
 };

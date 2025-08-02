@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text } from 'react-native';
 import { cva, type VariantProps } from 'class-variance-authority';
-import '../../types/nativewind';
+import '@rite/ui/types/nativewind';
 
 const alertVariants = cva(
   'relative w-full rounded-lg border px-4 py-3',

@@ -7,6 +7,11 @@ export * from './spacing'
 export * from './shadows'
 export * from './radius'
 
+// New theme system exports
+export * from './alternative-themes'
+export * from './colors-refined'
+export * from './light-themes'
+
 // Re-export as unified tokens object
 import { colors, webColors, mobileColors } from './colors'
 import { typography, typographyVariants } from './typography'

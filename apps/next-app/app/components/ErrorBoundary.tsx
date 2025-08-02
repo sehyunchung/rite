@@ -39,10 +39,10 @@ export class ErrorBoundary extends Component<Props, State> {
       return (
         <div className="min-h-screen flex items-center justify-center p-4">
           <div className="text-center max-w-md">
-            <h2 className="text-2xl font-semibold text-red-600 mb-4">
+            <h2 className="text-2xl font-semibold text-error mb-4">
               Something went wrong
             </h2>
-            <p className="text-gray-600 mb-6">
+            <p className="text-muted-foreground mb-6">
               {this.state.error?.message || 'An unexpected error occurred'}
             </p>
             <div className="space-x-4">
@@ -58,10 +58,10 @@ export class ErrorBoundary extends Component<Props, State> {
             </div>
             {process.env.NODE_ENV === 'development' && this.state.error && (
               <details className="mt-8 text-left">
-                <summary className="cursor-pointer text-sm text-gray-500">
+                <summary className="cursor-pointer text-sm text-muted-foreground">
                   Error details (development only)
                 </summary>
-                <pre className="mt-2 text-xs bg-gray-100 p-4 rounded overflow-auto">
+                <pre className="mt-2 text-xs bg-muted p-4 rounded overflow-auto">
                   {this.state.error.stack}
                 </pre>
               </details>

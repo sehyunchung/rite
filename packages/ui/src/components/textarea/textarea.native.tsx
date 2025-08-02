@@ -1,7 +1,7 @@
 import React from 'react';
 import { TextInput } from 'react-native';
 import type { TextInputProps } from 'react-native';
-import '../../types/nativewind';
+import '@rite/ui/types/nativewind';
 
 export interface TextareaProps extends Omit<TextInputProps, 'className'> {
   className?: string;

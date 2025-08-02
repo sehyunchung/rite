@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, ActivityIndicator } from 'react-native';
-import '../../types/nativewind';
+import '@rite/ui/types/nativewind';
 
 interface LoadingIndicatorProps {
   className?: string;

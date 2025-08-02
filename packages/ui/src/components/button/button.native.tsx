@@ -1,7 +1,7 @@
 import React from 'react';
 import { Pressable, Text, View } from 'react-native';
 import { cva, type VariantProps } from 'class-variance-authority';
-import '../../types/nativewind';
+import '@rite/ui/types/nativewind';
 
 const buttonVariants = cva(
   'flex items-center justify-center rounded-lg font-medium disabled:opacity-50',

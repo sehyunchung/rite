@@ -30,53 +30,65 @@ export default {
         'sans': ['var(--font-suit)', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
       },
       colors: {
-        // Brand colors from design system
-        'brand-primary': tokens.colors.brand.primary,
-        'brand-primary-dark': tokens.colors.brand.primaryDark,
-        'brand-primary-light': tokens.colors.brand.primaryLight,
+        // Brand colors using CSS variables for dynamic theming
+        'brand-primary': 'var(--brand-primary, #E946FF)',
+        'brand-primary-dark': 'var(--brand-primary-dark, #D01FFF)',
+        'brand-primary-light': 'var(--brand-primary-light, #F26FFF)',
         
-        // Neutral palette
-        neutral: tokens.colors.neutral,
+        // Neutral palette using CSS variables
+        neutral: {
+          0: 'var(--neutral-0, #FFFFFF)',
+          50: 'var(--neutral-50, #F8F8FA)',
+          100: 'var(--neutral-100, #E8E8ED)',
+          200: 'var(--neutral-200, #D1D1D9)',
+          300: 'var(--neutral-300, #A8A8B3)',
+          400: 'var(--neutral-400, #7A7A88)',
+          500: 'var(--neutral-500, #5A5A6A)',
+          600: 'var(--neutral-600, #3A3A4A)',
+          700: 'var(--neutral-700, #2A1F3F)',
+          800: 'var(--neutral-800, #1A0F2F)',
+          900: 'var(--neutral-900, #0A0515)',
+        },
         
-        // Semantic colors
-        success: tokens.colors.semantic.success,
-        warning: tokens.colors.semantic.warning,
-        error: tokens.colors.semantic.error,
-        info: tokens.colors.semantic.info,
+        // Semantic colors using CSS variables
+        success: 'var(--color-success, #4ADE80)',
+        warning: 'var(--color-warning, #FBBF24)',
+        error: 'var(--color-error, #EF4444)',
+        info: 'var(--color-info, #3B82F6)',
         
-        // Keep CSS variable fallbacks for gradual migration
-        border: tokens.colors.functional.border,
-        input: tokens.colors.neutral[700],
-        ring: tokens.colors.brand.primary,
-        background: tokens.colors.neutral[800],
-        foreground: tokens.colors.functional.textPrimary,
+        // Component colors using CSS variables
+        border: 'var(--border-default, #2A1F3F)',
+        input: 'var(--neutral-700, #2A1F3F)',
+        ring: 'var(--brand-primary, #E946FF)',
+        background: 'var(--bg-primary, #1A0F2F)',
+        foreground: 'var(--text-primary, #FFFFFF)',
         primary: {
-          DEFAULT: tokens.colors.brand.primary,
-          foreground: tokens.colors.neutral[0],
+          DEFAULT: 'var(--brand-primary, #E946FF)',
+          foreground: 'var(--neutral-0, #FFFFFF)',
         },
         secondary: {
-          DEFAULT: tokens.colors.neutral[600],
-          foreground: tokens.colors.functional.textPrimary,
+          DEFAULT: 'var(--neutral-600, #3A3A4A)',
+          foreground: 'var(--text-primary, #FFFFFF)',
         },
         destructive: {
-          DEFAULT: tokens.colors.semantic.error,
-          foreground: tokens.colors.neutral[0],
+          DEFAULT: 'var(--color-error, #EF4444)',
+          foreground: 'var(--neutral-0, #FFFFFF)',
         },
         muted: {
-          DEFAULT: tokens.colors.neutral[700],
-          foreground: tokens.colors.functional.textSecondary,
+          DEFAULT: 'var(--neutral-700, #2A1F3F)',
+          foreground: 'var(--text-secondary, #A8A8B3)',
         },
         accent: {
-          DEFAULT: tokens.colors.neutral[600],
-          foreground: tokens.colors.functional.textPrimary,
+          DEFAULT: 'var(--neutral-600, #3A3A4A)',
+          foreground: 'var(--text-primary, #FFFFFF)',
         },
         popover: {
-          DEFAULT: tokens.colors.neutral[700],
-          foreground: tokens.colors.functional.textPrimary,
+          DEFAULT: 'var(--bg-elevated, #2A1F3F)',
+          foreground: 'var(--text-primary, #FFFFFF)',
         },
         card: {
-          DEFAULT: tokens.colors.neutral[700],
-          foreground: tokens.colors.functional.textPrimary,
+          DEFAULT: 'var(--bg-elevated, #2A1F3F)',
+          foreground: 'var(--text-primary, #FFFFFF)',
         },
       },
       spacing: Object.fromEntries(

@@ -5,6 +5,7 @@ import { BottomNavigation } from './BottomNavigation';
 import { Button, Typography } from '@rite/ui';
 import { signOut } from 'next-auth/react';
 import { LanguageSwitcher } from './LanguageSwitcher';
+import { ThemeSwitcher } from './ThemeSwitcher';
 import { UserDisplay } from './UserDisplay';
 import { useTranslations } from 'next-intl';
 import { Menu, X } from 'lucide-react';
@@ -53,7 +54,10 @@ export function MobileLayout({ children, userId, fallbackDisplayName }: MobileLa
                 </div>
               )}
               <div className="flex items-center justify-between">
-                <LanguageSwitcher />
+                <div className="flex items-center space-x-2">
+                  <LanguageSwitcher />
+                  <ThemeSwitcher />
+                </div>
                 <Button 
                   variant="outline" 
                   size="sm"
@@ -92,6 +96,7 @@ export function MobileLayout({ children, userId, fallbackDisplayName }: MobileLa
                 <UserDisplay userId={userId} fallbackName={fallbackDisplayName} />
               )}
               <LanguageSwitcher />
+              <ThemeSwitcher />
               <Button 
                 variant="outline" 
                 onClick={() => signOut({ callbackUrl: '/' })}

@@ -1,6 +1,6 @@
 import React from 'react'
 import { Text, TextProps } from 'react-native'
-import '../../types/nativewind'
+import '@rite/ui/types/nativewind';
 
 export interface TypographyProps extends Omit<TextProps, 'className'> {
   variant?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'body' | 'body-lg' | 'body-sm' | 'caption' | 'label' | 'button'
