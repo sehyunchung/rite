@@ -16,13 +16,13 @@
           {
             "CFBundleURLName": "google-oauth",
             "CFBundleURLSchemes": [
-              "com.rite.mobile"
+              "com.googleusercontent.apps.420827108032-bksn0r122euuio8gfg8pa5ei50kjlkj4"
             ]
           },
           {
-            "CFBundleURLName": "google-oauth",
+            "CFBundleURLName": "expo-auth-session",
             "CFBundleURLSchemes": [
-              "com.rite.mobile"
+              "mobile"
             ]
           }
         ],
@@ -35,7 +35,23 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.rite.mobile"
+      "package": "com.rite.mobile",
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "category": ["BROWSABLE", "DEFAULT"],
+          "data": {
+            "scheme": "mobile"
+          }
+        },
+        {
+          "action": "VIEW", 
+          "category": ["BROWSABLE", "DEFAULT"],
+          "data": {
+            "scheme": "com.rite.mobile"
+          }
+        }
+      ]
     },
     "web": {
       "bundler": "metro",

@@ -63,8 +63,8 @@ const googleConfig = {
   androidClientId: process.env.EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID,
   webClientId: process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID,
   scopes: ['openid', 'profile', 'email'],
-  responseType: 'code',
-  shouldAutoExchangeCode: true,
+  responseType: Platform.OS === 'web' ? 'token' : 'code', // Use implicit flow for web to avoid PKCE
+  shouldAutoExchangeCode: Platform.OS !== 'web', // Enable auto exchange for mobile, disable for web
 };
 
 interface AuthProviderProps {
@@ -80,12 +80,24 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const isExpoGo = Constants.appOwnership === 'expo';
   const isWeb = Platform.OS === 'web';
   
-  // Set redirect URI based on platform - prioritize web over Expo Go
-  const redirectUri = isWeb
-    ? 'http://localhost:8081'
-    : isExpoGo 
-    ? `https://auth.expo.io/@sehyun_chung/rite`
-    : AuthSession.makeRedirectUri();
+  // Set redirect URI based on platform
+  // For iOS, use the Google-generated URL scheme from the iOS client configuration
+  // The scheme should be exactly: com.googleusercontent.apps.420827108032-bksn0r122euuio8gfg8pa5ei50kjlkj4
+  const googleIOSScheme = 'com.googleusercontent.apps.420827108032-bksn0r122euuio8gfg8pa5ei50kjlkj4';
+  
+  // Let's try different redirect URI approaches
+  let redirectUri;
+  if (isWeb) {
+    redirectUri = 'http://localhost:8081';
+  } else if (isExpoGo) {
+    // For Expo Go, use the Google URL scheme without path - simpler format
+    redirectUri = `${googleIOSScheme}://`;
+  } else if (Platform.OS === 'ios') {
+    // For iOS, try the exact scheme from Google Console with just ://
+    redirectUri = `${googleIOSScheme}://`;
+  } else {
+    redirectUri = AuthSession.makeRedirectUri({ scheme: 'com.rite.mobile' });
+  }
   
   console.log('Google OAuth Config:', {
     platform: Platform.OS,
@@ -96,7 +108,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
     androidClientId: googleConfig.androidClientId ? 'Set' : 'Not set', 
     webClientId: googleConfig.webClientId ? 'Set' : 'Not set',
     redirectUri,
-    usingClientId: (isWeb || isExpoGo) ? 'webClientId' : 'platform-specific',
+    googleIOSScheme,
+    usingClientId: isWeb ? 'webClientId' : 'platform-specific',
+    actualWebClientId: googleConfig.webClientId,
+    appInfo: {
+      applicationId: Constants.manifest?.ios?.bundleIdentifier || Constants.expoConfig?.ios?.bundleIdentifier,
+      expoSlug: Constants.manifest?.slug || Constants.expoConfig?.slug,
+      expoUsername: Constants.manifest?.owner || Constants.expoConfig?.owner,
+    }
   });
 
   // Only initialize Google auth if client IDs are available
@@ -106,26 +125,39 @@ export function AuthProvider({ children }: AuthProviderProps) {
     googleConfig.webClientId
   );
 
-  // For Expo Go on iOS/Android, we need to use webClientId
-  // Only use platform-specific IDs for standalone builds
-  
-  const authConfig = hasGoogleConfig ? {
-    ...googleConfig,
-    // Use webClientId for web platform or Expo Go
-    ...((isWeb || isExpoGo) && googleConfig.webClientId ? {
+  // Configure OAuth based on platform
+  let authConfig;
+  if (!hasGoogleConfig) {
+    authConfig = {
+      iosClientId: '',
+      androidClientId: '',
+      webClientId: '',
+      scopes: ['openid', 'profile', 'email'],
+      redirectUri: redirectUri,
+    };
+  } else if (isWeb) {
+    // For web platform, use web client ID
+    authConfig = {
+      ...googleConfig,
       clientId: googleConfig.webClientId,
       iosClientId: undefined,
       androidClientId: undefined,
-    } : {}),
-    // Add explicit redirect URI
-    redirectUri: redirectUri,
-  } : {
-    iosClientId: '',
-    androidClientId: '',
-    webClientId: '',
-    scopes: ['openid', 'profile', 'email'],
-    redirectUri: redirectUri,
-  };
+      redirectUri: redirectUri,
+    };
+  } else if (isExpoGo) {
+    // For Expo Go, use platform-specific client IDs with expo development scheme
+    // This works better with Expo's development server
+    authConfig = {
+      ...googleConfig,
+      redirectUri: redirectUri,
+    };
+  } else {
+    // For standalone mobile, use platform-specific client IDs
+    authConfig = {
+      ...googleConfig,
+      redirectUri: redirectUri,
+    };
+  }
 
   const checkExistingSession = useCallback(async () => {
     try {
@@ -224,6 +256,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
     iosClientId: authConfig.iosClientId,
     webClientId: authConfig.webClientId,
     redirectUri: authConfig.redirectUri,
+    hasWebClientId: !!googleConfig.webClientId,
+    isExpoGo,
+    isWeb,
+    shouldUseWebClient: (isWeb || isExpoGo) && googleConfig.webClientId,
   });
 
   const [request, response, promptAsync] = Google.useAuthRequest(authConfig);
@@ -236,25 +272,57 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   // Handle authentication response
   useEffect(() => {
-    if (!response) return;
+    if (!response) {
+      console.log('No OAuth response yet');
+      return;
+    }
     
+    console.log('=== OAuth Response Received ===');
     console.log('OAuth Response:', response);
     console.log('Response Type:', response.type);
+    console.log('Response Keys:', Object.keys(response));
     
     if (response.type === 'success') {
-      console.log('OAuth Success - Full Response:', response);
-      const accessToken = response.authentication?.accessToken;
-      console.log('OAuth Success - Access Token:', accessToken ? 'Present' : 'Missing');
+      console.log('OAuth Success - Full Response:', JSON.stringify(response, null, 2));
       
-      if (accessToken) {
-        handleGoogleAuth(accessToken);
+      // With shouldAutoExchangeCode: true, we should get an access token directly
+      if (response.authentication?.accessToken) {
+        console.log('OAuth Success - Access Token received via auto exchange');
+        handleGoogleAuth(response.authentication.accessToken);
       } else {
         console.error('No access token received in OAuth response');
+        console.error('Response authentication:', response.authentication);
+        console.error('Response params:', response.params);
+        console.error('Auto code exchange may have failed');
       }
     } else if (response.type === 'error') {
       console.error('OAuth Error:', response.error);
+      console.error('OAuth Error Details:', response.params);
+      console.error('OAuth Error Full Response:', JSON.stringify(response, null, 2));
+      
+      // Log specific error details for debugging
+      if (response.params?.error_description) {
+        console.error('Error Description:', response.params.error_description);
+      }
+      if (response.params?.error) {
+        console.error('Error Type:', response.params.error);
+      }
+      
+      // Check if it's a redirect URI mismatch error
+      if (response.params?.error === 'redirect_uri_mismatch') {
+        console.error('Redirect URI mismatch. Expected redirect URI:', redirectUri);
+        console.error('Please add this redirect URI to your Google OAuth client configuration.');
+      }
+      
+      // Handle other common errors
+      if (response.params?.error === 'access_denied') {
+        console.log('User denied access to the application');
+      }
     } else if (response.type === 'cancel') {
       console.log('OAuth was cancelled by user');
+    } else {
+      console.warn('Unexpected OAuth response type:', response.type);
+      console.warn('Full response:', JSON.stringify(response, null, 2));
     }
   }, [response, handleGoogleAuth]);
 
@@ -267,16 +335,33 @@ export function AuthProvider({ children }: AuthProviderProps) {
   useEffect(() => {
     if (Platform.OS === 'web') {
       const urlParams = new URLSearchParams(window.location.search);
-      const code = urlParams.get('code');
-      const state = urlParams.get('state');
+      const hashParams = new URLSearchParams(window.location.hash.substring(1));
       
-      if (code && state) {
-        console.log('Web OAuth redirect detected with code:', code ? 'Present' : 'Missing');
-        // Clear URL parameters
-        window.history.replaceState({}, document.title, window.location.pathname);
+      // Check for access token (implicit flow)
+      const accessToken = hashParams.get('access_token');
+      const state = hashParams.get('state') || urlParams.get('state');
+      
+      // Check for authorization code (code flow - fallback)
+      const code = urlParams.get('code');
+      
+      if (accessToken && state) {
+        console.log('Web OAuth redirect detected with access token:', accessToken.substring(0, 20) + '...');
+        console.log('State:', state);
         
-        // Exchange code for token manually since expo-auth-session isn't handling it
+        // Process the access token directly (implicit flow)
+        handleGoogleAuth(accessToken);
+        
+        // Clear URL parameters and hash to clean up the browser
+        window.history.replaceState({}, document.title, window.location.pathname);
+      } else if (code && state) {
+        console.log('Web OAuth redirect detected with code:', code.substring(0, 20) + '...');
+        console.log('State:', state);
+        
+        // Process the code manually (code flow - fallback)
         exchangeCodeForToken(code);
+        
+        // Clear URL parameters to clean up the browser
+        window.history.replaceState({}, document.title, window.location.pathname);
       }
     }
   }, []);
@@ -284,6 +369,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const exchangeCodeForToken = async (code: string) => {
     try {
       console.log('Exchanging authorization code for access token...');
+      console.log('Using redirect URI for token exchange:', redirectUri);
+      
       const tokenResponse = await fetch('https://oauth2.googleapis.com/token', {
         method: 'POST',
         headers: {
@@ -291,19 +378,24 @@ export function AuthProvider({ children }: AuthProviderProps) {
         },
         body: new URLSearchParams({
           client_id: googleConfig.webClientId!,
-          client_secret: '', // Web apps don't need client secret for PKCE
+          client_secret: process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_SECRET || '', 
           code: code,
           grant_type: 'authorization_code',
-          redirect_uri: 'http://localhost:8081',
+          redirect_uri: redirectUri, // Use the same redirect URI as in the auth request
         }),
       });
 
+      const responseText = await tokenResponse.text();
+      console.log('Token exchange response status:', tokenResponse.status);
+      console.log('Token exchange response:', responseText);
+
       if (!tokenResponse.ok) {
         console.error('Token exchange failed:', tokenResponse.status, tokenResponse.statusText);
+        console.error('Token exchange error response:', responseText);
         return;
       }
 
-      const tokenData = await tokenResponse.json();
+      const tokenData = JSON.parse(responseText);
       console.log('Token exchange successful');
       
       if (tokenData.access_token) {
@@ -316,8 +408,31 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   };
 
+  // Simple test function to open OAuth URL directly
+  const testDirectOAuth = () => {
+    const testUrl = isWeb 
+      ? `https://accounts.google.com/o/oauth2/v2/auth?redirect_uri=http://localhost:8081&client_id=${googleConfig.webClientId}&response_type=code&scope=openid+profile+email&state=test123`
+      : `https://accounts.google.com/o/oauth2/v2/auth?redirect_uri=https://auth.expo.io/@sehyun_chung/rite&client_id=${googleConfig.webClientId}&response_type=code&scope=openid+profile+email&state=test123`;
+    
+    console.log('Test OAuth URL:', testUrl);
+    
+    if (Platform.OS === 'web') {
+      window.open(testUrl, '_blank');
+    } else {
+      // For mobile, we'd need to use Linking.openURL but let's just log it for now
+      console.log('Copy this URL to test in browser:', testUrl);
+    }
+  };
+
   const signIn = async () => {
-    console.log('signIn called');
+    console.log('=== signIn called ===');
+    console.log('hasGoogleConfig:', hasGoogleConfig);
+    console.log('request ready:', !!request);
+    console.log('promptAsync ready:', !!promptAsync);
+    console.log('Platform:', Platform.OS);
+    console.log('isExpoGo:', isExpoGo);
+    console.log('isWeb:', isWeb);
+    
     if (!hasGoogleConfig) {
       console.warn('Google OAuth not configured. Please add Google client IDs to your .env file.');
       return;
@@ -329,11 +444,41 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
     
     console.log('Initiating OAuth flow with promptAsync...');
+    console.log('Final authConfig being used:', {
+      ...authConfig,
+      // Don't log sensitive client secrets, just indicate if set
+      webClientId: authConfig.webClientId ? 'Set' : 'Not set',
+      iosClientId: authConfig.iosClientId ? 'Set' : 'Not set',
+      androidClientId: authConfig.androidClientId ? 'Set' : 'Not set',
+      clientId: authConfig.clientId ? 'Set' : 'Not set',
+    });
+    
+    // Log the actual request URL being generated (if available)
+    if (request?.url) {
+      console.log('OAuth request URL:', request.url);
+    }
+    
     try {
-      const result = await promptAsync();
-      console.log('promptAsync result:', result);
-    } catch (error) {
+      console.log('Calling promptAsync...');
+      
+      // Add a timeout to detect if promptAsync hangs
+      const timeoutPromise = new Promise<never>((_, reject) => 
+        setTimeout(() => reject(new Error('promptAsync timeout after 30 seconds')), 30000)
+      );
+      
+      const result = await Promise.race([promptAsync(), timeoutPromise]);
+      console.log('promptAsync completed with result:', result);
+      console.log('promptAsync result type:', result?.type);
+      
+      // If we get here but no response in useEffect, there might be a timing issue
+      if (result?.type === 'success') {
+        console.log('promptAsync returned success but checking if useEffect will handle it...');
+      }
+    } catch (error: any) {
       console.error('Error signing in:', error);
+      if (error?.message?.includes('timeout')) {
+        console.error('promptAsync appears to be hanging - this suggests the redirect is not returning to the app');
+      }
     }
   };
 
@@ -368,6 +513,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
     signIn,
     signOut,
   };
+
+  // Add test function to window for debugging
+  if (typeof window !== 'undefined') {
+    (window as any).testDirectOAuth = testDirectOAuth;
+  }
 
   return (
     <AuthContext.Provider value={value}>
