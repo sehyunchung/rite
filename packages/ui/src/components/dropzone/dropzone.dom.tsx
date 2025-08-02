@@ -219,8 +219,6 @@ const Dropzone = ({
 };
 
 // Context and compound components for consistency with existing API
-import { createContext, useContext } from 'react';
-
 type DropzoneContextType = {
   files?: File[];
   accept?: Record<string, string[]>;
