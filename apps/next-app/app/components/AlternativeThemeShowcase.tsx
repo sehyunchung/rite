@@ -452,8 +452,7 @@ export function AlternativeThemeShowcase() {
                   className="px-6 py-3 rounded-xl font-medium transition-all hover:scale-105 shadow-lg"
                   style={{ 
                     backgroundColor: theme.brand.primary,
-                    color: theme.type === 'light' && selectedTheme !== 'monochromeLight' ? theme.neutral[0] : 
-                           selectedTheme === 'monochromeLight' ? theme.neutral[0] : theme.neutral[0]
+                    color: selectedTheme === 'monochromeDark' ? theme.neutral[900] : theme.neutral[0]
                   }}
                 >
                   Primary
@@ -472,7 +471,8 @@ export function AlternativeThemeShowcase() {
                   className="px-6 py-3 rounded-xl font-medium transition-all hover:opacity-90 shadow-sm"
                   style={{ 
                     backgroundColor: theme.accent,
-                    color: theme.type === 'light' ? (selectedTheme === 'monochromeLight' ? theme.neutral[0] : theme.neutral[900]) : theme.neutral[0]
+                    color: selectedTheme === 'monochromeDark' ? theme.neutral[900] : 
+                           theme.type === 'light' ? theme.neutral[900] : theme.neutral[0]
                   }}
                 >
                   Accent
@@ -488,6 +488,38 @@ export function AlternativeThemeShowcase() {
                   Neutral
                 </button>
               </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Form Components Testing */}
+        <div className="space-y-6">
+          <h3 className="text-xl font-semibold" style={{ color: theme.functional.textPrimary }}>
+            Form Components
+          </h3>
+          <div className="grid md:grid-cols-2 gap-6">
+            {/* Text Input */}
+            <div className="space-y-3">
+              <label className="block text-sm font-medium" style={{ color: theme.functional.textPrimary }}>
+                Email Address
+              </label>
+              <input
+                type="email"
+                placeholder="Enter your email"
+                className="flex h-12 w-full rounded-lg border border-neutral-600 bg-neutral-700 px-4 py-3 text-base text-white placeholder:text-neutral-400 shadow-sm transition-all outline-none opacity-80 focus:border-brand-primary focus:bg-neutral-600 focus:ring-[3px] focus:ring-brand-primary focus:opacity-90 hover:border-neutral-500 hover:opacity-85"
+              />
+            </div>
+            
+            {/* Textarea */}
+            <div className="space-y-3">
+              <label className="block text-sm font-medium" style={{ color: theme.functional.textPrimary }}>
+                Message
+              </label>
+              <textarea
+                placeholder="Enter your message"
+                rows={3}
+                className="flex field-sizing-content min-h-16 w-full rounded-lg border border-neutral-600 bg-neutral-700 px-4 py-3 text-base text-white placeholder:text-neutral-400 shadow-sm transition-all outline-none opacity-80 focus:border-brand-primary focus:bg-neutral-600 focus:ring-[3px] focus:ring-brand-primary focus:opacity-90 hover:border-neutral-500 hover:opacity-85 resize-none"
+              />
             </div>
           </div>
         </div>
