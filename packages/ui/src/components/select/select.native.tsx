@@ -8,7 +8,7 @@ import {
   Pressable 
 } from 'react-native';
 import { ChevronDownIcon, CheckIcon } from 'lucide-react-native';
-import '../../types/nativewind';
+import '@rite/ui/types/nativewind';
 
 // Root Select component - manages state
 export interface SelectProps {

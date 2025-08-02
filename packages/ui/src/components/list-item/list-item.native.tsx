@@ -1,7 +1,7 @@
 import React from 'react'
 import { Pressable, Text, View } from 'react-native'
 import { ChevronRight } from 'lucide-react-native'
-import '../../types/nativewind'
+import '@rite/ui/types/nativewind';
 
 export interface ListItemProps {
   icon?: React.ReactNode

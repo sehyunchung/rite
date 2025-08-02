@@ -15,9 +15,18 @@
         "CFBundleURLTypes": [
           {
             "CFBundleURLName": "google-oauth",
-            "CFBundleURLSchemes": ["com.rite.mobile"]
+            "CFBundleURLSchemes": [
+              "com.rite.mobile"
+            ]
+          },
+          {
+            "CFBundleURLName": "google-oauth",
+            "CFBundleURLSchemes": [
+              "com.rite.mobile"
+            ]
           }
-        ]
+        ],
+        "ITSAppUsesNonExemptEncryption": false
       }
     },
     "android": {

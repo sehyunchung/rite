@@ -16,7 +16,13 @@
     "./hooks/*": "./src/hooks/*/index.ts",
     "./utils/*": "./src/utils/*/index.ts",
     "./design-tokens": "./src/design-tokens/index.ts",
-    "./design-tokens/*": "./src/design-tokens/*"
+    "./design-tokens/*": "./src/design-tokens/*",
+    "./src/components/qr-code/qr-code.dom": "./src/components/qr-code/qr-code.dom.tsx",
+    "./src/components/qr-code/qr-code.native": "./src/components/qr-code/qr-code.native.tsx",
+    "./src/components/dropzone/dropzone.dom": "./src/components/dropzone/dropzone.dom.tsx",
+    "./src/components/dropzone/dropzone.native": "./src/components/dropzone/dropzone.native.tsx",
+    "./types/*": "./src/types/*",
+    "./types/nativewind": "./src/types/nativewind.d.ts"
   },
   "dependencies": {
     "@radix-ui/react-alert-dialog": "^1.1.5",

@@ -4,7 +4,7 @@ import { formatHex, oklch } from 'culori';
 import QR from 'qrcode';
 import { useEffect, useState, useMemo, useRef } from 'react';
 
-export type QRCodeProps = {
+type QRCodeProps = {
   data: string;
   foreground?: string;
   background?: string;
@@ -29,7 +29,7 @@ const getOklch = (color: string, fallback: [number, number, number]) => {
   };
 };
 
-export const QRCode = ({
+const QRCode = ({
   data,
   foreground,
   background,
@@ -111,3 +111,5 @@ export const QRCode = ({
     />
   );
 };
+
+export default QRCode;
