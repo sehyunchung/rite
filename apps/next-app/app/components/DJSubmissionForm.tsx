@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useQuery, useMutation } from 'convex/react';
 import { api } from '@rite/backend/convex/_generated/api';
 import { Button } from '@rite/ui';
@@ -26,6 +26,8 @@ export function DJSubmissionForm({ submissionToken }: DJSubmissionFormProps) {
   const timeslotData = useQuery(api.timeslots.getTimeslotByToken, { submissionToken });
   const generateUploadUrl = useMutation(api.submissions.generateUploadUrl);
   const saveSubmission = useMutation(api.submissions.saveSubmission);
+  const updateSubmission = useMutation(api.submissions.updateSubmission);
+  const deleteSubmission = useMutation(api.submissions.deleteSubmission);
   
   const [guestList, setGuestList] = useState<GuestListEntry[]>([]);
   const [promoFiles, setPromoFiles] = useState<File[]>([]);
@@ -39,6 +41,30 @@ export function DJSubmissionForm({ submissionToken }: DJSubmissionFormProps) {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submissionComplete, setSubmissionComplete] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+
+  // Effect to populate form with existing submission data
+  useEffect(() => {
+    if (timeslotData?.existingSubmission) {
+      const submission = timeslotData.existingSubmission;
+      setIsEditing(true);
+      
+      // Populate guest list
+      const existingGuests = submission.guestList.map((guest, index) => ({
+        id: `guest-${index}`,
+        name: guest.name,
+        phone: guest.phone || '',
+      }));
+      setGuestList(existingGuests);
+      
+      // Populate promo description
+      setPromoDescription(submission.promoMaterials.description);
+      
+      // Populate payment info
+      setPaymentInfo(submission.paymentInfo);
+    }
+  }, [timeslotData]);
 
   const addGuestEntry = () => {
     const newEntry: GuestListEntry = {
@@ -108,21 +134,65 @@ export function DJSubmissionForm({ submissionToken }: DJSubmissionFormProps) {
           phone: entry.phone.trim() || undefined,
         }));
 
-      // Save submission to database
-      await saveSubmission({
-        eventId: timeslotData.event._id,
-        timeslotId: timeslotData._id,
-        submissionToken,
-        promoFiles: uploadedFiles,
-        promoDescription: promoDescription.trim(),
-        guestList: validGuestList,
-        paymentInfo,
-      });
+      // Save or update submission to database
+      if (isEditing && timeslotData.existingSubmission) {
+        // Update existing submission
+        await updateSubmission({
+          submissionId: timeslotData.existingSubmission._id,
+          submissionToken,
+          ...(uploadedFiles.length > 0 && { promoFiles: uploadedFiles }),
+          promoDescription: promoDescription.trim(),
+          guestList: validGuestList,
+          paymentInfo,
+        });
+      } else {
+        // Create new submission
+        await saveSubmission({
+          eventId: timeslotData.event._id,
+          timeslotId: timeslotData._id,
+          submissionToken,
+          promoFiles: uploadedFiles,
+          promoDescription: promoDescription.trim(),
+          guestList: validGuestList,
+          paymentInfo,
+        });
+      }
       
       setSubmissionComplete(true);
     } catch (error) {
       console.error('Submission failed:', error);
       alert(`Submission failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleDeleteSubmission = async () => {
+    if (!timeslotData?.existingSubmission) return;
+    
+    setIsSubmitting(true);
+    try {
+      await deleteSubmission({
+        submissionId: timeslotData.existingSubmission._id,
+        submissionToken,
+      });
+      
+      // Reset form to creation mode
+      setIsEditing(false);
+      setGuestList([]);
+      setPromoFiles([]);
+      setPromoDescription('');
+      setPaymentInfo({
+        accountHolder: '',
+        bankName: '',
+        accountNumber: '',
+        residentNumber: '',
+        preferDirectContact: false,
+      });
+      setShowDeleteConfirm(false);
+    } catch (error) {
+      console.error('Delete failed:', error);
+      alert(`Delete failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     } finally {
       setIsSubmitting(false);
     }
@@ -192,8 +262,23 @@ export function DJSubmissionForm({ submissionToken }: DJSubmissionFormProps) {
       <div className="max-w-4xl mx-auto p-6 space-y-8">
         {/* Header */}
         <div className="text-center">
-          <Typography variant="h1" className="mb-2">{t('title')}</Typography>
-          <Typography variant="body-lg" color="secondary">{t('subtitle')}</Typography>
+          <Typography variant="h1" className="mb-2">
+            {isEditing ? 'Edit Your Submission' : t('title')}
+          </Typography>
+          <Typography variant="body-lg" color="secondary">
+            {isEditing ? 'Update your submission details below' : t('subtitle')}
+          </Typography>
+          {isEditing && (
+            <div className="mt-4">
+              <Button 
+                variant="outline" 
+                onClick={() => setShowDeleteConfirm(true)}
+                className="text-red-400 border-red-400 hover:bg-red-400/10"
+              >
+                Delete Submission
+              </Button>
+            </div>
+          )}
         </div>
 
         {/* Event & DJ Info */}
@@ -420,10 +505,46 @@ export function DJSubmissionForm({ submissionToken }: DJSubmissionFormProps) {
               className="px-8"
               disabled={isSubmitting}
             >
-              {isSubmitting ? t('submitting') : t('submitMaterials')}
+              {isSubmitting ? 
+                (isEditing ? 'Updating...' : t('submitting')) : 
+                (isEditing ? 'Update Submission' : t('submitMaterials'))
+              }
             </Button>
           </div>
         </form>
+
+        {/* Delete Confirmation Dialog */}
+        {showDeleteConfirm && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <Card className="max-w-md w-full">
+              <CardHeader>
+                <CardTitle className="text-red-400">Delete Submission</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Typography variant="body" color="secondary" className="mb-4">
+                  Are you sure you want to delete your submission? This action cannot be undone.
+                  You'll be able to submit new materials using the same link.
+                </Typography>
+                <div className="flex justify-end space-x-2">
+                  <Button 
+                    variant="outline" 
+                    onClick={() => setShowDeleteConfirm(false)}
+                    disabled={isSubmitting}
+                  >
+                    Cancel
+                  </Button>
+                  <Button 
+                    variant="destructive" 
+                    onClick={handleDeleteSubmission}
+                    disabled={isSubmitting}
+                  >
+                    {isSubmitting ? 'Deleting...' : 'Delete'}
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
       </div>
     </div>
   );
