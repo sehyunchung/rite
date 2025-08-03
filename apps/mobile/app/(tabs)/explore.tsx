@@ -1,184 +1,112 @@
-import { View, Text, ScrollView, StyleSheet, TouchableOpacity, SafeAreaView, Platform } from 'react-native';
+import * as React from 'react';
+import { View, ScrollView, SafeAreaView, Platform, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../../contexts/AuthContext';
-import { typography } from '../../constants/Typography';
-import { riteColors } from '../../constants/Colors';
-import { shadows } from '../../utils/shadow';
+import { Typography, Card } from '@rite/ui';
+import { colors } from '@rite/ui/design-tokens';
 
 export default function ProfileScreen() {
   const router = useRouter();
   const { user, signOut } = useAuth();
 
   return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView style={styles.scrollView}>
-      <View style={styles.content}>
-        {/* Profile Header */}
-        <View style={styles.profileHeader}>
-          <View style={styles.avatarContainer}>
-            <Ionicons name="person" size={40} color={riteColors.functional.textSecondary} />
+    <SafeAreaView className="flex-1 bg-neutral-800">
+      <ScrollView className="flex-1">
+        <View 
+          className="p-6" 
+          style={{ 
+            paddingBottom: Platform.OS === 'ios' ? 124 : 104 
+          }}
+        >
+          {/* Profile Header */}
+          <View className="items-center mb-8">
+            <View className="w-20 h-20 rounded-full bg-neutral-700 border-2 border-brand-primary items-center justify-center mb-4">
+              <Ionicons name="person" size={40} color={colors.functional.textSecondary} />
+            </View>
+            <Typography variant="h5" className="text-white mb-1">
+              {user?.name || 'Anonymous User'}
+            </Typography>
+            <Typography variant="body" color="secondary">
+              {user?.email || 'No email'}
+            </Typography>
           </View>
-          <Text style={styles.userName}>{user?.name || 'Anonymous User'}</Text>
-          <Text style={styles.userEmail}>{user?.email || 'No email'}</Text>
-        </View>
 
-        {/* Quick Actions */}
-        <View style={styles.section}>
+          {/* Quick Actions */}
+          <View className="mb-6">
+            <TouchableOpacity 
+              onPress={() => router.push('/settings')}
+            >
+              <Card className="bg-neutral-700 border-neutral-600 p-6 flex-row items-center mb-4">
+                <View className="w-10 h-10 rounded-full bg-neutral-800 items-center justify-center mr-4">
+                  <Ionicons name="settings-outline" size={24} color={colors.brand.primary} />
+                </View>
+                <Typography variant="body" className="text-white flex-1">
+                  Settings
+                </Typography>
+                <Ionicons name="chevron-forward" size={20} color={colors.functional.textSecondary} />
+              </Card>
+            </TouchableOpacity>
+
+            <TouchableOpacity>
+              <Card className="bg-neutral-700 border-neutral-600 p-6 flex-row items-center mb-4">
+                <View className="w-10 h-10 rounded-full bg-neutral-800 items-center justify-center mr-4">
+                  <Ionicons name="calendar-outline" size={24} color={colors.brand.primary} />
+                </View>
+                <Typography variant="body" className="text-white flex-1">
+                  My Events
+                </Typography>
+                <Ionicons name="chevron-forward" size={20} color={colors.functional.textSecondary} />
+              </Card>
+            </TouchableOpacity>
+
+            <TouchableOpacity>
+              <Card className="bg-neutral-700 border-neutral-600 p-6 flex-row items-center mb-4">
+                <View className="w-10 h-10 rounded-full bg-neutral-800 items-center justify-center mr-4">
+                  <Ionicons name="musical-notes-outline" size={24} color={colors.brand.primary} />
+                </View>
+                <Typography variant="body" className="text-white flex-1">
+                  DJ Applications
+                </Typography>
+                <Ionicons name="chevron-forward" size={20} color={colors.functional.textSecondary} />
+              </Card>
+            </TouchableOpacity>
+          </View>
+
+          {/* Stats */}
+          <View className="flex-row gap-3 mb-6">
+            <Card className="flex-1 bg-neutral-700 border-neutral-600 p-6 items-center">
+              <Typography variant="h3" color="primary" className="mb-1">
+                0
+              </Typography>
+              <Typography variant="caption" color="secondary">
+                Events
+              </Typography>
+            </Card>
+            <Card className="flex-1 bg-neutral-700 border-neutral-600 p-6 items-center">
+              <Typography variant="h3" color="primary" className="mb-1">
+                0
+              </Typography>
+              <Typography variant="caption" color="secondary">
+                DJ Sets
+              </Typography>
+            </Card>
+          </View>
+
+          {/* Sign Out */}
           <TouchableOpacity 
-            style={styles.actionCard}
-            onPress={() => router.push('/settings')}
-          >
-            <View style={styles.actionIcon}>
-              <Ionicons name="settings-outline" size={24} color={riteColors.brand.primary} />
-            </View>
-            <Text style={styles.actionText}>Settings</Text>
-            <Ionicons name="chevron-forward" size={20} color={riteColors.functional.textMuted} />
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.actionCard}>
-            <View style={styles.actionIcon}>
-              <Ionicons name="calendar-outline" size={24} color={riteColors.brand.primary} />
-            </View>
-            <Text style={styles.actionText}>My Events</Text>
-            <Ionicons name="chevron-forward" size={20} color={riteColors.functional.textMuted} />
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.actionCard}>
-            <View style={styles.actionIcon}>
-              <Ionicons name="musical-notes-outline" size={24} color={riteColors.brand.primary} />
-            </View>
-            <Text style={styles.actionText}>DJ Applications</Text>
-            <Ionicons name="chevron-forward" size={20} color={riteColors.functional.textMuted} />
-          </TouchableOpacity>
-        </View>
-
-        {/* Stats */}
-        <View style={styles.statsSection}>
-          <View style={styles.statCard}>
-            <Text style={styles.statNumber}>0</Text>
-            <Text style={styles.statLabel}>Events</Text>
-          </View>
-          <View style={styles.statCard}>
-            <Text style={styles.statNumber}>0</Text>
-            <Text style={styles.statLabel}>DJ Sets</Text>
-          </View>
-        </View>
-
-        {/* Sign Out */}
-        <View style={styles.section}>
-          <TouchableOpacity 
-            style={styles.signOutButton}
             onPress={signOut}
           >
-            <Ionicons name="log-out-outline" size={24} color={riteColors.functional.danger} />
-            <Text style={styles.signOutText}>Sign Out</Text>
+            <Card className="bg-neutral-700 border-error p-6 flex-row items-center justify-center">
+              <Ionicons name="log-out-outline" size={24} color={colors.semantic.error} />
+              <Typography variant="button" className="text-error ml-3">
+                Sign Out
+              </Typography>
+            </Card>
           </TouchableOpacity>
         </View>
-      </View>
       </ScrollView>
     </SafeAreaView>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: riteColors.neutral[800],
-  },
-  content: {
-    padding: 24,
-    paddingBottom: Platform.OS === 'ios' ? 124 : 104, // Account for tab bar + extra spacing
-  },
-  profileHeader: {
-    alignItems: 'center',
-    marginBottom: 32,
-  },
-  avatarContainer: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    backgroundColor: riteColors.neutral[700],
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 16,
-    borderWidth: 2,
-    borderColor: riteColors.brand.primary,
-  },
-  userName: {
-    ...typography.h5,
-    color: riteColors.neutral[0],
-    marginBottom: 4,
-  },
-  userEmail: {
-    ...typography.body,
-    color: riteColors.functional.textSecondary,
-  },
-  section: {
-    marginBottom: 24,
-  },
-  actionCard: {
-    backgroundColor: riteColors.neutral[700],
-    borderRadius: 16, // matches web's rounded-xl for cards
-    padding: 24, // matches web's p-6
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 16, // consistent spacing
-    borderWidth: 1,
-    borderColor: riteColors.functional.border,
-    ...shadows.md, // matches web's shadow-md for cards
-  },
-  actionIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: riteColors.neutral[800],
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 16,
-  },
-  actionText: {
-    ...typography.body,
-    color: riteColors.neutral[0],
-    flex: 1,
-  },
-  statsSection: {
-    flexDirection: 'row',
-    gap: 12,
-  },
-  statCard: {
-    flex: 1,
-    backgroundColor: riteColors.neutral[700],
-    borderRadius: 16, // matches web's rounded-xl for cards
-    padding: 24, // matches web's p-6
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: riteColors.functional.border,
-    ...shadows.md, // matches web's shadow-md for cards
-  },
-  statNumber: {
-    ...typography.h3,
-    color: riteColors.brand.primary,
-    marginBottom: 4,
-  },
-  statLabel: {
-    ...typography.caption,
-    color: riteColors.functional.textSecondary,
-  },
-  signOutButton: {
-    backgroundColor: riteColors.neutral[700],
-    borderRadius: 16,
-    padding: 24,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 12,
-    borderWidth: 1,
-    borderColor: riteColors.functional.danger,
-    ...shadows.md,
-  },
-  signOutText: {
-    ...typography.button,
-    color: riteColors.functional.danger,
-  },
-});

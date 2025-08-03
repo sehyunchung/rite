@@ -1,6 +1,25 @@
-import React from 'react'
-import { Text, TextProps } from 'react-native'
+import * as React from 'react'
+import { Text, TextProps, Platform } from 'react-native'
 import '@rite/ui/types/nativewind';
+
+// Map font weights to specific font files for React Native
+const getFontFamily = (weight: string) => {
+  const weightMap: Record<string, string> = {
+    'font-thin': 'SUIT-Regular',
+    'font-light': 'SUIT-Regular', 
+    'font-normal': 'SUIT-Regular',
+    'font-medium': 'SUIT-Medium',
+    'font-semibold': 'SUIT-SemiBold',
+    'font-bold': 'SUIT-Bold',
+    'font-black': 'SUIT-Bold',
+  };
+  
+  return Platform.select({
+    ios: weightMap[weight] || 'SUIT-Regular',
+    android: weightMap[weight] || 'SUIT-Regular',
+    default: 'System',
+  });
+};
 
 export interface TypographyProps extends Omit<TextProps, 'className'> {
   variant?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'body' | 'body-lg' | 'body-sm' | 'caption' | 'label' | 'button'
@@ -41,10 +60,20 @@ export function Typography({
   style,
   ...props
 }: TypographyProps) {
+  // Extract font weight from variant styles
+  const variantClass = variantStyles[variant];
+  const fontWeightMatch = variantClass.match(/font-(thin|light|normal|medium|semibold|bold|black)/);
+  const fontWeightClass = fontWeightMatch ? `font-${fontWeightMatch[1]}` : 'font-normal';
+  const fontFamily = getFontFamily(fontWeightClass);
+  
+  // Remove font-suit and font-weight classes from className since we handle them with fontFamily
+  const cleanedVariantClass = variantClass.replace(/font-\w+/g, '').trim();
+  const cleanedClassName = className.replace(/font-\w+/g, '').trim();
+  
   return (
     <Text
-      className={`font-suit ${variantStyles[variant]} ${colorStyles[color]} ${className}`}
-      style={style}
+      className={`${cleanedVariantClass} ${colorStyles[color]} ${cleanedClassName}`}
+      style={[{ fontFamily }, style]}
       {...props}
     >
       {children}

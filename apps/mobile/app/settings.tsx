@@ -1,17 +1,14 @@
-import React from 'react';
+import * as React from 'react';
 import {
   View,
-  Text,
   ScrollView,
   TouchableOpacity,
-  StyleSheet,
   SafeAreaView,
 } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { typography } from '../constants/Typography';
-import { riteColors } from '../constants/Colors';
-import { shadows } from '../utils/shadow';
+import { Typography, Card, Button } from '@rite/ui';
+import { colors } from '@rite/ui/design-tokens';
 
 interface SettingItemProps {
   icon: keyof typeof Ionicons.glyphMap;
@@ -21,15 +18,21 @@ interface SettingItemProps {
 }
 
 const SettingItem: React.FC<SettingItemProps> = ({ icon, title, subtitle, onPress }) => (
-  <TouchableOpacity style={styles.settingItem} onPress={onPress}>
-    <View style={styles.iconContainer}>
-      <Ionicons name={icon} size={24} color={riteColors.functional.textSecondary} />
-    </View>
-    <View style={styles.textContainer}>
-      <Text style={styles.settingTitle}>{title}</Text>
-      <Text style={styles.settingSubtitle}>{subtitle}</Text>
-    </View>
-    <Ionicons name="chevron-forward" size={20} color={riteColors.functional.textMuted} />
+  <TouchableOpacity onPress={onPress}>
+    <Card className="bg-neutral-700 border-neutral-600 p-6 flex-row items-center mb-4">
+      <View className="w-10 h-10 rounded-full bg-neutral-600 items-center justify-center mr-4">
+        <Ionicons name={icon} size={24} color={colors.functional.textSecondary} />
+      </View>
+      <View className="flex-1">
+        <Typography variant="body" className="text-white mb-1">
+          {title}
+        </Typography>
+        <Typography variant="caption" color="secondary">
+          {subtitle}
+        </Typography>
+      </View>
+      <Ionicons name="chevron-forward" size={20} color={colors.functional.textMuted} />
+    </Card>
   </TouchableOpacity>
 );
 
@@ -48,22 +51,23 @@ export default function SettingsScreen() {
           headerShown: true,
           title: 'Settings',
           headerStyle: {
-            backgroundColor: riteColors.neutral[800],
+            backgroundColor: colors.neutral[800],
           },
-          headerTintColor: riteColors.neutral[0],
-          headerTitleStyle: typography.h5,
+          headerTintColor: colors.functional.textPrimary,
           headerLeft: () => (
             <TouchableOpacity onPress={() => router.back()}>
-              <Ionicons name="arrow-back" size={24} color={riteColors.neutral[0]} />
+              <Ionicons name="arrow-back" size={24} color={colors.functional.textPrimary} />
             </TouchableOpacity>
           ),
         }}
       />
-      <SafeAreaView style={styles.container}>
-        <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+      <SafeAreaView className="flex-1 bg-neutral-800">
+        <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
           {/* Account Section */}
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Account</Text>
+          <View className="mt-8 px-6">
+            <Typography variant="h5" className="text-white mb-4">
+              Account
+            </Typography>
             
             <SettingItem
               icon="person-outline"
@@ -88,8 +92,10 @@ export default function SettingsScreen() {
           </View>
 
           {/* Preferences Section */}
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Preferences</Text>
+          <View className="mt-8 px-6">
+            <Typography variant="h5" className="text-white mb-4">
+              Preferences
+            </Typography>
             
             <SettingItem
               icon="globe-outline"
@@ -107,8 +113,10 @@ export default function SettingsScreen() {
           </View>
 
           {/* Support Section */}
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Support</Text>
+          <View className="mt-8 px-6">
+            <Typography variant="h5" className="text-white mb-4">
+              Support
+            </Typography>
             
             <SettingItem
               icon="mail-outline"
@@ -133,10 +141,16 @@ export default function SettingsScreen() {
           </View>
 
           {/* Log Out Button */}
-          <View style={styles.logoutSection}>
-            <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-              <Text style={styles.logoutText}>Log Out</Text>
-            </TouchableOpacity>
+          <View className="mt-12 mb-8 px-6">
+            <Button 
+              variant="outline" 
+              onPress={handleLogout}
+              className="border-2 border-neutral-600"
+            >
+              <Typography variant="button" color="primary">
+                Log Out
+              </Typography>
+            </Button>
           </View>
         </ScrollView>
       </SafeAreaView>
@@ -144,73 +158,3 @@ export default function SettingsScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: riteColors.neutral[800],
-  },
-  scrollView: {
-    flex: 1,
-  },
-  section: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    ...typography.h5,
-    color: riteColors.neutral[0],
-    marginBottom: 16,
-  },
-  settingItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: riteColors.neutral[700],
-    borderRadius: 16, // matches web's rounded-xl for cards
-    padding: 24, // matches web's p-6
-    marginBottom: 16, // consistent spacing
-    borderWidth: 1,
-    borderColor: riteColors.functional.border,
-    ...shadows.md, // matches web's shadow-md for cards
-  },
-  iconContainer: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: riteColors.neutral[600],
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 16,
-  },
-  textContainer: {
-    flex: 1,
-  },
-  settingTitle: {
-    ...typography.body,
-    color: riteColors.neutral[0],
-    marginBottom: 2,
-  },
-  settingSubtitle: {
-    ...typography.caption,
-    color: riteColors.functional.textSecondary,
-  },
-  logoutSection: {
-    marginTop: 48,
-    marginBottom: 32,
-    paddingHorizontal: 24,
-  },
-  logoutButton: {
-    backgroundColor: 'transparent',
-    borderRadius: 8, // matches web's rounded-lg for buttons
-    paddingHorizontal: 24,
-    paddingVertical: 12,
-    height: 48,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 2, // matches web's border-2 for outline buttons
-    borderColor: riteColors.neutral[600], // matches web's border-neutral-600
-  },
-  logoutText: {
-    ...typography.button,
-    color: riteColors.brand.primary,
-  },
-});

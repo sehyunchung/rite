@@ -2,44 +2,44 @@
 // Platform-agnostic color definitions
 
 export const colors = {
-  // Core brand colors
+  // Core brand colors - Josh Comeau theme
   brand: {
-    primary: '#E946FF',      // Vibrant pink/magenta
-    primaryDark: '#D01FFF',  // Darker variant
-    primaryLight: '#F26FFF', // Lighter variant
+    primary: 'hsl(225, 100%, 75%)',      // Josh Comeau primary blue
+    primaryDark: 'hsl(225, 100%, 60%)',  // Josh Comeau primaryDark
+    primaryLight: 'hsl(225, 100%, 85%)', // Josh Comeau primaryLight
   },
 
-  // Neutral colors
+  // Neutral colors - Josh Comeau theme
   neutral: {
-    0: '#FFFFFF',
-    50: '#F8F8FA',
-    100: '#E8E8ED',
-    200: '#D1D1D9',
-    300: '#A8A8B3',
-    400: '#7A7A88',
-    500: '#5A5A6A',
-    600: '#3A3A4A',
-    700: '#2A1F3F',  // Surface color
-    800: '#1A0F2F',  // Background color
-    900: '#0A0515',  // Deepest dark
+    0: 'hsl(210, 25%, 96%)',     // #F5F5F8
+    50: 'hsl(210, 25%, 88%)',    // #DDDDE5
+    100: 'hsl(210, 20%, 77%)',   // #C4C4D1
+    200: 'hsl(210, 14%, 66%)',   // #A8A8BD
+    300: 'hsl(210, 12%, 55%)',   // #8C8CA3
+    400: 'hsl(210, 8%, 50%)',    // #70707F
+    500: 'hsl(210, 9%, 40%)',    // #616166
+    600: 'hsl(210, 10%, 30%)',   // #47474D
+    700: 'hsl(210, 15%, 18%)',   // #26262E
+    800: 'hsl(210, 15%, 12%)',   // #1A1A1F
+    900: 'hsl(210, 15%, 6%)',    // #0F0F10
   },
 
-  // Semantic colors
+  // Semantic colors - Josh Comeau theme
   semantic: {
-    success: '#4ADE80',
-    warning: '#FBBF24',
-    error: '#EF4444',
-    info: '#3B82F6',
+    success: 'hsl(160, 100%, 40%)',  // #00CC66
+    warning: 'hsl(40, 100%, 50%)',   // #FFCC00
+    error: 'hsl(340, 95%, 60%)',     // #FF3366
+    info: 'hsl(225, 100%, 80%)',     // #9999FF
   },
 
-  // Functional colors
+  // Functional colors - Josh Comeau theme
   functional: {
-    textPrimary: '#FFFFFF',
-    textSecondary: '#A8A8B3',
-    textMuted: '#7A7A88',
-    border: '#2A1F3F',
-    divider: '#3A3A4A',
-    overlay: 'rgba(10, 5, 21, 0.8)',
+    textPrimary: 'hsl(210, 10%, 90%)',     // #E0E0E6
+    textSecondary: 'hsl(210, 12%, 55%)',   // #8C8CA3
+    textMuted: 'hsl(210, 8%, 50%)',        // #70707F
+    border: 'hsl(210, 15%, 18%)',          // #26262E
+    divider: 'hsl(210, 15%, 18%)',         // #26262E
+    overlay: 'hsl(210, 15%, 6%, 0.75)',   // #0F0F10BF
   },
 } as const
 
