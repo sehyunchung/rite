@@ -18,6 +18,7 @@ import { EditIcon, ClipboardListIcon, QrCodeIcon, Trash2Icon, AlertTriangleIcon 
 import { useTranslations } from 'next-intl';
 import { MobileLayout } from '../../../components/MobileLayout';
 import { useMutation } from 'convex/react';
+import { toast } from 'sonner';
 import { Label, Textarea } from '@rite/ui';
 
 interface EventDetailClientProps {
@@ -54,7 +55,7 @@ export function EventDetailClient({ eventId, userId, locale }: EventDetailClient
       router.push(`/${locale}/dashboard`);
     } catch (error) {
       console.error('Failed to delete event:', error);
-      alert('Failed to delete event. ' + (error as Error).message);
+      toast.error('Failed to delete event. Please try again.');
     }
     setIsDeleting(false);
     setShowDeleteConfirm(false);
@@ -74,7 +75,7 @@ export function EventDetailClient({ eventId, userId, locale }: EventDetailClient
       router.push(`/${locale}/dashboard`);
     } catch (error) {
       console.error('Failed to cancel event:', error);
-      alert('Failed to cancel event. ' + (error as Error).message);
+      toast.error('Failed to cancel event. Please try again.');
     }
     setIsDeleting(false);
     setShowCancelConfirm(false);

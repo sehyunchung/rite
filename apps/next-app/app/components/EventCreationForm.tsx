@@ -24,6 +24,7 @@ import {
   validatePromoDeadline
 } from '@/lib/validation';
 import { useTranslations } from 'next-intl';
+import { toast } from 'sonner';
 
 interface EventCreationFormProps {
   onEventCreated?: () => void;
@@ -274,13 +275,13 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
       // Prepare data for Convex (organizerId will be set automatically from auth)
       // Check if session is still loading
       if (status === 'loading') {
-        alert('Please wait for authentication to complete.');
+        toast.warning('Please wait for authentication to complete.');
         return;
       }
 
       // Check if user is authenticated
       if (!session?.user?.id) {
-        alert('You must be logged in to create an event.');
+        toast.error('You must be logged in to create an event.');
         return;
       }
 
@@ -307,7 +308,7 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
       console.log('Event data being sent:', eventData);
       await createEvent(eventData);
       
-      alert('Event created successfully!');
+      toast.success('Event created successfully!');
       
       // Reset form
       setFormData({
@@ -328,7 +329,7 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
       
     } catch (error) {
       console.error('Failed to create event:', error);
-      alert('Failed to create event. Please try again.');
+      toast.error('Failed to create event. Please try again.');
     } finally {
       setIsSubmitting(false);
     }

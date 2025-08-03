@@ -11,6 +11,7 @@ import { Id } from '@rite/backend/convex/_generated/dataModel';
 import { useTranslations } from 'next-intl';
 import { FullScreenLoading, Typography } from '@rite/ui';
 import { SubmissionCompleteMessage } from './SubmissionCompleteMessage';
+import { toast } from 'sonner';
 
 interface DJSubmissionFormProps {
   submissionToken: string;
@@ -165,7 +166,7 @@ export function DJSubmissionForm({ submissionToken }: DJSubmissionFormProps) {
       setSubmissionComplete(true);
     } catch (error) {
       console.error('Submission failed:', error);
-      alert(`Submission failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      toast.error(`Submission failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     } finally {
       setIsSubmitting(false);
     }
@@ -196,7 +197,7 @@ export function DJSubmissionForm({ submissionToken }: DJSubmissionFormProps) {
       setShowDeleteConfirm(false);
     } catch (error) {
       console.error('Delete failed:', error);
-      alert(`Delete failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      toast.error(`Delete failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     } finally {
       setIsSubmitting(false);
     }
