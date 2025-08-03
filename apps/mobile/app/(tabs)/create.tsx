@@ -78,13 +78,13 @@ export default function CreateTab() {
             paddingBottom: Platform.OS === 'ios' ? 124 : 104 
           }}
         >
-          <Typography variant="h3" className="text-white mb-8">
+          <Typography variant="h3" className="mb-8" style={{ color: colors.functional.textPrimary }}>
             Create Event
           </Typography>
           
           {/* Event Name */}
           <View className="mb-6">
-            <Typography variant="label" className="text-white mb-2">
+            <Typography variant="label" className="mb-2" style={{ color: colors.functional.textPrimary }}>
               Event Name
             </Typography>
             <Input
@@ -98,14 +98,14 @@ export default function CreateTab() {
 
           {/* Date */}
           <View className="mb-6">
-            <Typography variant="label" className="text-white mb-2">
+            <Typography variant="label" className="mb-2" style={{ color: colors.functional.textPrimary }}>
               Date
             </Typography>
             <TouchableOpacity 
               className="bg-neutral-700 border border-neutral-600 rounded-xl h-12 flex-row items-center px-4"
               onPress={() => setShowDatePicker(true)}
             >
-              <Typography variant="body" className="text-white flex-1">
+              <Typography variant="body" className="flex-1" style={{ color: colors.functional.textPrimary }}>
                 {formatDate(selectedDate)}
               </Typography>
               <Ionicons name="calendar-outline" size={20} color={colors.functional.textSecondary} />
@@ -114,14 +114,14 @@ export default function CreateTab() {
 
           {/* Start Time */}
           <View className="mb-6">
-            <Typography variant="label" className="text-white mb-2">
+            <Typography variant="label" className="mb-2" style={{ color: colors.functional.textPrimary }}>
               Start Time
             </Typography>
             <TouchableOpacity 
               className="bg-neutral-700 border border-neutral-600 rounded-xl h-12 flex-row items-center px-4"
               onPress={() => setShowTimePicker(true)}
             >
-              <Typography variant="body" className="text-white flex-1">
+              <Typography variant="body" className="flex-1" style={{ color: colors.functional.textPrimary }}>
                 {formatTime(startTime)}
               </Typography>
               <Ionicons name="time-outline" size={20} color={colors.functional.textSecondary} />
@@ -131,7 +131,7 @@ export default function CreateTab() {
           {/* DJ Lineup */}
           <View className="mb-6">
             <View className="flex-row justify-between items-center mb-3">
-              <Typography variant="label" className="text-white">
+              <Typography variant="label" style={{ color: colors.functional.textPrimary }}>
                 DJ Lineup
               </Typography>
               <TouchableOpacity className="flex-row items-center">
@@ -148,7 +148,7 @@ export default function CreateTab() {
                   <Ionicons name="musical-notes" size={20} color={colors.brand.primary} />
                 </View>
                 <View className="flex-1">
-                  <Typography variant="body" className="text-white mb-1">
+                  <Typography variant="body" className="mb-1" style={{ color: colors.functional.textPrimary }}>
                     {slot.name}
                   </Typography>
                   <Typography variant="caption" color="secondary">
