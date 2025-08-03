@@ -167,7 +167,7 @@ export function EventDetailClient({ eventId, userId, locale }: EventDetailClient
                   onClick={() => setShowQRCode(!showQRCode)}
                 >
                   <QrCodeIcon className="w-4 h-4" />
-                  <span className="ml-1 hidden sm:inline">{t('qrCode')}</span>
+                  <span className="ml-1 hidden sm:inline">{t('qrCodeButton')}</span>
                 </Button>
                 
                 {/* Delete/Cancel buttons */}

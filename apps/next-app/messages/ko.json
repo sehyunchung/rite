@@ -123,7 +123,7 @@
       },
       "edit": "편집",
       "submissions": "제출물",
-      "qrCode": "QR 코드",
+      "qrCodeButton": "QR 코드",
       "cancel": "취소",
       "delete": "삭제",
       "deleteEvent": "이벤트 삭제",
@@ -162,6 +162,25 @@
       "eventNotFound": "이벤트를 찾을 수 없음",
       "eventNotFoundMessage": "편집하려는 이벤트가 존재하지 않거나 편집할 권한이 없습니다.",
       "backToDashboard": "대시보드로 돌아가기"
+    },
+    "submissions": {
+      "title": "이벤트 제출물",
+      "subtitle": "이 이벤트의 DJ 제출물을 검토하고 관리하세요",
+      "backToEvent": "이벤트로 돌아가기",
+      "notFound": "이벤트를 찾을 수 없음",
+      "notFoundMessage": "찾고 계신 이벤트가 존재하지 않거나 접근 권한이 없습니다.",
+      "backToDashboard": "대시보드로 돌아가기",
+      "submitted": "제출물",
+      "status": {
+        "submitted": "제출됨",
+        "pending": "대기 중"
+      },
+      "guestList": "게스트 리스트",
+      "description": "설명",
+      "promoFiles": "홍보 파일",
+      "submittedOn": "제출일",
+      "awaitingSubmission": "DJ의 제출을 기다리는 중",
+      "noTimeslots": "이 이벤트에 대한 DJ 타임슬롯이 아직 생성되지 않았습니다."
     }
   },
   "status": {
