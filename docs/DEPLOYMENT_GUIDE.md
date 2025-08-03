@@ -1,7 +1,7 @@
 # Rite Deployment Guide
 
 ## Overview
-This guide covers deploying the Rite DJ event management platform to production, with a focus on Korean market requirements and the specific tech stack (Next.js 15 + App Router + Convex + NextAuth).
+This guide covers deploying the Rite DJ event management platform to production, with a focus on Korean market requirements and the specific tech stack (Next.js 15 + App Router + Convex + NextAuth v5).
 
 ## Recommended Platform: Vercel
 
@@ -29,45 +29,32 @@ First, get your production keys:
 npx convex deploy --cmd 'npx convex env get CONVEX_URL'
 ```
 
-**Clerk Production Keys:**
-- Go to [Clerk Dashboard](https://dashboard.clerk.com)
-- Select your production instance
-- Copy the Publishable Key
+**NextAuth v5 Configuration:**
+- Configure OAuth providers (Instagram via proxy, Google)
+- Set NEXTAUTH_SECRET for production
+- Configure redirect URLs for each OAuth provider
 
-### 2. Create Vercel Configuration
+### 2. Vercel Configuration
 
-Create `vercel.json` in your project root:
-
-```json
-{
-  "buildCommand": "npm run build",
-  "outputDirectory": "dist",
-  "framework": "vite",
-  "rewrites": [
-    {
-      "source": "/(.*)",
-      "destination": "/index.html"
-    }
-  ]
-}
-```
-
-This configuration ensures:
-- Correct build process for Vite
-- SPA routing works (all routes serve index.html)
-- TanStack Router can handle client-side navigation
+Vercel automatically detects Next.js projects and configures them optimally. No additional configuration is needed as Next.js 15 with App Router handles:
+- Server-side rendering and static generation
+- API routes
+- Internationalization routing
+- Image optimization
+- Automatic bundle optimization
 
 ### 3. Connect to Vercel
 
 #### Option A: Vercel CLI (Recommended)
 ```bash
 # Install Vercel CLI
-npm i -g vercel
+pnpm add -g vercel
 
 # Login to Vercel
 vercel login
 
-# Deploy
+# Deploy from Next.js app directory
+cd apps/next-app
 vercel
 
 # Follow prompts:
@@ -81,10 +68,10 @@ vercel
 1. Go to [vercel.com/new](https://vercel.com/new)
 2. Import your GitHub repository
 3. Configure project:
-   - Framework Preset: Vite
-   - Build Command: `npm run build`
-   - Output Directory: `dist`
-   - Install Command: `npm install`
+   - Framework Preset: Next.js
+   - Root Directory: `apps/next-app`
+   - Build Command: `cd ../.. && pnpm run build --filter=next-app`
+   - Install Command: `cd ../.. && pnpm install`
 
 ### 4. Set Environment Variables
 
@@ -92,17 +79,28 @@ In Vercel Dashboard > Project Settings > Environment Variables:
 
 ```bash
 # Required for production
-VITE_CONVEX_URL=https://your-instance.convex.cloud
-VITE_CLERK_PUBLISHABLE_KEY=pk_live_your_actual_key
+NEXT_PUBLIC_CONVEX_URL=https://your-instance.convex.cloud
+NEXTAUTH_URL=https://your-domain.vercel.app
+NEXTAUTH_SECRET=your_nextauth_secret_here
+
+# Instagram OAuth (via proxy)
+INSTAGRAM_CLIENT_ID=your_instagram_client_id
+INSTAGRAM_CLIENT_SECRET=your_instagram_client_secret
+INSTAGRAM_OAUTH_PROXY_URL=https://rite-instagram-oauth-proxy.sehyunchung.workers.dev
+
+# Google OAuth
+GOOGLE_CLIENT_ID=your_google_client_id
+GOOGLE_CLIENT_SECRET=your_google_client_secret
 
 # Optional for development preview
 CONVEX_DEPLOY_KEY=your_deploy_key
 ```
 
 **Important**: 
-- Use `VITE_` prefix for client-side variables
+- Use `NEXT_PUBLIC_` prefix for client-side variables
 - Don't commit production keys to git
 - Set different values for Preview/Development/Production environments
+- Ensure OAuth redirect URLs match production domain
 
 ### 5. Deploy to Production
 
@@ -117,87 +115,100 @@ git push origin main
 ### 6. Verify Deployment
 
 Check these critical paths:
-- `/` - Landing page loads
-- `/login` - Clerk authentication works
+- `/` - Landing page loads with theme switcher
+- `/ko` and `/en` - Internationalization works
+- `/auth/signin` - NextAuth v5 authentication works
 - `/dashboard` - Protected route redirects properly
-- `/dj-submission?token=test` - Shows error for invalid token
+- `/submit/[token]` - Shows error for invalid token
 - `/events/create` - Form loads with proper validation
+- Test Instagram and Google OAuth flows
 
 ## Production Checklist
 
 ### Security
 - [ ] Environment variables set correctly (not exposed in client)
 - [ ] HTTPS enforced (automatic on Vercel)
-- [ ] Clerk production instance configured
+- [ ] NextAuth v5 production configuration active
+- [ ] OAuth providers properly configured with production URLs
 - [ ] Convex production deployment active
 
 ### Performance
-- [ ] Build optimization enabled (automatic with Vite)
+- [ ] Build optimization enabled (automatic with Next.js 15)
 - [ ] Assets served from CDN (automatic on Vercel)
 - [ ] Gzip compression active (automatic on Vercel)
-- [ ] Client-side routing works without full page reloads
+- [ ] Server-side rendering and static generation working
+- [ ] Image optimization enabled
+- [ ] i18n routing works correctly
 
 ### Monitoring
 - [ ] Vercel Analytics enabled (optional)
 - [ ] Error tracking configured (consider Sentry)
 - [ ] Convex dashboard accessible for monitoring
-- [ ] Clerk dashboard shows active users
+- [ ] NextAuth session management working
+- [ ] OAuth providers showing successful authentications
 
 ## Alternative Deployment Options
 
 ### Netlify
-Similar to Vercel with slightly different configuration:
+Next.js support with additional configuration:
 
 `netlify.toml`:
 ```toml
 [build]
-  command = "npm run build"
-  publish = "dist"
+  command = "cd ../.. && pnpm run build --filter=next-app"
+  publish = "apps/next-app/.next"
 
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
+[build.environment]
+  NODE_VERSION = "18"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
 ```
 
-Pros: Good free tier, easy setup
-Cons: Slightly slower in Asia
+Pros: Good free tier, Next.js plugin support
+Cons: Slightly slower in Asia, requires additional configuration
 
 ### Cloudflare Pages
-Fast globally but requires more configuration:
+Fast globally but limited Next.js support:
 
 1. Build configuration:
-   - Build command: `npm run build`
-   - Build output directory: `dist`
+   - Build command: `cd ../.. && pnpm run build --filter=next-app`
+   - Build output directory: `apps/next-app/out`
+   - Requires static export configuration
 
-2. Add `_redirects` file in `public/`:
-   ```
-   /* /index.html 200
+2. Add to `next.config.js`:
+   ```javascript
+   /** @type {import('next').NextConfig} */
+   const nextConfig = {
+     output: 'export',
+     trailingSlash: true,
+     images: { unoptimized: true }
+   }
    ```
 
 Pros: Excellent global performance
-Cons: More complex setup, less intuitive dashboard
+Cons: Limited Next.js features (no server-side rendering, API routes)
 
 ### Railway
-Full-stack platform, but overkill for frontend-only:
+Full-stack platform suitable for Next.js apps:
 
 `railway.json`:
 ```json
 {
   "build": {
     "builder": "NIXPACKS",
-    "buildCommand": "npm run build"
+    "buildCommand": "cd ../.. && pnpm run build --filter=next-app"
   },
   "deploy": {
-    "startCommand": "npm run preview",
+    "startCommand": "cd apps/next-app && pnpm start",
     "restartPolicyType": "ON_FAILURE",
     "restartPolicyMaxRetries": 10
   }
 }
 ```
 
-Pros: Can host full-stack apps
-Cons: More expensive, unnecessary complexity
+Pros: Full Next.js support, good for monorepos
+Cons: More expensive than Vercel free tier
 
 ## Korean Market Optimizations
 
@@ -214,46 +225,52 @@ For optimal Korean performance, consider:
    - Configure origin to Vercel deployment
 
 ### Performance Tips
-1. **Font Loading**: Use Korean web fonts with `font-display: swap`
-2. **Image Optimization**: Use WebP format with fallbacks
-3. **Bundle Splitting**: Lazy load routes with TanStack Router
-4. **Caching**: Set appropriate cache headers for assets
+1. **Font Loading**: SUIT Variable font with `font-display: swap`
+2. **Image Optimization**: Next.js automatic optimization with WebP
+3. **Bundle Splitting**: Automatic with Next.js App Router
+4. **Caching**: ISR and static generation for optimal caching
+5. **i18n**: Efficient locale-based routing
 
 ## Troubleshooting
 
 ### Common Issues
 
 **404 on refresh:**
-- Ensure SPA rewrite rules are configured
-- Check `vercel.json` rewrites section
+- Next.js App Router handles this automatically
+- Ensure dynamic routes are properly configured
 
 **Environment variables not working:**
-- Variables must start with `VITE_` to be exposed to client
+- Variables must start with `NEXT_PUBLIC_` to be exposed to client
 - Rebuild after changing environment variables
+- Check Vercel dashboard environment settings
 
 **Slow initial load:**
 - Enable Vercel Edge Network
-- Consider code splitting for large components
-- Optimize bundle size with `npm run build -- --analyze`
+- Use Next.js static generation where possible
+- Optimize images with Next.js Image component
 
-**Authentication redirect loops:**
-- Verify Clerk redirect URLs include production domain
-- Check CORS settings in Clerk dashboard
+**Authentication issues:**
+- Verify NextAuth redirect URLs include production domain
+- Check OAuth provider settings
+- Ensure NEXTAUTH_SECRET is set in production
 
 ### Debug Commands
 
 ```bash
-# Check build output
-npm run build
+# Check build output (from root)
+pnpm run build --filter=next-app
 
 # Test production build locally
-npm run preview
+cd apps/next-app && pnpm start
 
 # Analyze bundle size
-npm run build -- --analyze
+cd apps/next-app && pnpm run build && npx @next/bundle-analyzer
 
 # Check environment variables
 vercel env ls
+
+# Test monorepo dependencies
+pnpm run type-check
 ```
 
 ## Maintenance

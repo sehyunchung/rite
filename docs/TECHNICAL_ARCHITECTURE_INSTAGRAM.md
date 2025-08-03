@@ -1,23 +1,26 @@
 # Technical Architecture: Instagram Post Generation
-## Simple System Design for Korean DJ Friends
+## Next.js Implementation for Korean DJ Platform
 
 ---
 
 ## 🏗️ **System Overview**
 
-The Instagram post generation feature for Rite is a straightforward addition that helps Korean DJ organizers create decent-looking social media content. The architecture is designed for **simplicity**, **reliability**, and **maintenance ease** while handling modest usage from 50-100 Korean electronic music organizers.
+The Instagram post generation feature for Rite integrates with the existing Next.js 15 + App Router architecture to help Korean DJ organizers create social media content. The system leverages Convex backend, NextAuth v5 authentication, and the established @rite/ui design system for **simplicity**, **reliability**, and **maintenance ease** while serving 50-100 Korean electronic music organizers.
 
-### High-Level Architecture (Simplified)
+### High-Level Architecture (Next.js + App Router)
 
 ```
 ┌─────────────────────────────────────────────────────┐
-│                 Rite Frontend                      │
+│            Next.js 15 Frontend (SSR/ISR)          │
 │  ┌─────────────────┐  ┌─────────────────┐         │
 │  │ Event Dashboard │  │ Generate Post   │         │
+│  │ /[locale]/      │  │ /[locale]/      │         │
+│  │ dashboard       │  │ generate        │         │
 │  │                 │  │                 │         │
 │  │ • Event Setup   │  │ • Template Pick │         │
 │  │ • DJ Timeslots  │  │ • Preview/Edit  │         │
-│  │ • Basic Info    │  │ • Download      │         │
+│  │ • @rite/ui      │  │ • Download      │         │
+│  │ • Theme System  │  │ • NextAuth      │         │
 │  └─────────────────┘  └─────────────────┘         │
 └─────────────────────────────────────────────────────┘
                             │
@@ -27,9 +30,10 @@ The Instagram post generation feature for Rite is a straightforward addition tha
 │  ┌─────────────────┐  ┌─────────────────┐         │
 │  │ Content Engine  │  │ Simple Scheduler│         │
 │  │                 │  │ (Premium Only)  │         │
-│  │ • Template Render│  │ • Basic Queue   │         │
-│  │ • Image Creation│  │ • Korean Time   │         │
-│  │ • Korean Text   │  │ • Retry Logic   │         │
+│  │ • Canvas API    │  │ • Cron Jobs     │         │
+│  │ • Image Gen     │  │ • Korean Time   │         │
+│  │ • SUIT Font     │  │ • Retry Logic   │         │
+│  │ • Korean Text   │  │ • Queue System  │         │
 │  └─────────────────┘  └─────────────────┘         │
 └─────────────────────────────────────────────────────┘
                             │
@@ -38,10 +42,10 @@ The Instagram post generation feature for Rite is a straightforward addition tha
 │              External Services                     │
 │  ┌─────────────────┐  ┌─────────────────┐         │
 │  │ Instagram API   │  │ Convex Storage  │         │
-│  │                 │  │                 │         │
-│  │ • OAuth Connect │  │ • Image Files   │         │
+│  │ (via NextAuth)  │  │                 │         │
+│  │ • OAuth Proxy   │  │ • Image Files   │         │
 │  │ • Post Content  │  │ • CDN Delivery  │         │
-│  │ • Basic Insights│  │ • Simple Cache  │         │
+│  │ • Basic Insights│  │ • Auto Cleanup  │         │
 │  └─────────────────┘  └─────────────────┘         │
 └─────────────────────────────────────────────────────┘
 ```
@@ -60,8 +64,9 @@ The Instagram post generation feature for Rite is a straightforward addition tha
 - Handle Korean typography properly
 
 **Technologies:**
-- **Canvas API** for image generation (server-side)
-- **Pretendard font** for Korean text rendering
+- **Canvas API** for server-side image generation (Convex actions)
+- **SUIT Variable font** for Korean text rendering (matching design system)
+- **@rite/ui design tokens** for consistent theming
 - **Simple templates** - no complex AI or dynamic generation
 
 **API Interface:**
@@ -167,23 +172,29 @@ class TemplateRenderer {
     const canvas = createCanvas(1080, 1080)
     const ctx = canvas.getContext('2d')
     
-    // Korean font setup
-    registerFont('./assets/fonts/Pretendard-Regular.ttf', { family: 'Pretendard' })
+    // Korean font setup (matching @rite/ui)
+    registerFont('./assets/fonts/SUIT-Variable.ttf', { family: 'SUIT Variable' })
     
-    // Dark background
-    ctx.fillStyle = '#1a1a1a'
+    // Apply current theme colors (Josh Comeau Dark/Light)
+    const theme = this.getActiveTheme()
+    ctx.fillStyle = theme.background.primary // --bg-primary
     ctx.fillRect(0, 0, 1080, 1080)
     
-    // Event name (Korean + English)
-    ctx.fillStyle = '#ffffff'
-    ctx.font = 'bold 64px Pretendard'
+    // Event name (Korean + English) with design system typography
+    ctx.fillStyle = theme.text.primary // --text-primary
+    ctx.font = 'bold 64px SUIT Variable'
     ctx.textAlign = 'center'
     ctx.fillText(event.name, 540, 300)
     
-    // Date and venue
-    ctx.font = '32px Pretendard'
+    // Date and venue with consistent styling
+    ctx.font = '32px SUIT Variable'
+    ctx.fillStyle = theme.text.secondary // --text-secondary
     ctx.fillText(event.date, 540, 400)
     ctx.fillText(event.venue.name, 540, 450)
+    
+    // Brand accent (--brand-primary)
+    ctx.fillStyle = theme.brand.primary
+    ctx.fillRect(100, 500, 880, 4) // Accent line
     
     return canvas.toBuffer('image/jpeg', { quality: 0.9 })
   }
@@ -423,33 +434,40 @@ export const deleteUserData = mutation({
 ## 🛠 **Development Approach (Simple)**
 
 ### Technology Stack (Already Available)
-- **Frontend**: React + TypeScript (existing Rite codebase)
-- **Backend**: Convex (already set up and working)
-- **Image Generation**: Canvas API (Node.js built-in)
+- **Frontend**: Next.js 15 + App Router + TypeScript (existing Rite codebase)
+- **Backend**: Convex with actions/mutations (already set up and working)
+- **Image Generation**: Canvas API (Node.js built-in via Convex actions)
 - **File Storage**: Convex File Storage (already available)
-- **Authentication**: Clerk (already integrated)
+- **Authentication**: NextAuth v5 with Instagram/Google OAuth (already integrated)
+- **Design System**: @rite/ui with dynamic theming (already integrated)
 
-### Code Organization (Minimal)
+### Code Organization (Next.js + Monorepo)
 ```
-src/
-├── components/
-│   └── instagram/
-│       ├── PostGenerator.tsx      # Main generation component
-│       ├── TemplateSelector.tsx   # Choose from 3 templates
-│       └── InstagramConnect.tsx   # Premium OAuth setup
+apps/next-app/
+├── app/
+│   └── [locale]/
+│       ├── generate/
+│       │   ├── page.tsx          # Post generation page
+│       │   └── components/
+│       │       ├── PostGenerator.tsx    # Main component
+│       │       ├── TemplateSelector.tsx # 3 templates
+│       │       └── InstagramConnect.tsx # OAuth setup
+│       └── dashboard/
+│           └── components/
+│               └── InstagramPanel.tsx   # Dashboard integration
 ├── lib/
 │   ├── instagram/
-│   │   ├── api-client.ts         # Simple Instagram API
-│   │   └── templates.ts          # 3 template generators
+│   │   ├── api-client.ts         # Instagram API wrapper
+│   │   └── templates.ts          # Template configurations
 │   └── validation/
-│       └── instagram.ts          # Input validation
-└── convex/
+│       └── instagram.ts          # ArkType validation
+└── packages/backend/convex/
     ├── instagram/
-    │   ├── generate.ts           # Post generation functions
-    │   ├── schedule.ts           # Basic scheduling (premium)
-    │   └── connect.ts            # Instagram OAuth
+    │   ├── generate.ts           # Server actions for generation
+    │   ├── schedule.ts           # Cron jobs for scheduling
+    │   └── connect.ts            # OAuth management
     └── storage/
-        └── cleanup.ts            # Image cleanup jobs
+        └── cleanup.ts            # Automated cleanup jobs
 ```
 
 ### Testing Strategy (Minimal)
