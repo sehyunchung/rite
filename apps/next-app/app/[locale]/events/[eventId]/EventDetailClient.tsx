@@ -14,9 +14,11 @@ import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { SubmissionLinks } from '@/components/SubmissionLinks';
 import { QRCode } from '@rite/ui';
 import { useState } from 'react';
-import { EditIcon, ClipboardListIcon, QrCodeIcon } from 'lucide-react';
+import { EditIcon, ClipboardListIcon, QrCodeIcon, Trash2Icon, AlertTriangleIcon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { MobileLayout } from '../../../components/MobileLayout';
+import { useMutation } from 'convex/react';
+import { Label, Textarea } from '@rite/ui';
 
 interface EventDetailClientProps {
   eventId: string;
@@ -28,8 +30,52 @@ export function EventDetailClient({ eventId, userId, locale }: EventDetailClient
   const router = useRouter();
   const baseUrl = typeof window !== 'undefined' ? window.location.origin : '';
   const [showQRCode, setShowQRCode] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [showCancelConfirm, setShowCancelConfirm] = useState(false);
+  const [cancelReason, setCancelReason] = useState('');
+  const [isDeleting, setIsDeleting] = useState(false);
   const t = useTranslations('events.detail');
   const tStatus = useTranslations('status');
+  
+  const deleteEvent = useMutation(api.events.deleteEvent);
+  const cancelEvent = useMutation(api.events.cancelEvent);
+
+  const handleDeleteEvent = async () => {
+    if (!event) return;
+    
+    setIsDeleting(true);
+    try {
+      await deleteEvent({
+        eventId: event._id,
+        userId: userId as Id<"users">,
+      });
+      router.push(`/${locale}/dashboard`);
+    } catch (error) {
+      console.error('Failed to delete event:', error);
+      alert('Failed to delete event. ' + (error as Error).message);
+    }
+    setIsDeleting(false);
+    setShowDeleteConfirm(false);
+  };
+
+  const handleCancelEvent = async () => {
+    if (!event) return;
+    
+    setIsDeleting(true);
+    try {
+      await cancelEvent({
+        eventId: event._id,
+        userId: userId as Id<"users">,
+        reason: cancelReason,
+      });
+      router.push(`/${locale}/dashboard`);
+    } catch (error) {
+      console.error('Failed to cancel event:', error);
+      alert('Failed to cancel event. ' + (error as Error).message);
+    }
+    setIsDeleting(false);
+    setShowCancelConfirm(false);
+  };
   
   const event = useQuery(
     api.events.getEvent,
@@ -107,6 +153,33 @@ export function EventDetailClient({ eventId, userId, locale }: EventDetailClient
                   <QrCodeIcon className="w-4 h-4" />
                   <span className="ml-1 hidden sm:inline">{t('qrCode')}</span>
                 </Button>
+                
+                {/* Delete/Cancel buttons */}
+                {event.phase !== 'CANCELLED' && event.phase !== 'COMPLETED' && (
+                  <>
+                    {event.timeslots.some(slot => slot.submissionId) ? (
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => setShowCancelConfirm(true)}
+                        className="text-orange-600 hover:text-orange-700 border-orange-300"
+                      >
+                        <AlertTriangleIcon className="w-4 h-4" />
+                        <span className="ml-1 hidden sm:inline">Cancel</span>
+                      </Button>
+                    ) : (
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => setShowDeleteConfirm(true)}
+                        className="text-red-600 hover:text-red-700 border-red-300"
+                      >
+                        <Trash2Icon className="w-4 h-4" />
+                        <span className="ml-1 hidden sm:inline">Delete</span>
+                      </Button>
+                    )}
+                  </>
+                )}
               </div>
             </div>
             {event.description && (
@@ -251,6 +324,90 @@ export function EventDetailClient({ eventId, userId, locale }: EventDetailClient
                   <p className="text-sm text-muted-foreground">
                     {t('qrCode.description')}
                   </p>
+                </CardContent>
+              </Card>
+            </div>
+          )}
+
+          {/* Delete Confirmation Dialog */}
+          {showDeleteConfirm && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+              <Card className="max-w-md w-full">
+                <CardHeader>
+                  <CardTitle className="flex items-center space-x-2 text-red-600">
+                    <Trash2Icon className="w-5 h-5" />
+                    <span>Delete Event</span>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Are you sure you want to permanently delete this event? This action cannot be undone.
+                    All timeslots and submission links will be removed.
+                  </p>
+                  <div className="flex justify-end space-x-2">
+                    <Button 
+                      variant="outline" 
+                      onClick={() => setShowDeleteConfirm(false)}
+                      disabled={isDeleting}
+                    >
+                      Cancel
+                    </Button>
+                    <Button 
+                      variant="destructive" 
+                      onClick={handleDeleteEvent}
+                      disabled={isDeleting}
+                    >
+                      {isDeleting ? 'Deleting...' : 'Delete Event'}
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          )}
+
+          {/* Cancel Confirmation Dialog */}
+          {showCancelConfirm && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+              <Card className="max-w-md w-full">
+                <CardHeader>
+                  <CardTitle className="flex items-center space-x-2 text-orange-600">
+                    <AlertTriangleIcon className="w-5 h-5" />
+                    <span>Cancel Event</span>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    This will cancel the event and notify all DJs. The event data will be preserved for records.
+                  </p>
+                  <div className="space-y-4">
+                    <div>
+                      <Label htmlFor="cancelReason">Cancellation Reason (Optional)</Label>
+                      <Textarea
+                        id="cancelReason"
+                        value={cancelReason}
+                        onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setCancelReason(e.target.value)}
+                        placeholder="Explain why the event is being cancelled..."
+                        rows={3}
+                      />
+                    </div>
+                    <div className="flex justify-end space-x-2">
+                      <Button 
+                        variant="outline" 
+                        onClick={() => setShowCancelConfirm(false)}
+                        disabled={isDeleting}
+                      >
+                        Keep Event
+                      </Button>
+                      <Button 
+                        variant="destructive" 
+                        onClick={handleCancelEvent}
+                        disabled={isDeleting}
+                        className="bg-orange-600 hover:bg-orange-700"
+                      >
+                        {isDeleting ? 'Cancelling...' : 'Cancel Event'}
+                      </Button>
+                    </div>
+                  </div>
                 </CardContent>
               </Card>
             </div>
