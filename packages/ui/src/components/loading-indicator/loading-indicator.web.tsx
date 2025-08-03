@@ -18,7 +18,7 @@ export function LoadingIndicator({
 
 export function FullScreenLoading() {
   return (
-    <div className="min-h-screen bg-bg-primary flex items-center justify-center">
+    <div className="fixed inset-0 bg-bg-primary flex items-center justify-center z-50">
       <LoadingIndicator />
     </div>
   )
