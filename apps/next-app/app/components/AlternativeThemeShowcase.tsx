@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { alternativeThemes, AlternativeThemeKey, generateThemeCSS } from '@rite/ui/design-tokens';
 
 export function AlternativeThemeShowcase() {
-  const [selectedTheme, setSelectedTheme] = useState<AlternativeThemeKey>('riteRefined');
+  const [selectedTheme, setSelectedTheme] = useState<AlternativeThemeKey>('joshComeau');
   const theme = alternativeThemes[selectedTheme];
 
   const getBackgroundColor = () => {
@@ -28,10 +28,10 @@ export function AlternativeThemeShowcase() {
         {/* Header */}
         <div className="text-center">
           <h1 className="text-5xl font-bold mb-4" style={{ color: theme.brand.primary }}>
-            RITE Alternative Themes
+            RITE Theme System
           </h1>
           <p className="text-lg" style={{ color: theme.functional.textSecondary }}>
-            Curated collection of refined color palettes
+            Josh Comeau inspired dark & light themes
           </p>
         </div>
 
@@ -330,8 +330,7 @@ export function AlternativeThemeShowcase() {
                   className="px-4 py-2 rounded-lg font-medium transition-all shadow-sm"
                   style={{ 
                     backgroundColor: theme.brand.primary,
-                    color: theme.type === 'light' && selectedTheme !== 'monochromeLight' ? theme.neutral[0] : 
-                           selectedTheme === 'monochromeLight' ? theme.neutral[0] : theme.neutral[0]
+                    color: theme.neutral[0]
                   }}
                 >
                   Sign In
@@ -353,10 +352,7 @@ export function AlternativeThemeShowcase() {
                   className="w-12 h-12 rounded-lg mb-4 flex items-center justify-center shadow-sm"
                   style={{ backgroundColor: theme.brand.primary }}
                 >
-                  <span style={{ 
-                    color: theme.type === 'light' && selectedTheme !== 'monochromeLight' ? theme.neutral[0] : 
-                           selectedTheme === 'monochromeLight' ? theme.neutral[0] : theme.neutral[0]
-                  }}>
+                  <span style={{ color: theme.neutral[0] }}>
                     🎵
                   </span>
                 </div>
@@ -374,7 +370,7 @@ export function AlternativeThemeShowcase() {
                     className="px-3 py-1 rounded-full text-sm font-medium"
                     style={{ 
                       backgroundColor: theme.semantic.success,
-                      color: theme.type === 'light' ? theme.neutral[0] : theme.neutral[0]
+                      color: theme.neutral[0]
                     }}
                   >
                     Live
@@ -387,8 +383,7 @@ export function AlternativeThemeShowcase() {
                 className="p-6 rounded-2xl shadow-lg transition-all hover:scale-105"
                 style={{ 
                   backgroundColor: theme.brand.primary,
-                  color: theme.type === 'light' && selectedTheme !== 'monochromeLight' ? theme.neutral[0] : 
-                         selectedTheme === 'monochromeLight' ? theme.neutral[0] : theme.neutral[0]
+                  color: theme.neutral[0]
                 }}
               >
                 <h4 className="text-lg font-semibold mb-2">
@@ -452,7 +447,7 @@ export function AlternativeThemeShowcase() {
                   className="px-6 py-3 rounded-xl font-medium transition-all hover:scale-105 shadow-lg"
                   style={{ 
                     backgroundColor: theme.brand.primary,
-                    color: selectedTheme === 'monochromeDark' ? theme.neutral[900] : theme.neutral[0]
+                    color: theme.neutral[0]
                   }}
                 >
                   Primary
@@ -471,8 +466,7 @@ export function AlternativeThemeShowcase() {
                   className="px-6 py-3 rounded-xl font-medium transition-all hover:opacity-90 shadow-sm"
                   style={{ 
                     backgroundColor: theme.accent,
-                    color: selectedTheme === 'monochromeDark' ? theme.neutral[900] : 
-                           theme.type === 'light' ? theme.neutral[900] : theme.neutral[0]
+                    color: theme.type === 'light' ? theme.neutral[900] : theme.neutral[0]
                   }}
                 >
                   Accent
