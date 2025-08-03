@@ -383,3 +383,220 @@ export const initializeEventPhase = mutation({
     });
   },
 });
+
+// Mutation to update an existing event
+export const updateEvent = mutation({
+  args: {
+    eventId: v.id("events"),
+    userId: v.id("users"),
+    name: v.optional(v.string()),
+    date: v.optional(v.string()),
+    venue: v.optional(v.object({
+      name: v.string(),
+      address: v.string(),
+    })),
+    description: v.optional(v.string()),
+    hashtags: v.optional(v.string()),
+    deadlines: v.optional(v.object({
+      guestList: v.string(),
+      promoMaterials: v.string(),
+    })),
+    payment: v.optional(v.object({
+      amount: v.number(),
+      perDJ: v.number(),
+      currency: v.string(),
+      dueDate: v.string(),
+    })),
+    guestLimitPerDJ: v.optional(v.number()),
+    timeslots: v.optional(v.array(v.object({
+      id: v.optional(v.id("timeslots")),
+      startTime: v.string(),
+      endTime: v.string(),
+      djName: v.string(),
+      djInstagram: v.string(),
+    }))),
+  },
+  handler: async (ctx, args) => {
+    const { userId, eventId, timeslots, ...updateData } = args;
+    
+    // Verify the event belongs to the authenticated user
+    const event = await ctx.db.get(eventId);
+    if (!event) {
+      throw new Error("Event not found");
+    }
+    if (event.organizerId !== userId) {
+      throw new Error("Access denied");
+    }
+    
+    // Check if event can be edited (only draft and planning phases)
+    const currentTimeslots = await ctx.db
+      .query("timeslots")
+      .filter((q) => q.eq(q.field("eventId"), eventId))
+      .collect();
+    const submissions = await ctx.db
+      .query("submissions")
+      .filter((q) => q.eq(q.field("eventId"), eventId))
+      .collect();
+    
+    const capabilities = computeEventCapabilities(event, currentTimeslots, submissions);
+    if (!capabilities.canEdit) {
+      throw new Error("Event cannot be edited in its current state");
+    }
+    
+    // Update event data (only include defined fields)
+    const eventUpdates: any = {};
+    Object.keys(updateData).forEach(key => {
+      if (updateData[key as keyof typeof updateData] !== undefined) {
+        eventUpdates[key] = updateData[key as keyof typeof updateData];
+      }
+    });
+    
+    if (Object.keys(eventUpdates).length > 0) {
+      await ctx.db.patch(eventId, eventUpdates);
+    }
+    
+    // Handle timeslots updates if provided
+    if (timeslots) {
+      // Get existing timeslots to compare
+      const existingTimeslots = await ctx.db
+        .query("timeslots")
+        .filter((q) => q.eq(q.field("eventId"), eventId))
+        .collect();
+      
+      const existingIds = new Set(existingTimeslots.map(t => t._id));
+      const providedIds = new Set(timeslots.map(t => t.id).filter(Boolean));
+      
+      // Delete timeslots that are no longer in the list
+      for (const existing of existingTimeslots) {
+        if (!providedIds.has(existing._id)) {
+          // Check if timeslot has submissions before deleting
+          const hasSubmissions = submissions.some(s => s.timeslotId === existing._id);
+          if (hasSubmissions) {
+            throw new Error(`Cannot delete timeslot with existing submissions: ${existing.djName}`);
+          }
+          await ctx.db.delete(existing._id);
+        }
+      }
+      
+      // Update or create timeslots
+      for (const slot of timeslots) {
+        if (slot.id && existingIds.has(slot.id)) {
+          // Update existing timeslot
+          await ctx.db.patch(slot.id, {
+            startTime: slot.startTime,
+            endTime: slot.endTime,
+            djName: slot.djName,
+            djInstagram: slot.djInstagram,
+          });
+        } else {
+          // Create new timeslot
+          const submissionToken = generateSubmissionToken();
+          await ctx.db.insert("timeslots", {
+            eventId,
+            startTime: slot.startTime,
+            endTime: slot.endTime,
+            djName: slot.djName,
+            djInstagram: slot.djInstagram,
+            submissionToken,
+          });
+        }
+      }
+    }
+    
+    return { success: true };
+  },
+});
+
+// Mutation to delete an event
+export const deleteEvent = mutation({
+  args: {
+    eventId: v.id("events"),
+    userId: v.id("users"),
+  },
+  handler: async (ctx, args) => {
+    // Verify the event belongs to the authenticated user
+    const event = await ctx.db.get(args.eventId);
+    if (!event) {
+      throw new Error("Event not found");
+    }
+    if (event.organizerId !== args.userId) {
+      throw new Error("Access denied");
+    }
+    
+    // Check if event has submissions - cannot delete if it does
+    const submissions = await ctx.db
+      .query("submissions")
+      .filter((q) => q.eq(q.field("eventId"), args.eventId))
+      .collect();
+    
+    if (submissions.length > 0) {
+      throw new Error("Cannot delete event with existing submissions. Consider cancelling instead.");
+    }
+    
+    // Delete all related timeslots first
+    const timeslots = await ctx.db
+      .query("timeslots")
+      .filter((q) => q.eq(q.field("eventId"), args.eventId))
+      .collect();
+    
+    for (const timeslot of timeslots) {
+      await ctx.db.delete(timeslot._id);
+    }
+    
+    // Delete the event
+    await ctx.db.delete(args.eventId);
+    
+    return { success: true };
+  },
+});
+
+// Mutation to cancel an event (soft delete - keeps data but marks as cancelled)
+export const cancelEvent = mutation({
+  args: {
+    eventId: v.id("events"),
+    userId: v.id("users"),
+    reason: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    // Verify the event belongs to the authenticated user
+    const event = await ctx.db.get(args.eventId);
+    if (!event) {
+      throw new Error("Event not found");
+    }
+    if (event.organizerId !== args.userId) {
+      throw new Error("Access denied");
+    }
+    
+    // Cannot cancel already completed or cancelled events
+    if (event.phase === EventPhase.COMPLETED || event.phase === EventPhase.CANCELLED) {
+      throw new Error(`Cannot cancel event in ${event.phase} state`);
+    }
+    
+    // Transition to cancelled phase
+    const now = new Date().toISOString();
+    const milestones = event.milestones || { createdAt: event.createdAt };
+    milestones.cancelledAt = now;
+    
+    await ctx.db.patch(args.eventId, {
+      phase: EventPhase.CANCELLED,
+      phaseMetadata: {
+        enteredAt: now,
+        enteredBy: args.userId,
+        reason: args.reason,
+      },
+      stateVersion: (event.stateVersion || 0) + 1,
+      milestones,
+      capabilities: {
+        canEdit: false,
+        canPublish: false,
+        canAcceptSubmissions: false,
+        canGenerateContent: false,
+        canFinalize: false,
+        showUrgentBanner: false,
+        showDayOfFeatures: false,
+      },
+    });
+    
+    return { success: true };
+  },
+});
