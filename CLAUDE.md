@@ -366,6 +366,14 @@ pnpm android
 - 📋 Dynamic theme switching (planned)
 
 ## Code Style
+
+### Mandatory Rules
+1. **Use namespace import for React**: `import * as React from 'react'` (never default import)
+2. **Never use `any` or `!` (non-null assertion)** in TypeScript
+3. **Use design system exclusively**: All components must use @rite/ui design tokens and components
+4. **After commit**: Always check if relevant documentation needs updating
+
+### Additional Guidelines
 - TypeScript strict mode, no `any` or non-null assertions
 - @rite/ui components exclusively
 - **Use CSS variables for colors** (`var(--brand-primary)` not hardcoded hex)
