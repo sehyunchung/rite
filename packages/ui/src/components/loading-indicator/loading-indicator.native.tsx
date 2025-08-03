@@ -11,12 +11,12 @@ export function LoadingIndicator({
 }: LoadingIndicatorProps) {
   return (
     <View className={`items-center ${className}`}>
-      <Text className="font-medium text-gray-300 text-4xl">
+      <Text className="font-medium text-brand-primary text-4xl">
         RITE
       </Text>
       <ActivityIndicator 
         size="small" 
-        color="#d1d5db" 
+        className="text-brand-primary"
         style={{ marginTop: 8 }}
       />
     </View>
@@ -25,7 +25,7 @@ export function LoadingIndicator({
 
 export function FullScreenLoading() {
   return (
-    <View className="flex-1 bg-gray-50 items-center justify-center">
+    <View className="absolute inset-0 bg-bg-primary items-center justify-center" style={{ zIndex: 50 }}>
       <LoadingIndicator />
     </View>
   );
