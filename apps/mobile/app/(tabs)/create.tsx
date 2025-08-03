@@ -1,29 +1,24 @@
-import React, { useState } from 'react';
+import * as React from 'react';
 import {
   View,
-  Text,
   ScrollView,
-  TextInput,
-  TouchableOpacity,
-  StyleSheet,
   SafeAreaView,
   Platform,
+  TouchableOpacity,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
-import { typography } from '../../constants/Typography';
-import { riteColors } from '../../constants/Colors';
-import { shadows } from '../../utils/shadow';
+import { Typography, Button, Input, Card } from '@rite/ui';
 
 export default function CreateTab() {
   const router = useRouter();
-  const [eventName, setEventName] = useState('');
-  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-  const [startTime, setStartTime] = useState<Date>(new Date());
-  const [showDatePicker, setShowDatePicker] = useState(false);
-  const [showTimePicker, setShowTimePicker] = useState(false);
-  const [djSlots, setDjSlots] = useState([
+  const [eventName, setEventName] = React.useState('');
+  const [selectedDate, setSelectedDate] = React.useState<Date>(new Date());
+  const [startTime, setStartTime] = React.useState<Date>(new Date());
+  const [showDatePicker, setShowDatePicker] = React.useState(false);
+  const [showTimePicker, setShowTimePicker] = React.useState(false);
+  const [djSlots, setDjSlots] = React.useState([
     { id: 1, name: 'DJ 1', startTime: '8:00 PM', endTime: '9:00 PM' },
     { id: 2, name: 'DJ 2', startTime: '9:00 PM', endTime: '10:00 PM' },
     { id: 3, name: 'DJ 3', startTime: '10:00 PM', endTime: '11:00 PM' },
@@ -74,89 +69,105 @@ export default function CreateTab() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
-        <View style={styles.content}>
-          <Text style={styles.title}>Create Event</Text>
+    <SafeAreaView className="flex-1 bg-neutral-800">
+      <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
+        <View 
+          className="p-6" 
+          style={{ 
+            paddingBottom: Platform.OS === 'ios' ? 124 : 104 
+          }}
+        >
+          <Typography variant="h3" className="text-white mb-8">
+            Create Event
+          </Typography>
           
           {/* Event Name */}
-          <View style={styles.section}>
-            <Text style={styles.label}>Event Name</Text>
-            <View style={styles.inputContainer}>
-              <TextInput
-                style={styles.input}
-                placeholder="Enter event name"
-                placeholderTextColor={riteColors.functional.textMuted}
-                value={eventName}
-                onChangeText={setEventName}
-                autoCapitalize="words"
-              />
-            </View>
+          <View className="mb-6">
+            <Typography variant="label" className="text-white mb-2">
+              Event Name
+            </Typography>
+            <Input
+              placeholder="Enter event name"
+              value={eventName}
+              onChangeText={setEventName}
+              autoCapitalize="words"
+              className="bg-neutral-700 border-neutral-600"
+            />
           </View>
 
           {/* Date */}
-          <View style={styles.section}>
-            <Text style={styles.label}>Date</Text>
+          <View className="mb-6">
+            <Typography variant="label" className="text-white mb-2">
+              Date
+            </Typography>
             <TouchableOpacity 
-              style={styles.inputContainer}
+              className="bg-neutral-700 border border-neutral-600 rounded-xl h-12 flex-row items-center px-4"
               onPress={() => setShowDatePicker(true)}
             >
-              <Text style={[styles.input, styles.inputText]}>
+              <Typography variant="body" className="text-white flex-1">
                 {formatDate(selectedDate)}
-              </Text>
-              <Ionicons name="calendar-outline" size={20} color={riteColors.functional.textMuted} />
+              </Typography>
+              <Ionicons name="calendar-outline" size={20} color="#A8A8B3" />
             </TouchableOpacity>
           </View>
 
           {/* Start Time */}
-          <View style={styles.section}>
-            <Text style={styles.label}>Start Time</Text>
+          <View className="mb-6">
+            <Typography variant="label" className="text-white mb-2">
+              Start Time
+            </Typography>
             <TouchableOpacity 
-              style={styles.inputContainer}
+              className="bg-neutral-700 border border-neutral-600 rounded-xl h-12 flex-row items-center px-4"
               onPress={() => setShowTimePicker(true)}
             >
-              <Text style={[styles.input, styles.inputText]}>
+              <Typography variant="body" className="text-white flex-1">
                 {formatTime(startTime)}
-              </Text>
-              <Ionicons name="time-outline" size={20} color={riteColors.functional.textMuted} />
+              </Typography>
+              <Ionicons name="time-outline" size={20} color="#A8A8B3" />
             </TouchableOpacity>
           </View>
 
           {/* DJ Lineup */}
-          <View style={styles.section}>
-            <View style={styles.sectionHeader}>
-              <Text style={styles.label}>DJ Lineup</Text>
-              <TouchableOpacity style={styles.addButton}>
-                <Ionicons name="add" size={20} color={riteColors.brand.primary} />
-                <Text style={styles.addButtonText}>Add Slot</Text>
+          <View className="mb-6">
+            <View className="flex-row justify-between items-center mb-3">
+              <Typography variant="label" className="text-white">
+                DJ Lineup
+              </Typography>
+              <TouchableOpacity className="flex-row items-center">
+                <Ionicons name="add" size={20} color="#E946FF" />
+                <Typography variant="button" color="primary" className="ml-1">
+                  Add Slot
+                </Typography>
               </TouchableOpacity>
             </View>
             
             {djSlots.map((slot) => (
-              <View key={slot.id} style={styles.djSlot}>
-                <View style={styles.djSlotIcon}>
-                  <Ionicons name="musical-notes" size={20} color={riteColors.brand.primary} />
+              <Card key={slot.id} className="bg-neutral-700 border-neutral-600 p-4 flex-row items-center mb-3">
+                <View className="w-10 h-10 rounded-full bg-neutral-800 items-center justify-center mr-3">
+                  <Ionicons name="musical-notes" size={20} color="#E946FF" />
                 </View>
-                <View style={styles.djSlotInfo}>
-                  <Text style={styles.djSlotName}>{slot.name}</Text>
-                  <Text style={styles.djSlotTime}>
+                <View className="flex-1">
+                  <Typography variant="body" className="text-white mb-1">
+                    {slot.name}
+                  </Typography>
+                  <Typography variant="caption" color="secondary">
                     {slot.startTime} - {slot.endTime}
-                  </Text>
+                  </Typography>
                 </View>
                 <TouchableOpacity>
-                  <Ionicons name="ellipsis-horizontal" size={20} color={riteColors.functional.textMuted} />
+                  <Ionicons name="ellipsis-horizontal" size={20} color="#A8A8B3" />
                 </TouchableOpacity>
-              </View>
+              </Card>
             ))}
           </View>
 
           {/* Create Button */}
-          <TouchableOpacity 
-            style={styles.createButton} 
+          <Button 
             onPress={handleCreateEvent}
+            className="mt-4"
           >
-            <Text style={styles.createButtonText}>Create Event</Text>
-          </TouchableOpacity>
+            Create Event
+          </Button>
         </View>
       </ScrollView>
       
@@ -167,7 +178,7 @@ export default function CreateTab() {
           mode="date"
           display={Platform.OS === 'ios' ? 'spinner' : 'default'}
           onChange={onDateChange}
-          textColor={riteColors.neutral[0]}
+          textColor="#FFFFFF"
           themeVariant="dark"
         />
       )}
@@ -179,7 +190,7 @@ export default function CreateTab() {
           mode="time"
           display={Platform.OS === 'ios' ? 'spinner' : 'default'}
           onChange={onTimeChange}
-          textColor={riteColors.neutral[0]}
+          textColor="#FFFFFF"
           themeVariant="dark"
         />
       )}
@@ -187,131 +198,3 @@ export default function CreateTab() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: riteColors.neutral[800],
-  },
-  scrollView: {
-    flex: 1,
-  },
-  content: {
-    padding: 24,
-    paddingBottom: Platform.OS === 'ios' ? 124 : 104, // Account for tab bar + extra spacing
-  },
-  title: {
-    ...typography.h3,
-    color: riteColors.neutral[0],
-    marginBottom: 32,
-  },
-  section: {
-    marginBottom: 24,
-  },
-  sectionHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 12,
-  },
-  label: {
-    ...typography.label,
-    color: riteColors.neutral[0],
-    marginBottom: 8,
-  },
-  inputContainer: {
-    backgroundColor: riteColors.neutral[700],
-    borderRadius: 12, // matches web's rounded-xl for inputs
-    height: 48, // standard height
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 0,
-    borderWidth: 1,
-    borderColor: riteColors.functional.border,
-    ...shadows.sm,
-  },
-  input: {
-    ...typography.body,
-    color: riteColors.neutral[0],
-    flex: 1,
-    height: 48,
-    paddingVertical: 0,
-    paddingHorizontal: 0,
-    textAlignVertical: 'center',
-    ...Platform.select({
-      web: { 
-        outlineStyle: 'none',
-        lineHeight: '48px',
-      },
-      ios: {
-        paddingTop: 12,
-        paddingBottom: 16,
-      },
-      default: {
-        paddingTop: 12,
-        paddingBottom: 16,
-      },
-    }),
-  },
-  inputText: {
-    height: 48,
-    paddingVertical: 0,
-    paddingTop: 12,
-    paddingBottom: 16,
-    textAlignVertical: 'center',
-  },
-  addButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-  },
-  addButtonText: {
-    ...typography.button,
-    color: riteColors.brand.primary,
-  },
-  djSlot: {
-    backgroundColor: riteColors.neutral[700],
-    borderRadius: 16, // matches web's rounded-xl for cards
-    padding: 16,
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 12,
-    borderWidth: 1,
-    borderColor: riteColors.functional.border,
-    ...shadows.sm,
-  },
-  djSlotIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: riteColors.neutral[800],
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 12,
-  },
-  djSlotInfo: {
-    flex: 1,
-  },
-  djSlotName: {
-    ...typography.body,
-    color: riteColors.neutral[0],
-    marginBottom: 2,
-  },
-  djSlotTime: {
-    ...typography.caption,
-    color: riteColors.functional.textSecondary,
-  },
-  createButton: {
-    backgroundColor: riteColors.brand.primary,
-    borderRadius: 8, // matches web's rounded-lg for buttons
-    height: 48,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 16,
-    ...shadows.sm,
-  },
-  createButtonText: {
-    ...typography.button,
-    color: riteColors.neutral[0],
-  },
-});
