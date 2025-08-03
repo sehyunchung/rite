@@ -105,19 +105,6 @@ export default function TabLayout() {
           ),
         }}
       />
-      <Tabs.Screen
-        name="demo"
-        options={{
-          title: 'DOM Demo',
-          tabBarIcon: ({ color, focused }) => (
-            <Ionicons 
-              name={focused ? "code-slash" : "code-slash-outline"} 
-              size={24} 
-              color={color} 
-            />
-          ),
-        }}
-      />
     </Tabs>
   );
 }
