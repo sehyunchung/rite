@@ -207,7 +207,7 @@ rite/
 - Convex functions: `/packages/backend/convex/`
 - UI components: `/packages/ui/src/components/`
 - Design tokens: `/packages/ui/src/design-tokens/`
-- Theme system: `/packages/ui/src/design-tokens/alternative-themes.ts`
+- Theme system: `/packages/ui/src/design-tokens/themes.ts`
 - Theme switcher: `/apps/next-app/app/components/ThemeSwitcher.tsx`
 
 ### Database Schema (Convex)
@@ -219,17 +219,14 @@ rite/
 
 ## RITE Design System
 
-Dynamic theme system with comprehensive token architecture and 5 curated themes:
+Dynamic theme system with comprehensive token architecture and 2 curated themes:
 
 ### Dynamic Theme System
 Built with CSS variables for real-time theme switching:
 
 **Available Themes:**
-- **RITE Refined** (Dark): Enhanced readability version with purple brand colors
-- **Deep Ocean** (Dark): Mysterious deep sea palette with bioluminescent accents  
-- **Josh Comeau Inspired** (Dark): Sophisticated theme with atmospheric gradients
-- **Pure Monochrome Light** (Light): Clean minimal light grayscale theme
-- **Pure Monochrome Dark** (Dark): Clean minimal dark grayscale theme
+- **Josh Comeau** (Dark): Sophisticated dark theme with atmospheric gradients and vibrant accents
+- **Josh Comeau Light** (Light): Sophisticated light theme with atmospheric gradients and vibrant accents
 
 **Theme Structure:**
 ```typescript
@@ -375,7 +372,7 @@ const t = useTranslations('dashboard');
 ### Adding New Themes
 To add a new theme to the system:
 
-1. **Define Theme Object** in `/packages/ui/src/design-tokens/alternative-themes.ts`:
+1. **Define Theme Object** in `/packages/ui/src/design-tokens/themes.ts`:
 ```typescript
 newTheme: {
   name: 'Theme Name',
@@ -401,7 +398,8 @@ const themes = [
 3. **Export Theme** for external use:
 ```typescript
 // From @rite/ui/design-tokens
-import { alternativeThemes, generateThemeCSS } from '@rite/ui/design-tokens';
+import { themes, generateThemeCSS } from '@rite/ui/design-tokens';
+// Note: alternativeThemes is still available for backward compatibility
 ```
 
 ### CSS Variable Generation
@@ -436,7 +434,7 @@ Test themes across:
 - **Comprehensive OAuth security implementation** (no hardcoded credentials, PKCE, CSRF protection)
 - **User-friendly error handling** (AuthErrorAlert component with specific error codes)
 - Design system with cross-platform components
-- **Dynamic theme system with 5 curated themes**
+- **Dynamic theme system with 2 curated themes**
 - **ThemeSwitcher component with persistence**
 - **CSS variables integration for real-time theme switching**
 - **Mobile styling consistency migration** (100% @rite/ui integration, zero hardcoded colors)
@@ -583,7 +581,7 @@ pnpm android
 - ✅ Design system integration (colors, typography, spacing)
 - ✅ Navigation aligned with Next.js app (Dashboard, Create Event, Events)
 - ✅ Tailwind configuration with @rite/ui tokens
-- ✅ Static theme tokens integration (5 themes available)
+- ✅ Static theme tokens integration (Josh themes available)
 - ✅ "use dom" demo with QR Code and Dropzone examples
 - ✅ **Google OAuth authentication with production security** (web, iOS, Android, Expo Go)
 - ✅ **Modular authentication architecture** (88-line AuthContext with error handling)
@@ -605,7 +603,7 @@ pnpm android
 - TypeScript strict mode, no `any` or non-null assertions
 - @rite/ui components exclusively
 - **Use CSS variables for colors** (`var(--brand-primary)` not hardcoded hex)
-- **Theme-agnostic component design** (works across all 5 themes)
+- **Theme-agnostic component design** (works across both themes)
 - Tailwind with ES modules and CSS variable integration
 - SUIT Variable font for all text
 - Platform-specific implementations when needed
