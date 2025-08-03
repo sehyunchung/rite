@@ -80,16 +80,36 @@ export function validateInstagramHandle(handle: string): string | null {
     return null;
   }
   
-  if (!handle.startsWith('@')) {
+  const trimmedHandle = handle.trim();
+  
+  if (!trimmedHandle.startsWith('@')) {
     return 'Instagram handle must start with @';
   }
   
-  if (handle.length < 2) {
+  if (trimmedHandle.length < 2) {
     return 'Instagram handle is too short';
   }
   
-  if (!/^@[a-zA-Z0-9_.]+$/.test(handle)) {
-    return 'Instagram handle contains invalid characters';
+  if (trimmedHandle.length > 30) {
+    return 'Instagram handle is too long (max 30 characters)';
+  }
+  
+  // Check for valid Instagram username format
+  const usernamePattern = /^@[a-zA-Z0-9_.]+$/;
+  if (!usernamePattern.test(trimmedHandle)) {
+    return 'Instagram handle contains invalid characters. Use only letters, numbers, dots, and underscores.';
+  }
+  
+  // Check for consecutive dots or underscores
+  if (trimmedHandle.includes('..') || trimmedHandle.includes('__')) {
+    return 'Instagram handle cannot have consecutive dots or underscores';
+  }
+  
+  // Check if it starts or ends with dot or underscore
+  const username = trimmedHandle.slice(1); // Remove @
+  if (username.startsWith('.') || username.startsWith('_') || 
+      username.endsWith('.') || username.endsWith('_')) {
+    return 'Instagram handle cannot start or end with dots or underscores';
   }
   
   return null;

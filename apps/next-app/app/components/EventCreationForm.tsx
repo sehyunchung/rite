@@ -16,6 +16,7 @@ import {
   validateDate,
   validateDeadlineOrder,
   validateTimeslotDuration,
+  validateInstagramHandle,
   getDefaultGuestListDeadline,
   getDefaultPromoDeadline,
   getDefaultStartTime,
@@ -231,11 +232,16 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
         newErrors[`timeslot-${slot.id}-duration`] = durationError;
       }
 
-      // Skip Instagram handle validation for now (TBD feature)
-      // const instagramError = validateInstagramHandle(slot.djInstagram);
-      // if (instagramError) {
-      //   newErrors[`timeslot-${slot.id}-instagram`] = instagramError;
-      // }
+      // Validate DJ name (required field)
+      if (!slot.djName.trim()) {
+        newErrors[`timeslot-${slot.id}-djName`] = 'DJ name is required';
+      }
+
+      // Validate Instagram handle
+      const instagramError = validateInstagramHandle(slot.djInstagram);
+      if (instagramError) {
+        newErrors[`timeslot-${slot.id}-instagram`] = instagramError;
+      }
     });
 
     // Check for overlapping timeslots
@@ -659,7 +665,12 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
                       placeholder="DJ Name"
                       value={slot.djName}
                       onChange={(e) => updateTimeslot(slot.id, 'djName', e.target.value)}
+                      className={errors[`timeslot-${slot.id}-djName`] ? 'border-red-500' : ''}
+                      required
                     />
+                    {errors[`timeslot-${slot.id}-djName`] && (
+                      <p className="text-xs text-red-500 mt-1">{errors[`timeslot-${slot.id}-djName`]}</p>
+                    )}
                   </div>
                   <div className="space-y-2">
                     <Label>{t('djInstagram')}</Label>
