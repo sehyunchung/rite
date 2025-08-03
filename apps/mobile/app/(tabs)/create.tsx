@@ -167,7 +167,9 @@ export default function CreateTab() {
             onPress={handleCreateEvent}
             className="mt-4"
           >
-            Create Event
+            <Typography variant="button" style={{ color: colors.functional.textPrimary }}>
+              Create Event
+            </Typography>
           </Button>
         </View>
       </ScrollView>
@@ -179,7 +181,7 @@ export default function CreateTab() {
           mode="date"
           display={Platform.OS === 'ios' ? 'spinner' : 'default'}
           onChange={onDateChange}
-          textColor="#FFFFFF"
+          textColor={colors.functional.textPrimary}
           themeVariant="dark"
         />
       )}
@@ -191,7 +193,7 @@ export default function CreateTab() {
           mode="time"
           display={Platform.OS === 'ios' ? 'spinner' : 'default'}
           onChange={onTimeChange}
-          textColor="#FFFFFF"
+          textColor={colors.functional.textPrimary}
           themeVariant="dark"
         />
       )}
