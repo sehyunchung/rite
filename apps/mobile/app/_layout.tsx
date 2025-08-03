@@ -29,23 +29,23 @@ export default function RootLayout() {
   if (!loaded) {
     // Show loading screen while fonts load
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#1A0F2F' }}>
-        <Text style={{ color: '#E946FF', fontSize: 24 }}>Loading fonts...</Text>
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'hsl(210deg 15% 12%)' }}>
+        <Text style={{ color: 'hsl(225deg 100% 75%)', fontSize: 24 }}>Loading fonts...</Text>
       </View>
     );
   }
 
-  // Custom RITE dark theme
+  // Custom RITE dark theme using Josh Comeau colors
   const RiteDarkTheme = {
     ...DarkTheme,
     colors: {
       ...DarkTheme.colors,
-      primary: '#E946FF',
-      background: '#1A0F2F',
-      card: '#2A1F3F',
-      text: '#FFFFFF',
-      border: '#2A1F3F',
-      notification: '#E946FF',
+      primary: 'hsl(225deg 100% 75%)',     // Josh Comeau primary
+      background: 'hsl(210deg 15% 12%)',   // Josh Comeau neutral-800
+      card: 'hsl(210deg 15% 18%)',         // Josh Comeau neutral-700
+      text: 'hsl(210deg 10% 90%)',         // Josh Comeau textPrimary
+      border: 'hsl(210deg 15% 18%)',       // Josh Comeau border
+      notification: 'hsl(225deg 100% 75%)', // Josh Comeau primary
     },
   };
 
