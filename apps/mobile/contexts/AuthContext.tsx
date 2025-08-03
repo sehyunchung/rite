@@ -1,19 +1,18 @@
 import * as React from 'react';
-import { createContext, useContext, ReactNode, useState, useCallback } from 'react';
 import { useConvex } from 'convex/react';
 import { AuthContextType, User, AuthError } from '../lib/auth/types';
 import { useSession } from '../hooks/auth/useSession';
 import { useOAuthFlow } from '../hooks/auth/useOAuthFlow';
 
-const AuthContext = createContext<AuthContextType | null>(null);
+const AuthContext = React.createContext<AuthContextType | null>(null);
 
 interface AuthProviderProps {
-  children: ReactNode;
+  children: React.ReactNode;
 }
 
 export function AuthProvider({ children }: AuthProviderProps) {
   const convex = useConvex();
-  const [error, setError] = useState<AuthError | null>(null);
+  const [error, setError] = React.useState<AuthError | null>(null);
   
   // Session management
   const { user, isLoading, setUser, signOut: sessionSignOut } = useSession(convex);
@@ -27,7 +26,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const { signIn: oauthSignIn } = useOAuthFlow(convex, handleAuthSuccess);
   
   // Wrap signIn to handle errors
-  const signIn = useCallback(async () => {
+  const signIn = React.useCallback(async () => {
     try {
       setError(null); // Clear previous errors
       await oauthSignIn();
@@ -46,7 +45,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }, [oauthSignIn]);
   
   // Wrap signOut to handle errors
-  const signOut = useCallback(async () => {
+  const signOut = React.useCallback(async () => {
     try {
       setError(null);
       await sessionSignOut();
@@ -61,7 +60,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   }, [sessionSignOut]);
   
-  const clearError = useCallback(() => {
+  const clearError = React.useCallback(() => {
     setError(null);
   }, []);
 
@@ -82,7 +81,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 }
 
 export function useAuth() {
-  const context = useContext(AuthContext);
+  const context = React.useContext(AuthContext);
   if (!context) {
     throw new Error('useAuth must be used within an AuthProvider');
   }
