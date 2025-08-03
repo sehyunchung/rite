@@ -358,3 +358,30 @@ export const getSubmissionByToken = query({
     };
   },
 });
+
+// Query to get all submissions for an event (for event organizer)
+export const getSubmissionsByEvent = query({
+  args: {
+    eventId: v.id("events"),
+    userId: v.id("users"),
+  },
+  handler: async (ctx, args) => {
+    // First, verify the user owns this event
+    const event = await ctx.db.get(args.eventId);
+    if (!event) {
+      throw new Error("Event not found");
+    }
+    
+    if (event.organizerId !== args.userId) {
+      throw new Error("Access denied: You don't own this event");
+    }
+    
+    // Get all submissions for this event
+    const submissions = await ctx.db
+      .query("submissions")
+      .filter((q) => q.eq(q.field("eventId"), args.eventId))
+      .collect();
+
+    return submissions;
+  },
+});
