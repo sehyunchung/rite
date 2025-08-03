@@ -3,10 +3,41 @@ import { mutation, query } from "./_generated/server";
 import { requireAuth } from "./auth";
 import { computeEventCapabilities } from "./eventStatus";
 
-// Generate upload URL for file storage
-export const generateUploadUrl = mutation(async (ctx) => {
-  // Generate a short-lived upload URL for file upload
-  return await ctx.storage.generateUploadUrl();
+// File validation constants
+const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
+const ALLOWED_FILE_TYPES = [
+  'image/jpeg',
+  'image/jpg', 
+  'image/png',
+  'image/gif',
+  'image/webp',
+  'video/mp4',
+  'video/mov',
+  'video/avi',
+  'video/quicktime',
+  'application/pdf'
+];
+
+// Generate upload URL for file storage with validation
+export const generateUploadUrl = mutation({
+  args: {
+    fileType: v.string(),
+    fileSize: v.number(),
+  },
+  handler: async (ctx, args) => {
+    // Validate file size
+    if (args.fileSize > MAX_FILE_SIZE) {
+      throw new Error(`File size ${Math.round(args.fileSize / 1024 / 1024)}MB exceeds maximum allowed size of ${MAX_FILE_SIZE / 1024 / 1024}MB`);
+    }
+
+    // Validate file type
+    if (!ALLOWED_FILE_TYPES.includes(args.fileType)) {
+      throw new Error(`File type ${args.fileType} is not allowed. Allowed types: ${ALLOWED_FILE_TYPES.join(', ')}`);
+    }
+
+    // Generate a short-lived upload URL for file upload
+    return await ctx.storage.generateUploadUrl();
+  },
 });
 
 // Create or update a submission

@@ -103,8 +103,11 @@ export function DJSubmissionForm({ submissionToken }: DJSubmissionFormProps) {
           throw new Error(`File ${file.name} is too large. Maximum size is 50MB.`);
         }
 
-        // Generate upload URL
-        const uploadUrl = await generateUploadUrl();
+        // Generate upload URL with backend validation
+        const uploadUrl = await generateUploadUrl({
+          fileType: file.type,
+          fileSize: file.size,
+        });
         
         // Upload file
         const result = await fetch(uploadUrl, {
