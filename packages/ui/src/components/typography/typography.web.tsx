@@ -3,7 +3,7 @@ import { cn } from "../../utils"
 import { tokens } from "../../design-tokens"
 import { cva, type VariantProps } from "class-variance-authority"
 
-const typographyVariants = cva("", {
+const typographyComponentVariants = cva("", {
   variants: {
     variant: {
       h1: "text-5xl font-bold leading-tight tracking-tight",
@@ -36,7 +36,7 @@ const typographyVariants = cva("", {
 
 export interface TypographyProps
   extends Omit<React.HTMLAttributes<HTMLElement>, 'color'>,
-    VariantProps<typeof typographyVariants> {
+    VariantProps<typeof typographyComponentVariants> {
   as?: React.ElementType
   children: React.ReactNode
 }
@@ -66,7 +66,7 @@ const Typography = React.forwardRef<HTMLElement, TypographyProps>(
         ref={ref}
         className={cn(
           "font-suit",
-          typographyVariants({ variant, color }),
+          typographyComponentVariants({ variant, color }),
           className
         )}
         {...props}
@@ -79,4 +79,4 @@ const Typography = React.forwardRef<HTMLElement, TypographyProps>(
 
 Typography.displayName = "Typography"
 
-export { Typography, typographyVariants }
+export { Typography, typographyComponentVariants }

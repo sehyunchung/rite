@@ -1,4 +1,5 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import { Platform } from 'react-native'
 import { PostHogProvider } from 'posthog-react-native'
 import { POSTHOG_CONFIG, getPostHogEnvVars } from '@rite/posthog-config'
 
@@ -7,19 +8,20 @@ interface PostHogProviderWrapperProps {
 }
 
 export function PostHogProviderWrapper({ children }: PostHogProviderWrapperProps) {
+  const [isClient, setIsClient] = useState(false)
   const { key, host } = getPostHogEnvVars()
 
-  if (!key) {
-    console.warn('PostHog key not found in environment variables')
-    return <>{children}</>
-  }
+  // Ensure we only initialize PostHog on the client side
+  useEffect(() => {
+    setIsClient(true)
+  }, [])
 
-  // Get app version from package.json dynamically
-  let appVersion = 'unknown'
-  try {
-    appVersion = require('../../package.json').version
-  } catch (error) {
-    console.warn('Could not load app version from package.json:', error)
+  // Don't initialize PostHog during SSR or if no key is provided
+  if (!isClient || !key || Platform.OS === 'web') {
+    if (!key && Platform.OS !== 'web') {
+      console.warn('PostHog key not found in environment variables')
+    }
+    return <>{children}</>
   }
 
   return (
@@ -28,10 +30,6 @@ export function PostHogProviderWrapper({ children }: PostHogProviderWrapperProps
       options={{
         ...POSTHOG_CONFIG.mobile,
         host,
-        properties: {
-          platform: 'mobile',
-          app_version: appVersion,
-        }
       }}
     >
       {children}
