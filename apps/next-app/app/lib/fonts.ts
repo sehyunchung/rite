@@ -5,4 +5,5 @@ export const suit = localFont({
   display: 'swap',
   weight: '100 900',
   variable: '--font-suit',
+  fallback: ['system-ui', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
 })

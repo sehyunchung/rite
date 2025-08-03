@@ -16,6 +16,7 @@ import {
   validateDate,
   validateDeadlineOrder,
   validateTimeslotDuration,
+  validateInstagramHandle,
   getDefaultGuestListDeadline,
   getDefaultPromoDeadline,
   getDefaultStartTime,
@@ -24,6 +25,7 @@ import {
   validatePromoDeadline
 } from '@/lib/validation';
 import { useTranslations } from 'next-intl';
+import { toast } from 'sonner';
 
 interface EventCreationFormProps {
   onEventCreated?: () => void;
@@ -230,11 +232,16 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
         newErrors[`timeslot-${slot.id}-duration`] = durationError;
       }
 
-      // Skip Instagram handle validation for now (TBD feature)
-      // const instagramError = validateInstagramHandle(slot.djInstagram);
-      // if (instagramError) {
-      //   newErrors[`timeslot-${slot.id}-instagram`] = instagramError;
-      // }
+      // Validate DJ name (required field)
+      if (!slot.djName.trim()) {
+        newErrors[`timeslot-${slot.id}-djName`] = 'DJ name is required';
+      }
+
+      // Validate Instagram handle
+      const instagramError = validateInstagramHandle(slot.djInstagram);
+      if (instagramError) {
+        newErrors[`timeslot-${slot.id}-instagram`] = instagramError;
+      }
     });
 
     // Check for overlapping timeslots
@@ -274,13 +281,13 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
       // Prepare data for Convex (organizerId will be set automatically from auth)
       // Check if session is still loading
       if (status === 'loading') {
-        alert('Please wait for authentication to complete.');
+        toast.warning('Please wait for authentication to complete.');
         return;
       }
 
       // Check if user is authenticated
       if (!session?.user?.id) {
-        alert('You must be logged in to create an event.');
+        toast.error('You must be logged in to create an event.');
         return;
       }
 
@@ -307,7 +314,7 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
       console.log('Event data being sent:', eventData);
       await createEvent(eventData);
       
-      alert('Event created successfully!');
+      toast.success('Event created successfully!');
       
       // Reset form
       setFormData({
@@ -328,7 +335,7 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
       
     } catch (error) {
       console.error('Failed to create event:', error);
-      alert('Failed to create event. Please try again.');
+      toast.error('Failed to create event. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
@@ -658,7 +665,12 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
                       placeholder="DJ Name"
                       value={slot.djName}
                       onChange={(e) => updateTimeslot(slot.id, 'djName', e.target.value)}
+                      className={errors[`timeslot-${slot.id}-djName`] ? 'border-red-500' : ''}
+                      required
                     />
+                    {errors[`timeslot-${slot.id}-djName`] && (
+                      <p className="text-xs text-red-500 mt-1">{errors[`timeslot-${slot.id}-djName`]}</p>
+                    )}
                   </div>
                   <div className="space-y-2">
                     <Label>{t('djInstagram')}</Label>

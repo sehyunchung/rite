@@ -1,11 +1,43 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import { requireAuth } from "./auth";
+import { computeEventCapabilities } from "./eventStatus";
 
-// Generate upload URL for file storage
-export const generateUploadUrl = mutation(async (ctx) => {
-  // Generate a short-lived upload URL for file upload
-  return await ctx.storage.generateUploadUrl();
+// File validation constants
+const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
+const ALLOWED_FILE_TYPES = [
+  'image/jpeg',
+  'image/jpg', 
+  'image/png',
+  'image/gif',
+  'image/webp',
+  'video/mp4',
+  'video/mov',
+  'video/avi',
+  'video/quicktime',
+  'application/pdf'
+];
+
+// Generate upload URL for file storage with validation
+export const generateUploadUrl = mutation({
+  args: {
+    fileType: v.string(),
+    fileSize: v.number(),
+  },
+  handler: async (ctx, args) => {
+    // Validate file size
+    if (args.fileSize > MAX_FILE_SIZE) {
+      throw new Error(`File size ${Math.round(args.fileSize / 1024 / 1024)}MB exceeds maximum allowed size of ${MAX_FILE_SIZE / 1024 / 1024}MB`);
+    }
+
+    // Validate file type
+    if (!ALLOWED_FILE_TYPES.includes(args.fileType)) {
+      throw new Error(`File type ${args.fileType} is not allowed. Allowed types: ${ALLOWED_FILE_TYPES.join(', ')}`);
+    }
+
+    // Generate a short-lived upload URL for file upload
+    return await ctx.storage.generateUploadUrl();
+  },
 });
 
 // Create or update a submission
@@ -169,5 +201,218 @@ export const getFileUrl = query({
   handler: async (ctx, args) => {
     await requireAuth(ctx); // Ensure user is authenticated to view files
     return await ctx.storage.getUrl(args.storageId);
+  },
+});
+
+// Mutation to update an existing submission
+export const updateSubmission = mutation({
+  args: {
+    submissionId: v.id("submissions"),
+    submissionToken: v.string(),
+    promoFiles: v.optional(v.array(
+      v.object({
+        fileName: v.string(),
+        fileType: v.string(),
+        fileSize: v.number(),
+        storageId: v.id("_storage"),
+      })
+    )),
+    promoDescription: v.optional(v.string()),
+    guestList: v.optional(v.array(
+      v.object({
+        name: v.string(),
+        phone: v.optional(v.string()),
+      })
+    )),
+    paymentInfo: v.optional(v.object({
+      accountHolder: v.string(),
+      bankName: v.string(),
+      accountNumber: v.string(),
+      residentNumber: v.string(),
+      preferDirectContact: v.boolean(),
+    })),
+  },
+  handler: async (ctx, args) => {
+    // Get the existing submission
+    const submission = await ctx.db.get(args.submissionId);
+    if (!submission) {
+      throw new Error("Submission not found");
+    }
+
+    // Verify the submission token matches
+    if (submission.uniqueLink !== args.submissionToken) {
+      throw new Error("Invalid submission token");
+    }
+
+    // Check if the event allows editing submissions
+    const event = await ctx.db.get(submission.eventId);
+    if (!event) {
+      throw new Error("Event not found");
+    }
+
+    // Get event capabilities to check if submissions can be edited
+    const timeslots = await ctx.db
+      .query("timeslots")
+      .filter((q) => q.eq(q.field("eventId"), submission.eventId))
+      .collect();
+    const submissions = await ctx.db
+      .query("submissions")
+      .filter((q) => q.eq(q.field("eventId"), submission.eventId))
+      .collect();
+    
+    const capabilities = computeEventCapabilities(event, timeslots, submissions);
+    if (!capabilities.canAcceptSubmissions) {
+      throw new Error("Submissions can no longer be edited for this event");
+    }
+
+    // Build update object with only provided fields
+    const updateData: any = {
+      lastUpdatedAt: new Date().toISOString(),
+    };
+
+    if (args.promoFiles !== undefined) {
+      updateData.promoMaterials = {
+        files: args.promoFiles.map((file) => ({
+          fileName: file.fileName,
+          fileType: file.fileType,
+          fileSize: file.fileSize,
+          convexFileId: file.storageId,
+          uploadedAt: new Date().toISOString(),
+        })),
+        description: args.promoDescription || submission.promoMaterials.description,
+      };
+    } else if (args.promoDescription !== undefined) {
+      updateData.promoMaterials = {
+        ...submission.promoMaterials,
+        description: args.promoDescription,
+      };
+    }
+
+    if (args.guestList !== undefined) {
+      updateData.guestList = args.guestList;
+    }
+
+    if (args.paymentInfo !== undefined) {
+      updateData.paymentInfo = {
+        accountHolder: args.paymentInfo.accountHolder,
+        bankName: args.paymentInfo.bankName,
+        // In production, these should be encrypted
+        accountNumber: args.paymentInfo.accountNumber,
+        residentNumber: args.paymentInfo.residentNumber,
+        preferDirectContact: args.paymentInfo.preferDirectContact,
+      };
+    }
+
+    await ctx.db.patch(args.submissionId, updateData);
+
+    return { success: true };
+  },
+});
+
+// Mutation to delete a submission
+export const deleteSubmission = mutation({
+  args: {
+    submissionId: v.id("submissions"),
+    submissionToken: v.string(),
+  },
+  handler: async (ctx, args) => {
+    // Get the existing submission
+    const submission = await ctx.db.get(args.submissionId);
+    if (!submission) {
+      throw new Error("Submission not found");
+    }
+
+    // Verify the submission token matches
+    if (submission.uniqueLink !== args.submissionToken) {
+      throw new Error("Invalid submission token");
+    }
+
+    // Check if the event allows editing submissions
+    const event = await ctx.db.get(submission.eventId);
+    if (!event) {
+      throw new Error("Event not found");
+    }
+
+    // Get event capabilities to check if submissions can be deleted
+    const timeslots = await ctx.db
+      .query("timeslots")
+      .filter((q) => q.eq(q.field("eventId"), submission.eventId))
+      .collect();
+    const submissions = await ctx.db
+      .query("submissions")
+      .filter((q) => q.eq(q.field("eventId"), submission.eventId))
+      .collect();
+    
+    const capabilities = computeEventCapabilities(event, timeslots, submissions);
+    if (!capabilities.canAcceptSubmissions) {
+      throw new Error("Submissions can no longer be deleted for this event");
+    }
+
+    // Remove submission reference from timeslot
+    const timeslot = await ctx.db.get(submission.timeslotId);
+    if (timeslot && timeslot.submissionId === submission._id) {
+      await ctx.db.patch(submission.timeslotId, {
+        submissionId: undefined,
+      });
+    }
+
+    // Delete the submission
+    await ctx.db.delete(args.submissionId);
+
+    return { success: true };
+  },
+});
+
+// Query to get submission by token (for editing)
+export const getSubmissionByToken = query({
+  args: { 
+    submissionToken: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const submission = await ctx.db
+      .query("submissions")
+      .filter((q) => q.eq(q.field("uniqueLink"), args.submissionToken))
+      .first();
+    
+    if (!submission) {
+      return null;
+    }
+
+    // Also get the related timeslot and event info
+    const timeslot = await ctx.db.get(submission.timeslotId);
+    const event = await ctx.db.get(submission.eventId);
+    
+    return {
+      ...submission,
+      timeslot,
+      event,
+    };
+  },
+});
+
+// Query to get all submissions for an event (for event organizer)
+export const getSubmissionsByEvent = query({
+  args: {
+    eventId: v.id("events"),
+    userId: v.id("users"),
+  },
+  handler: async (ctx, args) => {
+    // First, verify the user owns this event
+    const event = await ctx.db.get(args.eventId);
+    if (!event) {
+      throw new Error("Event not found");
+    }
+    
+    if (event.organizerId !== args.userId) {
+      throw new Error("Access denied: You don't own this event");
+    }
+    
+    // Get all submissions for this event
+    const submissions = await ctx.db
+      .query("submissions")
+      .filter((q) => q.eq(q.field("eventId"), args.eventId))
+      .collect();
+
+    return submissions;
   },
 });

@@ -47,9 +47,16 @@ export const getTimeslotByToken = query({
       throw new Error("Event not found");
     }
     
+    // Check if there's an existing submission for this timeslot
+    const existingSubmission = await ctx.db
+      .query("submissions")
+      .filter((q) => q.eq(q.field("timeslotId"), timeslot._id))
+      .first();
+    
     return {
       ...timeslot,
       event,
+      existingSubmission,
     };
   },
 });
@@ -71,7 +78,6 @@ export const createTimeslot = mutation({
       submissionToken,
     });
     
-    console.log("Created new timeslot with id:", timeslotId, "and token:", submissionToken);
     return { timeslotId, submissionToken };
   },
 });
@@ -116,12 +122,9 @@ export const addSubmissionTokensToExistingTimeslots = mutation({
       .filter((q) => q.eq(q.field("submissionToken"), undefined))
       .collect();
     
-    console.log(`Found ${timeslotsWithoutTokens.length} timeslots without submission tokens`);
-    
     for (const timeslot of timeslotsWithoutTokens) {
       const submissionToken = generateSubmissionToken();
       await ctx.db.patch(timeslot._id, { submissionToken });
-      console.log(`Added token ${submissionToken} to timeslot ${timeslot._id}`);
     }
     
     return { updated: timeslotsWithoutTokens.length };
