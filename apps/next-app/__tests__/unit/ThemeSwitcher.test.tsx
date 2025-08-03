@@ -5,18 +5,17 @@ import { ThemeSwitcher } from '@/app/components/ThemeSwitcher'
 // Mock the @rite/ui design tokens
 vi.mock('@rite/ui/design-tokens', () => ({
   alternativeThemes: {
-    riteRefined: { name: 'RITE Refined' },
-    oceanDepth: { name: 'Deep Ocean' },
-    joshComeau: { name: 'Josh Comeau' },
-    monochromeLight: { name: 'Light Mode' },
-    monochromeDark: { name: 'Dark Mode' },
+    joshComeau: { name: 'Josh Comeau', type: 'dark' },
+    joshComeauLight: { name: 'Josh Comeau Light', type: 'light' },
   },
-  generateThemeCSS: vi.fn(() => ':root { --brand-primary: #E946FF; }'),
+  generateThemeCSS: vi.fn(() => ':root { --brand-primary: #7C7CFF; }'),
 }))
 
 // Mock lucide-react
 vi.mock('lucide-react', () => ({
-  PaletteIcon: () => <span data-testid="palette-icon">🎨</span>,
+  Moon: () => <span data-testid="moon-icon">🌙</span>,
+  Sun: () => <span data-testid="sun-icon">☀️</span>,
+  Monitor: () => <span data-testid="monitor-icon">🖥️</span>,
 }))
 
 // Mock localStorage
@@ -45,9 +44,6 @@ const originalAppendChild = document.head.appendChild
 describe('ThemeSwitcher', () => {
   beforeEach(() => {
     vi.clearAllMocks()
-    
-    // Reset NODE_ENV for each test
-    delete process.env.NODE_ENV
 
     // Mock document methods
     document.createElement = vi.fn((tagName) => {
@@ -73,204 +69,214 @@ describe('ThemeSwitcher', () => {
     document.head.appendChild = originalAppendChild
   })
 
-  describe('Production Environment', () => {
-    it('should not render in production', () => {
-      process.env.NODE_ENV = 'production'
-      
-      const { container } = render(<ThemeSwitcher />)
-      
-      expect(container.firstChild).toBeNull()
+  it('should render theme toggle button', () => {
+    render(<ThemeSwitcher />)
+    
+    expect(screen.getByRole('button')).toBeInTheDocument()
+    expect(screen.getByTestId('moon-icon')).toBeInTheDocument()
+  })
+
+  it('should default to dark mode', async () => {
+    localStorageMock.getItem.mockReturnValue(null)
+    
+    render(<ThemeSwitcher />)
+    
+    await waitFor(() => {
+      expect(screen.getByText('Dark')).toBeInTheDocument()
+      expect(screen.getByTestId('moon-icon')).toBeInTheDocument()
     })
   })
 
-  describe('Development Environment', () => {
-    beforeEach(() => {
-      process.env.NODE_ENV = 'development'
-    })
-
-    it('should render theme switcher in development', () => {
-      render(<ThemeSwitcher />)
-      
-      expect(screen.getByRole('button')).toBeInTheDocument()
-      expect(screen.getByTestId('palette-icon')).toBeInTheDocument()
-    })
-
-    it('should default to joshComeau theme', async () => {
-      localStorageMock.getItem.mockReturnValue(null)
-      
-      render(<ThemeSwitcher />)
-      
-      await waitFor(() => {
-        expect(screen.getByText('Josh Comeau')).toBeInTheDocument()
-      })
-    })
-
-    it('should load saved theme from localStorage', async () => {
-      localStorageMock.getItem.mockReturnValue('oceanDepth')
-      
-      render(<ThemeSwitcher />)
-      
-      await waitFor(() => {
-        expect(screen.getByText('Deep Ocean')).toBeInTheDocument()
-      })
-    })
-
-    it('should fallback to default theme if saved theme is invalid', async () => {
-      localStorageMock.getItem.mockReturnValue('invalidTheme')
-      
-      render(<ThemeSwitcher />)
-      
-      await waitFor(() => {
-        expect(screen.getByText('Josh Comeau')).toBeInTheDocument()
-      })
-    })
-
-    it('should toggle dropdown when button is clicked', () => {
-      render(<ThemeSwitcher />)
-      
-      const button = screen.getByRole('button')
-      fireEvent.click(button)
-      
-      expect(screen.getByText('RITE Refined')).toBeInTheDocument()
-      expect(screen.getByText('Enhanced readability')).toBeInTheDocument()
-    })
-
-    it('should display all available themes in dropdown', () => {
-      render(<ThemeSwitcher />)
-      
-      const button = screen.getByRole('button')
-      fireEvent.click(button)
-      
-      expect(screen.getByText('RITE Refined')).toBeInTheDocument()
-      expect(screen.getByText('Deep Ocean')).toBeInTheDocument()
-      expect(screen.getByText('Josh Comeau')).toBeInTheDocument()
-      expect(screen.getByText('Light Mode')).toBeInTheDocument()
-      expect(screen.getByText('Dark Mode')).toBeInTheDocument()
-    })
-
-    it('should switch theme when a theme option is clicked', async () => {
-      render(<ThemeSwitcher />)
-      
-      const button = screen.getByRole('button')
-      fireEvent.click(button)
-      
-      const oceanThemeButton = screen.getByText('Deep Ocean')
-      fireEvent.click(oceanThemeButton)
-      
-      expect(localStorageMock.setItem).toHaveBeenCalledWith('rite-theme', 'oceanDepth')
-      
-      await waitFor(() => {
-        expect(screen.getByText('Deep Ocean')).toBeInTheDocument()
-      })
-    })
-
-    it('should close dropdown after selecting a theme', () => {
-      render(<ThemeSwitcher />)
-      
-      const button = screen.getByRole('button')
-      fireEvent.click(button)
-      
-      const oceanThemeButton = screen.getByText('Deep Ocean')
-      fireEvent.click(oceanThemeButton)
-      
-      expect(screen.queryByText('Enhanced readability')).not.toBeInTheDocument()
-    })
-
-    it('should close dropdown when clicking outside', () => {
-      render(<ThemeSwitcher />)
-      
-      const button = screen.getByRole('button')
-      fireEvent.click(button)
-      
-      expect(screen.getByText('Enhanced readability')).toBeInTheDocument()
-      
-      // Click the overlay
-      const overlay = document.querySelector('.fixed.inset-0')
-      fireEvent.click(overlay!)
-      
-      expect(screen.queryByText('Enhanced readability')).not.toBeInTheDocument()
-    })
-
-    it('should apply theme styles to document head', async () => {
-      render(<ThemeSwitcher />)
-      
-      await waitFor(() => {
-        expect(document.createElement).toHaveBeenCalledWith('style')
-        expect(mockStyleElement.id).toBe('rite-theme-style')
-        expect(document.head.appendChild).toHaveBeenCalledWith(mockStyleElement)
-      })
-    })
-
-    it('should remove existing theme style before applying new one', async () => {
-      const existingStyleElement = { remove: vi.fn() }
-      document.getElementById = vi.fn(() => existingStyleElement as any)
-      
-      render(<ThemeSwitcher />)
-      
-      const button = screen.getByRole('button')
-      fireEvent.click(button)
-      
-      const oceanThemeButton = screen.getByText('Deep Ocean')
-      fireEvent.click(oceanThemeButton)
-      
-      await waitFor(() => {
-        expect(existingStyleElement.remove).toHaveBeenCalled()
-      })
-    })
-
-    it('should highlight current theme in dropdown', () => {
-      localStorageMock.getItem.mockReturnValue('oceanDepth')
-      
-      render(<ThemeSwitcher />)
-      
-      const button = screen.getByRole('button')
-      fireEvent.click(button)
-      
-      const oceanThemeButton = screen.getByText('Deep Ocean').closest('button')
-      expect(oceanThemeButton).toHaveClass('bg-neutral-600', 'font-medium')
-    })
-
-    it('should show theme icon on mobile and name on desktop', () => {
-      localStorageMock.getItem.mockReturnValue('joshComeau')
-      
-      render(<ThemeSwitcher />)
-      
-      expect(screen.getByText('Josh Comeau')).toHaveClass('hidden', 'sm:inline')
-      expect(screen.getByText('✨')).toHaveClass('sm:hidden')
+  it('should load saved dark mode from localStorage', async () => {
+    localStorageMock.getItem.mockReturnValue('dark')
+    
+    render(<ThemeSwitcher />)
+    
+    await waitFor(() => {
+      expect(screen.getByText('Dark')).toBeInTheDocument()
+      expect(screen.getByTestId('moon-icon')).toBeInTheDocument()
     })
   })
 
-  describe('Environment Variable Edge Cases', () => {
-    it('should render when NODE_ENV is undefined', () => {
-      delete process.env.NODE_ENV
-      
-      render(<ThemeSwitcher />)
-      
-      expect(screen.getByRole('button')).toBeInTheDocument()
+  it('should load saved light mode from localStorage', async () => {
+    localStorageMock.getItem.mockReturnValue('light')
+    
+    render(<ThemeSwitcher />)
+    
+    await waitFor(() => {
+      expect(screen.getByText('Light')).toBeInTheDocument()
+      expect(screen.getByTestId('sun-icon')).toBeInTheDocument()
+    })
+  })
+
+  it('should load saved system mode from localStorage', async () => {
+    localStorageMock.getItem.mockReturnValue('system')
+    
+    render(<ThemeSwitcher />)
+    
+    await waitFor(() => {
+      expect(screen.getByText('System')).toBeInTheDocument()
+      expect(screen.getByTestId('monitor-icon')).toBeInTheDocument()
+    })
+  })
+
+  it('should fallback to default mode if saved mode is invalid', async () => {
+    localStorageMock.getItem.mockReturnValue('invalidMode')
+    
+    render(<ThemeSwitcher />)
+    
+    await waitFor(() => {
+      expect(screen.getByText('Dark')).toBeInTheDocument()
+      expect(screen.getByTestId('moon-icon')).toBeInTheDocument()
+    })
+  })
+
+  it('should cycle from dark to light when button is clicked', async () => {
+    localStorageMock.getItem.mockReturnValue('dark')
+    
+    render(<ThemeSwitcher />)
+    
+    // Initially should show dark mode
+    expect(screen.getByText('Dark')).toBeInTheDocument()
+    expect(screen.getByTestId('moon-icon')).toBeInTheDocument()
+    
+    const button = screen.getByRole('button')
+    fireEvent.click(button)
+    
+    expect(localStorageMock.setItem).toHaveBeenCalledWith('rite-theme-mode', 'light')
+    
+    await waitFor(() => {
+      expect(screen.getByText('Light')).toBeInTheDocument()
+      expect(screen.getByTestId('sun-icon')).toBeInTheDocument()
+    })
+  })
+
+  it('should cycle from light to system when button is clicked', async () => {
+    localStorageMock.getItem.mockReturnValue('light')
+    
+    render(<ThemeSwitcher />)
+    
+    // Initially should show light mode
+    expect(screen.getByText('Light')).toBeInTheDocument()
+    expect(screen.getByTestId('sun-icon')).toBeInTheDocument()
+    
+    const button = screen.getByRole('button')
+    fireEvent.click(button)
+    
+    expect(localStorageMock.setItem).toHaveBeenCalledWith('rite-theme-mode', 'system')
+    
+    await waitFor(() => {
+      expect(screen.getByText('System')).toBeInTheDocument()
+      expect(screen.getByTestId('monitor-icon')).toBeInTheDocument()
+    })
+  })
+
+  it('should cycle from system to dark when button is clicked', async () => {
+    localStorageMock.getItem.mockReturnValue('system')
+    
+    render(<ThemeSwitcher />)
+    
+    // Initially should show system mode
+    expect(screen.getByText('System')).toBeInTheDocument()
+    expect(screen.getByTestId('monitor-icon')).toBeInTheDocument()
+    
+    const button = screen.getByRole('button')
+    fireEvent.click(button)
+    
+    expect(localStorageMock.setItem).toHaveBeenCalledWith('rite-theme-mode', 'dark')
+    
+    await waitFor(() => {
+      expect(screen.getByText('Dark')).toBeInTheDocument()
+      expect(screen.getByTestId('moon-icon')).toBeInTheDocument()
+    })
+  })
+
+  it('should apply theme styles to document head', async () => {
+    render(<ThemeSwitcher />)
+    
+    await waitFor(() => {
+      expect(document.createElement).toHaveBeenCalledWith('style')
+      expect(mockStyleElement.id).toBe('rite-theme-style')
+      expect(document.head.appendChild).toHaveBeenCalledWith(mockStyleElement)
+    })
+  })
+
+  it('should remove existing theme style before applying new one', async () => {
+    const existingStyleElement = { remove: vi.fn() }
+    document.getElementById = vi.fn(() => existingStyleElement as any)
+    
+    render(<ThemeSwitcher />)
+    
+    const button = screen.getByRole('button')
+    fireEvent.click(button)
+    
+    await waitFor(() => {
+      expect(existingStyleElement.remove).toHaveBeenCalled()
+    })
+  })
+
+  it('should show theme text on desktop and hide on mobile', () => {
+    localStorageMock.getItem.mockReturnValue('dark')
+    
+    render(<ThemeSwitcher />)
+    
+    expect(screen.getByText('Dark')).toHaveClass('hidden', 'sm:inline')
+  })
+
+  it('should have proper tooltip text for dark mode', () => {
+    localStorageMock.getItem.mockReturnValue('dark')
+    
+    render(<ThemeSwitcher />)
+    
+    const button = screen.getByRole('button')
+    expect(button).toHaveAttribute('title', 'Switch to light mode')
+  })
+
+  it('should have proper tooltip text for light mode', () => {
+    localStorageMock.getItem.mockReturnValue('light')
+    
+    render(<ThemeSwitcher />)
+    
+    const button = screen.getByRole('button')
+    expect(button).toHaveAttribute('title', 'Switch to system mode')
+  })
+
+  it('should have proper tooltip text for system mode', () => {
+    localStorageMock.getItem.mockReturnValue('system')
+    
+    render(<ThemeSwitcher />)
+    
+    const button = screen.getByRole('button')
+    expect(button).toHaveAttribute('title', 'Switch to dark mode')
+  })
+
+  it('should update tooltip text when cycling through modes', async () => {
+    localStorageMock.getItem.mockReturnValue('dark')
+    
+    render(<ThemeSwitcher />)
+    
+    const button = screen.getByRole('button')
+    expect(button).toHaveAttribute('title', 'Switch to light mode')
+    
+    // Click to go to light mode
+    fireEvent.click(button)
+    
+    await waitFor(() => {
+      expect(button).toHaveAttribute('title', 'Switch to system mode')
     })
 
-    it('should render when NODE_ENV is development', () => {
-      process.env.NODE_ENV = 'development'
-      
-      render(<ThemeSwitcher />)
-      
-      expect(screen.getByRole('button')).toBeInTheDocument()
+    // Click to go to system mode
+    fireEvent.click(button)
+    
+    await waitFor(() => {
+      expect(button).toHaveAttribute('title', 'Switch to dark mode')
     })
 
-    it('should render when NODE_ENV is test', () => {
-      process.env.NODE_ENV = 'test'
-      
-      render(<ThemeSwitcher />)
-      
-      expect(screen.getByRole('button')).toBeInTheDocument()
-    })
-
-    it('should not render when NODE_ENV is production (strict equality)', () => {
-      process.env.NODE_ENV = 'production'
-      
-      const { container } = render(<ThemeSwitcher />)
-      
-      expect(container.firstChild).toBeNull()
+    // Click to go back to dark mode
+    fireEvent.click(button)
+    
+    await waitFor(() => {
+      expect(button).toHaveAttribute('title', 'Switch to light mode')
     })
   })
 })
