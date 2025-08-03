@@ -55,7 +55,7 @@ export function ThemeSwitcher() {
 
   const currentThemeInfo = themes.find(t => t.key === currentTheme) || themes[0];
 
-  // Hide theme switcher in production
+  // Hide theme switcher in production (users can still manually switch themes via localStorage)
   if (process.env.NODE_ENV === 'production') {
     return null;
   }
