@@ -1,3 +1,5 @@
+// Import secure random values for React Native cross-platform crypto
+import 'react-native-get-random-values';
 import { ConvexReactClient } from 'convex/react';
 import { api } from '@rite/backend/convex/_generated/api';
 import { Id } from '@rite/backend/convex/_generated/dataModel';
@@ -6,39 +8,18 @@ import { secureStorage, STORAGE_KEYS } from './secure-storage';
 
 /**
  * Generate a cryptographically secure session token
+ * Uses react-native-get-random-values for cross-platform security
  */
 export const generateSessionToken = (): string => {
-  // Use crypto API if available (web), otherwise fallback to secure generation
-  if (typeof crypto !== 'undefined' && crypto.getRandomValues) {
-    const array = new Uint8Array(32);
-    crypto.getRandomValues(array);
-    return Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('');
-  }
-  
-  // Fallback for environments without crypto API
-  // This is still better than Math.random() but not ideal
-  const timestamp = Date.now().toString(36);
-  const randomPart = Array.from({ length: 16 }, () => 
-    Math.floor(Math.random() * 36).toString(36)
-  ).join('');
-  
-  return `${timestamp}-${randomPart}`;
+  // react-native-get-random-values polyfills crypto.getRandomValues
+  // This works across all platforms (web, iOS, Android)
+  const array = new Uint8Array(32);
+  crypto.getRandomValues(array);
+  return Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('');
 };
 
-/**
- * Generate a secure OAuth state parameter for CSRF protection
- */
-export const generateOAuthState = (): string => {
-  // Generate a secure random state for CSRF protection
-  if (typeof crypto !== 'undefined' && crypto.getRandomValues) {
-    const array = new Uint8Array(16);
-    crypto.getRandomValues(array);
-    return Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('');
-  }
-  
-  // Fallback state generation
-  return `state_${Date.now()}_${Math.floor(Math.random() * 1000000)}`;
-};
+// Note: OAuth state/CSRF protection is handled automatically by expo-auth-session
+// No manual state generation or validation needed - expo-auth-session provides built-in PKCE and state management
 
 /**
  * Check and restore existing session if valid

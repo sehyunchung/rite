@@ -59,4 +59,6 @@ export const secureStorage = {
 
 export const STORAGE_KEYS = {
   SESSION_TOKEN: 'sessionToken',
+  // Note: OAuth state is handled automatically by expo-auth-session
+  // No manual CSRF storage needed
 } as const;

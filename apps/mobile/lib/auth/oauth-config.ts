@@ -3,14 +3,20 @@ import Constants from 'expo-constants';
 import * as AuthSession from 'expo-auth-session';
 import { GoogleOAuthConfig, Platform as PlatformType, AppEnvironment } from './types';
 
-// Generate Google iOS scheme from client ID to avoid hardcoding
+// Generate Google iOS scheme from client ID - no hardcoded fallback for security
 const getGoogleIOSScheme = (): string => {
   const iosClientId = process.env.EXPO_PUBLIC_GOOGLE_OAUTH_CLIENT_ID_IOS;
-  if (iosClientId) {
-    return `com.googleusercontent.apps.${iosClientId.split('-')[0]}-${iosClientId.split('-')[1]}`;
+  if (!iosClientId) {
+    throw new Error('EXPO_PUBLIC_GOOGLE_OAUTH_CLIENT_ID_IOS environment variable is required for iOS OAuth');
   }
-  // Fallback - should be replaced with proper environment variable
-  return 'com.googleusercontent.apps.420827108032-bksn0r122euuio8gfg8pa5ei50kjlkj4';
+  
+  // Extract the client ID parts to construct the URL scheme
+  const parts = iosClientId.split('-');
+  if (parts.length < 2) {
+    throw new Error('Invalid iOS client ID format. Expected format: [numbers]-[string].apps.googleusercontent.com');
+  }
+  
+  return `com.googleusercontent.apps.${parts[0]}-${parts[1]}`;
 };
 
 /**
