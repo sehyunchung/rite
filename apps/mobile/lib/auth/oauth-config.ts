@@ -45,36 +45,46 @@ export const getPlatformInfo = () => {
   return { platform, environment, isExpoGo, isWeb: platform === 'web' };
 };
 
+// Cache the redirect URI to prevent multiple calculations
+let cachedRedirectUri: string | null = null;
+let cachedPlatformInfo: ReturnType<typeof getPlatformInfo> | null = null;
+
 /**
- * Generate platform-specific redirect URI
+ * Generate platform-specific redirect URI with caching to prevent multiple calculations
  */
 export const getRedirectUri = () => {
-  const { platform, isExpoGo, isWeb } = getPlatformInfo();
+  // Use cached value if platform hasn't changed
+  const currentPlatformInfo = getPlatformInfo();
+  if (cachedRedirectUri && cachedPlatformInfo && 
+      JSON.stringify(cachedPlatformInfo) === JSON.stringify(currentPlatformInfo)) {
+    return cachedRedirectUri;
+  }
+
+  const { platform, isExpoGo, isWeb } = currentPlatformInfo;
+  cachedPlatformInfo = currentPlatformInfo;
   
-  console.log('🔍 OAuth Debug - Platform Info:', { platform, isExpoGo, isWeb });
+  let redirectUri: string;
   
   if (isWeb) {
-    const redirectUri = 'http://localhost:8081';
-    console.log('🔍 OAuth Debug - Web Redirect URI:', redirectUri);
-    return redirectUri;
+    redirectUri = 'http://localhost:8081';
   } else if (isExpoGo || platform === 'ios') {
     try {
       const scheme = getGoogleIOSScheme();
-      const redirectUri = `${scheme}://`;
-      console.log('🔍 OAuth Debug - iOS/Expo Redirect URI:', redirectUri);
-      return redirectUri;
+      redirectUri = `${scheme}://`;
     } catch (error) {
-      console.error('🚨 OAuth Debug - Failed to generate iOS scheme:', error);
-      // Fallback to the working hardcoded scheme for debugging
-      const fallbackUri = 'com.googleusercontent.apps.420827108032-bksn0r122euuio8gfg8pa5ei50kjlkj4://';
-      console.log('🔍 OAuth Debug - Using fallback URI:', fallbackUri);
-      return fallbackUri;
+      console.error('Failed to generate iOS OAuth scheme:', error);
+      // Fallback to the working hardcoded scheme
+      redirectUri = 'com.googleusercontent.apps.420827108032-bksn0r122euuio8gfg8pa5ei50kjlkj4://';
     }
   } else {
-    const redirectUri = AuthSession.makeRedirectUri({ scheme: 'com.rite.mobile' });
-    console.log('🔍 OAuth Debug - Android Redirect URI:', redirectUri);
-    return redirectUri;
+    redirectUri = AuthSession.makeRedirectUri({ scheme: 'com.rite.mobile' });
   }
+  
+  // Cache the result and log only once
+  cachedRedirectUri = redirectUri;
+  console.log(`OAuth Redirect URI (${platform}):`, redirectUri);
+  
+  return redirectUri;
 };
 
 /**
