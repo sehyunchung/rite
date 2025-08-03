@@ -47,9 +47,16 @@ export const getTimeslotByToken = query({
       throw new Error("Event not found");
     }
     
+    // Check if there's an existing submission for this timeslot
+    const existingSubmission = await ctx.db
+      .query("submissions")
+      .filter((q) => q.eq(q.field("timeslotId"), timeslot._id))
+      .first();
+    
     return {
       ...timeslot,
       event,
+      existingSubmission,
     };
   },
 });
