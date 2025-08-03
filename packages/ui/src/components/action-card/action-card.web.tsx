@@ -11,17 +11,17 @@ export interface ActionCardProps extends React.ComponentProps<"button"> {
 const ActionCard = React.forwardRef<HTMLButtonElement, ActionCardProps>(
   ({ className, icon, title, subtitle, variant = 'default', ...props }, ref) => {
     const iconColors = {
-      default: 'bg-blue-100 text-blue-600',
-      primary: 'bg-purple-100 text-purple-600',
-      secondary: 'bg-green-100 text-green-600'
+      default: 'bg-info/20 text-info',
+      primary: 'bg-brand-primary/20 text-brand-primary',
+      secondary: 'bg-success/20 text-success'
     }
 
     return (
       <button
         ref={ref}
         className={cn(
-          "relative w-full rounded-2xl border-2 border-dashed border-neutral-600 bg-neutral-700/50 p-8 text-center transition-all",
-          "hover:border-brand-primary hover:bg-neutral-700 hover:shadow-glow-sm",
+          "relative w-full rounded-2xl border-2 border-dashed border-border bg-bg-secondary/50 p-8 text-center transition-all",
+          "hover:border-brand-primary hover:bg-bg-secondary hover:shadow-glow-sm",
           "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background",
           "active:scale-[0.98]",
           className
@@ -39,8 +39,8 @@ const ActionCard = React.forwardRef<HTMLButtonElement, ActionCardProps>(
           </div>
           
           <div>
-            <h3 className="text-lg font-semibold text-white">{title}</h3>
-            <p className="mt-1 text-sm text-neutral-400">{subtitle}</p>
+            <h3 className="text-lg font-semibold text-text-primary">{title}</h3>
+            <p className="mt-1 text-sm text-text-secondary">{subtitle}</p>
           </div>
         </div>
       </button>

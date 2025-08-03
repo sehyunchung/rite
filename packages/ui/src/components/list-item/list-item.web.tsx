@@ -17,29 +17,29 @@ const ListItem = React.forwardRef<HTMLButtonElement, ListItemProps>(
         ref={ref}
         className={cn(
           "flex w-full items-center gap-4 px-5 py-4 text-left transition-colors",
-          "hover:bg-neutral-700/50 active:bg-neutral-700",
+          "hover:bg-bg-secondary/50 active:bg-bg-secondary",
           "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-inset",
           className
         )}
         {...props}
       >
         {icon && (
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-neutral-700">
-            <div className="h-5 w-5 text-white">
+          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-bg-secondary">
+            <div className="h-5 w-5 text-text-primary">
               {icon}
             </div>
           </div>
         )}
         
         <div className="flex-1 min-w-0">
-          <p className="text-base font-medium text-white">{title}</p>
+          <p className="text-base font-medium text-text-primary">{title}</p>
           {subtitle && (
-            <p className="text-sm text-neutral-400 mt-0.5">{subtitle}</p>
+            <p className="text-sm text-text-muted mt-0.5">{subtitle}</p>
           )}
         </div>
         
         {trailing || (showChevron && (
-          <ChevronRight className="h-5 w-5 text-neutral-400 flex-shrink-0" />
+          <ChevronRight className="h-5 w-5 text-text-muted flex-shrink-0" />
         ))}
       </button>
     )
