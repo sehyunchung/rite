@@ -34,6 +34,7 @@ export function EventDetailClient({ eventId, userId, locale }: EventDetailClient
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
   const [cancelReason, setCancelReason] = useState('');
   const [isDeleting, setIsDeleting] = useState(false);
+  const [eventDeleted, setEventDeleted] = useState(false);
   const t = useTranslations('events.detail');
   const tStatus = useTranslations('status');
   
@@ -49,6 +50,7 @@ export function EventDetailClient({ eventId, userId, locale }: EventDetailClient
         eventId: event._id,
         userId: userId as Id<"users">,
       });
+      setEventDeleted(true);
       router.push(`/${locale}/dashboard`);
     } catch (error) {
       console.error('Failed to delete event:', error);
@@ -68,6 +70,7 @@ export function EventDetailClient({ eventId, userId, locale }: EventDetailClient
         userId: userId as Id<"users">,
         reason: cancelReason,
       });
+      setEventDeleted(true);
       router.push(`/${locale}/dashboard`);
     } catch (error) {
       console.error('Failed to cancel event:', error);
@@ -79,11 +82,24 @@ export function EventDetailClient({ eventId, userId, locale }: EventDetailClient
   
   const event = useQuery(
     api.events.getEvent,
-    { 
+    eventDeleted ? "skip" : { 
       eventId: eventId as Id<"events">,
       userId: userId as Id<"users">
     }
   );
+
+  if (eventDeleted) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <Typography variant="h2" className="mb-2">Event Deleted</Typography>
+          <Typography variant="body" color="secondary" className="mb-4">
+            Redirecting to dashboard...
+          </Typography>
+        </div>
+      </div>
+    );
+  }
 
   if (event === undefined) {
     return (
