@@ -16,7 +16,7 @@ import {
   getDefaultEndTime
 } from '@/lib/validation';
 import { useTranslations } from 'next-intl';
-import { AlertCircle, Trash2, Calendar, MapPin, DollarSign, Clock, PlusCircle } from 'lucide-react';
+import { AlertCircle, Trash2, Calendar, MapPin, Clock, PlusCircle } from 'lucide-react';
 
 // Type for event with timeslots
 type EventWithTimeslots = Doc<"events"> & {
@@ -505,100 +505,6 @@ export function EventEditForm({ event, onEventUpdated }: EventEditFormProps) {
         </CardContent>
       </Card>
 
-      {/* Payment Information - Hidden to match creation form */}
-      {false && (
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
-            <DollarSign className="w-5 h-5" />
-            <span>{t('payment')}</span>
-          </CardTitle>
-          <CardDescription>{t('paymentDescription')}</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid gap-4 md:grid-cols-3">
-            <div className="space-y-2">
-              <Label htmlFor="totalAmount">{t('totalAmount')} *</Label>
-              <Input
-                id="totalAmount"
-                type="number"
-                value={formData.payment.amount}
-                onChange={(e) => updateFormData('payment.amount', Number(e.target.value))}
-                placeholder="0"
-                className={errors['payment.amount'] ? 'border-red-500' : ''}
-              />
-              {errors['payment.amount'] && (
-                <p className="text-sm text-red-500">{errors['payment.amount']}</p>
-              )}
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="perDJAmount">{t('paymentPerDJ')} *</Label>
-              <Input
-                id="perDJAmount"
-                type="number"
-                value={formData.payment.perDJ}
-                onChange={(e) => updateFormData('payment.perDJ', Number(e.target.value))}
-                placeholder="0"
-                className={errors['payment.perDJ'] ? 'border-red-500' : ''}
-              />
-              {errors['payment.perDJ'] && (
-                <p className="text-sm text-red-500">{errors['payment.perDJ']}</p>
-              )}
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="currency">{t('currency')} *</Label>
-              <Select value={formData.payment.currency} onValueChange={(value) => updateFormData('payment.currency', value)}>
-                <SelectTrigger>
-                  <SelectValue placeholder={t('currency')} />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="KRW">KRW (₩)</SelectItem>
-                  <SelectItem value="USD">USD ($)</SelectItem>
-                  <SelectItem value="EUR">EUR (€)</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-          
-          <div className="grid gap-4 md:grid-cols-2">
-            <div className="space-y-2">
-              <Label htmlFor="paymentDue">{t('paymentDueDate')} *</Label>
-              <Input
-                id="paymentDue"
-                type="date"
-                value={formData.payment.dueDate}
-                onChange={(e) => updateFormData('payment.dueDate', e.target.value)}
-                className={errors['payment.dueDate'] ? 'border-red-500' : ''}
-              />
-              {errors['payment.dueDate'] && (
-                <p className="text-sm text-red-500">{errors['payment.dueDate']}</p>
-              )}
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="guestLimit">{t('guestLimitPerDJ')} *</Label>
-              <Select 
-                value={formData.guestLimitPerDJ.toString()} 
-                onValueChange={(value) => updateFormData('guestLimitPerDJ', Number(value))}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder={t('guestLimitPerDJ')} />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="1">{t('guestCount', { count: 1 })}</SelectItem>
-                  <SelectItem value="2">{t('guestCount', { count: 2 })}</SelectItem>
-                  <SelectItem value="3">{t('guestCount', { count: 3 })}</SelectItem>
-                  <SelectItem value="4">{t('guestCount', { count: 4 })}</SelectItem>
-                  <SelectItem value="5">{t('guestCount', { count: 5 })}</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-      )}
 
       {/* Submit Button */}
       {errors.submit && (
