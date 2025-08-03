@@ -15,7 +15,7 @@ const themes = [
 
 export function ThemeSwitcher() {
   const [isOpen, setIsOpen] = useState(false);
-  const [currentTheme, setCurrentTheme] = useState<AlternativeThemeKey>('riteRefined');
+  const [currentTheme, setCurrentTheme] = useState<AlternativeThemeKey>('joshComeau');
 
   // Load theme from localStorage on mount
   useEffect(() => {
@@ -25,7 +25,7 @@ export function ThemeSwitcher() {
       applyTheme(savedTheme);
     } else {
       // Apply default theme if no saved theme
-      applyTheme('riteRefined');
+      applyTheme('joshComeau');
     }
   }, []);
 
@@ -54,6 +54,11 @@ export function ThemeSwitcher() {
   };
 
   const currentThemeInfo = themes.find(t => t.key === currentTheme) || themes[0];
+
+  // Hide theme switcher in production
+  if (process.env.NODE_ENV === 'production') {
+    return null;
+  }
 
   return (
     <div className="relative">
