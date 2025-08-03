@@ -10,7 +10,7 @@ import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { Typography, Button, Input, Card } from '@rite/ui';
-import { colors } from '@rite/ui/design-tokens';
+import { riteColors as colors } from '../../constants/Colors';
 
 export default function CreateTab() {
   const router = useRouter();

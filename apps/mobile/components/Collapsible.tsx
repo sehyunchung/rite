@@ -2,7 +2,7 @@ import * as React from 'react';
 import { TouchableOpacity, View } from 'react-native';
 
 import { Typography } from '@rite/ui';
-import { colors } from '@rite/ui/design-tokens';
+import { riteColors as colors } from '../constants/Colors';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 
 export function Collapsible({ children, title }: React.PropsWithChildren & { title: string }) {
