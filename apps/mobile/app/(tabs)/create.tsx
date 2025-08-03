@@ -10,6 +10,7 @@ import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { Typography, Button, Input, Card } from '@rite/ui';
+import { colors } from '@rite/ui/design-tokens';
 
 export default function CreateTab() {
   const router = useRouter();
@@ -107,7 +108,7 @@ export default function CreateTab() {
               <Typography variant="body" className="text-white flex-1">
                 {formatDate(selectedDate)}
               </Typography>
-              <Ionicons name="calendar-outline" size={20} color="hsl(210, 12%, 55%)" />
+              <Ionicons name="calendar-outline" size={20} color={colors.functional.textSecondary} />
             </TouchableOpacity>
           </View>
 
@@ -123,7 +124,7 @@ export default function CreateTab() {
               <Typography variant="body" className="text-white flex-1">
                 {formatTime(startTime)}
               </Typography>
-              <Ionicons name="time-outline" size={20} color="hsl(210, 12%, 55%)" />
+              <Ionicons name="time-outline" size={20} color={colors.functional.textSecondary} />
             </TouchableOpacity>
           </View>
 
@@ -134,7 +135,7 @@ export default function CreateTab() {
                 DJ Lineup
               </Typography>
               <TouchableOpacity className="flex-row items-center">
-                <Ionicons name="add" size={20} color="hsl(225, 100%, 75%)" />
+                <Ionicons name="add" size={20} color={colors.brand.primary} />
                 <Typography variant="button" color="primary" className="ml-1">
                   Add Slot
                 </Typography>
@@ -144,7 +145,7 @@ export default function CreateTab() {
             {djSlots.map((slot) => (
               <Card key={slot.id} className="bg-neutral-700 border-neutral-600 p-4 flex-row items-center mb-3">
                 <View className="w-10 h-10 rounded-full bg-neutral-800 items-center justify-center mr-3">
-                  <Ionicons name="musical-notes" size={20} color="hsl(225, 100%, 75%)" />
+                  <Ionicons name="musical-notes" size={20} color={colors.brand.primary} />
                 </View>
                 <View className="flex-1">
                   <Typography variant="body" className="text-white mb-1">
@@ -155,7 +156,7 @@ export default function CreateTab() {
                   </Typography>
                 </View>
                 <TouchableOpacity>
-                  <Ionicons name="ellipsis-horizontal" size={20} color="hsl(210, 12%, 55%)" />
+                  <Ionicons name="ellipsis-horizontal" size={20} color={colors.functional.textSecondary} />
                 </TouchableOpacity>
               </Card>
             ))}

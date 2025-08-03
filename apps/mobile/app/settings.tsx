@@ -8,6 +8,7 @@ import {
 import { Stack, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { Typography, Card, Button } from '@rite/ui';
+import { colors } from '@rite/ui/design-tokens';
 
 interface SettingItemProps {
   icon: keyof typeof Ionicons.glyphMap;
@@ -20,7 +21,7 @@ const SettingItem: React.FC<SettingItemProps> = ({ icon, title, subtitle, onPres
   <TouchableOpacity onPress={onPress}>
     <Card className="bg-neutral-700 border-neutral-600 p-6 flex-row items-center mb-4">
       <View className="w-10 h-10 rounded-full bg-neutral-600 items-center justify-center mr-4">
-        <Ionicons name={icon} size={24} color="hsl(210, 12%, 55%)" />
+        <Ionicons name={icon} size={24} color={colors.functional.textSecondary} />
       </View>
       <View className="flex-1">
         <Typography variant="body" className="text-white mb-1">
@@ -30,7 +31,7 @@ const SettingItem: React.FC<SettingItemProps> = ({ icon, title, subtitle, onPres
           {subtitle}
         </Typography>
       </View>
-      <Ionicons name="chevron-forward" size={20} color="hsl(210, 8%, 50%)" />
+      <Ionicons name="chevron-forward" size={20} color={colors.functional.textMuted} />
     </Card>
   </TouchableOpacity>
 );
@@ -55,7 +56,7 @@ export default function SettingsScreen() {
           headerTintColor: '#FFFFFF',
           headerLeft: () => (
             <TouchableOpacity onPress={() => router.back()}>
-              <Ionicons name="arrow-back" size={24} color="hsl(210, 10%, 90%)" />
+              <Ionicons name="arrow-back" size={24} color={colors.functional.textPrimary} />
             </TouchableOpacity>
           ),
         }}

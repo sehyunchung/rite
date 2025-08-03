@@ -4,6 +4,7 @@ import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../../contexts/AuthContext';
 import { Typography, Card } from '@rite/ui';
+import { colors } from '@rite/ui/design-tokens';
 
 export default function ProfileScreen() {
   const router = useRouter();
@@ -21,7 +22,7 @@ export default function ProfileScreen() {
           {/* Profile Header */}
           <View className="items-center mb-8">
             <View className="w-20 h-20 rounded-full bg-neutral-700 border-2 border-brand-primary items-center justify-center mb-4">
-              <Ionicons name="person" size={40} color="hsl(210, 12%, 55%)" />
+              <Ionicons name="person" size={40} color={colors.functional.textSecondary} />
             </View>
             <Typography variant="h5" className="text-white mb-1">
               {user?.name || 'Anonymous User'}
@@ -38,36 +39,36 @@ export default function ProfileScreen() {
             >
               <Card className="bg-neutral-700 border-neutral-600 p-6 flex-row items-center mb-4">
                 <View className="w-10 h-10 rounded-full bg-neutral-800 items-center justify-center mr-4">
-                  <Ionicons name="settings-outline" size={24} color="hsl(225, 100%, 75%)" />
+                  <Ionicons name="settings-outline" size={24} color={colors.brand.primary} />
                 </View>
                 <Typography variant="body" className="text-white flex-1">
                   Settings
                 </Typography>
-                <Ionicons name="chevron-forward" size={20} color="hsl(210, 12%, 55%)" />
+                <Ionicons name="chevron-forward" size={20} color={colors.functional.textSecondary} />
               </Card>
             </TouchableOpacity>
 
             <TouchableOpacity>
               <Card className="bg-neutral-700 border-neutral-600 p-6 flex-row items-center mb-4">
                 <View className="w-10 h-10 rounded-full bg-neutral-800 items-center justify-center mr-4">
-                  <Ionicons name="calendar-outline" size={24} color="hsl(225, 100%, 75%)" />
+                  <Ionicons name="calendar-outline" size={24} color={colors.brand.primary} />
                 </View>
                 <Typography variant="body" className="text-white flex-1">
                   My Events
                 </Typography>
-                <Ionicons name="chevron-forward" size={20} color="hsl(210, 12%, 55%)" />
+                <Ionicons name="chevron-forward" size={20} color={colors.functional.textSecondary} />
               </Card>
             </TouchableOpacity>
 
             <TouchableOpacity>
               <Card className="bg-neutral-700 border-neutral-600 p-6 flex-row items-center mb-4">
                 <View className="w-10 h-10 rounded-full bg-neutral-800 items-center justify-center mr-4">
-                  <Ionicons name="musical-notes-outline" size={24} color="hsl(225, 100%, 75%)" />
+                  <Ionicons name="musical-notes-outline" size={24} color={colors.brand.primary} />
                 </View>
                 <Typography variant="body" className="text-white flex-1">
                   DJ Applications
                 </Typography>
-                <Ionicons name="chevron-forward" size={20} color="hsl(210, 12%, 55%)" />
+                <Ionicons name="chevron-forward" size={20} color={colors.functional.textSecondary} />
               </Card>
             </TouchableOpacity>
           </View>
@@ -97,7 +98,7 @@ export default function ProfileScreen() {
             onPress={signOut}
           >
             <Card className="bg-neutral-700 border-error p-6 flex-row items-center justify-center">
-              <Ionicons name="log-out-outline" size={24} color="hsl(340, 95%, 60%)" />
+              <Ionicons name="log-out-outline" size={24} color={colors.semantic.error} />
               <Typography variant="button" className="text-error ml-3">
                 Sign Out
               </Typography>

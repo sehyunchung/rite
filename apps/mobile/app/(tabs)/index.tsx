@@ -3,6 +3,7 @@ import { View, ScrollView, SafeAreaView, Platform } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { Button, Typography, Card } from '@rite/ui';
+import { colors } from '@rite/ui/design-tokens';
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -28,7 +29,7 @@ export default function HomeScreen() {
             onPress={() => router.push('/(tabs)/create')}
             className="flex-row items-center justify-center mt-4 mb-8"
           >
-            <Ionicons name="add-circle" size={24} color="hsl(210, 10%, 90%)" />
+            <Ionicons name="add-circle" size={24} color={colors.functional.textPrimary} />
             <Typography variant="button" className="text-white ml-2">
               Create New Event
             </Typography>
