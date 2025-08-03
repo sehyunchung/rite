@@ -68,14 +68,8 @@ export const getRedirectUri = () => {
   if (isWeb) {
     redirectUri = 'http://localhost:8081';
   } else if (isExpoGo || platform === 'ios') {
-    try {
-      const scheme = getGoogleIOSScheme();
-      redirectUri = `${scheme}://`;
-    } catch (error) {
-      console.error('Failed to generate iOS OAuth scheme:', error);
-      // Fallback to the working hardcoded scheme
-      redirectUri = 'com.googleusercontent.apps.420827108032-bksn0r122euuio8gfg8pa5ei50kjlkj4://';
-    }
+    const scheme = getGoogleIOSScheme();
+    redirectUri = `${scheme}://`;
   } else {
     redirectUri = AuthSession.makeRedirectUri({ scheme: 'com.rite.mobile' });
   }
@@ -106,19 +100,19 @@ export const getGoogleOAuthConfig = (): GoogleOAuthConfig => {
   const redirectUri = getRedirectUri();
   
   if (!hasGoogleConfig()) {
-    return {
-      iosClientId: '',
-      androidClientId: '',
-      webClientId: '',
-      scopes: ['openid', 'profile', 'email'],
-      responseType: 'code',
-      shouldAutoExchangeCode: true,
-      redirectUri,
-    };
+    throw new Error(
+      'Google OAuth is not configured. Please set the following environment variables:\n' +
+      '- EXPO_PUBLIC_GOOGLE_OAUTH_CLIENT_ID_IOS\n' +
+      '- EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID\n' +
+      '- EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID'
+    );
   }
   
   if (isWeb) {
     // For web platform, use web client ID
+    if (!baseGoogleConfig.webClientId) {
+      throw new Error('EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID is required for web platform');
+    }
     return {
       ...baseGoogleConfig,
       clientId: baseGoogleConfig.webClientId,
@@ -127,13 +121,23 @@ export const getGoogleOAuthConfig = (): GoogleOAuthConfig => {
       redirectUri,
     };
   } else if (isExpoGo) {
-    // For Expo Go, use platform-specific client IDs
+    // For Expo Go, validate iOS client ID
+    if (!baseGoogleConfig.iosClientId) {
+      throw new Error('EXPO_PUBLIC_GOOGLE_OAUTH_CLIENT_ID_IOS is required for Expo Go');
+    }
     return {
       ...baseGoogleConfig,
       redirectUri,
     };
   } else {
-    // For standalone mobile, use platform-specific client IDs
+    // For standalone mobile, validate platform-specific client IDs
+    const platform = Platform.OS;
+    if (platform === 'ios' && !baseGoogleConfig.iosClientId) {
+      throw new Error('EXPO_PUBLIC_GOOGLE_OAUTH_CLIENT_ID_IOS is required for iOS');
+    }
+    if (platform === 'android' && !baseGoogleConfig.androidClientId) {
+      throw new Error('EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID is required for Android');
+    }
     return {
       ...baseGoogleConfig,
       redirectUri,
