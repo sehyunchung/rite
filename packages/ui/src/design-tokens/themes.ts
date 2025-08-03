@@ -1,11 +1,7 @@
-// RITE Design System - All Alternative Themes Collection
-// Consolidates all theme options in one place
+// RITE Design System - Theme Collection
+// Josh Comeau inspired dark and light themes
 
-// Import existing theme systems
-import { colorsRefined } from './colors-refined';
-import { lightThemes } from './light-themes';
-
-export const alternativeThemes = {
+export const themes = {
 
   // Josh Comeau Inspired (dark)
   joshComeau: {
@@ -141,26 +137,30 @@ export const alternativeThemes = {
 };
 
 // Helper to get theme by key
-export const getTheme = (themeKey: keyof typeof alternativeThemes) => {
-  return alternativeThemes[themeKey];
+export const getTheme = (themeKey: keyof typeof themes) => {
+  return themes[themeKey];
 };
 
 // Get all themes of a specific type
 export const getThemesByType = (type: 'light' | 'dark') => {
-  return Object.entries(alternativeThemes)
+  return Object.entries(themes)
     .filter(([_, theme]) => theme.type === type)
     .reduce((acc, [key, theme]) => {
       (acc as any)[key] = theme;
       return acc;
-    }, {} as Partial<typeof alternativeThemes>);
+    }, {} as Partial<typeof themes>);
 };
 
 // Theme type definitions
-export type AlternativeThemeKey = keyof typeof alternativeThemes;
+export type ThemeKey = keyof typeof themes;
 export type ThemeType = 'light' | 'dark';
 
+// Backward compatibility exports
+export const alternativeThemes = themes;
+export type AlternativeThemeKey = ThemeKey;
+
 // CSS Variable generator for any theme
-export const generateThemeCSS = (theme: typeof alternativeThemes[AlternativeThemeKey]) => {
+export const generateThemeCSS = (theme: typeof themes[ThemeKey]) => {
   return `
 /* ${theme.name} - ${theme.type} theme */
 :root {

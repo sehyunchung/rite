@@ -1,8 +1,6 @@
 // RITE Design System - Shadow/Elevation Tokens
 // Platform-specific shadow definitions
 
-import { colors } from './colors'
-
 // Web shadows (box-shadow)
 export const webShadows = {
   none: 'none',
