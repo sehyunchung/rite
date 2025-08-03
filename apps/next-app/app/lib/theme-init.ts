@@ -1,7 +1,6 @@
 import { alternativeThemes, generateThemeCSS } from '@rite/ui/design-tokens';
 
 type ThemeMode = 'dark' | 'light' | 'system';
-type _ActualTheme = 'joshComeau' | 'joshComeauLight';
 
 /**
  * Generate inline CSS for the default theme (Josh Comeau dark)

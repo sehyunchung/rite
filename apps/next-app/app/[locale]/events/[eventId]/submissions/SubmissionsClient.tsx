@@ -22,11 +22,18 @@ interface SubmissionsClientProps {
 export function SubmissionsClient({ eventId, userId, locale }: SubmissionsClientProps) {
   const router = useRouter();
   const t = useTranslations('events.submissions');
-  const tCommon = useTranslations('common');
-  const tStatus = useTranslations('status');
 
   const event = useQuery(
     api.events.getEvent,
+    { 
+      eventId: eventId as Id<"events">,
+      userId: userId as Id<"users">
+    }
+  );
+
+  // Get submissions for this event - must be called before any conditional returns
+  const submissions = useQuery(
+    api.submissions.getSubmissionsByEvent,
     { 
       eventId: eventId as Id<"events">,
       userId: userId as Id<"users">
@@ -52,15 +59,6 @@ export function SubmissionsClient({ eventId, userId, locale }: SubmissionsClient
       </div>
     );
   }
-
-  // Get submissions for this event
-  const submissions = useQuery(
-    api.submissions.getSubmissionsByEvent,
-    { 
-      eventId: eventId as Id<"events">,
-      userId: userId as Id<"users">
-    }
-  );
 
   const submissionCount = submissions?.length || 0;
   const totalSlots = event.timeslots?.length || 0;
@@ -147,10 +145,10 @@ export function SubmissionsClient({ eventId, userId, locale }: SubmissionsClient
                               )}
                               
                               {/* Submission Description */}
-                              {submission.description && (
+                              {submission.promoMaterials.description && (
                                 <div>
                                   <p className="font-medium text-sm mb-1">{t('description')}</p>
-                                  <p className="text-sm text-muted-foreground">{submission.description}</p>
+                                  <p className="text-sm text-muted-foreground">{submission.promoMaterials.description}</p>
                                 </div>
                               )}
                             </>
@@ -159,14 +157,14 @@ export function SubmissionsClient({ eventId, userId, locale }: SubmissionsClient
 
                         {/* Files and Actions */}
                         <div className="space-y-3">
-                          {submission && submission.promoFiles && submission.promoFiles.length > 0 && (
+                          {submission && submission.promoMaterials.files && submission.promoMaterials.files.length > 0 && (
                             <div>
-                              <p className="font-medium text-sm mb-2">{t('promoFiles')} ({submission.promoFiles.length})</p>
+                              <p className="font-medium text-sm mb-2">{t('promoFiles')} ({submission.promoMaterials.files.length})</p>
                               <div className="space-y-1">
-                                {submission.promoFiles.map((file, index) => (
+                                {submission.promoMaterials.files.map((file, index) => (
                                   <div key={index} className="flex items-center space-x-2 text-sm">
                                     <FileText className="w-4 h-4" />
-                                    <span className="text-muted-foreground truncate">{file}</span>
+                                    <span className="text-muted-foreground truncate">{file.fileName}</span>
                                   </div>
                                 ))}
                               </div>

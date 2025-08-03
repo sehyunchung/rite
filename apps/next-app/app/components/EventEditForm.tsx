@@ -6,7 +6,6 @@ import { useSession } from 'next-auth/react';
 import { Button } from '@rite/ui';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@rite/ui';
 import { Input, Label, Textarea } from '@rite/ui';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@rite/ui';
 import { 
   type EventFormData, 
   type Timeslot, 

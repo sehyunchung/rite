@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Button } from '@rite/ui';
 import { Moon, Sun, Monitor } from 'lucide-react';
 import { alternativeThemes, generateThemeCSS } from '@rite/ui/design-tokens';
@@ -10,7 +10,6 @@ type ActualTheme = 'joshComeau' | 'joshComeauLight';
 
 export function ThemeSwitcher() {
   const [themeMode, setThemeMode] = useState<ThemeMode>('dark');
-  const [_actualTheme, setActualTheme] = useState<ActualTheme>('joshComeau');
 
   // System theme detection
   const getSystemTheme = (): ActualTheme => {
@@ -21,7 +20,7 @@ export function ThemeSwitcher() {
   };
 
   // Calculate actual theme based on mode
-  const calculateActualTheme = React.useCallback((mode: ThemeMode): ActualTheme => {
+  const calculateActualTheme = useCallback((mode: ThemeMode): ActualTheme => {
     switch (mode) {
       case 'dark': return 'joshComeau';
       case 'light': return 'joshComeauLight';
@@ -57,7 +56,6 @@ export function ThemeSwitcher() {
     setThemeMode(initialMode);
     
     const theme = calculateActualTheme(initialMode);
-    setActualTheme(theme);
     applyTheme(theme);
   }, [calculateActualTheme]);
 
@@ -68,7 +66,6 @@ export function ThemeSwitcher() {
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
     const handleChange = () => {
       const newTheme = calculateActualTheme('system');
-      setActualTheme(newTheme);
       applyTheme(newTheme);
     };
 
@@ -86,7 +83,6 @@ export function ThemeSwitcher() {
     localStorage.setItem('rite-theme-mode', nextMode);
     
     const newTheme = calculateActualTheme(nextMode);
-    setActualTheme(newTheme);
     applyTheme(newTheme);
   };
 
