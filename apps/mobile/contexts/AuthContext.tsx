@@ -1,4 +1,5 @@
-import React, { createContext, useContext, ReactNode, useState, useCallback } from 'react';
+import * as React from 'react';
+import { createContext, useContext, ReactNode, useState, useCallback } from 'react';
 import { useConvex } from 'convex/react';
 import { AuthContextType, User, AuthError } from '../lib/auth/types';
 import { useSession } from '../hooks/auth/useSession';

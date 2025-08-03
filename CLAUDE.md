@@ -55,7 +55,7 @@ EXPO_PUBLIC_GOOGLE_WEB_CLIENT_SECRET=your_web_client_secret
 
 ### Mobile Authentication Architecture
 
-**Modular Structure** - AuthContext reduced from 365 lines to 47 lines with clean separation:
+**Modular Structure** - AuthContext reduced from 365 lines to 88 lines with clean separation and error handling:
 
 ```
 apps/mobile/
@@ -69,16 +69,19 @@ apps/mobile/
 │   ├── useGoogleAuth.ts   # Google OAuth flow handling
 │   ├── useSession.ts      # Session state management
 │   └── useOAuthFlow.ts    # Complete OAuth flow orchestration
-└── contexts/
-    └── AuthContext.tsx    # Clean, focused context (47 lines)
+├── contexts/
+    └── AuthContext.tsx    # Clean, focused context (88 lines with error handling)
+└── components/
+    └── AuthErrorAlert.tsx # User-friendly error notifications
 ```
 
 **Key Features:**
 - **Cross-platform OAuth**: Works on web, iOS, Android, and Expo Go
 - **Modular hooks**: Specialized hooks for different auth operations
 - **Enhanced type safety**: Comprehensive TypeScript interfaces
-- **Structured error handling**: Custom AuthError class with error codes
+- **Comprehensive error handling**: Custom AuthError class with user notifications
 - **Secure storage**: Platform-specific secure storage abstraction
+- **Security first**: No hardcoded credentials, PKCE and CSRF protection
 
 ### Google OAuth Configuration
 
@@ -115,45 +118,50 @@ apps/mobile/
   - Complete profile data capture
   - Auto-connection during signup
 
-### App Configuration (app.json)
+### App Configuration (app.config.js)
 
-**URL Schemes for OAuth:**
-```json
+**Dynamic URL Schemes for OAuth Security:**
+```javascript
 {
-  "ios": {
-    "bundleIdentifier": "com.rite.mobile",
-    "infoPlist": {
-      "CFBundleURLTypes": [
+  ios: {
+    bundleIdentifier: "com.rite.mobile",
+    infoPlist: {
+      CFBundleURLTypes: [
         {
-          "CFBundleURLName": "google-oauth",
-          "CFBundleURLSchemes": [
-            "com.googleusercontent.apps.420827108032-bksn0r122euuio8gfg8pa5ei50kjlkj4"
-          ]
+          CFBundleURLName: "google-oauth",
+          CFBundleURLSchemes: process.env.EXPO_PUBLIC_GOOGLE_OAUTH_CLIENT_ID_IOS
+            ? [`com.googleusercontent.apps.${process.env.EXPO_PUBLIC_GOOGLE_OAUTH_CLIENT_ID_IOS.split('-')[0]}-${process.env.EXPO_PUBLIC_GOOGLE_OAUTH_CLIENT_ID_IOS.split('-')[1]}`]
+            : []
         },
         {
-          "CFBundleURLName": "expo-auth-session",
-          "CFBundleURLSchemes": ["mobile"]
+          CFBundleURLName: "expo-auth-session",
+          CFBundleURLSchemes: ["mobile"]
         }
       ]
     }
   },
-  "android": {
-    "package": "com.rite.mobile",
-    "intentFilters": [
+  android: {
+    package: "com.rite.mobile",
+    intentFilters: [
       {
-        "action": "VIEW",
-        "category": ["BROWSABLE", "DEFAULT"],
-        "data": { "scheme": "mobile" }
+        action: "VIEW",
+        category: ["BROWSABLE", "DEFAULT"],
+        data: { scheme: "mobile" }
       },
       {
-        "action": "VIEW",
-        "category": ["BROWSABLE", "DEFAULT"],
-        "data": { "scheme": "com.rite.mobile" }
+        action: "VIEW",
+        category: ["BROWSABLE", "DEFAULT"],
+        data: { scheme: "com.rite.mobile" }
       }
     ]
   }
 }
 ```
+
+**Security Benefits:**
+- No hardcoded OAuth client IDs in repository
+- URL schemes generated dynamically from environment variables
+- Fails gracefully when environment variables are missing
 
 ## Project Architecture
 
@@ -192,7 +200,8 @@ rite/
 - Auth utilities: `/apps/mobile/lib/auth/`
 - Auth hooks: `/apps/mobile/hooks/auth/`
 - OAuth config: `/apps/mobile/lib/auth/oauth-config.ts`
-- App configuration: `/apps/mobile/app.json`
+- App configuration: `/apps/mobile/app.config.js`
+- Error handling: `/apps/mobile/components/AuthErrorAlert.tsx`
 
 **Shared:**
 - Convex functions: `/packages/backend/convex/`
@@ -422,8 +431,10 @@ Test themes across:
 **✅ Complete:**
 - Core platform with event creation, DJ submissions
 - Instagram OAuth with mobile support
-- **Google OAuth with cross-platform support** (web, iOS, Android, Expo Go)
-- **Modular mobile authentication architecture** (AuthContext: 365→47 lines)
+- **Google OAuth with production-ready security** (web, iOS, Android, Expo Go)
+- **Modular mobile authentication architecture** (AuthContext: 365→88 lines with error handling)
+- **Comprehensive OAuth security implementation** (no hardcoded credentials, PKCE, CSRF protection)
+- **User-friendly error handling** (AuthErrorAlert component with specific error codes)
 - Design system with cross-platform components
 - **Dynamic theme system with 5 curated themes**
 - **ThemeSwitcher component with persistence**
@@ -573,9 +584,10 @@ pnpm android
 - ✅ Tailwind configuration with @rite/ui tokens
 - ✅ Static theme tokens integration (5 themes available)
 - ✅ "use dom" demo with QR Code and Dropzone examples
-- ✅ **Google OAuth authentication** (web, iOS, Android, Expo Go)
-- ✅ **Modular authentication architecture** (47-line AuthContext)
+- ✅ **Google OAuth authentication with production security** (web, iOS, Android, Expo Go)
+- ✅ **Modular authentication architecture** (88-line AuthContext with error handling)
 - ✅ **Cross-platform secure storage**
+- ✅ **Comprehensive error handling** (AuthErrorAlert, structured error codes)
 - 🚧 Full @rite/ui component integration
 - 📋 Dynamic theme switching (planned)
 
