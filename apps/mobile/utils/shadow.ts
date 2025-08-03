@@ -44,21 +44,21 @@ export const shadows = {
 // Brand glow effects for special elements
 export const glowShadows = {
   sm: createShadow({
-    shadowColor: '#E946FF',
+    shadowColor: 'hsl(225deg 100% 75%)',
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.3,
     shadowRadius: 10,
     elevation: 0,
   }),
   md: createShadow({
-    shadowColor: '#E946FF',
+    shadowColor: 'hsl(225deg 100% 75%)',
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.4,
     shadowRadius: 20,
     elevation: 0,
   }),
   lg: createShadow({
-    shadowColor: '#E946FF',
+    shadowColor: 'hsl(225deg 100% 75%)',
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.5,
     shadowRadius: 30,

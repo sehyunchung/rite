@@ -38,7 +38,7 @@ export default function ProfileScreen() {
             >
               <Card className="bg-neutral-700 border-neutral-600 p-6 flex-row items-center mb-4">
                 <View className="w-10 h-10 rounded-full bg-neutral-800 items-center justify-center mr-4">
-                  <Ionicons name="settings-outline" size={24} color="#E946FF" />
+                  <Ionicons name="settings-outline" size={24} color="hsl(225deg 100% 75%)" />
                 </View>
                 <Typography variant="body" className="text-white flex-1">
                   Settings
@@ -50,7 +50,7 @@ export default function ProfileScreen() {
             <TouchableOpacity>
               <Card className="bg-neutral-700 border-neutral-600 p-6 flex-row items-center mb-4">
                 <View className="w-10 h-10 rounded-full bg-neutral-800 items-center justify-center mr-4">
-                  <Ionicons name="calendar-outline" size={24} color="#E946FF" />
+                  <Ionicons name="calendar-outline" size={24} color="hsl(225deg 100% 75%)" />
                 </View>
                 <Typography variant="body" className="text-white flex-1">
                   My Events
@@ -62,7 +62,7 @@ export default function ProfileScreen() {
             <TouchableOpacity>
               <Card className="bg-neutral-700 border-neutral-600 p-6 flex-row items-center mb-4">
                 <View className="w-10 h-10 rounded-full bg-neutral-800 items-center justify-center mr-4">
-                  <Ionicons name="musical-notes-outline" size={24} color="#E946FF" />
+                  <Ionicons name="musical-notes-outline" size={24} color="hsl(225deg 100% 75%)" />
                 </View>
                 <Typography variant="body" className="text-white flex-1">
                   DJ Applications
