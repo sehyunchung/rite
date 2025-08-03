@@ -1,16 +1,16 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@rite/ui';
 import { Moon, Sun, Monitor } from 'lucide-react';
-import { alternativeThemes, type AlternativeThemeKey, generateThemeCSS } from '@rite/ui/design-tokens';
+import { alternativeThemes, generateThemeCSS } from '@rite/ui/design-tokens';
 
 type ThemeMode = 'dark' | 'light' | 'system';
 type ActualTheme = 'joshComeau' | 'joshComeauLight';
 
 export function ThemeSwitcher() {
   const [themeMode, setThemeMode] = useState<ThemeMode>('dark');
-  const [actualTheme, setActualTheme] = useState<ActualTheme>('joshComeau');
+  const [_actualTheme, setActualTheme] = useState<ActualTheme>('joshComeau');
 
   // System theme detection
   const getSystemTheme = (): ActualTheme => {
@@ -21,14 +21,14 @@ export function ThemeSwitcher() {
   };
 
   // Calculate actual theme based on mode
-  const calculateActualTheme = (mode: ThemeMode): ActualTheme => {
+  const calculateActualTheme = React.useCallback((mode: ThemeMode): ActualTheme => {
     switch (mode) {
       case 'dark': return 'joshComeau';
       case 'light': return 'joshComeauLight';
       case 'system': return getSystemTheme();
       default: return 'joshComeau';
     }
-  };
+  }, []);
 
   // Apply theme to DOM
   const applyTheme = (themeKey: ActualTheme) => {
@@ -59,7 +59,7 @@ export function ThemeSwitcher() {
     const theme = calculateActualTheme(initialMode);
     setActualTheme(theme);
     applyTheme(theme);
-  }, []);
+  }, [calculateActualTheme]);
 
   // Listen for system theme changes when in system mode
   useEffect(() => {
@@ -74,7 +74,7 @@ export function ThemeSwitcher() {
 
     mediaQuery.addEventListener('change', handleChange);
     return () => mediaQuery.removeEventListener('change', handleChange);
-  }, [themeMode]);
+  }, [themeMode, calculateActualTheme]);
 
   // Finite state machine: dark → light → system → dark
   const cycleTheme = () => {
