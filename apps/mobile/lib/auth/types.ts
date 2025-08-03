@@ -15,8 +15,10 @@ export interface User {
 export interface AuthContextType {
   user: User | null;
   isLoading: boolean;
+  error: AuthError | null;
   signIn: () => Promise<void>;
   signOut: () => Promise<void>;
+  clearError: () => void;
 }
 
 export interface GoogleOAuthConfig {
@@ -43,3 +45,9 @@ export class AuthError extends Error {
 
 export type Platform = 'web' | 'ios' | 'android';
 export type AppEnvironment = 'expo' | 'standalone';
+
+export interface OAuthState {
+  state: string;
+  codeVerifier?: string;
+  timestamp: number;
+}
