@@ -21,7 +21,6 @@ interface EventEditClientProps {
 export function EventEditClient({ eventId, userId, locale }: EventEditClientProps) {
   const router = useRouter();
   const t = useTranslations('events.edit');
-  const tCommon = useTranslations('common');
 
   const event = useQuery(
     api.events.getEvent,
@@ -39,12 +38,12 @@ export function EventEditClient({ eventId, userId, locale }: EventEditClientProp
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
-          <Typography variant="h2" className="mb-2">Event not found</Typography>
+          <Typography variant="h2" className="mb-2">{t('eventNotFound')}</Typography>
           <Typography variant="body" color="secondary" className="mb-4">
-            The event you're trying to edit doesn't exist or you don't have permission to edit it.
+            {t('eventNotFoundMessage')}
           </Typography>
           <Button onClick={() => router.push(`/${locale}/dashboard`)}>
-            Back to Dashboard
+            {t('backToDashboard')}
           </Button>
         </div>
       </div>

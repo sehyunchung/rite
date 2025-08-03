@@ -181,7 +181,7 @@ export function EventDetailClient({ eventId, userId, locale }: EventDetailClient
                         className="text-orange-600 hover:text-orange-700 border-orange-300"
                       >
                         <AlertTriangleIcon className="w-4 h-4" />
-                        <span className="ml-1 hidden sm:inline">Cancel</span>
+                        <span className="ml-1 hidden sm:inline">{t('cancel')}</span>
                       </Button>
                     ) : (
                       <Button 
@@ -191,7 +191,7 @@ export function EventDetailClient({ eventId, userId, locale }: EventDetailClient
                         className="text-red-600 hover:text-red-700 border-red-300"
                       >
                         <Trash2Icon className="w-4 h-4" />
-                        <span className="ml-1 hidden sm:inline">Delete</span>
+                        <span className="ml-1 hidden sm:inline">{t('delete')}</span>
                       </Button>
                     )}
                   </>
@@ -352,13 +352,12 @@ export function EventDetailClient({ eventId, userId, locale }: EventDetailClient
                 <CardHeader>
                   <CardTitle className="flex items-center space-x-2 text-red-600">
                     <Trash2Icon className="w-5 h-5" />
-                    <span>Delete Event</span>
+                    <span>{t('deleteEvent')}</span>
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-sm text-muted-foreground mb-4">
-                    Are you sure you want to permanently delete this event? This action cannot be undone.
-                    All timeslots and submission links will be removed.
+                    {t('deleteConfirmMessage')}
                   </p>
                   <div className="flex justify-end space-x-2">
                     <Button 
@@ -366,14 +365,14 @@ export function EventDetailClient({ eventId, userId, locale }: EventDetailClient
                       onClick={() => setShowDeleteConfirm(false)}
                       disabled={isDeleting}
                     >
-                      Cancel
+                      {t('cancelAction')}
                     </Button>
                     <Button 
                       variant="destructive" 
                       onClick={handleDeleteEvent}
                       disabled={isDeleting}
                     >
-                      {isDeleting ? 'Deleting...' : 'Delete Event'}
+                      {isDeleting ? t('deleting') : t('deleteEvent')}
                     </Button>
                   </div>
                 </CardContent>
@@ -388,21 +387,21 @@ export function EventDetailClient({ eventId, userId, locale }: EventDetailClient
                 <CardHeader>
                   <CardTitle className="flex items-center space-x-2 text-orange-600">
                     <AlertTriangleIcon className="w-5 h-5" />
-                    <span>Cancel Event</span>
+                    <span>{t('cancelEvent')}</span>
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-sm text-muted-foreground mb-4">
-                    This will cancel the event and notify all DJs. The event data will be preserved for records.
+                    {t('cancelConfirmMessage')}
                   </p>
                   <div className="space-y-4">
                     <div>
-                      <Label htmlFor="cancelReason">Cancellation Reason (Optional)</Label>
+                      <Label htmlFor="cancelReason">{t('cancellationReason')}</Label>
                       <Textarea
                         id="cancelReason"
                         value={cancelReason}
                         onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setCancelReason(e.target.value)}
-                        placeholder="Explain why the event is being cancelled..."
+                        placeholder={t('cancellationReasonPlaceholder')}
                         rows={3}
                       />
                     </div>
@@ -412,7 +411,7 @@ export function EventDetailClient({ eventId, userId, locale }: EventDetailClient
                         onClick={() => setShowCancelConfirm(false)}
                         disabled={isDeleting}
                       >
-                        Keep Event
+                        {t('keepEvent')}
                       </Button>
                       <Button 
                         variant="destructive" 
@@ -420,7 +419,7 @@ export function EventDetailClient({ eventId, userId, locale }: EventDetailClient
                         disabled={isDeleting}
                         className="bg-orange-600 hover:bg-orange-700"
                       >
-                        {isDeleting ? 'Cancelling...' : 'Cancel Event'}
+                        {isDeleting ? t('cancelling') : t('cancelEvent')}
                       </Button>
                     </div>
                   </div>

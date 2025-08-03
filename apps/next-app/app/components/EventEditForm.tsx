@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useMutation } from 'convex/react';
 import { api } from '@rite/backend/convex/_generated/api';
 import { Id, Doc } from '@rite/backend/convex/_generated/dataModel';
@@ -12,19 +12,11 @@ import {
   type Timeslot, 
   validateEvent, 
   validateTimeslot,
-  validateTimeRange,
-  validateDate,
-  validateDeadlineOrder,
-  validateTimeslotDuration,
-  getDefaultGuestListDeadline,
-  getDefaultPromoDeadline,
   getDefaultStartTime,
-  getDefaultEndTime,
-  validateGuestListDeadline,
-  validatePromoDeadline
+  getDefaultEndTime
 } from '@/lib/validation';
 import { useTranslations } from 'next-intl';
-import { AlertCircle, Trash2, Calendar, MapPin, Users, DollarSign, Clock, PlusCircle } from 'lucide-react';
+import { AlertCircle, Trash2, Calendar, MapPin, DollarSign, Clock, PlusCircle } from 'lucide-react';
 
 // Type for event with timeslots
 type EventWithTimeslots = Doc<"events"> & {
@@ -39,6 +31,7 @@ interface EventEditFormProps {
 const MAX_TIMESLOTS_PER_EVENT = 12;
 
 export function EventEditForm({ event, onEventUpdated }: EventEditFormProps) {
+  const t = useTranslations('events.create');
   const updateEvent = useMutation(api.events.updateEvent);
   const { data: session } = useSession();
   
@@ -81,7 +74,7 @@ export function EventEditForm({ event, onEventUpdated }: EventEditFormProps) {
 
   const addTimeslot = () => {
     if (timeslots.length >= MAX_TIMESLOTS_PER_EVENT) {
-      setErrors({ ...errors, maxTimeslots: `Maximum ${MAX_TIMESLOTS_PER_EVENT} timeslots allowed per event` });
+      setErrors({ ...errors, maxTimeslots: t('maxTimeslotsError', { max: MAX_TIMESLOTS_PER_EVENT }) });
       return;
     }
     
@@ -182,9 +175,9 @@ export function EventEditForm({ event, onEventUpdated }: EventEditFormProps) {
     
     // Validate timeslots
     if (timeslots.length === 0) {
-      newErrors.timeslots = 'At least one DJ timeslot is required';
+      newErrors.timeslots = t('timeslotsRequired');
     } else {
-      timeslots.forEach((slot, index) => {
+      timeslots.forEach((slot) => {
         const slotErrors = validateTimeslot(slot);
         Object.keys(slotErrors).forEach(key => {
           newErrors[`timeslot-${slot.id}-${key}`] = slotErrors[key as keyof typeof slotErrors];
@@ -197,7 +190,7 @@ export function EventEditForm({ event, onEventUpdated }: EventEditFormProps) {
         const next = timeslots[i + 1];
         // Check if current end time comes before next start time
         if (current.endTime && next.startTime && current.endTime > next.startTime) {
-          newErrors[`timeslot-${next.id}-startTime`] = 'Start time must be after previous slot ends';
+          newErrors[`timeslot-${next.id}-startTime`] = t('startTimeAfterPrevious');
         }
       }
     }
@@ -235,7 +228,7 @@ export function EventEditForm({ event, onEventUpdated }: EventEditFormProps) {
       onEventUpdated?.();
     } catch (error) {
       console.error('Failed to update event:', error);
-      setErrors({ submit: 'Failed to update event. Please try again.' });
+      setErrors({ submit: t('updateFailed') });
     }
     
     setIsSubmitting(false);
@@ -248,19 +241,19 @@ export function EventEditForm({ event, onEventUpdated }: EventEditFormProps) {
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
             <Calendar className="w-5 h-5" />
-            <span>Event Details</span>
+            <span>{t('basicInfo')}</span>
           </CardTitle>
-          <CardDescription>Update the basic information about your event</CardDescription>
+          <CardDescription>{t('subtitle')}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="grid gap-4 md:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="eventName">Event Name *</Label>
+              <Label htmlFor="eventName">{t('eventName')} *</Label>
               <Input
                 id="eventName"
                 value={formData.name}
                 onChange={(e) => updateFormData('name', e.target.value)}
-                placeholder="Enter event name"
+                placeholder={t('eventNamePlaceholder')}
                 className={errors.name ? 'border-red-500' : ''}
               />
               {errors.name && (
@@ -272,7 +265,7 @@ export function EventEditForm({ event, onEventUpdated }: EventEditFormProps) {
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="eventDate">Event Date *</Label>
+              <Label htmlFor="eventDate">{t('eventDate')} *</Label>
               <Input
                 id="eventDate"
                 type="date"
@@ -290,23 +283,23 @@ export function EventEditForm({ event, onEventUpdated }: EventEditFormProps) {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="description">Description</Label>
+            <Label htmlFor="description">{t('description')}</Label>
             <Textarea
               id="description"
               value={formData.description}
               onChange={(e) => updateFormData('description', e.target.value)}
-              placeholder="Describe your event..."
+              placeholder={t('descriptionPlaceholder')}
               rows={3}
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="hashtags">Instagram Hashtags</Label>
+            <Label htmlFor="hashtags">{t('hashtags')}</Label>
             <Input
               id="hashtags"
               value={formData.hashtags}
               onChange={(e) => updateFormData('hashtags', e.target.value)}
-              placeholder="#techno #underground #seoul"
+              placeholder={t('hashtagsPlaceholder')}
             />
           </div>
         </CardContent>
@@ -317,17 +310,18 @@ export function EventEditForm({ event, onEventUpdated }: EventEditFormProps) {
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
             <MapPin className="w-5 h-5" />
-            <span>Venue Information</span>
+            <span>{t('venue')}</span>
           </CardTitle>
+          <CardDescription>{t('venueDescription')}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="venueName">Venue Name *</Label>
+            <Label htmlFor="venueName">{t('venueName')} *</Label>
             <Input
               id="venueName"
               value={formData.venue.name}
               onChange={(e) => updateFormData('venue.name', e.target.value)}
-              placeholder="Enter venue name"
+              placeholder={t('venueNamePlaceholder')}
               className={errors['venue.name'] ? 'border-red-500' : ''}
             />
             {errors['venue.name'] && (
@@ -339,12 +333,12 @@ export function EventEditForm({ event, onEventUpdated }: EventEditFormProps) {
           </div>
           
           <div className="space-y-2">
-            <Label htmlFor="venueAddress">Venue Address *</Label>
+            <Label htmlFor="venueAddress">{t('venueAddress')} *</Label>
             <Input
               id="venueAddress"
               value={formData.venue.address}
               onChange={(e) => updateFormData('venue.address', e.target.value)}
-              placeholder="Enter full venue address"
+              placeholder={t('venueAddressPlaceholder')}
               className={errors['venue.address'] ? 'border-red-500' : ''}
             />
             {errors['venue.address'] && (
@@ -363,7 +357,7 @@ export function EventEditForm({ event, onEventUpdated }: EventEditFormProps) {
           <CardTitle className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
               <Clock className="w-5 h-5" />
-              <span>DJ Lineup ({timeslots.length})</span>
+              <span>{t('timeslots')} ({timeslots.length})</span>
             </div>
             <Button
               type="button"
@@ -373,11 +367,11 @@ export function EventEditForm({ event, onEventUpdated }: EventEditFormProps) {
               disabled={timeslots.length >= MAX_TIMESLOTS_PER_EVENT}
             >
               <PlusCircle className="w-4 h-4 mr-2" />
-              Add DJ Slot
+              {t('addTimeslot')}
             </Button>
           </CardTitle>
           <CardDescription>
-            Schedule your DJs and their performance times
+            {t('timeslotsDescription')}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -398,7 +392,7 @@ export function EventEditForm({ event, onEventUpdated }: EventEditFormProps) {
           {timeslots.map((slot, index) => (
             <div key={slot.id} className="p-4 border rounded-lg space-y-4">
               <div className="flex items-center justify-between">
-                <h4 className="font-medium">DJ Slot {index + 1}</h4>
+                <h4 className="font-medium">{t('djSlot', { number: index + 1 })}</h4>
                 <Button
                   type="button"
                   variant={deleteConfirm === slot.id ? "destructive" : "outline"}
@@ -406,18 +400,18 @@ export function EventEditForm({ event, onEventUpdated }: EventEditFormProps) {
                   onClick={() => removeTimeslot(slot.id)}
                 >
                   <Trash2 className="w-4 h-4" />
-                  {deleteConfirm === slot.id ? 'Confirm Delete' : 'Remove'}
+                  {deleteConfirm === slot.id ? t('confirmDelete') : t('removeTimeslot')}
                 </Button>
               </div>
               
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                 <div className="space-y-2">
-                  <Label htmlFor={`djName-${slot.id}`}>DJ Name *</Label>
+                  <Label htmlFor={`djName-${slot.id}`}>{t('djName')} *</Label>
                   <Input
                     id={`djName-${slot.id}`}
                     value={slot.djName}
                     onChange={(e) => updateTimeslot(slot.id, 'djName', e.target.value)}
-                    placeholder="DJ name"
+                    placeholder={t('djName')}
                     className={errors[`timeslot-${slot.id}-djName`] ? 'border-red-500' : ''}
                   />
                   {errors[`timeslot-${slot.id}-djName`] && (
@@ -426,7 +420,7 @@ export function EventEditForm({ event, onEventUpdated }: EventEditFormProps) {
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor={`djInstagram-${slot.id}`}>Instagram Handle *</Label>
+                  <Label htmlFor={`djInstagram-${slot.id}`}>{t('djInstagram')} *</Label>
                   <Input
                     id={`djInstagram-${slot.id}`}
                     value={slot.djInstagram}
@@ -440,7 +434,7 @@ export function EventEditForm({ event, onEventUpdated }: EventEditFormProps) {
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor={`startTime-${slot.id}`}>Start Time *</Label>
+                  <Label htmlFor={`startTime-${slot.id}`}>{t('startTime')} *</Label>
                   <Input
                     id={`startTime-${slot.id}`}
                     type="time"
@@ -454,7 +448,7 @@ export function EventEditForm({ event, onEventUpdated }: EventEditFormProps) {
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor={`endTime-${slot.id}`}>End Time *</Label>
+                  <Label htmlFor={`endTime-${slot.id}`}>{t('endTime')} *</Label>
                   <Input
                     id={`endTime-${slot.id}`}
                     type="time"
@@ -475,12 +469,13 @@ export function EventEditForm({ event, onEventUpdated }: EventEditFormProps) {
       {/* Deadlines */}
       <Card>
         <CardHeader>
-          <CardTitle>Important Deadlines</CardTitle>
+          <CardTitle>{t('deadlines')}</CardTitle>
+          <CardDescription>{t('deadlinesDescription')}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid gap-4 md:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="guestListDeadline">Guest List Deadline *</Label>
+              <Label htmlFor="guestListDeadline">{t('guestListDeadline')} *</Label>
               <Input
                 id="guestListDeadline"
                 type="date"
@@ -494,7 +489,7 @@ export function EventEditForm({ event, onEventUpdated }: EventEditFormProps) {
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="promoDeadline">Promo Materials Deadline *</Label>
+              <Label htmlFor="promoDeadline">{t('promoMaterialsDeadline')} *</Label>
               <Input
                 id="promoDeadline"
                 type="date"
@@ -510,18 +505,20 @@ export function EventEditForm({ event, onEventUpdated }: EventEditFormProps) {
         </CardContent>
       </Card>
 
-      {/* Payment Information */}
+      {/* Payment Information - Hidden to match creation form */}
+      {false && (
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
             <DollarSign className="w-5 h-5" />
-            <span>Payment Details</span>
+            <span>{t('payment')}</span>
           </CardTitle>
+          <CardDescription>{t('paymentDescription')}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid gap-4 md:grid-cols-3">
             <div className="space-y-2">
-              <Label htmlFor="totalAmount">Total Payment *</Label>
+              <Label htmlFor="totalAmount">{t('totalAmount')} *</Label>
               <Input
                 id="totalAmount"
                 type="number"
@@ -536,7 +533,7 @@ export function EventEditForm({ event, onEventUpdated }: EventEditFormProps) {
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="perDJAmount">Payment per DJ *</Label>
+              <Label htmlFor="perDJAmount">{t('paymentPerDJ')} *</Label>
               <Input
                 id="perDJAmount"
                 type="number"
@@ -551,10 +548,10 @@ export function EventEditForm({ event, onEventUpdated }: EventEditFormProps) {
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="currency">Currency *</Label>
+              <Label htmlFor="currency">{t('currency')} *</Label>
               <Select value={formData.payment.currency} onValueChange={(value) => updateFormData('payment.currency', value)}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Select currency" />
+                  <SelectValue placeholder={t('currency')} />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="KRW">KRW (₩)</SelectItem>
@@ -567,7 +564,7 @@ export function EventEditForm({ event, onEventUpdated }: EventEditFormProps) {
           
           <div className="grid gap-4 md:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="paymentDue">Payment Due Date *</Label>
+              <Label htmlFor="paymentDue">{t('paymentDueDate')} *</Label>
               <Input
                 id="paymentDue"
                 type="date"
@@ -581,26 +578,27 @@ export function EventEditForm({ event, onEventUpdated }: EventEditFormProps) {
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="guestLimit">Guest Limit per DJ *</Label>
+              <Label htmlFor="guestLimit">{t('guestLimitPerDJ')} *</Label>
               <Select 
                 value={formData.guestLimitPerDJ.toString()} 
                 onValueChange={(value) => updateFormData('guestLimitPerDJ', Number(value))}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Select guest limit" />
+                  <SelectValue placeholder={t('guestLimitPerDJ')} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="1">1 guest</SelectItem>
-                  <SelectItem value="2">2 guests</SelectItem>
-                  <SelectItem value="3">3 guests</SelectItem>
-                  <SelectItem value="4">4 guests</SelectItem>
-                  <SelectItem value="5">5 guests</SelectItem>
+                  <SelectItem value="1">{t('guestCount', { count: 1 })}</SelectItem>
+                  <SelectItem value="2">{t('guestCount', { count: 2 })}</SelectItem>
+                  <SelectItem value="3">{t('guestCount', { count: 3 })}</SelectItem>
+                  <SelectItem value="4">{t('guestCount', { count: 4 })}</SelectItem>
+                  <SelectItem value="5">{t('guestCount', { count: 5 })}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
           </div>
         </CardContent>
       </Card>
+      )}
 
       {/* Submit Button */}
       {errors.submit && (
@@ -618,7 +616,7 @@ export function EventEditForm({ event, onEventUpdated }: EventEditFormProps) {
           disabled={isSubmitting}
           className="min-w-[120px]"
         >
-          {isSubmitting ? 'Updating...' : 'Update Event'}
+          {isSubmitting ? t('updating') : t('updateEvent')}
         </Button>
       </div>
     </form>

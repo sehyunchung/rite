@@ -86,7 +86,10 @@
       "endTime": "End Time",
       "removeTimeslot": "Remove",
       "createEvent": "Create Event",
-      "creating": "Creating..."
+      "creating": "Creating...",
+      "djSlot": "DJ Slot {number}",
+      "updateEvent": "Update Event",
+      "confirmDelete": "Confirm Delete"
     },
     "detail": {
       "notFound": "Event Not Found",
@@ -120,7 +123,19 @@
       },
       "edit": "Edit",
       "submissions": "Submissions", 
-      "qrCode": "QR Code"
+      "qrCode": "QR Code",
+      "cancel": "Cancel",
+      "delete": "Delete",
+      "deleteEvent": "Delete Event",
+      "deleteConfirmMessage": "Are you sure you want to permanently delete this event? This action cannot be undone. All timeslots and submission links will be removed.",
+      "cancelAction": "Cancel",
+      "deleting": "Deleting...",
+      "cancelEvent": "Cancel Event",
+      "cancelConfirmMessage": "This will cancel the event and notify all DJs. The event data will be preserved for records.",
+      "cancellationReason": "Cancellation Reason (Optional)",
+      "cancellationReasonPlaceholder": "Explain why the event is being cancelled...",
+      "keepEvent": "Keep Event",
+      "cancelling": "Cancelling..."
     },
     "edit": {
       "title": "Edit Event",
@@ -137,7 +152,16 @@
       "importantDeadlines": "Important Deadlines",
       "paymentDetails": "Payment Details",
       "saveChanges": "Save Changes",
-      "discardChanges": "Discard Changes"
+      "discardChanges": "Discard Changes",
+      "maxTimeslotsError": "Maximum {max} timeslots allowed per event",
+      "timeslotsRequired": "At least one DJ timeslot is required",
+      "startTimeAfterPrevious": "Start time must be after previous slot ends",
+      "updateFailed": "Failed to update event. Please try again.",
+      "djSlot": "DJ Slot {number}",
+      "guestCount": "{count, plural, one {# guest} other {# guests}}",
+      "eventNotFound": "Event not found",
+      "eventNotFoundMessage": "The event you're trying to edit doesn't exist or you don't have permission to edit it.",
+      "backToDashboard": "Back to Dashboard"
     }
   },
   "status": {
