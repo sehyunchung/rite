@@ -10,10 +10,13 @@ const getGoogleIOSScheme = (): string => {
     throw new Error('EXPO_PUBLIC_GOOGLE_OAUTH_CLIENT_ID_IOS environment variable is required for iOS OAuth');
   }
   
+  // Remove .apps.googleusercontent.com suffix if present
+  const cleanClientId = iosClientId.replace('.apps.googleusercontent.com', '');
+  
   // Extract the client ID parts to construct the URL scheme
-  const parts = iosClientId.split('-');
+  const parts = cleanClientId.split('-');
   if (parts.length < 2) {
-    throw new Error('Invalid iOS client ID format. Expected format: [numbers]-[string].apps.googleusercontent.com');
+    throw new Error(`Invalid iOS client ID format. Expected format: [numbers]-[string].apps.googleusercontent.com, got: ${iosClientId}`);
   }
   
   return `com.googleusercontent.apps.${parts[0]}-${parts[1]}`;
@@ -48,12 +51,29 @@ export const getPlatformInfo = () => {
 export const getRedirectUri = () => {
   const { platform, isExpoGo, isWeb } = getPlatformInfo();
   
+  console.log('🔍 OAuth Debug - Platform Info:', { platform, isExpoGo, isWeb });
+  
   if (isWeb) {
-    return 'http://localhost:8081';
+    const redirectUri = 'http://localhost:8081';
+    console.log('🔍 OAuth Debug - Web Redirect URI:', redirectUri);
+    return redirectUri;
   } else if (isExpoGo || platform === 'ios') {
-    return `${getGoogleIOSScheme()}://`;
+    try {
+      const scheme = getGoogleIOSScheme();
+      const redirectUri = `${scheme}://`;
+      console.log('🔍 OAuth Debug - iOS/Expo Redirect URI:', redirectUri);
+      return redirectUri;
+    } catch (error) {
+      console.error('🚨 OAuth Debug - Failed to generate iOS scheme:', error);
+      // Fallback to the working hardcoded scheme for debugging
+      const fallbackUri = 'com.googleusercontent.apps.420827108032-bksn0r122euuio8gfg8pa5ei50kjlkj4://';
+      console.log('🔍 OAuth Debug - Using fallback URI:', fallbackUri);
+      return fallbackUri;
+    }
   } else {
-    return AuthSession.makeRedirectUri({ scheme: 'com.rite.mobile' });
+    const redirectUri = AuthSession.makeRedirectUri({ scheme: 'com.rite.mobile' });
+    console.log('🔍 OAuth Debug - Android Redirect URI:', redirectUri);
+    return redirectUri;
   }
 };
 
