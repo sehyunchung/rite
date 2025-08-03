@@ -20,9 +20,9 @@ const typographyVariants = cva("", {
       button: "text-base font-medium leading-tight tracking-wide",
     },
     color: {
-      default: "text-white",
-      secondary: "text-neutral-400",
-      muted: "text-neutral-500",
+      default: "text-text-primary",
+      secondary: "text-text-secondary", 
+      muted: "text-text-muted",
       primary: "text-brand-primary",
       error: "text-error",
       success: "text-success",

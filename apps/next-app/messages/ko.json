@@ -20,7 +20,7 @@
   "navigation": {
     "dashboard": "대시보드",
     "events": "이벤트",
-    "createEvent": "이벤트 만들기", 
+    "createEvent": "이벤트 만들기",
     "signOut": "로그아웃",
     "welcomeUser": "환영합니다, {name}"
   },
@@ -125,7 +125,7 @@
   },
   "status": {
     "active": "활성",
-    "inactive": "비활성", 
+    "inactive": "비활성",
     "draft": "초안",
     "completed": "완료"
   },

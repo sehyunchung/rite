@@ -30,7 +30,7 @@ const EventCard = React.forwardRef<HTMLDivElement, EventCardProps>(
       <div
         ref={ref}
         className={cn(
-          "relative overflow-hidden rounded-2xl bg-gradient-to-br from-neutral-700 to-neutral-800 p-6 shadow-lg",
+          "relative overflow-hidden rounded-2xl bg-gradient-to-br from-bg-secondary to-bg-elevated p-6 shadow-lg",
           className
         )}
         {...props}
@@ -42,9 +42,9 @@ const EventCard = React.forwardRef<HTMLDivElement, EventCardProps>(
         <div className="absolute right-4 top-4">
           <span className={cn(
             "rounded-full px-3 py-1 text-xs font-medium",
-            status === 'draft' && "bg-neutral-600 text-neutral-200",
+            status === 'draft' && "bg-bg-tertiary text-text-secondary",
             status === 'published' && "bg-brand-primary/20 text-brand-primary",
-            status === 'completed' && "bg-green-500/20 text-green-400"
+            status === 'completed' && "bg-success/20 text-success"
           )}>
             {status.charAt(0).toUpperCase() + status.slice(1)}
           </span>
@@ -52,30 +52,30 @@ const EventCard = React.forwardRef<HTMLDivElement, EventCardProps>(
 
         {/* Content */}
         <div className="relative z-10">
-          <h3 className="text-2xl font-bold text-white">{eventName}</h3>
-          <p className="mt-1 text-sm text-neutral-300">{venueName}</p>
+          <h3 className="text-2xl font-bold text-text-primary">{eventName}</h3>
+          <p className="mt-1 text-sm text-text-secondary">{venueName}</p>
           
           <div className="mt-6 space-y-2">
-            <p className="text-lg text-white">{date}</p>
+            <p className="text-lg text-text-primary">{date}</p>
             <p className="text-sm text-brand-primary font-medium">{djCount} DJs</p>
           </div>
           
-          <div className="mt-4 border-t border-neutral-600 pt-4">
-            <p className="text-sm text-neutral-400">Guest list due: {dueDate}</p>
+          <div className="mt-4 border-t border-border pt-4">
+            <p className="text-sm text-text-muted">Guest list due: {dueDate}</p>
           </div>
           
           {/* Actions */}
           <div className="mt-6 flex items-center gap-3">
             <button
               onClick={onViewDetails}
-              className="flex-1 rounded-lg border border-neutral-600 bg-transparent px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-neutral-700 hover:border-neutral-500"
+              className="flex-1 rounded-lg border border-border bg-transparent px-4 py-2.5 text-sm font-medium text-text-primary transition-colors hover:bg-bg-secondary hover:border-border-strong"
             >
               View Details
             </button>
             {onShare && (
               <button
                 onClick={onShare}
-                className="flex h-10 w-10 items-center justify-center rounded-lg border border-neutral-600 bg-transparent text-white transition-colors hover:bg-neutral-700 hover:border-neutral-500"
+                className="flex h-10 w-10 items-center justify-center rounded-lg border border-border bg-transparent text-text-primary transition-colors hover:bg-bg-secondary hover:border-border-strong"
                 aria-label="Share event"
               >
                 <Link2 className="h-4 w-4" />

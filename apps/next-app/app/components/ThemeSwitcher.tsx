@@ -2,34 +2,36 @@
 
 import { useState, useEffect } from 'react';
 import { Button } from '@rite/ui';
-import { PaletteIcon } from 'lucide-react';
+import { Moon, Sun, Monitor } from 'lucide-react';
 import { alternativeThemes, type AlternativeThemeKey, generateThemeCSS } from '@rite/ui/design-tokens';
 
-const themes = [
-  { key: 'riteRefined', name: 'RITE Refined', description: 'Enhanced readability', icon: '🎨' },
-  { key: 'oceanDepth', name: 'Deep Ocean', description: 'Mysterious depths', icon: '🌊' },
-  { key: 'joshComeau', name: 'Josh Comeau', description: 'Atmospheric gradients', icon: '✨' },
-  { key: 'monochromeLight', name: 'Light Mode', description: 'Clean minimal light', icon: '☀️' },
-  { key: 'monochromeDark', name: 'Dark Mode', description: 'Clean minimal dark', icon: '🌙' },
-] as const;
+type ThemeMode = 'dark' | 'light' | 'system';
+type ActualTheme = 'joshComeau' | 'joshComeauLight';
 
 export function ThemeSwitcher() {
-  const [isOpen, setIsOpen] = useState(false);
-  const [currentTheme, setCurrentTheme] = useState<AlternativeThemeKey>('riteRefined');
+  const [themeMode, setThemeMode] = useState<ThemeMode>('dark');
+  const [actualTheme, setActualTheme] = useState<ActualTheme>('joshComeau');
 
-  // Load theme from localStorage on mount
-  useEffect(() => {
-    const savedTheme = localStorage.getItem('rite-theme') as AlternativeThemeKey;
-    if (savedTheme && alternativeThemes[savedTheme]) {
-      setCurrentTheme(savedTheme);
-      applyTheme(savedTheme);
-    } else {
-      // Apply default theme if no saved theme
-      applyTheme('riteRefined');
+  // System theme detection
+  const getSystemTheme = (): ActualTheme => {
+    if (typeof window !== 'undefined' && window.matchMedia) {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'joshComeau' : 'joshComeauLight';
     }
-  }, []);
+    return 'joshComeau'; // fallback to dark
+  };
 
-  const applyTheme = (themeKey: AlternativeThemeKey) => {
+  // Calculate actual theme based on mode
+  const calculateActualTheme = (mode: ThemeMode): ActualTheme => {
+    switch (mode) {
+      case 'dark': return 'joshComeau';
+      case 'light': return 'joshComeauLight';
+      case 'system': return getSystemTheme();
+      default: return 'joshComeau';
+    }
+  };
+
+  // Apply theme to DOM
+  const applyTheme = (themeKey: ActualTheme) => {
     const theme = alternativeThemes[themeKey];
     const css = generateThemeCSS(theme);
     
@@ -46,55 +48,74 @@ export function ThemeSwitcher() {
     document.head.appendChild(style);
   };
 
-  const switchTheme = (themeKey: AlternativeThemeKey) => {
-    setCurrentTheme(themeKey);
-    applyTheme(themeKey);
-    localStorage.setItem('rite-theme', themeKey);
-    setIsOpen(false);
+  // Load theme from localStorage on mount
+  useEffect(() => {
+    const savedMode = localStorage.getItem('rite-theme-mode') as ThemeMode;
+    const validModes: ThemeMode[] = ['dark', 'light', 'system'];
+    
+    const initialMode = savedMode && validModes.includes(savedMode) ? savedMode : 'dark';
+    setThemeMode(initialMode);
+    
+    const theme = calculateActualTheme(initialMode);
+    setActualTheme(theme);
+    applyTheme(theme);
+  }, []);
+
+  // Listen for system theme changes when in system mode
+  useEffect(() => {
+    if (themeMode !== 'system') return;
+
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const handleChange = () => {
+      const newTheme = calculateActualTheme('system');
+      setActualTheme(newTheme);
+      applyTheme(newTheme);
+    };
+
+    mediaQuery.addEventListener('change', handleChange);
+    return () => mediaQuery.removeEventListener('change', handleChange);
+  }, [themeMode]);
+
+  // Finite state machine: dark → light → system → dark
+  const cycleTheme = () => {
+    const nextMode: ThemeMode = 
+      themeMode === 'dark' ? 'light' :
+      themeMode === 'light' ? 'system' : 'dark';
+    
+    setThemeMode(nextMode);
+    localStorage.setItem('rite-theme-mode', nextMode);
+    
+    const newTheme = calculateActualTheme(nextMode);
+    setActualTheme(newTheme);
+    applyTheme(newTheme);
   };
 
-  const currentThemeInfo = themes.find(t => t.key === currentTheme) || themes[0];
+  const getThemeInfo = () => {
+    switch (themeMode) {
+      case 'dark':
+        return { icon: Moon, label: 'Dark', next: 'light' };
+      case 'light':
+        return { icon: Sun, label: 'Light', next: 'system' };
+      case 'system':
+        return { icon: Monitor, label: 'System', next: 'dark' };
+      default:
+        return { icon: Moon, label: 'Dark', next: 'light' };
+    }
+  };
+
+  const themeInfo = getThemeInfo();
+  const IconComponent = themeInfo.icon;
 
   return (
-    <div className="relative">
-      <Button
-        variant="outline"
-        size="sm"
-        onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2"
-      >
-        <PaletteIcon className="w-4 h-4" />
-        <span className="hidden sm:inline">{currentThemeInfo.name}</span>
-        <span className="sm:hidden">{currentThemeInfo.icon}</span>
-      </Button>
-
-      {isOpen && (
-        <div className="absolute right-0 top-full mt-1 bg-neutral-700 border border-neutral-600 rounded-md shadow-lg z-50 min-w-[200px]">
-          {themes.map((theme) => (
-            <button
-              key={theme.key}
-              onClick={() => switchTheme(theme.key)}
-              className={`w-full px-3 py-2 text-left text-sm text-white hover:bg-neutral-600 flex items-center gap-3 ${
-                currentTheme === theme.key ? 'bg-neutral-600 font-medium' : ''
-              }`}
-            >
-              <span className="text-base">{theme.icon}</span>
-              <div className="flex flex-col">
-                <span className="font-medium">{theme.name}</span>
-                <span className="text-xs text-neutral-400">{theme.description}</span>
-              </div>
-            </button>
-          ))}
-        </div>
-      )}
-
-      {/* Click outside to close */}
-      {isOpen && (
-        <div
-          className="fixed inset-0 z-40"
-          onClick={() => setIsOpen(false)}
-        />
-      )}
-    </div>
+    <Button
+      variant="outline"
+      size="sm"
+      onClick={cycleTheme}
+      className="flex items-center gap-2"
+      title={`Switch to ${themeInfo.next} mode`}
+    >
+      <IconComponent className="w-4 h-4" />
+      <span className="hidden sm:inline">{themeInfo.label}</span>
+    </Button>
   );
 }

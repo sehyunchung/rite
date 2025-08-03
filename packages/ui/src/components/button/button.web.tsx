@@ -12,13 +12,13 @@ const buttonVariants = cva(
         default:
           "bg-brand-primary shadow-sm hover:bg-brand-primary-dark hover:shadow-glow-sm active:scale-[0.98] [&]:text-[var(--button-primary-text,_white)]",
         destructive:
-          "bg-error text-white shadow-sm hover:bg-error/90 focus-visible:ring-error",
+          "bg-error text-[var(--button-primary-text,_white)] shadow-sm hover:bg-error/90 focus-visible:ring-error",
         outline:
-          "border-2 border-neutral-600 bg-transparent text-white hover:bg-neutral-700 hover:border-neutral-500",
+          "border-2 border-border bg-transparent text-text-primary hover:bg-bg-secondary hover:border-border-strong",
         secondary:
-          "bg-neutral-700 text-white shadow-sm hover:bg-neutral-600",
+          "bg-bg-secondary text-text-primary shadow-sm hover:bg-bg-tertiary",
         ghost:
-          "text-white hover:bg-neutral-700/50",
+          "text-text-primary hover:bg-bg-secondary/50",
         link: "text-brand-primary underline-offset-4 hover:underline hover:text-brand-primary-light",
       },
       size: {

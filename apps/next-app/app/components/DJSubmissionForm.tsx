@@ -170,7 +170,7 @@ export function DJSubmissionForm({ submissionToken }: DJSubmissionFormProps) {
           <CardContent className="space-y-4">
             <div className="bg-neutral-700 p-4 rounded-lg text-left">
               <Typography variant="h6" className="text-success mb-2">What happens next?</Typography>
-              <ul className="text-sm text-neutral-300 space-y-1">
+              <ul className="text-sm text-text-secondary space-y-1">
                 <li>• The organizer will review your submission</li>
                 <li>• You&apos;ll receive confirmation via Instagram DM</li>
                 <li>• Payment will be processed after the event</li>
@@ -254,7 +254,7 @@ export function DJSubmissionForm({ submissionToken }: DJSubmissionFormProps) {
                 <DropzoneContent>
                   <div className="space-y-2">
                     <Typography variant="h6">{t('selectedFiles')}</Typography>
-                    <ul className="text-sm text-neutral-400 space-y-1">
+                    <ul className="text-sm text-text-muted space-y-1">
                       {promoFiles.map((file, index) => (
                         <li key={index} className="flex items-center">
                           <span className="w-2 h-2 bg-neutral-500 rounded-full mr-2"></span>
