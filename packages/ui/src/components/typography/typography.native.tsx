@@ -4,7 +4,7 @@ import '@rite/ui/types/nativewind';
 
 // Map font weights to specific font files for React Native
 const getFontFamily = (weight: string) => {
-  const weightMap = {
+  const weightMap: Record<string, string> = {
     'font-thin': 'SUIT-Regular',
     'font-light': 'SUIT-Regular', 
     'font-normal': 'SUIT-Regular',
