@@ -2,13 +2,11 @@ import * as React from 'react';
 import { TouchableOpacity, View } from 'react-native';
 
 import { Typography } from '@rite/ui';
+import { colors } from '@rite/ui/design-tokens';
 import { IconSymbol } from '@/components/ui/IconSymbol';
-import { Colors } from '@/constants/Colors';
-import { useColorScheme } from '@/hooks/useColorScheme';
 
 export function Collapsible({ children, title }: React.PropsWithChildren & { title: string }) {
   const [isOpen, setIsOpen] = React.useState(false);
-  const theme = useColorScheme() ?? 'light';
 
   return (
     <View className="bg-neutral-800">
@@ -20,11 +18,11 @@ export function Collapsible({ children, title }: React.PropsWithChildren & { tit
           name="chevron.right"
           size={18}
           weight="medium"
-          color={theme === 'light' ? Colors.light.icon : Colors.dark.icon}
+          color={colors.functional.textSecondary}
           style={{ transform: [{ rotate: isOpen ? '90deg' : '0deg' }] }}
         />
 
-        <Typography variant="body" className="text-white font-semibold">
+        <Typography variant="body" className="font-semibold" style={{ color: colors.functional.textPrimary }}>
           {title}
         </Typography>
       </TouchableOpacity>

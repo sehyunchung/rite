@@ -51,9 +51,9 @@ export default function SettingsScreen() {
           headerShown: true,
           title: 'Settings',
           headerStyle: {
-            backgroundColor: '#1A0F2F',
+            backgroundColor: colors.neutral[800],
           },
-          headerTintColor: '#FFFFFF',
+          headerTintColor: colors.functional.textPrimary,
           headerLeft: () => (
             <TouchableOpacity onPress={() => router.back()}>
               <Ionicons name="arrow-back" size={24} color={colors.functional.textPrimary} />
