@@ -29,9 +29,9 @@ export function MobileLayout({ children, userId, fallbackDisplayName }: MobileLa
   }, [pathname]);
 
   return (
-    <div className="min-h-screen bg-neutral-800">
+    <div className="min-h-screen bg-bg-primary">
       {/* Mobile Header */}
-      <header className="bg-neutral-700 border-b border-neutral-600 md:hidden">
+      <header className="bg-bg-secondary border-b border-border md:hidden">
         <div className="flex justify-between items-center px-4 py-3">
           <Typography variant="h5" className="text-brand-primary">RITE</Typography>
           <Button
@@ -46,7 +46,7 @@ export function MobileLayout({ children, userId, fallbackDisplayName }: MobileLa
         
         {/* Mobile Menu Dropdown */}
         {isMenuOpen && (
-          <div className="absolute top-full left-0 right-0 bg-neutral-700 border-b border-neutral-600 z-40 animate-in slide-in-from-top-2 duration-200">
+          <div className="absolute top-full left-0 right-0 bg-bg-secondary border-b border-border z-40 animate-in slide-in-from-top-2 duration-200">
             <div className="flex flex-col space-y-4 p-4">
               {userId && fallbackDisplayName && (
                 <div className="flex items-center justify-between">
@@ -75,7 +75,7 @@ export function MobileLayout({ children, userId, fallbackDisplayName }: MobileLa
       </header>
 
       {/* Desktop Navigation (unchanged) */}
-      <nav className="bg-neutral-700 border-b border-neutral-600 hidden md:block">
+      <nav className="bg-bg-secondary border-b border-border hidden md:block">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16 items-center">
             <div className="flex items-center space-x-8">
@@ -83,10 +83,10 @@ export function MobileLayout({ children, userId, fallbackDisplayName }: MobileLa
                 <Typography variant="h5" className="ml-2 text-brand-primary">RITE</Typography>
               </div>
               <nav className="hidden md:flex space-x-6">
-                <Link href="/dashboard" className="text-sm font-medium text-white hover:text-brand-primary transition-colors">
+                <Link href="/dashboard" className="text-sm font-medium text-text-primary hover:text-brand-primary transition-colors">
                   {t('dashboard')}
                 </Link>
-                <Link href="/events/create" className="text-sm font-medium text-white hover:text-brand-primary transition-colors">
+                <Link href="/events/create" className="text-sm font-medium text-text-primary hover:text-brand-primary transition-colors">
                   {t('createEvent')}
                 </Link>
               </nav>

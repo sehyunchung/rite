@@ -21,7 +21,7 @@ export default async function SignInPage({ params }: Props) {
   }
 
   return (
-    <div className="min-h-screen bg-neutral-800 flex items-center justify-center py-12 px-4">
+    <div className="min-h-screen bg-bg-primary flex items-center justify-center py-12 px-4">
       <div className="max-w-md w-full space-y-12">
         <div className="text-center">
           <Typography variant="h1" className="text-5xl text-brand-primary">RITE</Typography>
@@ -59,10 +59,10 @@ export default async function SignInPage({ params }: Props) {
 
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
-                <span className="w-full border-t border-neutral-600" />
+                <span className="w-full border-t border-border" />
               </div>
               <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-neutral-700 px-2 text-neutral-400">{t('or')}</span>
+                <span className="bg-bg-secondary px-2 text-text-secondary">{t('or')}</span>
               </div>
             </div>
 
@@ -87,9 +87,9 @@ export default async function SignInPage({ params }: Props) {
             </form>
 
             {/* Mobile OAuth guidance - only show for Instagram */}
-            <div className="mt-4 p-3 bg-blue-500/10 border border-blue-500/20 rounded-lg">
-              <Typography variant="body-sm" className="text-blue-400 font-medium mb-1">{t('mobileGuidance.title')}</Typography>
-              <Typography variant="body-sm" className="text-blue-400">{t('mobileGuidance.message')}</Typography>
+            <div className="mt-4 p-3 bg-color-info/10 border border-color-info/20 rounded-lg">
+              <Typography variant="body-sm" className="text-color-info font-medium mb-1">{t('mobileGuidance.title')}</Typography>
+              <Typography variant="body-sm" className="text-color-info">{t('mobileGuidance.message')}</Typography>
               <Typography variant="caption" color="secondary" className="mt-2">
                 {t('accountRequirement')}
               </Typography>
