@@ -27,6 +27,10 @@ export const useOAuthFlow = (
     }
     
     try {
+      // expo-auth-session automatically handles:
+      // - PKCE for code flow (code_challenge, code_verifier)
+      // - State parameter generation and validation
+      // - Secure storage of OAuth parameters
       await promptAsync();
     } catch (error) {
       throw new AuthError(
@@ -53,10 +57,13 @@ export const useOAuthFlow = (
             }
           })
           .catch((error) => {
-            // Handle auth error - could be logged or shown to user
-            console.error('Auth error:', error);
+            // Errors are now handled by AuthContext
+            // Just log for debugging
+            console.error('OAuth authentication failed:', error);
           });
       }
+    } else if (response.type === 'error') {
+      console.error('OAuth response error:', response.error);
     }
   }, [response, handleGoogleAuth, onAuthSuccess]);
 
