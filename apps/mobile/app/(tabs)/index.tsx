@@ -30,19 +30,19 @@ export default function HomeScreen() {
             className="flex-row items-center justify-center mt-4 mb-8"
           >
             <Ionicons name="add-circle" size={24} color={colors.functional.textPrimary} />
-            <Typography variant="button" className="text-white ml-2">
+            <Typography variant="button" className="ml-2" style={{ color: colors.functional.textPrimary }}>
               Create New Event
             </Typography>
           </Button>
           
           {/* Your Events Section */}
           <View className="mb-6">
-            <Typography variant="h5" className="text-white mb-4">
+            <Typography variant="h5" className="mb-4" style={{ color: colors.functional.textPrimary }}>
               Your Events
             </Typography>
             
             <Card className="bg-neutral-700 p-6">
-              <Typography variant="body" className="text-white text-center mb-1">
+              <Typography variant="body" className="text-center mb-1" style={{ color: colors.functional.textPrimary }}>
                 No events yet
               </Typography>
               <Typography variant="caption" color="secondary" className="text-center">
