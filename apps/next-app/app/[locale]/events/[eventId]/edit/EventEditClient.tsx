@@ -20,7 +20,7 @@ interface EventEditClientProps {
 
 export function EventEditClient({ eventId, userId, locale }: EventEditClientProps) {
   const router = useRouter();
-  const tEvents = useTranslations('events.edit');
+  const t = useTranslations('events.edit');
   const tCommon = useTranslations('common');
 
   const event = useQuery(
@@ -58,16 +58,16 @@ export function EventEditClient({ eventId, userId, locale }: EventEditClientProp
           {/* Back Button - Desktop only */}
           <div className="hidden md:block mb-4">
             <Button variant="outline" onClick={() => router.push(`/${locale}/events/${eventId}`)}>
-              ← Back to Event
+              ← {t('backToEvent')}
             </Button>
           </div>
 
           <div className="mb-6 md:mb-8">
             <Typography variant="h1" className="text-2xl md:text-3xl">
-              Edit Event: {event.name}
+              {t('title')}: {event.name}
             </Typography>
             <Typography variant="body-lg" color="secondary" className="mt-2">
-              Update your event details and DJ lineup
+              {t('subtitle')}
             </Typography>
           </div>
           

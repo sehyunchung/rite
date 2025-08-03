@@ -121,6 +121,23 @@
       "edit": "편집",
       "submissions": "제출물",
       "qrCode": "QR 코드"
+    },
+    "edit": {
+      "title": "이벤트 편집",
+      "subtitle": "이벤트 세부사항과 DJ 라인업을 업데이트하세요",
+      "backToEvent": "이벤트로 돌아가기",
+      "updating": "업데이트 중...",
+      "updateEvent": "이벤트 업데이트",
+      "eventDetails": "이벤트 세부사항",
+      "venueInformation": "장소 정보",
+      "djLineup": "DJ 라인업",
+      "addDJSlot": "DJ 슬롯 추가",
+      "removeDJ": "DJ 삭제",
+      "confirmDelete": "삭제 확인",
+      "importantDeadlines": "중요한 마감일",
+      "paymentDetails": "결제 세부사항",
+      "saveChanges": "변경사항 저장",
+      "discardChanges": "변경사항 취소"
     }
   },
   "status": {

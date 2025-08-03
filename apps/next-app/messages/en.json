@@ -121,6 +121,23 @@
       "edit": "Edit",
       "submissions": "Submissions", 
       "qrCode": "QR Code"
+    },
+    "edit": {
+      "title": "Edit Event",
+      "subtitle": "Update your event details and DJ lineup",
+      "backToEvent": "Back to Event",
+      "updating": "Updating...",
+      "updateEvent": "Update Event",
+      "eventDetails": "Event Details",
+      "venueInformation": "Venue Information",
+      "djLineup": "DJ Lineup",
+      "addDJSlot": "Add DJ Slot",
+      "removeDJ": "Remove DJ",
+      "confirmDelete": "Confirm Delete",
+      "importantDeadlines": "Important Deadlines",
+      "paymentDetails": "Payment Details",
+      "saveChanges": "Save Changes",
+      "discardChanges": "Discard Changes"
     }
   },
   "status": {

@@ -39,8 +39,6 @@ interface EventEditFormProps {
 const MAX_TIMESLOTS_PER_EVENT = 12;
 
 export function EventEditForm({ event, onEventUpdated }: EventEditFormProps) {
-  const t = useTranslations('events.edit');
-  const tCommon = useTranslations('common');
   const updateEvent = useMutation(api.events.updateEvent);
   const { data: session } = useSession();
   
