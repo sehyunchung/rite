@@ -50,36 +50,6 @@ export default function HomeScreen() {
             </Card>
           </View>
           
-          {/* Status Card */}
-          <Card className="bg-neutral-700 p-4">
-            <Typography variant="h5" className="text-white mb-3">
-              Mobile App Status
-            </Typography>
-            <Typography variant="body" color="secondary" className="mb-1">
-              ✅ Shared backend package
-            </Typography>
-            <Typography variant="body" color="secondary" className="mb-1">
-              ✅ NativeWind styling
-            </Typography>
-            <Typography variant="body" color="secondary" className="mb-1">
-              ✅ Design token integration
-            </Typography>
-            <Typography variant="body" color="secondary" className="mb-1">
-              ✅ Dark theme applied
-            </Typography>
-            <Typography variant="body" color="secondary" className="mb-1">
-              ✅ SUIT fonts configured
-            </Typography>
-            <Typography variant="body" color="secondary" className="mb-1">
-              ✅ Navigation aligned with Next.js
-            </Typography>
-            <Typography variant="body" color="secondary" className="mb-1">
-              ✅ Authentication implemented
-            </Typography>
-            <Typography variant="body" color="secondary">
-              ✅ @rite/ui components integrated
-            </Typography>
-          </Card>
         </View>
       </ScrollView>
     </SafeAreaView>
