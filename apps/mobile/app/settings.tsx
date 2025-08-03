@@ -20,7 +20,7 @@ const SettingItem: React.FC<SettingItemProps> = ({ icon, title, subtitle, onPres
   <TouchableOpacity onPress={onPress}>
     <Card className="bg-neutral-700 border-neutral-600 p-6 flex-row items-center mb-4">
       <View className="w-10 h-10 rounded-full bg-neutral-600 items-center justify-center mr-4">
-        <Ionicons name={icon} size={24} color="#A8A8B3" />
+        <Ionicons name={icon} size={24} color="hsl(210deg 12% 55%)" />
       </View>
       <View className="flex-1">
         <Typography variant="body" className="text-white mb-1">
@@ -30,7 +30,7 @@ const SettingItem: React.FC<SettingItemProps> = ({ icon, title, subtitle, onPres
           {subtitle}
         </Typography>
       </View>
-      <Ionicons name="chevron-forward" size={20} color="#666B7D" />
+      <Ionicons name="chevron-forward" size={20} color="hsl(210deg 8% 50%)" />
     </Card>
   </TouchableOpacity>
 );
@@ -55,7 +55,7 @@ export default function SettingsScreen() {
           headerTintColor: '#FFFFFF',
           headerLeft: () => (
             <TouchableOpacity onPress={() => router.back()}>
-              <Ionicons name="arrow-back" size={24} color="#FFFFFF" />
+              <Ionicons name="arrow-back" size={24} color="hsl(210deg 10% 90%)" />
             </TouchableOpacity>
           ),
         }}

@@ -107,7 +107,7 @@ export default function CreateTab() {
               <Typography variant="body" className="text-white flex-1">
                 {formatDate(selectedDate)}
               </Typography>
-              <Ionicons name="calendar-outline" size={20} color="#A8A8B3" />
+              <Ionicons name="calendar-outline" size={20} color="hsl(210deg 12% 55%)" />
             </TouchableOpacity>
           </View>
 
@@ -123,7 +123,7 @@ export default function CreateTab() {
               <Typography variant="body" className="text-white flex-1">
                 {formatTime(startTime)}
               </Typography>
-              <Ionicons name="time-outline" size={20} color="#A8A8B3" />
+              <Ionicons name="time-outline" size={20} color="hsl(210deg 12% 55%)" />
             </TouchableOpacity>
           </View>
 
@@ -155,7 +155,7 @@ export default function CreateTab() {
                   </Typography>
                 </View>
                 <TouchableOpacity>
-                  <Ionicons name="ellipsis-horizontal" size={20} color="#A8A8B3" />
+                  <Ionicons name="ellipsis-horizontal" size={20} color="hsl(210deg 12% 55%)" />
                 </TouchableOpacity>
               </Card>
             ))}

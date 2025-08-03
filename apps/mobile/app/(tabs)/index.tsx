@@ -28,7 +28,7 @@ export default function HomeScreen() {
             onPress={() => router.push('/(tabs)/create')}
             className="flex-row items-center justify-center mt-4 mb-8"
           >
-            <Ionicons name="add-circle" size={24} color="#FFFFFF" />
+            <Ionicons name="add-circle" size={24} color="hsl(210deg 10% 90%)" />
             <Typography variant="button" className="text-white ml-2">
               Create New Event
             </Typography>
