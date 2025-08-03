@@ -233,7 +233,10 @@
         "The organizer will review your submission",
         "You'll receive confirmation via Instagram DM",
         "Payment will be processed after the event"
-      ]
+      ],
+      "eventLabel": "Event",
+      "timeSlotLabel": "Your Slot",
+      "djLabel": "DJ"
     }
   },
   "auth": {
