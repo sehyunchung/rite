@@ -11,6 +11,7 @@ import { api } from '@rite/backend/convex/_generated/api';
 import { Id } from '@rite/backend/convex/_generated/dataModel';
 import { FullScreenLoading } from '@rite/ui';
 import { Button } from '@rite/ui';
+import { isValidConvexId } from '@/lib/utils';
 
 interface EventEditClientProps {
   eventId: string;
@@ -22,13 +23,34 @@ export function EventEditClient({ eventId, userId, locale }: EventEditClientProp
   const router = useRouter();
   const t = useTranslations('events.edit');
 
+  // Validate IDs before using them
+  const isValidEventId = isValidConvexId(eventId);
+  const isValidUserId = isValidConvexId(userId);
+
   const event = useQuery(
     api.events.getEvent,
-    { 
+    isValidEventId && isValidUserId ? { 
       eventId: eventId as Id<"events">,
       userId: userId as Id<"users">
-    }
+    } : "skip"
   );
+
+  // Handle invalid IDs
+  if (!isValidEventId || !isValidUserId) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <Typography variant="h2" className="mb-2">{t('invalidRequest')}</Typography>
+          <Typography variant="body" color="secondary" className="mb-4">
+            {t('invalidRequestMessage') || 'The request contains invalid parameters'}
+          </Typography>
+          <Button onClick={() => router.push(`/${locale}/dashboard`)}>
+            {t('backToDashboard')}
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   if (event === undefined) {
     return <FullScreenLoading />;
