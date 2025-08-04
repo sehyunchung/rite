@@ -232,7 +232,7 @@ export default function CreateTab() {
               <Typography variant="body" className="flex-1 text-white">
                 {formatDate(selectedDate)}
               </Typography>
-              <Ionicons name="calendar-outline" size={20} color="#9CA3AF" />
+              <Ionicons name="calendar-outline" size={20} color="var(--neutral-400)" />
             </TouchableOpacity>
           </View>
 

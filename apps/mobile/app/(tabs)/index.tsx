@@ -2,7 +2,7 @@ import * as React from 'react';
 import { View, ScrollView, SafeAreaView, Platform, ActivityIndicator, Text } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { Typography, Card, EventCard } from '@rite/ui';
+import { Typography, Card, CardContent, EventCard } from '@rite/ui';
 import { useQuery } from 'convex/react';
 import { api } from '@rite/backend/convex/_generated/api';
 import { useAuth } from '../../contexts/AuthContext';
@@ -51,13 +51,15 @@ export default function HomeScreen() {
                 <ActivityIndicator size="large" color="var(--brand-primary)" />
               </View>
             ) : events.length === 0 ? (
-              <Card className="bg-neutral-700 p-6">
-                <Typography variant="body" className="text-center mb-1 text-white">
-                  No events yet
-                </Typography>
-                <Typography variant="caption" color="secondary" className="text-center">
-                  Create your first event to get started
-                </Typography>
+              <Card className="bg-neutral-700 border-neutral-600">
+                <CardContent>
+                  <Typography variant="body" className="text-center mb-1 text-white">
+                    No events yet
+                  </Typography>
+                  <Typography variant="caption" className="text-center text-neutral-400">
+                    Create your first event to get started
+                  </Typography>
+                </CardContent>
               </Card>
             ) : (
               <View className="gap-4">

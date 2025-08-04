@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { View, ScrollView, SafeAreaView, Platform, ActivityIndicator, Pressable } from 'react-native';
-import { Typography, Card, Badge } from '@rite/ui';
+import { Typography, Card, CardHeader, CardContent, CardTitle, Badge } from '@rite/ui';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useQuery } from 'convex/react';
 import { api } from '@rite/backend/convex/_generated/api';
@@ -35,7 +35,7 @@ export default function EventDetailScreen() {
     return (
       <SafeAreaView className="flex-1 bg-neutral-800">
         <View className="flex-1 items-center justify-center">
-          <ActivityIndicator size="large" color="#E946FF" />
+          <ActivityIndicator size="large" color="var(--brand-primary)" />
         </View>
       </SafeAreaView>
     );
@@ -99,7 +99,7 @@ export default function EventDetailScreen() {
               onPress={() => router.back()}
               className="mr-3"
             >
-              <Ionicons name="arrow-back" size={24} color="white" />
+              <Ionicons name="arrow-back" size={24} color="var(--text-primary)" />
             </Pressable>
             <Typography variant="h4" className="flex-1 text-white">
               Event Details
@@ -107,39 +107,42 @@ export default function EventDetailScreen() {
           </View>
 
           {/* Event Info */}
-          <Card className="bg-neutral-700 p-6 mb-6">
-            <View className="flex-row items-center justify-between mb-4">
-              <Typography variant="h5" className="text-white">
-                {event.name}
-              </Typography>
-              <Badge 
-                variant={event.status === 'active' ? 'default' : 'outline'}
-              >
-                {event.status === 'active' ? 'Published' : 'Draft'}
-              </Badge>
-            </View>
-            
-            <View className="gap-3">
-              <View className="flex-row items-center">
-                <Ionicons name="location" size={20} color="#9CA3AF" />
-                <Typography variant="body" className="ml-2 text-neutral-400">
-                  {event.venue.name}
-                </Typography>
+          <Card className="mb-6 bg-neutral-700 border-neutral-600">
+            <CardHeader>
+              <View className="flex-row items-center justify-between">
+                <CardTitle className="text-white">
+                  {event.name}
+                </CardTitle>
+                <Badge 
+                  variant={event.status === 'active' ? 'default' : 'outline'}
+                >
+                  {event.status === 'active' ? 'Published' : 'Draft'}
+                </Badge>
               </View>
-              
-              <View className="flex-row items-center">
-                <Ionicons name="calendar" size={20} color="#9CA3AF" />
-                <Typography variant="body" className="ml-2 text-neutral-400">
-                  {formatDate(event.date)}
-                </Typography>
+            </CardHeader>
+            <CardContent>
+              <View className="gap-3">
+                <View className="flex-row items-center">
+                  <Ionicons name="location" size={20} color="var(--neutral-400)" />
+                  <Typography variant="body" className="ml-2 text-neutral-400">
+                    {event.venue.name}
+                  </Typography>
+                </View>
+                
+                <View className="flex-row items-center">
+                  <Ionicons name="calendar" size={20} color="var(--neutral-400)" />
+                  <Typography variant="body" className="ml-2 text-neutral-400">
+                    {formatDate(event.date)}
+                  </Typography>
+                </View>
+                
+                {event.description && (
+                  <Typography variant="body" className="mt-2 text-neutral-400">
+                    {event.description}
+                  </Typography>
+                )}
               </View>
-              
-              {event.description && (
-                <Typography variant="body" className="mt-2 text-neutral-400">
-                  {event.description}
-                </Typography>
-              )}
-            </View>
+            </CardContent>
           </Card>
 
           {/* Timeslots */}
@@ -149,67 +152,72 @@ export default function EventDetailScreen() {
           
           <View className="gap-3 mb-6">
             {event.timeslots.map((slot, index) => (
-              <Card key={slot._id} className="bg-neutral-700 p-4">
-                <View className="flex-row items-center justify-between">
-                  <View className="flex-1">
-                    <Typography variant="body" className="text-white">
-                      {slot.djName}
-                    </Typography>
-                    <Typography variant="caption" color="secondary">
-                      @{slot.djInstagram}
+              <Card key={slot._id} className="bg-neutral-700 border-neutral-600">
+                <CardContent>
+                  <View className="flex-row items-center justify-between">
+                    <View className="flex-1">
+                      <Typography variant="body" className="text-white font-medium">
+                        {slot.djName}
+                      </Typography>
+                      <Typography variant="caption" className="text-brand-primary">
+                        @{slot.djInstagram}
+                      </Typography>
+                    </View>
+                    <Typography variant="caption" className="text-neutral-400">
+                      {formatTime(slot.startTime)} - {formatTime(slot.endTime)}
                     </Typography>
                   </View>
-                  <Typography variant="caption" color="secondary">
-                    {formatTime(slot.startTime)} - {formatTime(slot.endTime)}
-                  </Typography>
-                </View>
+                </CardContent>
               </Card>
             ))}
           </View>
 
           {/* Event Details */}
-          <Card className="bg-neutral-700 p-6 mb-6">
-            <Typography variant="h6" className="mb-4 text-white">
-              Event Details
-            </Typography>
-            
-            <View className="gap-3">
-              <View>
-                <Typography variant="caption" color="secondary">
-                  Guest List Deadline
-                </Typography>
-                <Typography variant="body" className="text-white">
-                  {formatDate(event.deadlines.guestList)}
-                </Typography>
+          <Card className="bg-neutral-700 border-neutral-600 mb-6">
+            <CardHeader>
+              <CardTitle className="text-white">
+                Event Details
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <View className="gap-4">
+                <View>
+                  <Typography variant="caption" className="text-neutral-400 mb-1">
+                    Guest List Deadline
+                  </Typography>
+                  <Typography variant="body" className="text-white">
+                    {formatDate(event.deadlines.guestList)}
+                  </Typography>
+                </View>
+                
+                <View>
+                  <Typography variant="caption" className="text-neutral-400 mb-1">
+                    Promo Materials Deadline
+                  </Typography>
+                  <Typography variant="body" className="text-white">
+                    {formatDate(event.deadlines.promoMaterials)}
+                  </Typography>
+                </View>
+                
+                <View>
+                  <Typography variant="caption" className="text-neutral-400 mb-1">
+                    Payment
+                  </Typography>
+                  <Typography variant="body" className="text-white">
+                    {event.payment.currency} {event.payment.perDJ} per DJ
+                  </Typography>
+                </View>
+                
+                <View>
+                  <Typography variant="caption" className="text-neutral-400 mb-1">
+                    Guest Limit
+                  </Typography>
+                  <Typography variant="body" className="text-white">
+                    {event.guestLimitPerDJ} guests per DJ
+                  </Typography>
+                </View>
               </View>
-              
-              <View>
-                <Typography variant="caption" color="secondary">
-                  Promo Materials Deadline
-                </Typography>
-                <Typography variant="body" className="text-white">
-                  {formatDate(event.deadlines.promoMaterials)}
-                </Typography>
-              </View>
-              
-              <View>
-                <Typography variant="caption" color="secondary">
-                  Payment
-                </Typography>
-                <Typography variant="body" className="text-white">
-                  {event.payment.currency} {event.payment.perDJ} per DJ
-                </Typography>
-              </View>
-              
-              <View>
-                <Typography variant="caption" color="secondary">
-                  Guest Limit
-                </Typography>
-                <Typography variant="body" className="text-white">
-                  {event.guestLimitPerDJ} guests per DJ
-                </Typography>
-              </View>
-            </View>
+            </CardContent>
           </Card>
 
           {/* Actions */}

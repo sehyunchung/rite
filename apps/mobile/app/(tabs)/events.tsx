@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { View, ScrollView, SafeAreaView, Platform, ActivityIndicator } from 'react-native';
-import { Typography, Card, EventCard } from '@rite/ui';
+import { Typography, Card, CardContent, EventCard } from '@rite/ui';
 import { useQuery } from 'convex/react';
 import { api } from '@rite/backend/convex/_generated/api';
 import { useRouter } from 'expo-router';
@@ -35,13 +35,15 @@ export default function EventsScreen() {
               <ActivityIndicator size="large" color="var(--brand-primary)" />
             </View>
           ) : events.length === 0 ? (
-            <Card className="bg-neutral-700 p-6 items-center">
-              <Typography variant="body" className="text-white text-center mb-1">
-                No events available
-              </Typography>
-              <Typography variant="caption" color="secondary" className="text-center">
-                Check back later for upcoming events
-              </Typography>
+            <Card className="bg-neutral-700 border-neutral-600">
+              <CardContent className="items-center">
+                <Typography variant="body" className="text-white text-center mb-1">
+                  No events available
+                </Typography>
+                <Typography variant="caption" className="text-center text-neutral-400">
+                  Check back later for upcoming events
+                </Typography>
+              </CardContent>
             </Card>
           ) : (
             <View className="gap-4">

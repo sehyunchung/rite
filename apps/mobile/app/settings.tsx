@@ -27,7 +27,7 @@ const SettingItem: React.FC<SettingItemProps> = ({ icon, title, subtitle, onPres
         <Typography variant="body" className="text-white mb-1">
           {title}
         </Typography>
-        <Typography variant="caption" color="secondary">
+        <Typography variant="caption" className="text-neutral-400">
           {subtitle}
         </Typography>
       </View>

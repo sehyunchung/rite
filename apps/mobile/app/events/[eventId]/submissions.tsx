@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { View, ScrollView, SafeAreaView, Platform, ActivityIndicator, Pressable } from 'react-native';
-import { Typography, Card, Badge } from '@rite/ui';
+import { Typography, Card, CardHeader, CardContent, CardTitle, Badge } from '@rite/ui';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useQuery } from 'convex/react';
 import { api } from '@rite/backend/convex/_generated/api';
@@ -120,21 +120,27 @@ export default function SubmissionsScreen() {
           </View>
 
           {/* Event Info */}
-          <Card className="bg-neutral-700 p-4 mb-6">
-            <Typography variant="h5" className="mb-1 text-white">
-              {event.name}
-            </Typography>
-            <Typography variant="body" color="secondary">
-              Total Submissions: {submissions.length}
-            </Typography>
+          <Card className="bg-neutral-700 border-neutral-600 mb-6">
+            <CardHeader>
+              <CardTitle className="text-white">
+                {event.name}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Typography variant="body" className="text-neutral-400">
+                Total Submissions: {submissions.length}
+              </Typography>
+            </CardContent>
           </Card>
 
           {/* Submissions by Timeslot */}
           {event.timeslots.length === 0 ? (
-            <Card className="bg-neutral-700 p-6">
-              <Typography variant="body" className="text-center text-neutral-400">
-                No timeslots configured for this event
-              </Typography>
+            <Card className="bg-neutral-700 border-neutral-600">
+              <CardContent>
+                <Typography variant="body" className="text-center text-neutral-400">
+                  No timeslots configured for this event
+                </Typography>
+              </CardContent>
             </Card>
           ) : (
             <View className="gap-6">
@@ -159,56 +165,61 @@ export default function SubmissionsScreen() {
                     </View>
                     
                     {slotSubmissions.length === 0 ? (
-                      <Card className="bg-neutral-700 p-4">
-                        <Typography variant="body" className="text-center text-neutral-400">
-                          No submissions yet
-                        </Typography>
+                      <Card className="bg-neutral-700 border-neutral-600">
+                        <CardContent>
+                          <Typography variant="body" className="text-center text-neutral-400">
+                            No submissions yet
+                          </Typography>
+                        </CardContent>
                       </Card>
                     ) : (
                       <View className="gap-3">
                         {slotSubmissions.map((submission) => (
-                          <Card key={submission._id} className="bg-neutral-700 p-4">
-                            <View className="flex-row items-start justify-between mb-2">
-                              <View className="flex-1">
-                                <Typography variant="body" className="text-white">
-                                  {submission.guestList.length > 0 ? submission.guestList[0].name : 'Anonymous Submission'}
-                                </Typography>
-                                <Typography variant="caption" color="secondary">
-                                  Submitted {formatDate(submission.submittedAt || new Date().toISOString())}
-                                </Typography>
+                          <Card key={submission._id} className="bg-neutral-700 border-neutral-600">
+                            <CardHeader>
+                              <View className="flex-row items-start justify-between">
+                                <View className="flex-1">
+                                  <CardTitle className="text-white text-base">
+                                    {submission.guestList.length > 0 ? submission.guestList[0].name : 'Anonymous Submission'}
+                                  </CardTitle>
+                                  <Typography variant="caption" className="text-neutral-400">
+                                    Submitted {formatDate(submission.submittedAt || new Date().toISOString())}
+                                  </Typography>
+                                </View>
+                                <Badge variant="default">Submitted</Badge>
                               </View>
-                              <Badge variant="default">Submitted</Badge>
-                            </View>
-                            
-                            {submission.guestList.length > 0 && (
-                              <View className="mt-3">
-                                <Typography variant="caption" color="secondary" className="mb-1">
-                                  Guests ({submission.guestList.length})
-                                </Typography>
-                                <Typography variant="body" className="text-neutral-400">
-                                  {submission.guestList.map(guest => `${guest.name}${guest.phone ? ` (${guest.phone})` : ''}`).join(', ')}
-                                </Typography>
-                              </View>
-                            )}
-                            
-                            {submission.promoMaterials.description && (
-                              <View className="mt-2">
-                                <Typography variant="caption" color="secondary" className="mb-1">
-                                  Promo Description
-                                </Typography>
-                                <Typography variant="body" className="text-neutral-400">
-                                  {submission.promoMaterials.description}
-                                </Typography>
-                              </View>
-                            )}
-                            
-                            {submission.promoMaterials.files.length > 0 && (
-                              <View className="mt-2">
-                                <Typography variant="caption" color="secondary">
-                                  {`📁 ${submission.promoMaterials.files.length} file${submission.promoMaterials.files.length !== 1 ? 's' : ''} uploaded`}
-                                </Typography>
-                              </View>
-                            )}
+                            </CardHeader>
+                            <CardContent>
+                              {submission.guestList.length > 0 && (
+                                <View className="mb-3">
+                                  <Typography variant="caption" className="text-neutral-400 mb-1">
+                                    Guests ({submission.guestList.length})
+                                  </Typography>
+                                  <Typography variant="body" className="text-neutral-300">
+                                    {submission.guestList.map(guest => `${guest.name}${guest.phone ? ` (${guest.phone})` : ''}`).join(', ')}
+                                  </Typography>
+                                </View>
+                              )}
+                              
+                              {submission.promoMaterials.description && (
+                                <View className="mb-3">
+                                  <Typography variant="caption" className="text-neutral-400 mb-1">
+                                    Promo Description
+                                  </Typography>
+                                  <Typography variant="body" className="text-neutral-300">
+                                    {submission.promoMaterials.description}
+                                  </Typography>
+                                </View>
+                              )}
+                              
+                              {submission.promoMaterials.files.length > 0 && (
+                                <View>
+                                  <Typography variant="caption" className="text-brand-primary">
+                                    {`📁 ${submission.promoMaterials.files.length} file${submission.promoMaterials.files.length !== 1 ? 's' : ''} uploaded`}
+                                  </Typography>
+                                </View>
+                              )}
+                            </CardContent>
                           </Card>
                         ))}
                       </View>
