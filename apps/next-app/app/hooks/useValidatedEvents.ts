@@ -3,6 +3,7 @@
 import { useQuery } from 'convex/react';
 import { api } from '@rite/backend/convex/_generated/api';
 import { Id, Doc } from '@rite/backend/convex/_generated/dataModel';
+import { isValidConvexId } from '@/lib/utils';
 
 // Type that guarantees data integrity
 export type ValidatedEvent = Doc<"events"> & {
@@ -24,7 +25,7 @@ export type ValidatedEvent = Doc<"events"> & {
 export function useValidatedEvents(userId: string) {
   const events = useQuery(
     api.events.listEvents,
-    userId ? { userId: userId as Id<"users"> } : "skip"
+    userId && isValidConvexId(userId) ? { userId: userId as Id<"users"> } : "skip"
   ) as ValidatedEvent[] | undefined;
 
   // Ensure timeslots is always an array for each event
@@ -46,7 +47,7 @@ export function useValidatedEvents(userId: string) {
 export function useValidatedEvent(eventId: string, userId: string) {
   const event = useQuery(
     api.events.getEvent,
-    eventId && userId ? { 
+    eventId && userId && isValidConvexId(eventId) && isValidConvexId(userId) ? { 
       eventId: eventId as Id<"events">, 
       userId: userId as Id<"users"> 
     } : "skip"
