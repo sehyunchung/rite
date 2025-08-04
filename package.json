@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "turbo run dev",
     "dev:next": "turbo run dev --filter=next-app",
-    "dev:mobile": "turbo run start --filter=mobile",
+    "dev:mobile": "turbo run start --filter=mobile -- -c",
     "dev:backend": "turbo run dev --filter=@rite/backend",
     "predev": "pnpm --filter=@rite/backend run dev --until-success && pnpm --filter=@rite/backend convex dashboard",
     "build": "turbo run build",
