@@ -6,13 +6,11 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useQuery, useMutation } from 'convex/react';
 import { api } from '@rite/backend/convex/_generated/api';
 import { riteColors as colors } from '../../constants/Colors';
-import { useAuth } from '../../contexts/AuthContext';
 import { Ionicons } from '@expo/vector-icons';
 
 export default function DJSubmissionScreen() {
   const { token } = useLocalSearchParams<{ token: string }>();
   const router = useRouter();
-  const { user } = useAuth();
   const createSubmission = useMutation(api.submissions.saveSubmission);
   
   // Form state

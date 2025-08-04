@@ -40,14 +40,14 @@ export default function EditEventScreen() {
   const [hashtags, setHashtags] = React.useState('');
   const [showDatePicker, setShowDatePicker] = React.useState(false);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
-  const [djSlots, setDjSlots] = React.useState<Array<{
+  const [djSlots, setDjSlots] = React.useState<{
     id: number;
     _id?: string;
     djName: string;
     djInstagram: string;
     startTime: string;
     endTime: string;
-  }>>([]);
+  }[]>([]);
 
   // Initialize form with event data
   React.useEffect(() => {

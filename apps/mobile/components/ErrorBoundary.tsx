@@ -66,7 +66,7 @@ export class ErrorBoundary extends Component<Props, State> {
               marginBottom: 24,
               lineHeight: 24,
             }}>
-              We're sorry, but an unexpected error occurred. Please restart the app or contact support if the problem persists.
+              We&apos;re sorry, but an unexpected error occurred. Please restart the app or contact support if the problem persists.
             </Text>
 
             {__DEV__ && this.state.error && (

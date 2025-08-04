@@ -1,17 +1,14 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
+import { DarkTheme, ThemeProvider } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { View, Text } from 'react-native';
 import 'react-native-reanimated';
 import '../global.css';
 import './index.css';
-
-import { useColorScheme } from '@/hooks/useColorScheme';
 import { ConvexProvider } from '../providers/ConvexProvider';
 import { PostHogProviderWrapper } from '../providers/PostHogProvider';
 import { AuthProvider } from '../contexts/AuthContext';
-import ErrorBoundary from '../components/ErrorBoundary';
+import { ErrorBoundary } from '../components/ErrorBoundary';
 import AppNavigator from '../components/AppNavigator';
 
 export default function RootLayout() {

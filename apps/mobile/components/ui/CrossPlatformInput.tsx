@@ -56,7 +56,7 @@ const createWebInputProps = (props: WebInputProps) => {
     placeholder,
     className,
     disabled,
-    platform: _platform,
+    platform: _platform, // eslint-disable-line @typescript-eslint/no-unused-vars
     type,
     autoComplete,
     maxLength,
@@ -90,10 +90,10 @@ const createNativeInputProps = (props: NativeInputProps) => {
     placeholder,
     className,
     disabled,
-    platform: _platform,
+    platform: _platform, // eslint-disable-line @typescript-eslint/no-unused-vars
     keyboardType,
     autoCapitalize,
-    autoCorrect,
+    autoCorrect, // eslint-disable-line @typescript-eslint/no-unused-vars
     numberOfLines,
     multiline,
     secureTextEntry,
