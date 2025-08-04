@@ -1,5 +1,6 @@
 import { v } from "convex/values";
 import { query, mutation } from "./_generated/server";
+import type { Id, Doc } from "./_generated/dataModel";
 import { requireAuth } from "./auth";
 import { 
   EventPhase, 
@@ -150,7 +151,7 @@ export const createEvent = mutation({
     }
     
     const now = new Date().toISOString();
-    let eventId: any;
+    let eventId: Id<"events"> | undefined;
     let timeslotResults: Array<{ timeslotId: any; submissionToken: string }> = [];
     
     try {
@@ -209,10 +210,12 @@ export const createEvent = mutation({
           }
           
           // Delete the event
-          try {
-            await ctx.db.delete(eventId);
-          } catch (cleanupError) {
-            console.error('Failed to cleanup event:', cleanupError);
+          if (eventId) {
+            try {
+              await ctx.db.delete(eventId);
+            } catch (cleanupError) {
+              console.error('Failed to cleanup event:', cleanupError);
+            }
           }
           
           throw new Error(`Failed to create timeslot ${i + 1}: ${timeslotError instanceof Error ? timeslotError.message : 'Unknown error'}`);
@@ -225,15 +228,17 @@ export const createEvent = mutation({
       }
       
       // Update capabilities now that all timeslots are created successfully
-      const updatedEvent = await ctx.db.get(eventId);
-      if (updatedEvent) {
-        // Get the actual created timeslots from the database
-        const createdTimeslots = await ctx.db
-          .query("timeslots")
-          .filter((q) => q.eq(q.field("eventId"), eventId))
-          .collect();
-        const capabilities = computeEventCapabilities(updatedEvent, createdTimeslots, []);
-        await ctx.db.patch(eventId, { capabilities });
+      if (eventId) {
+        const updatedEvent = await ctx.db.get(eventId);
+        if (updatedEvent) {
+          // Get the actual created timeslots from the database
+          const createdTimeslots = await ctx.db
+            .query("timeslots")
+            .filter((q) => q.eq(q.field("eventId"), eventId))
+            .collect();
+          const capabilities = computeEventCapabilities(updatedEvent, createdTimeslots, []);
+          await ctx.db.patch(eventId, { capabilities });
+        }
       }
       
       return { 
@@ -254,10 +259,12 @@ export const createEvent = mutation({
         }
         
         // Delete the event
-        try {
-          await ctx.db.delete(eventId);
-        } catch (cleanupError) {
-          console.error('Failed to cleanup event in final catch:', cleanupError);
+        if (eventId) {
+          try {
+            await ctx.db.delete(eventId);
+          } catch (cleanupError) {
+            console.error('Failed to cleanup event in final catch:', cleanupError);
+          }
         }
       }
       
