@@ -82,9 +82,14 @@ export default function VisualTestPage() {
             </CardContent>
           </Card>
           <ActionCard
+            icon={
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+              </svg>
+            }
             title="Action Card"
-            description="This is an action card with interactive behavior"
-            action={<Button size="sm">Action</Button>}
+            subtitle="This is an action card with interactive behavior"
+            variant="primary"
           />
         </div>
       </section>
