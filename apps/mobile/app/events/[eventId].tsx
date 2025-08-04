@@ -4,6 +4,7 @@ import { Typography, Card, Badge } from '@rite/ui';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useQuery } from 'convex/react';
 import { api } from '@rite/backend/convex/_generated/api';
+import { Id } from '@rite/backend/convex/_generated/dataModel';
 import { riteColors as colors } from '../../constants/Colors';
 import { useAuth } from '../../contexts/AuthContext';
 import { Ionicons } from '@expo/vector-icons';
@@ -15,7 +16,7 @@ export default function EventDetailScreen() {
   const { user } = useAuth();
   
   const event = useQuery(api.events.getEventWithCapabilities, 
-    eventId && user ? { eventId: eventId as any, userId: user._id } : "skip"
+    eventId && user ? { eventId: eventId as Id<"events">, userId: user._id } : "skip"
   );
 
   if (!eventId) {

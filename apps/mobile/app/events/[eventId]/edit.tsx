@@ -28,7 +28,7 @@ export default function EditEventScreen() {
   
   // Fetch existing event data
   const event = useQuery(api.events.getEvent, 
-    eventId && user ? { eventId: eventId as any, userId: user._id } : "skip"
+    eventId && user ? { eventId: eventId as Id<"events">, userId: user._id } : "skip"
   );
   
   // Form state
