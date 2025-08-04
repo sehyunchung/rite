@@ -1,3 +1,2 @@
-export { CrossPlatformInput, WebInput, NativeInput } from './CrossPlatformInput';
-export { CrossPlatformButton } from './CrossPlatformButton';
-export { CrossPlatformTextarea } from './CrossPlatformTextarea';
+// Re-export @rite/ui components - they handle platform differences automatically
+export { Button, Input, Textarea } from '@rite/ui';
