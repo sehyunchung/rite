@@ -5,7 +5,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useQuery } from 'convex/react';
 import { api } from '@rite/backend/convex/_generated/api';
 import { Id } from '@rite/backend/convex/_generated/dataModel';
-import { riteColors as colors } from '../../constants/Colors';
+// Design system colors via Tailwind CSS variables
 import { useAuth } from '../../contexts/AuthContext';
 import { Ionicons } from '@expo/vector-icons';
 import { CrossPlatformButton as Button } from '../../components/ui';
@@ -35,7 +35,7 @@ export default function EventDetailScreen() {
     return (
       <SafeAreaView className="flex-1 bg-neutral-800">
         <View className="flex-1 items-center justify-center">
-          <ActivityIndicator size="large" color={colors.brand.primary} />
+          <ActivityIndicator size="large" color="#E946FF" />
         </View>
       </SafeAreaView>
     );
@@ -87,9 +87,9 @@ export default function EventDetailScreen() {
               onPress={() => router.back()}
               className="mr-3"
             >
-              <Ionicons name="arrow-back" size={24} color={colors.functional.textPrimary} />
+              <Ionicons name="arrow-back" size={24} color="white" />
             </Pressable>
-            <Typography variant="h4" className="flex-1" style={{ color: colors.functional.textPrimary }}>
+            <Typography variant="h4" className="flex-1 text-white">
               Event Details
             </Typography>
           </View>
@@ -97,7 +97,7 @@ export default function EventDetailScreen() {
           {/* Event Info */}
           <Card className="bg-neutral-700 p-6 mb-6">
             <View className="flex-row items-center justify-between mb-4">
-              <Typography variant="h5" style={{ color: colors.functional.textPrimary }}>
+              <Typography variant="h5" className="text-white">
                 {event.name}
               </Typography>
               <Badge 
@@ -109,21 +109,21 @@ export default function EventDetailScreen() {
             
             <View className="gap-3">
               <View className="flex-row items-center">
-                <Ionicons name="location" size={20} color={colors.functional.textSecondary} />
-                <Typography variant="body" className="ml-2" style={{ color: colors.functional.textSecondary }}>
+                <Ionicons name="location" size={20} color="#9CA3AF" />
+                <Typography variant="body" className="ml-2 text-neutral-400">
                   {event.venue.name}
                 </Typography>
               </View>
               
               <View className="flex-row items-center">
-                <Ionicons name="calendar" size={20} color={colors.functional.textSecondary} />
-                <Typography variant="body" className="ml-2" style={{ color: colors.functional.textSecondary }}>
+                <Ionicons name="calendar" size={20} color="#9CA3AF" />
+                <Typography variant="body" className="ml-2 text-neutral-400">
                   {formatDate(event.date)}
                 </Typography>
               </View>
               
               {event.description && (
-                <Typography variant="body" className="mt-2" style={{ color: colors.functional.textSecondary }}>
+                <Typography variant="body" className="mt-2 text-neutral-400">
                   {event.description}
                 </Typography>
               )}
@@ -131,7 +131,7 @@ export default function EventDetailScreen() {
           </Card>
 
           {/* Timeslots */}
-          <Typography variant="h5" className="mb-4" style={{ color: colors.functional.textPrimary }}>
+          <Typography variant="h5" className="mb-4 text-white">
             DJ Lineup ({event.timeslots.length})
           </Typography>
           
@@ -140,7 +140,7 @@ export default function EventDetailScreen() {
               <Card key={slot._id} className="bg-neutral-700 p-4">
                 <View className="flex-row items-center justify-between">
                   <View className="flex-1">
-                    <Typography variant="body" style={{ color: colors.functional.textPrimary }}>
+                    <Typography variant="body" className="text-white">
                       {slot.djName}
                     </Typography>
                     <Typography variant="caption" color="secondary">
@@ -157,7 +157,7 @@ export default function EventDetailScreen() {
 
           {/* Event Details */}
           <Card className="bg-neutral-700 p-6 mb-6">
-            <Typography variant="h6" className="mb-4" style={{ color: colors.functional.textPrimary }}>
+            <Typography variant="h6" className="mb-4 text-white">
               Event Details
             </Typography>
             
@@ -166,7 +166,7 @@ export default function EventDetailScreen() {
                 <Typography variant="caption" color="secondary">
                   Guest List Deadline
                 </Typography>
-                <Typography variant="body" style={{ color: colors.functional.textPrimary }}>
+                <Typography variant="body" className="text-white">
                   {formatDate(event.deadlines.guestList)}
                 </Typography>
               </View>
@@ -175,7 +175,7 @@ export default function EventDetailScreen() {
                 <Typography variant="caption" color="secondary">
                   Promo Materials Deadline
                 </Typography>
-                <Typography variant="body" style={{ color: colors.functional.textPrimary }}>
+                <Typography variant="body" className="text-white">
                   {formatDate(event.deadlines.promoMaterials)}
                 </Typography>
               </View>
@@ -184,7 +184,7 @@ export default function EventDetailScreen() {
                 <Typography variant="caption" color="secondary">
                   Payment
                 </Typography>
-                <Typography variant="body" style={{ color: colors.functional.textPrimary }}>
+                <Typography variant="body" className="text-white">
                   {event.payment.currency} {event.payment.perDJ} per DJ
                 </Typography>
               </View>
@@ -193,7 +193,7 @@ export default function EventDetailScreen() {
                 <Typography variant="caption" color="secondary">
                   Guest Limit
                 </Typography>
-                <Typography variant="body" style={{ color: colors.functional.textPrimary }}>
+                <Typography variant="body" className="text-white">
                   {event.guestLimitPerDJ} guests per DJ
                 </Typography>
               </View>
