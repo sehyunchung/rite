@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Platform } from 'react-native';
-import { Button, ButtonProps } from '@rite/ui';
+import { Button } from '@rite/ui';
 
 interface CrossPlatformButtonProps {
   onAction?: () => void;
@@ -23,7 +23,7 @@ export function CrossPlatformButton({
     // On web, only pass web-compatible props
     return (
       <Button
-        onClick={onAction}
+        {...{ onClick: onAction } as { onClick?: () => void }}
         variant={variant}
         size={size}
         className={className}
@@ -37,7 +37,7 @@ export function CrossPlatformButton({
   // On native, use onPress
   return (
     <Button
-      onPress={onAction}
+      {...{ onPress: onAction } as { onPress?: () => void }}
       variant={variant}
       size={size}
       className={className}

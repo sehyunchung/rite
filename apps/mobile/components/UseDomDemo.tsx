@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, Platform } from 'react-native';
-import { Button } from '@rite/ui';
+import { CrossPlatformButton as Button } from './ui';
 
 // Conditional imports based on platform
 const QRCode = Platform.OS === 'web' 
@@ -49,7 +49,7 @@ export default function UseDomDemo() {
             className="mb-4"
           />
           <Button
-            onPress={() => setQrData(`https://rite.dj/event/${Date.now()}`)}
+            onAction={() => setQrData(`https://rite.dj/event/${Date.now()}`)}
             size="sm"
           >
             Generate New QR

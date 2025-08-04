@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Platform, TextInputProps } from 'react-native';
-import { Input, InputProps } from '@rite/ui';
+import { Input } from '@rite/ui';
 
 // Define cross-platform props that work on both web and native
 interface CrossPlatformInputProps {
@@ -44,11 +44,11 @@ export function CrossPlatformInput({
   return (
     <Input
       value={value}
-      onChangeText={onValueChange}
-      keyboardType={keyboardType}
-      autoCapitalize={autoCapitalize}
-      numberOfLines={numberOfLines}
-      multiline={multiline}
+      {...{ onChangeText: onValueChange } as { onChangeText?: (text: string) => void }}
+      {...{ keyboardType } as { keyboardType?: TextInputProps['keyboardType'] }}
+      {...{ autoCapitalize } as { autoCapitalize?: TextInputProps['autoCapitalize'] }}
+      {...{ numberOfLines } as { numberOfLines?: number }}
+      {...{ multiline } as { multiline?: boolean }}
       placeholder={placeholder}
       className={className}
       disabled={disabled}

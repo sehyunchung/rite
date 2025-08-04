@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Platform, TextInputProps } from 'react-native';
-import { Textarea, TextareaProps } from '@rite/ui';
+import { Textarea } from '@rite/ui';
 
 interface CrossPlatformTextareaProps {
   value: string;
@@ -38,8 +38,8 @@ export function CrossPlatformTextarea({
   return (
     <Textarea
       value={value}
-      onChangeText={onValueChange}
-      numberOfLines={numberOfLines}
+      {...{ onChangeText: onValueChange } as { onChangeText?: (text: string) => void }}
+      {...{ numberOfLines } as { numberOfLines?: number }}
       placeholder={placeholder}
       className={className}
       disabled={disabled}
