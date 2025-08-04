@@ -112,13 +112,13 @@ export const createEvent = mutation({
     }),
     description: v.optional(v.string()),
     hashtags: v.optional(v.string()),
-    deadlines: v.object({
+    deadlines: v.object({  
       guestList: v.string(),
       promoMaterials: v.string(),
     }),
     payment: v.object({
       amount: v.number(),
-      perDJ: v.number(),
+      perDJ: v.number(), 
       currency: v.string(),
       dueDate: v.string(),
     }),
