@@ -223,17 +223,17 @@ export default function CreateTab() {
 
           {/* Date */}
           <View className="mb-6">
-            <Typography variant="label" className="mb-2" style={{ color: colors.functional.textPrimary }}>
+            <Typography variant="label" className="mb-2 text-white">
               Date
             </Typography>
             <TouchableOpacity 
               className="bg-neutral-700 border border-neutral-600 rounded-xl h-12 flex-row items-center px-4"
               onPress={() => setShowDatePicker(true)}
             >
-              <Typography variant="body" className="flex-1" style={{ color: colors.functional.textPrimary }}>
+              <Typography variant="body" className="flex-1 text-white">
                 {formatDate(selectedDate)}
               </Typography>
-              <Ionicons name="calendar-outline" size={20} color={colors.functional.textSecondary} />
+              <Ionicons name="calendar-outline" size={20} color="#9CA3AF" />
             </TouchableOpacity>
           </View>
 
@@ -382,9 +382,7 @@ export default function CreateTab() {
             className="mt-4"
             disabled={isSubmitting}
           >
-            <Typography variant="button" style={{ color: colors.functional.textPrimary }}>
-              {isSubmitting ? 'Creating...' : 'Create Event'}
-            </Typography>
+            {isSubmitting ? 'Creating...' : 'Create Event'}
           </Button>
         </View>
       </ScrollView>
@@ -396,7 +394,7 @@ export default function CreateTab() {
           mode="date"
           display={Platform.OS === 'ios' ? 'spinner' : 'default'}
           onChange={onDateChange}
-          textColor={colors.functional.textPrimary}
+          textColor="white"
           themeVariant="dark"
         />
       )}
