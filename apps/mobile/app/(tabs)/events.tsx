@@ -1,8 +1,20 @@
 import * as React from 'react';
-import { View, ScrollView, SafeAreaView, Platform } from 'react-native';
-import { Typography, Card } from '@rite/ui';
+import { View, ScrollView, SafeAreaView, Platform, ActivityIndicator } from 'react-native';
+import { Typography, Card, EventCard } from '@rite/ui';
+import { useQuery } from 'convex/react';
+import { api } from '@rite/backend/convex/_generated/api';
+import { useRouter } from 'expo-router';
+import { riteColors as colors } from '../../constants/Colors';
+import { useAuth } from '../../contexts/AuthContext';
 
 export default function EventsScreen() {
+  const router = useRouter();
+  const { user } = useAuth();
+  
+  // For now, show user's events. In the future, this could show all public events
+  const events = useQuery(api.events.listEvents, 
+    user ? { userId: user._id } : "skip"
+  );
   return (
     <SafeAreaView className="flex-1 bg-neutral-800">
       <ScrollView className="flex-1">
@@ -19,14 +31,40 @@ export default function EventsScreen() {
             Discover upcoming events
           </Typography>
           
-          <Card className="bg-neutral-700 p-6 items-center">
-            <Typography variant="body" className="text-white text-center mb-1">
-              No events available
-            </Typography>
-            <Typography variant="caption" color="secondary" className="text-center">
-              Check back later for upcoming events
-            </Typography>
-          </Card>
+          {events === undefined ? (
+            <View className="p-8 items-center">
+              <ActivityIndicator size="large" color={colors.brand.primary} />
+            </View>
+          ) : events.length === 0 ? (
+            <Card className="bg-neutral-700 p-6 items-center">
+              <Typography variant="body" className="text-white text-center mb-1">
+                No events available
+              </Typography>
+              <Typography variant="caption" color="secondary" className="text-center">
+                Check back later for upcoming events
+              </Typography>
+            </Card>
+          ) : (
+            <View className="gap-4">
+              {events.map((event) => (
+                <EventCard
+                  key={event._id}
+                  eventName={event.name}
+                  venueName={event.venue.name}
+                  date={event.date}
+                  djCount={event.timeslots?.length || 0}
+                  dueDate={event.deadlines?.guestList || ''}
+                  status={event.status === 'active' ? 'published' : 'draft'}
+                  onViewDetails={() => {
+                    router.push(`/events/${event._id}`);
+                  }}
+                  onShare={() => {
+                    // TODO: Implement share functionality
+                  }}
+                />
+              ))}
+            </View>
+          )}
         </View>
       </ScrollView>
     </SafeAreaView>

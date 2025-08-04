@@ -5,6 +5,7 @@ import { StatusBar } from 'expo-status-bar';
 import { View, Text } from 'react-native';
 import 'react-native-reanimated';
 import '../global.css';
+import './index.css';
 
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { ConvexProvider } from '../providers/ConvexProvider';

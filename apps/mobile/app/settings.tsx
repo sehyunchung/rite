@@ -7,8 +7,9 @@ import {
 } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { Typography, Card, Button } from '@rite/ui';
+import { Typography, Card } from '@rite/ui';
 import { riteColors as colors } from '../constants/Colors';
+import { CrossPlatformButton as Button } from '../components/ui';
 
 interface SettingItemProps {
   icon: keyof typeof Ionicons.glyphMap;
@@ -144,7 +145,7 @@ export default function SettingsScreen() {
           <View className="mt-12 mb-8 px-6">
             <Button 
               variant="outline" 
-              onPress={handleLogout}
+              onAction={handleLogout}
               className="border-2 border-neutral-600"
             >
               <Typography variant="button" color="primary">

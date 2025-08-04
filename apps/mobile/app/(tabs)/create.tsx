@@ -13,13 +13,14 @@ import { api } from '@rite/backend/convex/_generated/api';
 import { Id } from '@rite/backend/convex/_generated/dataModel';
 import { Ionicons } from '@expo/vector-icons';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
-import { Typography, Button, Input, Card } from '@rite/ui';
+import { Typography, Card } from '@rite/ui';
 import { riteColors as colors } from '../../constants/Colors';
-import { useAuthContext } from '../../contexts/AuthContext';
+import { useAuth } from '../../contexts/AuthContext';
+import { CrossPlatformInput as Input, CrossPlatformButton as Button } from '../../components/ui';
 
 export default function CreateTab() {
   const router = useRouter();
-  const { user } = useAuthContext();
+  const { user } = useAuth();
   const createEvent = useMutation(api.events.createEvent);
   
   const [eventName, setEventName] = React.useState('');
@@ -79,7 +80,7 @@ export default function CreateTab() {
   };
 
   const handleCreateEvent = async () => {
-    if (!user?.id) {
+    if (!user?._id) {
       Alert.alert('Error', 'You must be logged in to create an event');
       return;
     }
@@ -101,7 +102,7 @@ export default function CreateTab() {
       guestDeadline.setDate(guestDeadline.getDate() - 3);
 
       const eventData = {
-        userId: user.id as Id<"users">,
+        userId: user._id as Id<"users">,
         name: eventName.trim(),
         date: eventDate,
         venue: {
@@ -214,7 +215,7 @@ export default function CreateTab() {
             <Input
               placeholder="Enter event name"
               value={eventName}
-              onChangeText={setEventName}
+              onValueChange={setEventName}
               autoCapitalize="words"
               className="bg-neutral-700 border-neutral-600"
             />
@@ -244,7 +245,7 @@ export default function CreateTab() {
             <Input
               placeholder="Enter venue name"
               value={venueName}
-              onChangeText={setVenueName}
+              onValueChange={setVenueName}
               autoCapitalize="words"
               className="bg-neutral-700 border-neutral-600"
             />
@@ -257,7 +258,7 @@ export default function CreateTab() {
             <Input
               placeholder="Enter venue address"
               value={venueAddress}
-              onChangeText={setVenueAddress}
+              onValueChange={setVenueAddress}
               autoCapitalize="words"
               className="bg-neutral-700 border-neutral-600"
             />
@@ -271,7 +272,7 @@ export default function CreateTab() {
             <Input
               placeholder="Event description"
               value={description}
-              onChangeText={setDescription}
+              onValueChange={setDescription}
               multiline
               numberOfLines={3}
               className="bg-neutral-700 border-neutral-600"
@@ -286,7 +287,7 @@ export default function CreateTab() {
             <Input
               placeholder="#rave #techno #seoul"
               value={hashtags}
-              onChangeText={setHashtags}
+              onValueChange={setHashtags}
               className="bg-neutral-700 border-neutral-600"
             />
           </View>
@@ -327,7 +328,7 @@ export default function CreateTab() {
                       </Typography>
                       <Input
                         value={slot.startTime}
-                        onChangeText={(value) => updateDjSlot(slot.id, 'startTime', value)}
+                        onValueChange={(value) => updateDjSlot(slot.id, 'startTime', value)}
                         placeholder="22:00"
                         className="bg-neutral-800 border-neutral-600 text-xs"
                       />
@@ -338,7 +339,7 @@ export default function CreateTab() {
                       </Typography>
                       <Input
                         value={slot.endTime}
-                        onChangeText={(value) => updateDjSlot(slot.id, 'endTime', value)}
+                        onValueChange={(value) => updateDjSlot(slot.id, 'endTime', value)}
                         placeholder="23:00"
                         className="bg-neutral-800 border-neutral-600 text-xs"
                       />
@@ -352,7 +353,7 @@ export default function CreateTab() {
                     </Typography>
                     <Input
                       value={slot.djName}
-                      onChangeText={(value) => updateDjSlot(slot.id, 'djName', value)}
+                      onValueChange={(value) => updateDjSlot(slot.id, 'djName', value)}
                       placeholder="DJ Name"
                       className="bg-neutral-800 border-neutral-600"
                     />
@@ -365,7 +366,7 @@ export default function CreateTab() {
                     </Typography>
                     <Input
                       value={slot.djInstagram}
-                      onChangeText={(value) => updateDjSlot(slot.id, 'djInstagram', value)}
+                      onValueChange={(value) => updateDjSlot(slot.id, 'djInstagram', value)}
                       placeholder="@username"
                       className="bg-neutral-800 border-neutral-600"
                     />
@@ -377,7 +378,7 @@ export default function CreateTab() {
 
           {/* Create Button */}
           <Button 
-            onPress={handleCreateEvent}
+            onAction={handleCreateEvent}
             className="mt-4"
             disabled={isSubmitting}
           >
