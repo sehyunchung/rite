@@ -2,11 +2,9 @@ import { renderHook, waitFor } from '@testing-library/react'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { useValidatedEvents, useValidatedEvent } from '@/app/hooks/useValidatedEvents'
 
-// Mock the Convex client
-const mockUseQuery = vi.fn()
-
+// Mock the Convex client - must be declared before vi.mock
 vi.mock('convex/react', () => ({
-  useQuery: mockUseQuery,
+  useQuery: vi.fn(),
 }))
 
 // Mock the API
@@ -18,6 +16,10 @@ vi.mock('@rite/backend/convex/_generated/api', () => ({
     },
   },
 }))
+
+// Import the mocked function
+import { useQuery } from 'convex/react'
+const mockUseQuery = vi.mocked(useQuery)
 
 // Mock data types
 const mockEvent = {

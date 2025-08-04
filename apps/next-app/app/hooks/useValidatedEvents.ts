@@ -49,6 +49,6 @@ export function useValidatedEvent(eventId: string, userId: string) {
   return {
     event,
     isLoading: event === undefined,
-    exists: event !== null,
+    exists: event !== null && event !== undefined,
   };
 }
