@@ -3,22 +3,17 @@
 import { Card, CardContent } from '@rite/ui';
 import { CopyButton } from './CopyButton';
 import { useTranslations } from 'next-intl';
-import { Doc } from '@rite/backend/convex/_generated/dataModel';
-
-// Type for events that includes timeslots from query results
-type EventWithTimeslots = Doc<"events"> & {
-  timeslots: Doc<"timeslots">[];
-};
+import { ValidatedEvent } from '@/hooks/useEffectEvents';
 
 interface SubmissionLinksProps {
-  events: EventWithTimeslots[];
+  events: ValidatedEvent[];
 }
 
 export function SubmissionLinks({ events }: SubmissionLinksProps) {
   const baseUrl = typeof window !== 'undefined' ? window.location.origin : '';
   const t = useTranslations('events.detail.submissionLinks');
 
-  if (!events.some((event) => event.timeslots?.length > 0)) {
+  if (!events.some((event) => event.timeslots.length > 0)) {
     return null;
   }
 
