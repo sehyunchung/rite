@@ -5,7 +5,7 @@ export const TimeslotValidation = type({
   id: 'string',
   startTime: 'string',
   endTime: 'string',
-  djName: 'string',
+  djName: 'string', // Optional in practice, but form handles empty string
   djInstagram: 'string',
 });
 
@@ -23,9 +23,9 @@ export const EventValidation = type({
     promoMaterials: 'string',
   },
   payment: {
-    amount: 'number>0',
-    perDJ: 'number>0', // Payment amount per DJ
-    currency: '"KRW" | "USD" | "EUR"',
+    amount: 'number>=0',
+    perDJ: 'number>=0',
+    currency: 'string',
     dueDate: 'string',
   },
   guestLimitPerDJ: 'number>0', // Maximum guests each DJ can add
@@ -191,6 +191,15 @@ export function getDefaultGuestListDeadline(eventDate: string): string {
   const guestDeadline = new Date(event);
   guestDeadline.setDate(event.getDate() - 1); // Day before event
   
+  // Ensure deadline is not in the past
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  
+  if (guestDeadline < today) {
+    // If calculated deadline is in the past, use today
+    return today.toISOString().split('T')[0];
+  }
+  
   return guestDeadline.toISOString().split('T')[0];
 }
 
@@ -200,6 +209,15 @@ export function getDefaultPromoDeadline(eventDate: string): string {
   const event = new Date(eventDate);
   const promoDeadline = new Date(event);
   promoDeadline.setDate(event.getDate() - 21); // 3 weeks (21 days) before event
+  
+  // Ensure deadline is not in the past
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  
+  if (promoDeadline < today) {
+    // If calculated deadline is in the past, use today
+    return today.toISOString().split('T')[0];
+  }
   
   return promoDeadline.toISOString().split('T')[0];
 }
@@ -327,3 +345,4 @@ export function validatePromoDeadline(promoDate: string, eventDate: string): {
   
   return { isValid: true };
 }
+
