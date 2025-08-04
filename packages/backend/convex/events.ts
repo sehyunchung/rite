@@ -32,7 +32,7 @@ export const listEvents = query({
       .order("desc")
       .collect();
     
-    // Get timeslots for each event
+    // Get timeslots for each event and ensure data integrity
     const eventsWithTimeslots = await Promise.all(
       events.map(async (event) => {
         const timeslots = await ctx.db
@@ -40,15 +40,20 @@ export const listEvents = query({
           .filter((q) => q.eq(q.field("eventId"), event._id))
           .collect();
         
+        // Data integrity check - events should always have timeslots
+        if (timeslots.length === 0) {
+          console.error(`Event ${event._id} has no timeslots - this should not happen`);
+        }
+        
         return {
           ...event,
-          guestLimitPerDJ: event.guestLimitPerDJ ?? 2, // Default to 2 guests per DJ
+          guestLimitPerDJ: event.guestLimitPerDJ ?? 2,
           payment: {
             ...event.payment,
-            perDJ: event.payment.perDJ ?? event.payment.amount, // Default perDJ to total amount
+            perDJ: event.payment.perDJ ?? event.payment.amount,
           },
-          hashtags: event.hashtags ?? '', // Default to empty string
-          timeslots,
+          hashtags: event.hashtags ?? '',
+          timeslots, // Always an array (empty if no timeslots found)
         };
       })
     );
@@ -107,13 +112,13 @@ export const createEvent = mutation({
     }),
     description: v.optional(v.string()),
     hashtags: v.optional(v.string()),
-    deadlines: v.object({
+    deadlines: v.object({  
       guestList: v.string(),
       promoMaterials: v.string(),
     }),
     payment: v.object({
       amount: v.number(),
-      perDJ: v.number(),
+      perDJ: v.number(), 
       currency: v.string(),
       dueDate: v.string(),
     }),
@@ -127,6 +132,11 @@ export const createEvent = mutation({
   },
   handler: async (ctx, args) => {
     const { userId, timeslots, ...eventData } = args;
+    
+    // Validate that at least one timeslot is provided
+    if (!timeslots || timeslots.length === 0) {
+      throw new Error("At least one timeslot is required to create an event");
+    }
     
     // Create the event with authenticated user as organizer
     const now = new Date().toISOString();

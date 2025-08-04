@@ -4,7 +4,7 @@ import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../../contexts/AuthContext';
 import { Typography, Card } from '@rite/ui';
-import { colors } from '@rite/ui/design-tokens';
+import { riteColors as colors } from '../../constants/Colors';
 
 export default function ProfileScreen() {
   const router = useRouter();

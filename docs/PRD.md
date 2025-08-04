@@ -6,10 +6,16 @@ A web application that streamlines the booking and administration process for lo
 
 ## Tech Stack
 
-- **Backend**: Convex
-- **Frontend**: React, Tanstack Router, Tailwind CSS
-- **Authentication**: Instagram OAuth Login using Clerk and Cloudflare Workers Proxy
+- **Monorepo**: pnpm workspaces + Turborepo
+- **Frontend**: Next.js 15, React 18, TypeScript, Turbopack
+- **Mobile**: Expo SDK 53, React Native 0.79.5
+- **Backend**: Convex real-time database
+- **Authentication**: NextAuth v5 + Instagram OAuth proxy + Google OAuth
+- **Design System**: Dark-first @rite/ui with CSS variables and dynamic theme switching
+- **Styling**: Tailwind CSS with ES modules
+- **i18n**: next-intl with [locale] routing
 - **Storage**: Convex file storage for uploads
+- **Validation**: ArkType
 - **Security**: Encrypted storage for sensitive payment information
 
 ## Core User Flows
@@ -18,8 +24,10 @@ A web application that streamlines the booking and administration process for lo
 
 #### 1.1 Authentication
 
-- Simple auth for organizers only (magic link email or Google OAuth)
-- No authentication required for DJs
+- NextAuth v5 with Instagram OAuth (via Cloudflare Worker proxy) and Google OAuth
+- Mobile authentication via modular hook-based architecture
+- Cross-platform support (web, iOS, Android, Expo Go)
+- No authentication required for DJs (unique submission links)
 
 #### 1.2 Event Creation
 

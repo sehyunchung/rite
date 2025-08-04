@@ -1,5 +1,39 @@
 const { tokens } = require('@rite/ui/design-tokens');
 
+// Josh Comeau theme static values for mobile (from themes.ts)
+const defaultTheme = {
+  brand: {
+    primary: 'hsl(225 100% 75%)',      // #7C7CFF
+    primaryDark: 'hsl(225 100% 60%)',  // #5C5CFF
+    primaryLight: 'hsl(225 100% 85%)', // #9C9CFF
+  },
+  neutral: {
+    0: 'hsl(210 25% 96%)',     // #F5F5F8
+    50: 'hsl(210 25% 88%)',    // #DDDDE5
+    100: 'hsl(210 20% 77%)',   // #C4C4D1
+    200: 'hsl(210 14% 66%)',   // #A8A8BD
+    300: 'hsl(210 12% 55%)',   // #8C8CA3
+    400: 'hsl(210 8% 50%)',    // #70707F
+    500: 'hsl(210 9% 40%)',    // #616166
+    600: 'hsl(210 10% 30%)',   // #47474D
+    700: 'hsl(210 15% 18%)',   // #26262E
+    800: 'hsl(210 15% 12%)',   // #1A1A1F
+    900: 'hsl(210 15% 6%)',    // #0F0F10
+  },
+  semantic: {
+    success: 'hsl(160 100% 40%)',  // #00CC66
+    warning: 'hsl(40 100% 50%)',   // #FFCC00
+    error: 'hsl(340 95% 60%)',     // #FF3366
+    info: 'hsl(225 100% 80%)',     // #9999FF
+  },
+  functional: {
+    textPrimary: 'hsl(210 10% 90%)',     // #E0E0E6
+    textSecondary: 'hsl(210 12% 55%)',   // #8C8CA3
+    textMuted: 'hsl(210 8% 50%)',        // #70707F
+    border: 'hsl(210 15% 18%)',          // #26262E
+  },
+};
+
 // Convert numeric values to pixel strings
 const pxValue = (value) => `${value}px`;
 
@@ -19,34 +53,34 @@ module.exports = {
       },
       colors: {
         // Brand colors from design system
-        'brand-primary': tokens.colors.brand.primary,
-        'brand-primary-dark': tokens.colors.brand.primaryDark,
-        'brand-primary-light': tokens.colors.brand.primaryLight,
+        'brand-primary': defaultTheme.brand.primary,
+        'brand-primary-dark': defaultTheme.brand.primaryDark,
+        'brand-primary-light': defaultTheme.brand.primaryLight,
         
         // Neutral palette
-        neutral: tokens.colors.neutral,
+        neutral: defaultTheme.neutral,
         
         // Semantic colors
-        success: tokens.colors.semantic.success,
-        warning: tokens.colors.semantic.warning,
-        error: tokens.colors.semantic.error,
-        info: tokens.colors.semantic.info,
+        success: defaultTheme.semantic.success,
+        warning: defaultTheme.semantic.warning,
+        error: defaultTheme.semantic.error,
+        info: defaultTheme.semantic.info,
         
         // Functional colors
-        border: tokens.colors.functional.border,
-        background: tokens.colors.neutral[800],
-        foreground: tokens.colors.functional.textPrimary,
+        border: defaultTheme.functional.border,
+        background: defaultTheme.neutral[800],
+        foreground: defaultTheme.functional.textPrimary,
         primary: {
-          DEFAULT: tokens.colors.brand.primary,
-          foreground: tokens.colors.neutral[0],
+          DEFAULT: defaultTheme.brand.primary,
+          foreground: defaultTheme.neutral[0],
         },
         secondary: {
-          DEFAULT: tokens.colors.neutral[600],
-          foreground: tokens.colors.functional.textPrimary,
+          DEFAULT: defaultTheme.neutral[600],
+          foreground: defaultTheme.functional.textPrimary,
         },
         muted: {
-          DEFAULT: tokens.colors.neutral[700],
-          foreground: tokens.colors.functional.textSecondary,
+          DEFAULT: defaultTheme.neutral[700],
+          foreground: defaultTheme.functional.textSecondary,
         },
       },
       spacing: Object.fromEntries(

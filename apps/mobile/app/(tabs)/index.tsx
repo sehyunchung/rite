@@ -3,7 +3,7 @@ import { View, ScrollView, SafeAreaView, Platform } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { Button, Typography, Card } from '@rite/ui';
-import { colors } from '@rite/ui/design-tokens';
+import { riteColors as colors } from '../../constants/Colors';
 
 export default function HomeScreen() {
   const router = useRouter();

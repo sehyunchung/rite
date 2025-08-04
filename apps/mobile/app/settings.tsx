@@ -8,7 +8,7 @@ import {
 import { Stack, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { Typography, Card, Button } from '@rite/ui';
-import { colors } from '@rite/ui/design-tokens';
+import { riteColors as colors } from '../constants/Colors';
 
 interface SettingItemProps {
   icon: keyof typeof Ionicons.glyphMap;

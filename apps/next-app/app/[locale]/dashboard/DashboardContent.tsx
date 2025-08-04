@@ -1,8 +1,5 @@
 'use client';
 
-import { useQuery } from 'convex/react';
-import { api } from '@rite/backend/convex/_generated/api';
-import { Id, Doc } from '@rite/backend/convex/_generated/dataModel';
 import { Card, CardContent } from '@rite/ui';
 import { Button } from '@rite/ui';
 import { ActionCard } from '@rite/ui';
@@ -12,11 +9,7 @@ import { Link } from '../../../i18n/routing';
 import { useSession } from 'next-auth/react';
 import { useTranslations } from 'next-intl';
 import { LoadingIndicator } from '@rite/ui';
-
-// Type for events that includes timeslots from query results
-type EventWithTimeslots = Doc<"events"> & {
-  timeslots: Doc<"timeslots">[];
-};
+import { useValidatedEvents } from '@/hooks/useValidatedEvents';
 
 interface DashboardContentProps {
   userId: string;
@@ -27,16 +20,11 @@ export function DashboardContent({ userId }: DashboardContentProps) {
   const baseUrl = typeof window !== 'undefined' ? window.location.origin : '';
   const t = useTranslations('dashboard');
   
-  // Query events for the authenticated user
-  const events = useQuery(
-    api.events.listEvents,
-    userId ? { userId: userId as Id<"users"> } : "skip"
-  ) as EventWithTimeslots[] | undefined;
+  // Use validated events hook for type safety
+  const { events, isLoading } = useValidatedEvents(userId);
   
-  const eventsData = events || [];
-  
-  // Show loading state while session is loading
-  if (status === 'loading') {
+  // Show loading state while session or events are loading
+  if (status === 'loading' || isLoading) {
     return (
       <div className="space-y-8">
         {/* Placeholder for action cards grid */}
@@ -99,7 +87,7 @@ export function DashboardContent({ userId }: DashboardContentProps) {
         <Typography variant="h3" className="mb-4">{t('yourEvents')}</Typography>
       </div>
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {eventsData.length === 0 ? (
+        {events.length === 0 ? (
           <Card className="col-span-full">
             <CardContent className="pt-6">
               <div className="text-center">
@@ -113,7 +101,7 @@ export function DashboardContent({ userId }: DashboardContentProps) {
             </CardContent>
           </Card>
         ) : (
-          eventsData.map((event) => (
+          events.map((event) => (
             <EventCard
               key={event._id}
               eventName={event.name}
