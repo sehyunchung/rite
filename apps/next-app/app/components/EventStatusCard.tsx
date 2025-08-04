@@ -152,7 +152,7 @@ export function EventStatusCard({ eventId, userId }: EventStatusCardProps) {
                 <p className="text-sm">
                   {t('submissionStatus', {
                     count: event.submissionCount,
-                    total: event.timeslots?.length ?? 0,
+                    total: event.timeslots.length,
                   })}
                 </p>
               </div>
