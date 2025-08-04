@@ -135,7 +135,9 @@
       "cancellationReason": "Cancellation Reason (Optional)",
       "cancellationReasonPlaceholder": "Explain why the event is being cancelled...",
       "keepEvent": "Keep Event",
-      "cancelling": "Cancelling..."
+      "cancelling": "Cancelling...",
+      "invalidRequest": "Invalid Request",
+      "invalidRequestMessage": "The request contains invalid parameters"
     },
     "edit": {
       "title": "Edit Event",
@@ -161,7 +163,9 @@
       "guestCount": "{count, plural, one {# guest} other {# guests}}",
       "eventNotFound": "Event not found",
       "eventNotFoundMessage": "The event you're trying to edit doesn't exist or you don't have permission to edit it.",
-      "backToDashboard": "Back to Dashboard"
+      "backToDashboard": "Back to Dashboard",
+      "invalidRequest": "Invalid Request",
+      "invalidRequestMessage": "The request contains invalid parameters"
     },
     "submissions": {
       "title": "Event Submissions",
@@ -170,6 +174,8 @@
       "notFound": "Event Not Found",
       "notFoundMessage": "The event you're looking for doesn't exist or you don't have access to it.",
       "backToDashboard": "Back to Dashboard",
+      "invalidRequest": "Invalid Request",
+      "invalidRequestMessage": "The request contains invalid parameters",
       "submitted": "submissions",
       "status": {
         "submitted": "Submitted",

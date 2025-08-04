@@ -135,7 +135,9 @@
       "cancellationReason": "취소 사유 (선택사항)",
       "cancellationReasonPlaceholder": "이벤트가 취소되는 이유를 설명해주세요...",
       "keepEvent": "이벤트 유지",
-      "cancelling": "취소 중..."
+      "cancelling": "취소 중...",
+      "invalidRequest": "잘못된 요청",
+      "invalidRequestMessage": "요청에 유효하지 않은 매개변수가 포함되어 있습니다"
     },
     "edit": {
       "title": "이벤트 편집",
@@ -161,7 +163,9 @@
       "guestCount": "{count}명",
       "eventNotFound": "이벤트를 찾을 수 없음",
       "eventNotFoundMessage": "편집하려는 이벤트가 존재하지 않거나 편집할 권한이 없습니다.",
-      "backToDashboard": "대시보드로 돌아가기"
+      "backToDashboard": "대시보드로 돌아가기",
+      "invalidRequest": "잘못된 요청",
+      "invalidRequestMessage": "요청에 유효하지 않은 매개변수가 포함되어 있습니다"
     },
     "submissions": {
       "title": "이벤트 제출물",
@@ -170,6 +174,8 @@
       "notFound": "이벤트를 찾을 수 없음",
       "notFoundMessage": "찾고 계신 이벤트가 존재하지 않거나 접근 권한이 없습니다.",
       "backToDashboard": "대시보드로 돌아가기",
+      "invalidRequest": "잘못된 요청",
+      "invalidRequestMessage": "요청에 유효하지 않은 매개변수가 포함되어 있습니다",
       "submitted": "제출물",
       "status": {
         "submitted": "제출됨",
