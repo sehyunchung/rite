@@ -10,7 +10,7 @@ interface AuthProviderProps {
   children: React.ReactNode;
 }
 
-export function AuthProvider({ children }: AuthProviderProps) {
+export const AuthProvider = React.memo(({ children }: AuthProviderProps) => {
   const convex = useConvex();
   const [error, setError] = React.useState<AuthError | null>(null);
   
@@ -78,7 +78,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
       {children}
     </AuthContext.Provider>
   );
-}
+});
+
+AuthProvider.displayName = 'AuthProvider';
 
 export function useAuth() {
   const context = React.useContext(AuthContext);
