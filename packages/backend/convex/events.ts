@@ -225,9 +225,14 @@ export const createEvent = mutation({
       }
       
       // Update capabilities now that all timeslots are created successfully
-      const event = await ctx.db.get(eventId);
-      if (event) {
-        const capabilities = computeEventCapabilities(event, timeslots as any, []);
+      const updatedEvent = await ctx.db.get(eventId);
+      if (updatedEvent) {
+        // Get the actual created timeslots from the database
+        const createdTimeslots = await ctx.db
+          .query("timeslots")
+          .filter((q) => q.eq(q.field("eventId"), eventId))
+          .collect();
+        const capabilities = computeEventCapabilities(updatedEvent, createdTimeslots, []);
         await ctx.db.patch(eventId, { capabilities });
       }
       
