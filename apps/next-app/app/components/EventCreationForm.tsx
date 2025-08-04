@@ -38,9 +38,7 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
   const createEvent = useMutation(api.events.createEvent);
   const { data: session, status } = useSession();
 
-  // Debug session data
-  console.log('EventCreationForm session:', session);
-  console.log('Session status:', status);
+  // Session authentication check
   
   const [formData, setFormData] = useState<EventFormData>({
     name: '',
@@ -285,8 +283,7 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
         return;
       }
 
-      console.log('Session data:', session);
-      console.log('User ID:', session.user.id);
+      // User authenticated, proceeding with event creation
 
       const eventData = {
         userId: session.user.id as Id<"users">,
@@ -306,7 +303,7 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
         timeslots: timeslots.map(({ id: _id, ...slot }) => slot), // Remove the temporary id
       };
 
-      console.log('Event data being sent:', eventData);
+      // Submit event data to backend
       await createEvent(eventData);
       
       toast.success('Event created successfully!');
@@ -666,11 +663,10 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
                   <div className="space-y-2">
                     <Label>{t('djName')}</Label>
                     <Input
-                      placeholder="DJ Name"
+                      placeholder="DJ Name (optional)"
                       value={slot.djName}
                       onChange={(e) => updateTimeslot(slot.id, 'djName', e.target.value)}
                       className={errors[`timeslot-${slot.id}-djName`] ? 'border-red-500' : ''}
-                      required
                     />
                     {errors[`timeslot-${slot.id}-djName`] && (
                       <p className="text-xs text-red-500 mt-1">{errors[`timeslot-${slot.id}-djName`]}</p>
