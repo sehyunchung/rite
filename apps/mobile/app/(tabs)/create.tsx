@@ -14,9 +14,8 @@ import { Id } from '@rite/backend/convex/_generated/dataModel';
 import { Ionicons } from '@expo/vector-icons';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { Typography, Card } from '@rite/ui';
-import { riteColors as colors } from '../../constants/Colors';
 import { useAuth } from '../../contexts/AuthContext';
-import { CrossPlatformInput as Input, CrossPlatformButton as Button } from '../../components/ui';
+import { Input, Button } from '@rite/ui';
 
 export default function CreateTab() {
   const router = useRouter();
@@ -203,19 +202,19 @@ export default function CreateTab() {
             paddingBottom: Platform.OS === 'ios' ? 124 : 104 
           }}
         >
-          <Typography variant="h3" className="mb-8" style={{ color: colors.functional.textPrimary }}>
+          <Typography variant="h3" className="mb-8 text-white">
             Create Event
           </Typography>
           
           {/* Event Name */}
           <View className="mb-6">
-            <Typography variant="label" className="mb-2" style={{ color: colors.functional.textPrimary }}>
+            <Typography variant="label" className="mb-2 text-white">
               Event Name
             </Typography>
             <Input
               placeholder="Enter event name"
               value={eventName}
-              onValueChange={setEventName}
+              onChangeText={setEventName}
               autoCapitalize="words"
               className="bg-neutral-700 border-neutral-600"
             />
@@ -239,26 +238,26 @@ export default function CreateTab() {
 
           {/* Venue */}
           <View className="mb-6">
-            <Typography variant="label" className="mb-2" style={{ color: colors.functional.textPrimary }}>
+            <Typography variant="label" className="mb-2 text-white">
               Venue Name
             </Typography>
             <Input
               placeholder="Enter venue name"
               value={venueName}
-              onValueChange={setVenueName}
+              onChangeText={setVenueName}
               autoCapitalize="words"
               className="bg-neutral-700 border-neutral-600"
             />
           </View>
 
           <View className="mb-6">
-            <Typography variant="label" className="mb-2" style={{ color: colors.functional.textPrimary }}>
+            <Typography variant="label" className="mb-2 text-white">
               Venue Address
             </Typography>
             <Input
               placeholder="Enter venue address"
               value={venueAddress}
-              onValueChange={setVenueAddress}
+              onChangeText={setVenueAddress}
               autoCapitalize="words"
               className="bg-neutral-700 border-neutral-600"
             />
@@ -266,13 +265,13 @@ export default function CreateTab() {
 
           {/* Description */}
           <View className="mb-6">
-            <Typography variant="label" className="mb-2" style={{ color: colors.functional.textPrimary }}>
+            <Typography variant="label" className="mb-2 text-white">
               Description (optional)
             </Typography>
             <Input
               placeholder="Event description"
               value={description}
-              onValueChange={setDescription}
+              onChangeText={setDescription}
               multiline
               numberOfLines={3}
               className="bg-neutral-700 border-neutral-600"
@@ -281,13 +280,13 @@ export default function CreateTab() {
 
           {/* Hashtags */}
           <View className="mb-6">
-            <Typography variant="label" className="mb-2" style={{ color: colors.functional.textPrimary }}>
+            <Typography variant="label" className="mb-2 text-white">
               Hashtags (optional)
             </Typography>
             <Input
               placeholder="#rave #techno #seoul"
               value={hashtags}
-              onValueChange={setHashtags}
+              onChangeText={setHashtags}
               className="bg-neutral-700 border-neutral-600"
             />
           </View>
@@ -295,11 +294,11 @@ export default function CreateTab() {
           {/* DJ Lineup */}
           <View className="mb-6">
             <View className="flex-row justify-between items-center mb-3">
-              <Typography variant="label" style={{ color: colors.functional.textPrimary }}>
+              <Typography variant="label" className="text-white">
                 DJ Lineup
               </Typography>
               <TouchableOpacity className="flex-row items-center" onPress={addDjSlot}>
-                <Ionicons name="add" size={20} color={colors.brand.primary} />
+                <Ionicons name="add" size={20} color="var(--brand-primary)" />
                 <Typography variant="button" color="primary" className="ml-1">
                   Add Slot
                 </Typography>
@@ -309,12 +308,12 @@ export default function CreateTab() {
             {djSlots.map((slot, index) => (
               <Card key={slot.id} className="bg-neutral-700 border-neutral-600 p-4 mb-3">
                 <View className="flex-row justify-between items-center mb-3">
-                  <Typography variant="body" style={{ color: colors.functional.textPrimary }}>
+                  <Typography variant="body" className="text-white">
                     Slot {index + 1}
                   </Typography>
                   {djSlots.length > 1 && (
                     <TouchableOpacity onPress={() => removeDjSlot(slot.id)}>
-                      <Ionicons name="trash-outline" size={20} color={colors.semantic.error} />
+                      <Ionicons name="trash-outline" size={20} color="var(--color-error)" />
                     </TouchableOpacity>
                   )}
                 </View>
@@ -323,23 +322,23 @@ export default function CreateTab() {
                   {/* Time Range */}
                   <View className="flex-row space-x-3">
                     <View className="flex-1">
-                      <Typography variant="caption" className="mb-1" style={{ color: colors.functional.textSecondary }}>
+                      <Typography variant="caption" className="mb-1 text-neutral-400">
                         Start Time
                       </Typography>
                       <Input
                         value={slot.startTime}
-                        onValueChange={(value) => updateDjSlot(slot.id, 'startTime', value)}
+                        onChangeText={(value) => updateDjSlot(slot.id, 'startTime', value)}
                         placeholder="22:00"
                         className="bg-neutral-800 border-neutral-600 text-xs"
                       />
                     </View>
                     <View className="flex-1">
-                      <Typography variant="caption" className="mb-1" style={{ color: colors.functional.textSecondary }}>
+                      <Typography variant="caption" className="mb-1 text-neutral-400">
                         End Time
                       </Typography>
                       <Input
                         value={slot.endTime}
-                        onValueChange={(value) => updateDjSlot(slot.id, 'endTime', value)}
+                        onChangeText={(value) => updateDjSlot(slot.id, 'endTime', value)}
                         placeholder="23:00"
                         className="bg-neutral-800 border-neutral-600 text-xs"
                       />
@@ -348,12 +347,12 @@ export default function CreateTab() {
                   
                   {/* DJ Name */}
                   <View>
-                    <Typography variant="caption" className="mb-1" style={{ color: colors.functional.textSecondary }}>
+                    <Typography variant="caption" className="mb-1 text-neutral-400">
                       DJ Name (optional)
                     </Typography>
                     <Input
                       value={slot.djName}
-                      onValueChange={(value) => updateDjSlot(slot.id, 'djName', value)}
+                      onChangeText={(value) => updateDjSlot(slot.id, 'djName', value)}
                       placeholder="DJ Name"
                       className="bg-neutral-800 border-neutral-600"
                     />
@@ -361,12 +360,12 @@ export default function CreateTab() {
                   
                   {/* Instagram Handle */}
                   <View>
-                    <Typography variant="caption" className="mb-1" style={{ color: colors.functional.textSecondary }}>
+                    <Typography variant="caption" className="mb-1 text-neutral-400">
                       Instagram Handle *
                     </Typography>
                     <Input
                       value={slot.djInstagram}
-                      onValueChange={(value) => updateDjSlot(slot.id, 'djInstagram', value)}
+                      onChangeText={(value) => updateDjSlot(slot.id, 'djInstagram', value)}
                       placeholder="@username"
                       className="bg-neutral-800 border-neutral-600"
                     />
@@ -378,7 +377,7 @@ export default function CreateTab() {
 
           {/* Create Button */}
           <Button 
-            onAction={handleCreateEvent}
+            onPress={handleCreateEvent}
             className="mt-4"
             disabled={isSubmitting}
           >

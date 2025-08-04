@@ -9,7 +9,6 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../contexts/AuthContext';
 import { typography } from '../constants/Typography';
-import { riteColors } from '../constants/Colors';
 import { shadows } from '../utils/shadow';
 
 export default function AuthScreen() {
@@ -41,7 +40,7 @@ export default function AuthScreen() {
             onPress={signIn}
             disabled={isLoading || !hasGoogleConfig}
           >
-            <Ionicons name="logo-google" size={20} color={riteColors.neutral[800]} />
+            <Ionicons name="logo-google" size={20} color="var(--neutral-800)" />
             <Text style={styles.googleButtonText}>
               {!hasGoogleConfig 
                 ? 'Google OAuth Not Configured' 
@@ -63,7 +62,7 @@ export default function AuthScreen() {
             style={[styles.instagramButton, styles.comingSoon]}
             disabled={true}
           >
-            <Ionicons name="logo-instagram" size={20} color={riteColors.functional.textMuted} />
+            <Ionicons name="logo-instagram" size={20} color="var(--neutral-500)" />
             <Text style={styles.instagramButtonText}>
               Continue with Instagram (Coming Soon)
             </Text>
@@ -84,7 +83,7 @@ export default function AuthScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: riteColors.neutral[800],
+    backgroundColor: 'var(--neutral-800)',
   },
   content: {
     flex: 1,
@@ -97,19 +96,19 @@ const styles = StyleSheet.create({
   },
   title: {
     ...typography.h1,
-    color: riteColors.brand.primary,
+    color: 'var(--brand-primary)',
     marginBottom: 8,
     fontSize: 48,
     fontFamily: 'SUIT-Bold',
   },
   subtitle: {
     ...typography.h5,
-    color: riteColors.neutral[0],
+    color: 'var(--neutral-0)',
     marginBottom: 16,
   },
   description: {
     ...typography.body,
-    color: riteColors.functional.textSecondary,
+    color: 'var(--neutral-400)',
     textAlign: 'center',
     lineHeight: 24,
     maxWidth: 280,
@@ -119,7 +118,7 @@ const styles = StyleSheet.create({
     marginBottom: 48,
   },
   googleButton: {
-    backgroundColor: riteColors.neutral[0],
+    backgroundColor: 'var(--neutral-0)',
     borderRadius: 12,
     height: 56,
     flexDirection: 'row',
@@ -130,11 +129,11 @@ const styles = StyleSheet.create({
   },
   googleButtonText: {
     ...typography.button,
-    color: riteColors.neutral[800],
+    color: 'var(--neutral-800)',
     fontSize: 16,
   },
   instagramButton: {
-    backgroundColor: riteColors.neutral[700],
+    backgroundColor: 'var(--neutral-700)',
     borderRadius: 12,
     height: 56,
     flexDirection: 'row',
@@ -142,14 +141,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: 12,
     borderWidth: 1,
-    borderColor: riteColors.functional.border,
+    borderColor: 'var(--neutral-600)',
   },
   comingSoon: {
     opacity: 0.5,
   },
   instagramButtonText: {
     ...typography.button,
-    color: riteColors.functional.textMuted,
+    color: 'var(--neutral-500)',
     fontSize: 16,
   },
   termsSection: {
@@ -157,7 +156,7 @@ const styles = StyleSheet.create({
   },
   termsText: {
     ...typography.caption,
-    color: riteColors.functional.textMuted,
+    color: 'var(--neutral-500)',
     textAlign: 'center',
     lineHeight: 20,
     maxWidth: 280,
@@ -167,7 +166,7 @@ const styles = StyleSheet.create({
   },
   configText: {
     ...typography.caption,
-    color: riteColors.functional.textMuted,
+    color: 'var(--neutral-500)',
     textAlign: 'center',
     fontStyle: 'italic',
     marginTop: -8,

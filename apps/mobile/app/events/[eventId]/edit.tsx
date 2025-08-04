@@ -16,8 +16,7 @@ import { Id } from '@rite/backend/convex/_generated/dataModel';
 import { Ionicons } from '@expo/vector-icons';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { Typography, Card } from '@rite/ui';
-import { CrossPlatformButton, CrossPlatformInput } from '../../../components/ui';
-import { riteColors as colors } from '../../../constants/Colors';
+import { Button, Input } from '@rite/ui';
 import { useAuth } from '../../../contexts/AuthContext';
 
 export default function EditEventScreen() {
@@ -88,7 +87,7 @@ export default function EditEventScreen() {
     return (
       <SafeAreaView className="flex-1 bg-neutral-800">
         <View className="flex-1 items-center justify-center">
-          <ActivityIndicator size="large" color={colors.brand.primary} />
+          <ActivityIndicator size="large" color="var(--brand-primary)" />
         </View>
       </SafeAreaView>
     );
@@ -258,22 +257,22 @@ export default function EditEventScreen() {
               onPress={() => router.back()}
               className="mr-3"
             >
-              <Ionicons name="arrow-back" size={24} color={colors.functional.textPrimary} />
+              <Ionicons name="arrow-back" size={24} color="var(--text-primary)" />
             </Pressable>
-            <Typography variant="h4" className="flex-1" style={{ color: colors.functional.textPrimary }}>
+            <Typography variant="h4" className="flex-1 text-white">
               Edit Event
             </Typography>
           </View>
           
           {/* Event Name */}
           <View className="mb-6">
-            <Typography variant="label" className="mb-2" style={{ color: colors.functional.textPrimary }}>
+            <Typography variant="label" className="mb-2 text-white">
               Event Name
             </Typography>
-            <CrossPlatformInput
+            <Input
               placeholder="Enter event name"
               value={eventName}
-              onValueChange={setEventName}
+              onChangeText={setEventName}
               autoCapitalize="words"
               className="bg-neutral-700 border-neutral-600"
             />
@@ -281,42 +280,42 @@ export default function EditEventScreen() {
 
           {/* Date */}
           <View className="mb-6">
-            <Typography variant="label" className="mb-2" style={{ color: colors.functional.textPrimary }}>
+            <Typography variant="label" className="mb-2 text-white">
               Date
             </Typography>
             <TouchableOpacity 
               className="bg-neutral-700 border border-neutral-600 rounded-xl h-12 flex-row items-center px-4"
               onPress={() => setShowDatePicker(true)}
             >
-              <Typography variant="body" className="flex-1" style={{ color: colors.functional.textPrimary }}>
+              <Typography variant="body" className="flex-1 text-white">
                 {formatDate(selectedDate)}
               </Typography>
-              <Ionicons name="calendar-outline" size={20} color={colors.functional.textSecondary} />
+              <Ionicons name="calendar-outline" size={20} color="var(--neutral-400)" />
             </TouchableOpacity>
           </View>
 
           {/* Venue */}
           <View className="mb-6">
-            <Typography variant="label" className="mb-2" style={{ color: colors.functional.textPrimary }}>
+            <Typography variant="label" className="mb-2 text-white">
               Venue Name
             </Typography>
-            <CrossPlatformInput
+            <Input
               placeholder="Enter venue name"
               value={venueName}
-              onValueChange={setVenueName}
+              onChangeText={setVenueName}
               autoCapitalize="words"
               className="bg-neutral-700 border-neutral-600"
             />
           </View>
 
           <View className="mb-6">
-            <Typography variant="label" className="mb-2" style={{ color: colors.functional.textPrimary }}>
+            <Typography variant="label" className="mb-2 text-white">
               Venue Address
             </Typography>
-            <CrossPlatformInput
+            <Input
               placeholder="Enter venue address"
               value={venueAddress}
-              onValueChange={setVenueAddress}
+              onChangeText={setVenueAddress}
               autoCapitalize="words"
               className="bg-neutral-700 border-neutral-600"
             />
@@ -324,13 +323,13 @@ export default function EditEventScreen() {
 
           {/* Description */}
           <View className="mb-6">
-            <Typography variant="label" className="mb-2" style={{ color: colors.functional.textPrimary }}>
+            <Typography variant="label" className="mb-2 text-white">
               Description (optional)
             </Typography>
-            <CrossPlatformInput
+            <Input
               placeholder="Event description"
               value={description}
-              onValueChange={setDescription}
+              onChangeText={setDescription}
               multiline
               numberOfLines={3}
               className="bg-neutral-700 border-neutral-600"
@@ -339,13 +338,13 @@ export default function EditEventScreen() {
 
           {/* Hashtags */}
           <View className="mb-6">
-            <Typography variant="label" className="mb-2" style={{ color: colors.functional.textPrimary }}>
+            <Typography variant="label" className="mb-2 text-white">
               Hashtags (optional)
             </Typography>
-            <CrossPlatformInput
+            <Input
               placeholder="#rave #techno #seoul"
               value={hashtags}
-              onValueChange={setHashtags}
+              onChangeText={setHashtags}
               className="bg-neutral-700 border-neutral-600"
             />
           </View>
@@ -353,11 +352,11 @@ export default function EditEventScreen() {
           {/* DJ Lineup */}
           <View className="mb-6">
             <View className="flex-row justify-between items-center mb-3">
-              <Typography variant="label" style={{ color: colors.functional.textPrimary }}>
+              <Typography variant="label" className="text-white">
                 DJ Lineup
               </Typography>
               <TouchableOpacity className="flex-row items-center" onPress={addDjSlot}>
-                <Ionicons name="add" size={20} color={colors.brand.primary} />
+                <Ionicons name="add" size={20} color="var(--brand-primary)" />
                 <Typography variant="button" color="primary" className="ml-1">
                   Add Slot
                 </Typography>
@@ -367,12 +366,12 @@ export default function EditEventScreen() {
             {djSlots.map((slot, index) => (
               <Card key={slot.id} className="bg-neutral-700 border-neutral-600 p-4 mb-3">
                 <View className="flex-row justify-between items-center mb-3">
-                  <Typography variant="body" style={{ color: colors.functional.textPrimary }}>
+                  <Typography variant="body" className="text-white">
                     Slot {index + 1}
                   </Typography>
                   {djSlots.length > 1 && (
                     <TouchableOpacity onPress={() => removeDjSlot(slot.id)}>
-                      <Ionicons name="trash-outline" size={20} color={colors.semantic.error} />
+                      <Ionicons name="trash-outline" size={20} color="var(--color-error)" />
                     </TouchableOpacity>
                   )}
                 </View>
@@ -381,23 +380,23 @@ export default function EditEventScreen() {
                   {/* Time Range */}
                   <View className="flex-row space-x-3">
                     <View className="flex-1">
-                      <Typography variant="caption" className="mb-1" style={{ color: colors.functional.textSecondary }}>
+                      <Typography variant="caption" className="mb-1 text-neutral-400">
                         Start Time
                       </Typography>
-                      <CrossPlatformInput
+                      <Input
                         value={slot.startTime}
-                        onValueChange={(value) => updateDjSlot(slot.id, 'startTime', value)}
+                        onChangeText={(value) => updateDjSlot(slot.id, 'startTime', value)}
                         placeholder="22:00"
                         className="bg-neutral-800 border-neutral-600 text-xs"
                       />
                     </View>
                     <View className="flex-1">
-                      <Typography variant="caption" className="mb-1" style={{ color: colors.functional.textSecondary }}>
+                      <Typography variant="caption" className="mb-1 text-neutral-400">
                         End Time
                       </Typography>
-                      <CrossPlatformInput
+                      <Input
                         value={slot.endTime}
-                        onValueChange={(value) => updateDjSlot(slot.id, 'endTime', value)}
+                        onChangeText={(value) => updateDjSlot(slot.id, 'endTime', value)}
                         placeholder="23:00"
                         className="bg-neutral-800 border-neutral-600 text-xs"
                       />
@@ -406,12 +405,12 @@ export default function EditEventScreen() {
                   
                   {/* DJ Name */}
                   <View>
-                    <Typography variant="caption" className="mb-1" style={{ color: colors.functional.textSecondary }}>
+                    <Typography variant="caption" className="mb-1 text-neutral-400">
                       DJ Name (optional)
                     </Typography>
-                    <CrossPlatformInput
+                    <Input
                       value={slot.djName}
-                      onValueChange={(value) => updateDjSlot(slot.id, 'djName', value)}
+                      onChangeText={(value) => updateDjSlot(slot.id, 'djName', value)}
                       placeholder="DJ Name"
                       className="bg-neutral-800 border-neutral-600"
                     />
@@ -419,12 +418,12 @@ export default function EditEventScreen() {
                   
                   {/* Instagram Handle */}
                   <View>
-                    <Typography variant="caption" className="mb-1" style={{ color: colors.functional.textSecondary }}>
+                    <Typography variant="caption" className="mb-1 text-neutral-400">
                       Instagram Handle *
                     </Typography>
-                    <CrossPlatformInput
+                    <Input
                       value={slot.djInstagram}
-                      onValueChange={(value) => updateDjSlot(slot.id, 'djInstagram', value)}
+                      onChangeText={(value) => updateDjSlot(slot.id, 'djInstagram', value)}
                       placeholder="@username"
                       className="bg-neutral-800 border-neutral-600"
                     />
@@ -435,13 +434,13 @@ export default function EditEventScreen() {
           </View>
 
           {/* Update Button */}
-          <CrossPlatformButton 
-            onAction={handleUpdateEvent}
+          <Button 
+            onPress={handleUpdateEvent}
             className="mt-4"
             disabled={isSubmitting}
           >
             {isSubmitting ? 'Updating...' : 'Update Event'}
-          </CrossPlatformButton>
+          </Button>
         </View>
       </ScrollView>
       
@@ -452,7 +451,7 @@ export default function EditEventScreen() {
           mode="date"
           display={Platform.OS === 'ios' ? 'spinner' : 'default'}
           onChange={onDateChange}
-          textColor={colors.functional.textPrimary}
+          textColor="var(--text-primary)"
           themeVariant="dark"
         />
       )}

@@ -1,11 +1,10 @@
 import * as React from 'react';
 import { View, ScrollView, SafeAreaView, Platform, ActivityIndicator, Alert } from 'react-native';
 import { Typography, Card } from '@rite/ui';
-import { CrossPlatformButton, CrossPlatformInput, CrossPlatformTextarea } from '../../components/ui';
+import { Button, Input, Textarea } from '@rite/ui';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useQuery, useMutation } from 'convex/react';
 import { api } from '@rite/backend/convex/_generated/api';
-import { riteColors as colors } from '../../constants/Colors';
 import { Ionicons } from '@expo/vector-icons';
 
 export default function DJSubmissionScreen() {
@@ -46,7 +45,7 @@ export default function DJSubmissionScreen() {
     return (
       <SafeAreaView className="flex-1 bg-neutral-800">
         <View className="flex-1 items-center justify-center">
-          <ActivityIndicator size="large" color={colors.brand.primary} />
+          <ActivityIndicator size="large" className="text-brand-primary" />
         </View>
       </SafeAreaView>
     );
@@ -56,7 +55,7 @@ export default function DJSubmissionScreen() {
     return (
       <SafeAreaView className="flex-1 bg-neutral-800">
         <View className="p-6">
-          <Typography variant="h4" className="mb-4" style={{ color: colors.functional.textPrimary }}>
+          <Typography variant="h4" className="mb-4 text-white">
             Invalid Token
           </Typography>
           <Typography variant="body" color="secondary">
@@ -71,11 +70,11 @@ export default function DJSubmissionScreen() {
     return (
       <SafeAreaView className="flex-1 bg-neutral-800">
         <View className="p-6">
-          <Typography variant="h4" className="mb-4" style={{ color: colors.functional.textPrimary }}>
+          <Typography variant="h4" className="mb-4 text-white">
             Already Submitted
           </Typography>
           <Card className="bg-neutral-700 p-6">
-            <Typography variant="body" className="mb-2" style={{ color: colors.functional.textPrimary }}>
+            <Typography variant="body" className="mb-2 text-white">
               You have already submitted for this slot.
             </Typography>
             <Typography variant="caption" color="secondary">
@@ -178,34 +177,34 @@ export default function DJSubmissionScreen() {
           }}
         >
           {/* Header */}
-          <Typography variant="h4" className="mb-6" style={{ color: colors.functional.textPrimary }}>
+          <Typography variant="h4" className="mb-6 text-white">
             DJ Submission
           </Typography>
 
           {/* Event Info */}
           <Card className="bg-neutral-700 p-6 mb-6">
-            <Typography variant="h5" className="mb-3" style={{ color: colors.functional.textPrimary }}>
+            <Typography variant="h5" className="mb-3 text-white">
               {event?.name || 'Event'}
             </Typography>
             
             <View className="gap-2">
               <View className="flex-row items-center">
-                <Ionicons name="location" size={20} color={colors.functional.textSecondary} />
-                <Typography variant="body" className="ml-2" style={{ color: colors.functional.textSecondary }}>
+                <Ionicons name="location" size={20} color="var(--neutral-400)" />
+                <Typography variant="body" className="ml-2 text-neutral-400">
                   {event?.venue?.name || 'TBD'}
                 </Typography>
               </View>
               
               <View className="flex-row items-center">
-                <Ionicons name="calendar" size={20} color={colors.functional.textSecondary} />
-                <Typography variant="body" className="ml-2" style={{ color: colors.functional.textSecondary }}>
+                <Ionicons name="calendar" size={20} color="var(--neutral-400)" />
+                <Typography variant="body" className="ml-2 text-neutral-400">
                   {event?.date ? formatDate(event.date) : 'TBD'}
                 </Typography>
               </View>
               
               <View className="flex-row items-center">
-                <Ionicons name="time" size={20} color={colors.functional.textSecondary} />
-                <Typography variant="body" className="ml-2" style={{ color: colors.functional.textSecondary }}>
+                <Ionicons name="time" size={20} color="var(--neutral-400)" />
+                <Typography variant="body" className="ml-2 text-neutral-400">
                   {formatTime(timeslot.startTime)} - {formatTime(timeslot.endTime)}
                 </Typography>
               </View>
@@ -216,26 +215,26 @@ export default function DJSubmissionScreen() {
           <View className="gap-6">
             {/* DJ Name */}
             <View>
-              <Typography variant="label" className="mb-2" style={{ color: colors.functional.textPrimary }}>
+              <Typography variant="label" className="mb-2 text-white">
                 DJ Name *
               </Typography>
-              <CrossPlatformInput
+              <Input
                 placeholder="Enter your DJ name"
                 value={djName}
-                onValueChange={setDjName}
+                onChangeText={setDjName}
                 className="bg-neutral-700 border-neutral-600"
               />
             </View>
 
             {/* Guest Names */}
             <View>
-              <Typography variant="label" className="mb-2" style={{ color: colors.functional.textPrimary }}>
+              <Typography variant="label" className="mb-2 text-white">
                 Guest Names (Max {event?.guestLimitPerDJ || 10})
               </Typography>
-              <CrossPlatformTextarea
+              <Textarea
                 placeholder="Enter one name per line"
                 value={guestNames}
-                onValueChange={setGuestNames}
+                onChangeText={setGuestNames}
                 className="bg-neutral-700 border-neutral-600"
               />
               <Typography variant="caption" color="secondary" className="mt-1">
@@ -245,33 +244,33 @@ export default function DJSubmissionScreen() {
 
             {/* Guest Names for Lineup */}
             <View>
-              <Typography variant="label" className="mb-2" style={{ color: colors.functional.textPrimary }}>
+              <Typography variant="label" className="mb-2 text-white">
                 Guest Names for Lineup (Optional)
               </Typography>
-              <CrossPlatformInput
+              <Input
                 placeholder="Names to display on lineup"
                 value={guestNamesLineup}
-                onValueChange={setGuestNamesLineup}
+                onChangeText={setGuestNamesLineup}
                 className="bg-neutral-700 border-neutral-600"
               />
             </View>
 
             {/* Promo Video URL */}
             <View>
-              <Typography variant="label" className="mb-2" style={{ color: colors.functional.textPrimary }}>
+              <Typography variant="label" className="mb-2 text-white">
                 Promo Video URL (Optional)
               </Typography>
-              <CrossPlatformInput
+              <Input
                 placeholder="https://..."
                 value={promoVideoUrl}
-                onValueChange={setPromoVideoUrl}
+                onChangeText={setPromoVideoUrl}
                 className="bg-neutral-700 border-neutral-600"
               />
             </View>
 
             {/* Important Dates */}
             <Card className="bg-neutral-700 p-4">
-              <Typography variant="h6" className="mb-3" style={{ color: colors.functional.textPrimary }}>
+              <Typography variant="h6" className="mb-3 text-white">
                 Important Dates
               </Typography>
               <View className="gap-2">
@@ -279,7 +278,7 @@ export default function DJSubmissionScreen() {
                   <Typography variant="caption" color="secondary">
                     Guest List Deadline
                   </Typography>
-                  <Typography variant="body" style={{ color: colors.functional.textPrimary }}>
+                  <Typography variant="body" className="text-white">
                     {event?.deadlines?.guestList ? formatDate(event.deadlines.guestList) : 'TBD'}
                   </Typography>
                 </View>
@@ -287,7 +286,7 @@ export default function DJSubmissionScreen() {
                   <Typography variant="caption" color="secondary">
                     Promo Materials Deadline
                   </Typography>
-                  <Typography variant="body" style={{ color: colors.functional.textPrimary }}>
+                  <Typography variant="body" className="text-white">
                     {event?.deadlines?.promoMaterials ? formatDate(event.deadlines.promoMaterials) : 'TBD'}
                   </Typography>
                 </View>
@@ -295,13 +294,13 @@ export default function DJSubmissionScreen() {
             </Card>
 
             {/* Submit Button */}
-            <CrossPlatformButton 
-              onAction={handleSubmit}
+            <Button 
+              onPress={handleSubmit}
               disabled={isSubmitting}
               className="mt-4"
             >
               {isSubmitting ? 'Submitting...' : 'Submit'}
-            </CrossPlatformButton>
+            </Button>
           </View>
         </View>
       </ScrollView>

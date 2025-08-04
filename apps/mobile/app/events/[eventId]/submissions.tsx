@@ -5,7 +5,6 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useQuery } from 'convex/react';
 import { api } from '@rite/backend/convex/_generated/api';
 import { Id } from '@rite/backend/convex/_generated/dataModel';
-import { riteColors as colors } from '../../../constants/Colors';
 import { useAuth } from '../../../contexts/AuthContext';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -38,7 +37,7 @@ export default function SubmissionsScreen() {
     return (
       <SafeAreaView className="flex-1 bg-neutral-800">
         <View className="flex-1 items-center justify-center">
-          <ActivityIndicator size="large" color={colors.brand.primary} />
+          <ActivityIndicator size="large" color="var(--brand-primary)" />
         </View>
       </SafeAreaView>
     );
@@ -113,16 +112,16 @@ export default function SubmissionsScreen() {
               onPress={() => router.back()}
               className="mr-3"
             >
-              <Ionicons name="arrow-back" size={24} color={colors.functional.textPrimary} />
+              <Ionicons name="arrow-back" size={24} color="var(--text-primary)" />
             </Pressable>
-            <Typography variant="h4" className="flex-1" style={{ color: colors.functional.textPrimary }}>
+            <Typography variant="h4" className="flex-1 text-white">
               Submissions
             </Typography>
           </View>
 
           {/* Event Info */}
           <Card className="bg-neutral-700 p-4 mb-6">
-            <Typography variant="h5" className="mb-1" style={{ color: colors.functional.textPrimary }}>
+            <Typography variant="h5" className="mb-1 text-white">
               {event.name}
             </Typography>
             <Typography variant="body" color="secondary">
@@ -133,7 +132,7 @@ export default function SubmissionsScreen() {
           {/* Submissions by Timeslot */}
           {event.timeslots.length === 0 ? (
             <Card className="bg-neutral-700 p-6">
-              <Typography variant="body" className="text-center" style={{ color: colors.functional.textSecondary }}>
+              <Typography variant="body" className="text-center text-neutral-400">
                 No timeslots configured for this event
               </Typography>
             </Card>
@@ -146,7 +145,7 @@ export default function SubmissionsScreen() {
                   <View key={timeslot._id}>
                     <View className="flex-row items-center justify-between mb-3">
                       <View>
-                        <Typography variant="h6" style={{ color: colors.functional.textPrimary }}>
+                        <Typography variant="h6" className="text-white">
                           {formatTime(timeslot.startTime)} - {formatTime(timeslot.endTime)}
                         </Typography>
                         <Typography variant="caption" color="secondary">
@@ -155,13 +154,13 @@ export default function SubmissionsScreen() {
                         </Typography>
                       </View>
                       <Badge variant={slotSubmissions.length > 0 ? 'default' : 'outline'}>
-                        {slotSubmissions.length} submission{slotSubmissions.length !== 1 ? 's' : ''}
+                        {`${slotSubmissions.length} submission${slotSubmissions.length !== 1 ? 's' : ''}`}
                       </Badge>
                     </View>
                     
                     {slotSubmissions.length === 0 ? (
                       <Card className="bg-neutral-700 p-4">
-                        <Typography variant="body" className="text-center" style={{ color: colors.functional.textSecondary }}>
+                        <Typography variant="body" className="text-center text-neutral-400">
                           No submissions yet
                         </Typography>
                       </Card>
@@ -171,7 +170,7 @@ export default function SubmissionsScreen() {
                           <Card key={submission._id} className="bg-neutral-700 p-4">
                             <View className="flex-row items-start justify-between mb-2">
                               <View className="flex-1">
-                                <Typography variant="body" style={{ color: colors.functional.textPrimary }}>
+                                <Typography variant="body" className="text-white">
                                   {submission.guestList.length > 0 ? submission.guestList[0].name : 'Anonymous Submission'}
                                 </Typography>
                                 <Typography variant="caption" color="secondary">
@@ -186,7 +185,7 @@ export default function SubmissionsScreen() {
                                 <Typography variant="caption" color="secondary" className="mb-1">
                                   Guests ({submission.guestList.length})
                                 </Typography>
-                                <Typography variant="body" style={{ color: colors.functional.textSecondary }}>
+                                <Typography variant="body" className="text-neutral-400">
                                   {submission.guestList.map(guest => `${guest.name}${guest.phone ? ` (${guest.phone})` : ''}`).join(', ')}
                                 </Typography>
                               </View>
@@ -197,7 +196,7 @@ export default function SubmissionsScreen() {
                                 <Typography variant="caption" color="secondary" className="mb-1">
                                   Promo Description
                                 </Typography>
-                                <Typography variant="body" style={{ color: colors.functional.textSecondary }}>
+                                <Typography variant="body" className="text-neutral-400">
                                   {submission.promoMaterials.description}
                                 </Typography>
                               </View>
@@ -206,7 +205,7 @@ export default function SubmissionsScreen() {
                             {submission.promoMaterials.files.length > 0 && (
                               <View className="mt-2">
                                 <Typography variant="caption" color="secondary">
-                                  📁 {submission.promoMaterials.files.length} file{submission.promoMaterials.files.length !== 1 ? 's' : ''} uploaded
+                                  {`📁 ${submission.promoMaterials.files.length} file${submission.promoMaterials.files.length !== 1 ? 's' : ''} uploaded`}
                                 </Typography>
                               </View>
                             )}

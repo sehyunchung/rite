@@ -3,11 +3,10 @@ import { View, ScrollView, SafeAreaView, Platform, ActivityIndicator, Text } fro
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { Typography, Card, EventCard } from '@rite/ui';
-import { riteColors as colors } from '../../constants/Colors';
 import { useQuery } from 'convex/react';
 import { api } from '@rite/backend/convex/_generated/api';
 import { useAuth } from '../../contexts/AuthContext';
-import { CrossPlatformButton as Button } from '../../components/ui';
+import { Button } from '@rite/ui';
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -35,26 +34,25 @@ export default function HomeScreen() {
           
           {/* Create Event Button */}
           <Button 
-            onAction={() => router.push('/(tabs)/create')}
+            onPress={() => router.push('/(tabs)/create')}
             className="flex-row items-center justify-center mt-4 mb-8"
           >
-            <Ionicons name="add-circle" size={24} color="white" />
-            <Text className="text-white font-medium text-base ml-2">Create New Event</Text>
+            Create New Event
           </Button>
           
           {/* Your Events Section */}
           <View className="mb-6">
-            <Typography variant="h5" className="mb-4" style={{ color: colors.functional.textPrimary }}>
+            <Typography variant="h5" className="mb-4 text-white">
               Your Events
             </Typography>
             
             {events === undefined ? (
               <View className="p-8">
-                <ActivityIndicator size="large" color={colors.brand.primary} />
+                <ActivityIndicator size="large" color="var(--brand-primary)" />
               </View>
             ) : events.length === 0 ? (
               <Card className="bg-neutral-700 p-6">
-                <Typography variant="body" className="text-center mb-1" style={{ color: colors.functional.textPrimary }}>
+                <Typography variant="body" className="text-center mb-1 text-white">
                   No events yet
                 </Typography>
                 <Typography variant="caption" color="secondary" className="text-center">

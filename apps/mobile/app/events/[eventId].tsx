@@ -8,7 +8,7 @@ import { Id } from '@rite/backend/convex/_generated/dataModel';
 // Design system colors via Tailwind CSS variables
 import { useAuth } from '../../contexts/AuthContext';
 import { Ionicons } from '@expo/vector-icons';
-import { CrossPlatformButton as Button } from '../../components/ui';
+import { Button } from '@rite/ui';
 
 export default function EventDetailScreen() {
   const { eventId } = useLocalSearchParams<{ eventId: string }>();
@@ -216,7 +216,7 @@ export default function EventDetailScreen() {
           {event.capabilities.canEdit && (
             <View className="gap-3">
               <Button 
-                onAction={() => router.push(`/events/${eventId}/edit`)}
+                onPress={() => router.push(`/events/${eventId}/edit`)}
                 variant="default"
               >
                 Edit Event
@@ -224,7 +224,7 @@ export default function EventDetailScreen() {
               
               {event.capabilities.canPublish && event.status === 'draft' && (
                 <Button 
-                  onAction={() => {
+                  onPress={() => {
                     // TODO: Implement publish functionality
                   }}
                   variant="secondary"
@@ -234,10 +234,10 @@ export default function EventDetailScreen() {
               )}
               
               <Button 
-                onAction={() => router.push(`/events/${eventId}/submissions`)}
+                onPress={() => router.push(`/events/${eventId}/submissions`)}
                 variant="outline"
               >
-                View Submissions ({event.submissionCount || 0})
+                {`View Submissions (${event.submissionCount || 0})`}
               </Button>
             </View>
           )}

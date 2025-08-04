@@ -4,7 +4,6 @@ import { Typography, Card, EventCard } from '@rite/ui';
 import { useQuery } from 'convex/react';
 import { api } from '@rite/backend/convex/_generated/api';
 import { useRouter } from 'expo-router';
-import { riteColors as colors } from '../../constants/Colors';
 import { useAuth } from '../../contexts/AuthContext';
 
 export default function EventsScreen() {
@@ -33,7 +32,7 @@ export default function EventsScreen() {
           
           {events === undefined ? (
             <View className="p-8 items-center">
-              <ActivityIndicator size="large" color={colors.brand.primary} />
+              <ActivityIndicator size="large" color="var(--brand-primary)" />
             </View>
           ) : events.length === 0 ? (
             <Card className="bg-neutral-700 p-6 items-center">
