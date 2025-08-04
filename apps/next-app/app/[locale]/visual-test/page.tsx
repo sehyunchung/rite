@@ -164,9 +164,9 @@ export default function VisualTestPage() {
       <section className="space-y-4">
         <Typography variant="h2">Loading States</Typography>
         <div className="flex gap-4 items-center">
-          <LoadingIndicator size="sm" />
+          <LoadingIndicator className="text-2xl" />
           <LoadingIndicator />
-          <LoadingIndicator size="lg" />
+          <LoadingIndicator className="text-6xl" />
         </div>
       </section>
     </div>
