@@ -148,9 +148,7 @@ export default function SettingsScreen() {
               onAction={handleLogout}
               className="border-2 border-neutral-600"
             >
-              <Typography variant="button" color="primary">
-                Log Out
-              </Typography>
+              Log Out
             </Button>
           </View>
         </ScrollView>

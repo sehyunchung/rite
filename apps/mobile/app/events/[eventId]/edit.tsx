@@ -440,9 +440,7 @@ export default function EditEventScreen() {
             className="mt-4"
             disabled={isSubmitting}
           >
-            <Typography variant="button" style={{ color: colors.functional.textPrimary }}>
-              {isSubmitting ? 'Updating...' : 'Update Event'}
-            </Typography>
+            {isSubmitting ? 'Updating...' : 'Update Event'}
           </CrossPlatformButton>
         </View>
       </ScrollView>

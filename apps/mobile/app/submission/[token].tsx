@@ -300,9 +300,7 @@ export default function DJSubmissionScreen() {
               disabled={isSubmitting}
               className="mt-4"
             >
-              <Typography variant="button" style={{ color: colors.functional.textPrimary }}>
-                {isSubmitting ? 'Submitting...' : 'Submit'}
-              </Typography>
+              {isSubmitting ? 'Submitting...' : 'Submit'}
             </CrossPlatformButton>
           </View>
         </View>
