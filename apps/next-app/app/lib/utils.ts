@@ -1,6 +1,6 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
-import { type Id } from '@rite/backend/convex/_generated/dataModel'
+import { type Id, type TableNames } from '@rite/backend/convex/_generated/dataModel'
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -19,6 +19,6 @@ export function isValidConvexId(id: string): boolean {
  * Type-safe helper to convert validated string to Convex ID
  * Returns null if the ID is invalid, eliminating the gap between validation and type assertion
  */
-export function toConvexId<T extends string>(id: string, table: T): Id<T> | null {
+export function toConvexId<T extends TableNames>(id: string, _table: T): Id<T> | null {
   return isValidConvexId(id) ? (id as Id<T>) : null;
 }
