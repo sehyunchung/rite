@@ -1,5 +1,8 @@
 // Common types that can be shared between Next.js and SvelteKit apps
 
+// Export Effect schemas for type-safe validation and undefined pollution elimination
+export * from './effect-schemas';
+
 export interface Event {
   id: string;
   name: string;
