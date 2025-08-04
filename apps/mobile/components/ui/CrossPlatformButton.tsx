@@ -11,39 +11,39 @@ interface CrossPlatformButtonProps {
   disabled?: boolean;
 }
 
-export function CrossPlatformButton({ 
-  onAction, 
-  children, 
-  variant,
-  size,
-  className,
-  disabled
-}: CrossPlatformButtonProps) {
+// Helper function to create platform-specific props with proper typing
+const createButtonProps = (
+  onAction: (() => void) | undefined,
+  commonProps: Omit<CrossPlatformButtonProps, 'onAction'>
+) => {
+  const { children, variant, size, className, disabled } = commonProps;
+  
   if (Platform.OS === 'web') {
-    // On web, only pass web-compatible props
-    return (
-      <Button
-        {...{ onClick: onAction } as { onClick?: () => void }}
-        variant={variant}
-        size={size}
-        className={className}
-        disabled={disabled}
-      >
-        {children}
-      </Button>
-    );
+    // Return web-specific props
+    return {
+      onClick: onAction,
+      variant,
+      size,
+      className,
+      disabled,
+      children,
+    } as const;
   }
   
-  // On native, use onPress
-  return (
-    <Button
-      {...{ onPress: onAction } as { onPress?: () => void }}
-      variant={variant}
-      size={size}
-      className={className}
-      disabled={disabled}
-    >
-      {children}
-    </Button>
-  );
+  // Return native-specific props
+  return {
+    onPress: onAction,
+    variant,
+    size,
+    className,
+    disabled,
+    children,
+  } as const;
+};
+
+export function CrossPlatformButton(props: CrossPlatformButtonProps) {
+  const { onAction, ...commonProps } = props;
+  const buttonProps = createButtonProps(onAction, commonProps);
+  
+  return <Button {...buttonProps} />;
 }

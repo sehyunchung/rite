@@ -12,37 +12,41 @@ interface CrossPlatformTextareaProps {
   numberOfLines?: TextInputProps['numberOfLines'];
 }
 
-export function CrossPlatformTextarea({ 
-  value, 
-  onValueChange, 
-  numberOfLines,
-  placeholder,
-  className,
-  disabled
-}: CrossPlatformTextareaProps) {
+// Helper function to create platform-specific props with proper typing
+const createTextareaProps = (props: CrossPlatformTextareaProps) => {
+  const {
+    value,
+    onValueChange,
+    numberOfLines,
+    placeholder,
+    className,
+    disabled,
+  } = props;
+
   if (Platform.OS === 'web') {
-    // On web, only pass web-compatible props
-    return (
-      <Textarea
-        value={value}
-        onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => onValueChange(e.target.value)}
-        rows={numberOfLines}
-        placeholder={placeholder}
-        className={className}
-        disabled={disabled}
-      />
-    );
+    // Return web-specific props (numberOfLines becomes rows for web)
+    return {
+      value,
+      onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => onValueChange(e.target.value),
+      rows: numberOfLines,
+      placeholder,
+      className,
+      disabled,
+    } as const;
   }
-  
-  // On native, use all props including native-specific ones
-  return (
-    <Textarea
-      value={value}
-      {...{ onChangeText: onValueChange } as { onChangeText?: (text: string) => void }}
-      {...{ numberOfLines } as { numberOfLines?: number }}
-      placeholder={placeholder}
-      className={className}
-      disabled={disabled}
-    />
-  );
+
+  // Return native-specific props
+  return {
+    value,
+    onChangeText: onValueChange,
+    numberOfLines,
+    placeholder,
+    className,
+    disabled,
+  } as const;
+};
+
+export function CrossPlatformTextarea(props: CrossPlatformTextareaProps) {
+  const textareaProps = createTextareaProps(props);
+  return <Textarea {...textareaProps} />;
 }
