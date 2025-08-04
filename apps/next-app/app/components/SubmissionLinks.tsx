@@ -18,7 +18,7 @@ export function SubmissionLinks({ events }: SubmissionLinksProps) {
   const baseUrl = typeof window !== 'undefined' ? window.location.origin : '';
   const t = useTranslations('events.detail.submissionLinks');
 
-  if (!events.some((event) => event.timeslots.length > 0)) {
+  if (!events.some((event) => event.timeslots?.length > 0)) {
     return null;
   }
 

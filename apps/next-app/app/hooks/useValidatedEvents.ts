@@ -27,10 +27,16 @@ export function useValidatedEvents(userId: string) {
     userId ? { userId: userId as Id<"users"> } : "skip"
   ) as ValidatedEvent[] | undefined;
 
+  // Ensure timeslots is always an array for each event
+  const validatedEvents = events?.map(event => ({
+    ...event,
+    timeslots: event.timeslots || []
+  })) ?? [];
+
   return {
-    events: events ?? [],
+    events: validatedEvents,
     isLoading: events === undefined,
-    isEmpty: events ? events.length === 0 : false,
+    isEmpty: validatedEvents.length === 0,
   };
 }
 
@@ -46,9 +52,15 @@ export function useValidatedEvent(eventId: string, userId: string) {
     } : "skip"
   ) as ValidatedEvent | undefined;
 
+  // Ensure timeslots is always an array
+  const validatedEvent = event ? {
+    ...event,
+    timeslots: event.timeslots || []
+  } : undefined;
+
   return {
-    event,
+    event: validatedEvent,
     isLoading: event === undefined,
-    exists: event !== null && event !== undefined,
+    exists: validatedEvent !== null && validatedEvent !== undefined,
   };
 }
