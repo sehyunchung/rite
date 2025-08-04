@@ -174,7 +174,7 @@ export function EventDetailClient({ eventId, userId, locale }: EventDetailClient
                 {/* Delete/Cancel buttons */}
                 {event.phase !== 'CANCELLED' && event.phase !== 'COMPLETED' && (
                   <>
-                    {event.timeslots.some(slot => slot.submissionId) ? (
+                    {event.timeslots?.some(slot => slot.submissionId) ? (
                       <Button 
                         variant="outline" 
                         size="sm"

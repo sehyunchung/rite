@@ -107,7 +107,7 @@ export function DashboardContent({ userId }: DashboardContentProps) {
               eventName={event.name}
               venueName={event.venue.name}
               date={event.date}
-              djCount={event.timeslots.length}
+              djCount={event.timeslots?.length || 0}
               dueDate={event.deadlines?.guestList || ''}
               status={event.status === 'active' ? 'published' : 'draft'}
               onViewDetails={() => {
