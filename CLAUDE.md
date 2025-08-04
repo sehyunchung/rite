@@ -424,6 +424,33 @@ Test themes across:
 - Interactive state visibility
 - Component compatibility
 
+## Visual Testing
+
+Visual regression testing is implemented using Playwright to ensure UI consistency across themes and viewports.
+
+### Running Visual Tests
+```bash
+# Run tests against baselines
+pnpm run test:visual
+
+# Update baseline screenshots
+pnpm run test:visual:update
+
+# Debug with UI mode
+pnpm run test:visual:ui
+```
+
+### Test Coverage
+- **All 5 themes**: Each component tested across all theme variants
+- **Responsive viewports**: Desktop, tablet, and mobile
+- **Component states**: Hover, focus, active, disabled
+- **Critical components**: Button, Card, Typography, EventCard, Forms, etc.
+
+### Visual Test Page
+Access the component showcase at `/[locale]/visual-test` for manual inspection.
+
+See `/apps/next-app/e2e/visual/README.md` for detailed documentation.
+
 ## Development Status
 
 **✅ Complete:**
