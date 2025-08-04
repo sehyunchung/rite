@@ -143,12 +143,12 @@ export default function VisualTestPage() {
           <AlertTitle>Info</AlertTitle>
           <AlertDescription>This is an informational alert.</AlertDescription>
         </Alert>
-        <Alert variant="success">
+        <Alert className="border-success/50 text-success [&>svg]:text-success">
           <CheckCircle className="h-4 w-4" />
           <AlertTitle>Success</AlertTitle>
           <AlertDescription>Operation completed successfully!</AlertDescription>
         </Alert>
-        <Alert variant="warning">
+        <Alert className="border-warning/50 text-warning [&>svg]:text-warning">
           <AlertTriangle className="h-4 w-4" />
           <AlertTitle>Warning</AlertTitle>
           <AlertDescription>Please review before proceeding.</AlertDescription>
