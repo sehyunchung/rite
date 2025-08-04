@@ -14,7 +14,6 @@ import {
   validateTimeslot,
   validateTimeRange,
   validateDate,
-  validateDeadlineOrder,
   validateTimeslotDuration,
   validateInstagramHandle,
   getDefaultGuestListDeadline,
@@ -22,7 +21,8 @@ import {
   getDefaultStartTime,
   getDefaultEndTime,
   validateGuestListDeadline,
-  validatePromoDeadline
+  validatePromoDeadline,
+  validateDeadlineOrder
 } from '@/lib/validation';
 import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
@@ -186,16 +186,13 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
       newErrors.guestListDeadline = guestValidation.error;
     }
 
+    // Validate promo materials deadline
     const promoValidation = validatePromoDeadline(formData.deadlines.promoMaterials, formData.date);
     if (!promoValidation.isValid && promoValidation.error) {
       newErrors.promoDeadline = promoValidation.error;
     }
 
-    // Skip payment validation when payment section is hidden
-    // const paymentError = validateDate(formData.payment.dueDate);
-    // if (paymentError) newErrors.paymentDue = paymentError;
-
-    // Validate deadline order
+    // Validate deadline order (promo before guest list)
     const deadlineOrderError = validateDeadlineOrder(formData.deadlines.guestList, formData.deadlines.promoMaterials);
     if (deadlineOrderError) newErrors.deadlineOrder = deadlineOrderError;
 
@@ -232,10 +229,7 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
         newErrors[`timeslot-${slot.id}-duration`] = durationError;
       }
 
-      // Validate DJ name (required field)
-      if (!slot.djName.trim()) {
-        newErrors[`timeslot-${slot.id}-djName`] = 'DJ name is required';
-      }
+      // DJ name is now optional - no validation needed
 
       // Validate Instagram handle
       const instagramError = validateInstagramHandle(slot.djInstagram);
@@ -303,9 +297,10 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
         hashtags: formData.hashtags || '',
         deadlines: formData.deadlines,
         payment: {
-          ...formData.payment,
-          // Provide default values for hidden payment section
-          dueDate: formData.payment.dueDate || formData.date, // Default to event date if not set
+          amount: 0, // Default payment amount
+          perDJ: 0, // Default per DJ amount
+          currency: "KRW", // Default currency
+          dueDate: formData.date, // Default to event date
         },
         guestLimitPerDJ: formData.guestLimitPerDJ,
         timeslots: timeslots.map(({ id: _id, ...slot }) => slot), // Remove the temporary id
@@ -324,7 +319,12 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
         description: '',
         hashtags: '',
         deadlines: { guestList: '', promoMaterials: '' },
-        payment: { amount: 0, perDJ: 0, currency: 'KRW', dueDate: '' },
+        payment: {
+          amount: 0,
+          perDJ: 0,
+          currency: 'KRW',
+          dueDate: '',
+        },
         guestLimitPerDJ: 2,
       });
       setTimeslots([]);
@@ -559,6 +559,30 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
           <CardContent className="space-y-3 sm:space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
               <div className="space-y-2">
+                <Label htmlFor="promoDeadline">{t('promoDeadline')}</Label>
+                <Input
+                  id="promoDeadline"
+                  type="date"
+                  value={formData.deadlines.promoMaterials}
+                  onChange={(e) => {
+                    setFormData({ 
+                      ...formData, 
+                      deadlines: { ...formData.deadlines, promoMaterials: e.target.value }
+                    });
+                    clearFieldError('promoDeadline');
+                    clearFieldError('deadlineOrder');
+                  }}
+                  className={errors.promoDeadline ? 'border-red-500' : ''}
+                  required
+                />
+                {errors.promoDeadline && (
+                  <p className="text-sm text-red-500 mt-1">{errors.promoDeadline}</p>
+                )}
+                {suggestions.promoDeadline && !errors.promoDeadline && (
+                  <p className="text-sm text-blue-600 mt-1">💡 {suggestions.promoDeadline}</p>
+                )}
+              </div>
+              <div className="space-y-2">
                 <Label htmlFor="guestListDeadline">{t('guestListDeadline')}</Label>
                 <Input
                   id="guestListDeadline"
@@ -582,33 +606,13 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
                   <p className="text-sm text-blue-600 mt-1">💡 {suggestions.guestListDeadline}</p>
                 )}
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="promoDeadline">{t('promoMaterialsDeadline')}</Label>
-                <Input
-                  id="promoDeadline"
-                  type="date"
-                  value={formData.deadlines.promoMaterials}
-                  onChange={(e) => {
-                    setFormData({ 
-                      ...formData, 
-                      deadlines: { ...formData.deadlines, promoMaterials: e.target.value }
-                    });
-                    clearFieldError('promoDeadline');
-                    clearFieldError('deadlineOrder');
-                  }}
-                  className={errors.promoDeadline ? 'border-red-500' : ''}
-                  required
-                />
-                {errors.promoDeadline && (
-                  <p className="text-sm text-red-500 mt-1">{errors.promoDeadline}</p>
-                )}
-                {suggestions.promoDeadline && !errors.promoDeadline && (
-                  <p className="text-sm text-blue-600 mt-1">💡 {suggestions.promoDeadline}</p>
-                )}
-              </div>
             </div>
+            
+            {/* Deadline order error display */}
             {errors.deadlineOrder && (
-              <p className="text-sm text-red-500 text-center">{errors.deadlineOrder}</p>
+              <div className="text-sm text-red-500 text-center bg-red-50 border border-red-200 rounded p-2">
+                {errors.deadlineOrder}
+              </div>
             )}
           </CardContent>
         </Card>
