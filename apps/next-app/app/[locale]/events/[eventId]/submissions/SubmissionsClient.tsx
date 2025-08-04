@@ -12,6 +12,7 @@ import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { MobileLayout } from '@/components/MobileLayout';
 import { ArrowLeft, User, Instagram, Clock, FileText, Users } from 'lucide-react';
+import { isValidConvexId } from '@/lib/utils';
 
 interface SubmissionsClientProps {
   eventId: string;
@@ -23,24 +24,45 @@ export function SubmissionsClient({ eventId, userId, locale }: SubmissionsClient
   const router = useRouter();
   const t = useTranslations('events.submissions');
 
+  // Validate IDs before using them
+  const isValidEventId = isValidConvexId(eventId);
+  const isValidUserId = isValidConvexId(userId);
+
   const event = useQuery(
     api.events.getEvent,
-    { 
+    isValidEventId && isValidUserId ? { 
       eventId: eventId as Id<"events">,
       userId: userId as Id<"users">
-    }
+    } : "skip"
   );
 
   // Get submissions for this event - must be called before any conditional returns
   const submissions = useQuery(
     api.submissions.getSubmissionsByEvent,
-    { 
+    isValidEventId && isValidUserId ? { 
       eventId: eventId as Id<"events">,
       userId: userId as Id<"users">
-    }
+    } : "skip"
   );
 
-  if (event === undefined) {
+  // Handle invalid IDs
+  if (!isValidEventId || !isValidUserId) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <Typography variant="h2" className="mb-2">{t('invalidRequest')}</Typography>
+          <Typography variant="body" color="secondary" className="mb-4">
+            {t('invalidRequestMessage') || 'The request contains invalid parameters'}
+          </Typography>
+          <Button onClick={() => router.push(`/${locale}/dashboard`)}>
+            {t('backToDashboard')}
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  if (event === undefined || submissions === undefined) {
     return <FullScreenLoading />;
   }
 

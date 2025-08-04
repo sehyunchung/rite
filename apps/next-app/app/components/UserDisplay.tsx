@@ -2,9 +2,9 @@
 
 import { useQuery } from 'convex/react';
 import { api } from '@rite/backend/convex/_generated/api';
-import { Id } from '@rite/backend/convex/_generated/dataModel';
 import { useTranslations } from 'next-intl';
 import { Typography } from '@rite/ui';
+import { toConvexId } from '@/lib/utils';
 
 interface UserDisplayProps {
   userId: string;
@@ -14,10 +14,13 @@ interface UserDisplayProps {
 export function UserDisplay({ userId, fallbackName }: UserDisplayProps) {
   const t = useTranslations('navigation');
   
+  // Convert to valid Convex ID or null
+  const validUserId = toConvexId(userId, "users");
+  
   // Only query if we have a valid userId
   const instagramConnection = useQuery(
     api.instagram.getInstagramConnection, 
-    userId ? { userId: userId as Id<"users"> } : "skip"
+    validUserId ? { userId: validUserId } : "skip"
   );
 
   const displayName = instagramConnection?.username 

@@ -3,6 +3,7 @@ import { api } from '@rite/backend/convex/_generated/api';
 import { Id } from '@rite/backend/convex/_generated/dataModel';
 import { useCallback, useState } from 'react';
 import { EventPhaseInfo, getAvailableActions, type EventAction } from '@rite/backend/convex/eventStatus';
+import { isValidConvexId } from '@/lib/utils';
 
 interface UseEventStatusOptions {
   eventId: string;
@@ -16,9 +17,9 @@ export function useEventStatus({ eventId, userId }: UseEventStatusOptions) {
   // Get event with capabilities
   const event = useQuery(
     api.events.getEventWithCapabilities,
-    eventId ? {
+    eventId && isValidConvexId(eventId) && (!userId || isValidConvexId(userId)) ? {
       eventId: eventId as Id<"events">,
-      userId: userId as Id<"users"> | undefined,
+      userId: userId ? userId as Id<"users"> : undefined,
     } : "skip"
   );
   
