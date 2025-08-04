@@ -1,0 +1,13 @@
+/* Web-specific styles for Expo Web */
+
+/* Apply SUIT font to all text elements on web */
+html, body {
+  font-family: 'SUIT', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  color: var(--text-primary, hsl(210 10% 90%));
+  background-color: var(--bg-primary, hsl(210 15% 12%));
+}
+
+/* Ensure all text elements use SUIT */
+* {
+  font-family: inherit;
+}
