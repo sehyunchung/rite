@@ -5,37 +5,176 @@ import {
   SafeAreaView,
   Platform,
   TouchableOpacity,
+  Alert,
 } from 'react-native';
 import { useRouter } from 'expo-router';
+import { useMutation } from 'convex/react';
+import { api } from '@rite/backend/convex/_generated/api';
+import { Id } from '@rite/backend/convex/_generated/dataModel';
 import { Ionicons } from '@expo/vector-icons';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { Typography, Button, Input, Card } from '@rite/ui';
 import { riteColors as colors } from '../../constants/Colors';
+import { useAuthContext } from '../../contexts/AuthContext';
 
 export default function CreateTab() {
   const router = useRouter();
+  const { user } = useAuthContext();
+  const createEvent = useMutation(api.events.createEvent);
+  
   const [eventName, setEventName] = React.useState('');
   const [selectedDate, setSelectedDate] = React.useState<Date>(new Date());
-  const [startTime, setStartTime] = React.useState<Date>(new Date());
+  const [venueName, setVenueName] = React.useState('');
+  const [venueAddress, setVenueAddress] = React.useState('');
+  const [description, setDescription] = React.useState('');
+  const [hashtags, setHashtags] = React.useState('');
   const [showDatePicker, setShowDatePicker] = React.useState(false);
-  const [showTimePicker, setShowTimePicker] = React.useState(false);
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
+  
   const [djSlots, setDjSlots] = React.useState([
-    { id: 1, name: 'DJ 1', startTime: '8:00 PM', endTime: '9:00 PM' },
-    { id: 2, name: 'DJ 2', startTime: '9:00 PM', endTime: '10:00 PM' },
-    { id: 3, name: 'DJ 3', startTime: '10:00 PM', endTime: '11:00 PM' },
-    { id: 4, name: 'DJ 4', startTime: '11:00 PM', endTime: '12:00 AM' },
+    { id: 1, djName: '', djInstagram: '', startTime: '22:00', endTime: '23:00' },
+    { id: 2, djName: '', djInstagram: '', startTime: '23:00', endTime: '00:00' },
   ]);
 
-  const handleCreateEvent = () => {
-    // TODO: Implement event creation with Convex
-    console.log('Creating event:', {
-      eventName,
-      selectedDate,
-      startTime,
-      djSlots,
-    });
-    // After successful creation, navigate to events tab
-    router.replace('/(tabs)/events');
+  const validateForm = () => {
+    if (!eventName.trim()) {
+      Alert.alert('Error', 'Please enter an event name');
+      return false;
+    }
+    
+    if (!venueName.trim()) {
+      Alert.alert('Error', 'Please enter a venue name');
+      return false;
+    }
+    
+    if (!venueAddress.trim()) {
+      Alert.alert('Error', 'Please enter a venue address');
+      return false;
+    }
+
+    const eventDate = selectedDate.toISOString().split('T')[0];
+    const today = new Date().toISOString().split('T')[0];
+    if (eventDate < today) {
+      Alert.alert('Error', 'Event date cannot be in the past');
+      return false;
+    }
+
+    if (djSlots.length === 0) {
+      Alert.alert('Error', 'At least one DJ slot is required');
+      return false;
+    }
+
+    for (const slot of djSlots) {
+      if (!slot.startTime || !slot.endTime) {
+        Alert.alert('Error', 'All DJ slots must have start and end times');
+        return false;
+      }
+      if (!slot.djInstagram.trim()) {
+        Alert.alert('Error', 'All DJ slots must have an Instagram handle');
+        return false;
+      }
+    }
+
+    return true;
+  };
+
+  const handleCreateEvent = async () => {
+    if (!user?.id) {
+      Alert.alert('Error', 'You must be logged in to create an event');
+      return;
+    }
+
+    if (!validateForm()) {
+      return;
+    }
+
+    setIsSubmitting(true);
+    
+    try {
+      const eventDate = selectedDate.toISOString().split('T')[0];
+      
+      // Default deadlines: promo materials 7 days before, guest list 3 days before
+      const eventDateObj = new Date(selectedDate);
+      const promoDeadline = new Date(eventDateObj);
+      promoDeadline.setDate(promoDeadline.getDate() - 7);
+      const guestDeadline = new Date(eventDateObj);
+      guestDeadline.setDate(guestDeadline.getDate() - 3);
+
+      const eventData = {
+        userId: user.id as Id<"users">,
+        name: eventName.trim(),
+        date: eventDate,
+        venue: {
+          name: venueName.trim(),
+          address: venueAddress.trim(),
+        },
+        description: description.trim(),
+        hashtags: hashtags.trim(),
+        deadlines: {
+          guestList: guestDeadline.toISOString().split('T')[0],
+          promoMaterials: promoDeadline.toISOString().split('T')[0],
+        },
+        payment: {
+          amount: 0,
+          perDJ: 0,
+          currency: 'KRW',
+          dueDate: eventDate,
+        },
+        guestLimitPerDJ: 2,
+        timeslots: djSlots.map(slot => ({
+          startTime: slot.startTime,
+          endTime: slot.endTime,
+          djName: slot.djName.trim(),
+          djInstagram: slot.djInstagram.trim(),
+        })),
+      };
+
+      await createEvent(eventData);
+      
+      Alert.alert('Success', 'Event created successfully!', [
+        {
+          text: 'OK',
+          onPress: () => router.replace('/(tabs)/events'),
+        },
+      ]);
+      
+    } catch (error) {
+      console.error('Failed to create event:', error);
+      Alert.alert('Error', 'Failed to create event. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const addDjSlot = () => {
+    const lastSlot = djSlots[djSlots.length - 1];
+    const newId = Math.max(...djSlots.map(s => s.id)) + 1;
+    
+    // Next slot starts where the last one ended
+    const newStartTime = lastSlot ? lastSlot.endTime : '22:00';
+    const [hour, minute] = newStartTime.split(':');
+    const nextHour = (parseInt(hour) + 1) % 24;
+    const newEndTime = `${nextHour.toString().padStart(2, '0')}:${minute}`;
+    
+    setDjSlots([...djSlots, {
+      id: newId,
+      djName: '',
+      djInstagram: '',
+      startTime: newStartTime,
+      endTime: newEndTime,
+    }]);
+  };
+
+  const removeDjSlot = (id: number) => {
+    if (djSlots.length > 1) {
+      setDjSlots(djSlots.filter(slot => slot.id !== id));
+    }
+  };
+
+  const updateDjSlot = (id: number, field: keyof typeof djSlots[0], value: string) => {
+    setDjSlots(djSlots.map(slot => 
+      slot.id === id ? { ...slot, [field]: value } : slot
+    ));
   };
 
   const formatDate = (date: Date) => {
@@ -47,25 +186,10 @@ export default function CreateTab() {
     });
   };
 
-  const formatTime = (date: Date) => {
-    return date.toLocaleTimeString('en-US', {
-      hour: 'numeric',
-      minute: '2-digit',
-      hour12: true,
-    });
-  };
-
   const onDateChange = (event: DateTimePickerEvent, date?: Date) => {
     setShowDatePicker(false);
     if (date) {
       setSelectedDate(date);
-    }
-  };
-
-  const onTimeChange = (event: DateTimePickerEvent, date?: Date) => {
-    setShowTimePicker(false);
-    if (date) {
-      setStartTime(date);
     }
   };
 
@@ -112,20 +236,59 @@ export default function CreateTab() {
             </TouchableOpacity>
           </View>
 
-          {/* Start Time */}
+          {/* Venue */}
           <View className="mb-6">
             <Typography variant="label" className="mb-2" style={{ color: colors.functional.textPrimary }}>
-              Start Time
+              Venue Name
             </Typography>
-            <TouchableOpacity 
-              className="bg-neutral-700 border border-neutral-600 rounded-xl h-12 flex-row items-center px-4"
-              onPress={() => setShowTimePicker(true)}
-            >
-              <Typography variant="body" className="flex-1" style={{ color: colors.functional.textPrimary }}>
-                {formatTime(startTime)}
-              </Typography>
-              <Ionicons name="time-outline" size={20} color={colors.functional.textSecondary} />
-            </TouchableOpacity>
+            <Input
+              placeholder="Enter venue name"
+              value={venueName}
+              onChangeText={setVenueName}
+              autoCapitalize="words"
+              className="bg-neutral-700 border-neutral-600"
+            />
+          </View>
+
+          <View className="mb-6">
+            <Typography variant="label" className="mb-2" style={{ color: colors.functional.textPrimary }}>
+              Venue Address
+            </Typography>
+            <Input
+              placeholder="Enter venue address"
+              value={venueAddress}
+              onChangeText={setVenueAddress}
+              autoCapitalize="words"
+              className="bg-neutral-700 border-neutral-600"
+            />
+          </View>
+
+          {/* Description */}
+          <View className="mb-6">
+            <Typography variant="label" className="mb-2" style={{ color: colors.functional.textPrimary }}>
+              Description (optional)
+            </Typography>
+            <Input
+              placeholder="Event description"
+              value={description}
+              onChangeText={setDescription}
+              multiline
+              numberOfLines={3}
+              className="bg-neutral-700 border-neutral-600"
+            />
+          </View>
+
+          {/* Hashtags */}
+          <View className="mb-6">
+            <Typography variant="label" className="mb-2" style={{ color: colors.functional.textPrimary }}>
+              Hashtags (optional)
+            </Typography>
+            <Input
+              placeholder="#rave #techno #seoul"
+              value={hashtags}
+              onChangeText={setHashtags}
+              className="bg-neutral-700 border-neutral-600"
+            />
           </View>
 
           {/* DJ Lineup */}
@@ -134,7 +297,7 @@ export default function CreateTab() {
               <Typography variant="label" style={{ color: colors.functional.textPrimary }}>
                 DJ Lineup
               </Typography>
-              <TouchableOpacity className="flex-row items-center">
+              <TouchableOpacity className="flex-row items-center" onPress={addDjSlot}>
                 <Ionicons name="add" size={20} color={colors.brand.primary} />
                 <Typography variant="button" color="primary" className="ml-1">
                   Add Slot
@@ -142,22 +305,72 @@ export default function CreateTab() {
               </TouchableOpacity>
             </View>
             
-            {djSlots.map((slot) => (
-              <Card key={slot.id} className="bg-neutral-700 border-neutral-600 p-4 flex-row items-center mb-3">
-                <View className="w-10 h-10 rounded-full bg-neutral-800 items-center justify-center mr-3">
-                  <Ionicons name="musical-notes" size={20} color={colors.brand.primary} />
-                </View>
-                <View className="flex-1">
-                  <Typography variant="body" className="mb-1" style={{ color: colors.functional.textPrimary }}>
-                    {slot.name}
+            {djSlots.map((slot, index) => (
+              <Card key={slot.id} className="bg-neutral-700 border-neutral-600 p-4 mb-3">
+                <View className="flex-row justify-between items-center mb-3">
+                  <Typography variant="body" style={{ color: colors.functional.textPrimary }}>
+                    Slot {index + 1}
                   </Typography>
-                  <Typography variant="caption" color="secondary">
-                    {slot.startTime} - {slot.endTime}
-                  </Typography>
+                  {djSlots.length > 1 && (
+                    <TouchableOpacity onPress={() => removeDjSlot(slot.id)}>
+                      <Ionicons name="trash-outline" size={20} color={colors.semantic.error} />
+                    </TouchableOpacity>
+                  )}
                 </View>
-                <TouchableOpacity>
-                  <Ionicons name="ellipsis-horizontal" size={20} color={colors.functional.textSecondary} />
-                </TouchableOpacity>
+                
+                <View className="space-y-3">
+                  {/* Time Range */}
+                  <View className="flex-row space-x-3">
+                    <View className="flex-1">
+                      <Typography variant="caption" className="mb-1" style={{ color: colors.functional.textSecondary }}>
+                        Start Time
+                      </Typography>
+                      <Input
+                        value={slot.startTime}
+                        onChangeText={(value) => updateDjSlot(slot.id, 'startTime', value)}
+                        placeholder="22:00"
+                        className="bg-neutral-800 border-neutral-600 text-xs"
+                      />
+                    </View>
+                    <View className="flex-1">
+                      <Typography variant="caption" className="mb-1" style={{ color: colors.functional.textSecondary }}>
+                        End Time
+                      </Typography>
+                      <Input
+                        value={slot.endTime}
+                        onChangeText={(value) => updateDjSlot(slot.id, 'endTime', value)}
+                        placeholder="23:00"
+                        className="bg-neutral-800 border-neutral-600 text-xs"
+                      />
+                    </View>
+                  </View>
+                  
+                  {/* DJ Name */}
+                  <View>
+                    <Typography variant="caption" className="mb-1" style={{ color: colors.functional.textSecondary }}>
+                      DJ Name (optional)
+                    </Typography>
+                    <Input
+                      value={slot.djName}
+                      onChangeText={(value) => updateDjSlot(slot.id, 'djName', value)}
+                      placeholder="DJ Name"
+                      className="bg-neutral-800 border-neutral-600"
+                    />
+                  </View>
+                  
+                  {/* Instagram Handle */}
+                  <View>
+                    <Typography variant="caption" className="mb-1" style={{ color: colors.functional.textSecondary }}>
+                      Instagram Handle *
+                    </Typography>
+                    <Input
+                      value={slot.djInstagram}
+                      onChangeText={(value) => updateDjSlot(slot.id, 'djInstagram', value)}
+                      placeholder="@username"
+                      className="bg-neutral-800 border-neutral-600"
+                    />
+                  </View>
+                </View>
               </Card>
             ))}
           </View>
@@ -166,9 +379,10 @@ export default function CreateTab() {
           <Button 
             onPress={handleCreateEvent}
             className="mt-4"
+            disabled={isSubmitting}
           >
             <Typography variant="button" style={{ color: colors.functional.textPrimary }}>
-              Create Event
+              {isSubmitting ? 'Creating...' : 'Create Event'}
             </Typography>
           </Button>
         </View>
@@ -186,17 +400,6 @@ export default function CreateTab() {
         />
       )}
       
-      {/* Time Picker Modal */}
-      {showTimePicker && (
-        <DateTimePicker
-          value={startTime}
-          mode="time"
-          display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-          onChange={onTimeChange}
-          textColor={colors.functional.textPrimary}
-          themeVariant="dark"
-        />
-      )}
     </SafeAreaView>
   );
 }

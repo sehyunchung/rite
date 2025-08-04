@@ -1,5 +1,6 @@
 import { v } from "convex/values";
 import { query, mutation } from "./_generated/server";
+import type { Id, Doc } from "./_generated/dataModel";
 import { requireAuth } from "./auth";
 import { 
   EventPhase, 
@@ -138,61 +139,138 @@ export const createEvent = mutation({
       throw new Error("At least one timeslot is required to create an event");
     }
     
-    // Create the event with authenticated user as organizer
-    const now = new Date().toISOString();
-    const eventId = await ctx.db.insert("events", {
-      ...eventData,
-      organizerId: userId,
-      createdAt: now,
-      status: "draft" as const,
-      // Initialize new phase system
-      phase: EventPhase.DRAFT,
-      phaseMetadata: {
-        enteredAt: now,
-        enteredBy: userId,
-      },
-      stateVersion: 1,
-      milestones: {
-        createdAt: now,
-      },
-      capabilities: {
-        canEdit: true,
-        canPublish: false, // Will be updated after timeslots are created
-        canAcceptSubmissions: false,
-        canGenerateContent: false,
-        canFinalize: false,
-        showUrgentBanner: false,
-        showDayOfFeatures: false,
-      },
-    });
-    
-    // Create timeslots for the event with unique submission tokens
-    const timeslotResults = await Promise.all(
-      timeslots.map(async (slot) => {
-        const submissionToken = generateSubmissionToken();
-        const timeslotId = await ctx.db.insert("timeslots", {
-          eventId,
-          startTime: slot.startTime,
-          endTime: slot.endTime,
-          djName: slot.djName,
-          djInstagram: slot.djInstagram,
-          submissionToken,
-        });
-        return { timeslotId, submissionToken };
-      })
-    );
-    
-    // Update capabilities now that timeslots are created
-    const event = await ctx.db.get(eventId);
-    if (event && timeslots.length > 0) {
-      const capabilities = computeEventCapabilities(event, timeslots as any, []);
-      await ctx.db.patch(eventId, { capabilities });
+    // Validate timeslot data before creating anything
+    for (let i = 0; i < timeslots.length; i++) {
+      const slot = timeslots[i];
+      if (!slot.startTime || !slot.endTime) {
+        throw new Error(`Timeslot ${i + 1} must have both start and end times`);
+      }
+      if (!slot.djInstagram) {
+        throw new Error(`Timeslot ${i + 1} must have an Instagram handle`);
+      }
     }
     
-    return { 
-      eventId, 
-      timeslots: timeslotResults 
-    };
+    const now = new Date().toISOString();
+    let eventId: Id<"events"> | undefined;
+    let timeslotResults: Array<{ timeslotId: any; submissionToken: string }> = [];
+    
+    try {
+      // Create the event with authenticated user as organizer
+      eventId = await ctx.db.insert("events", {
+        ...eventData,
+        organizerId: userId,
+        createdAt: now,
+        status: "draft" as const,
+        // Initialize new phase system
+        phase: EventPhase.DRAFT,
+        phaseMetadata: {
+          enteredAt: now,
+          enteredBy: userId,
+        },
+        stateVersion: 1,
+        milestones: {
+          createdAt: now,
+        },
+        capabilities: {
+          canEdit: true,
+          canPublish: false, // Will be updated after timeslots are created
+          canAcceptSubmissions: false,
+          canGenerateContent: false,
+          canFinalize: false,
+          showUrgentBanner: false,
+          showDayOfFeatures: false,
+        },
+      });
+      
+      // Create timeslots one by one with error handling
+      for (let i = 0; i < timeslots.length; i++) {
+        const slot = timeslots[i];
+        try {
+          const submissionToken = generateSubmissionToken();
+          const timeslotId = await ctx.db.insert("timeslots", {
+            eventId,
+            startTime: slot.startTime,
+            endTime: slot.endTime,
+            djName: slot.djName,
+            djInstagram: slot.djInstagram,
+            submissionToken,
+          });
+          timeslotResults.push({ timeslotId, submissionToken });
+        } catch (timeslotError) {
+          // If any timeslot creation fails, delete the event and all created timeslots
+          console.error(`Failed to create timeslot ${i + 1}:`, timeslotError);
+          
+          // Clean up: delete all created timeslots
+          for (const result of timeslotResults) {
+            try {
+              await ctx.db.delete(result.timeslotId);
+            } catch (cleanupError) {
+              console.error('Failed to cleanup timeslot:', cleanupError);
+            }
+          }
+          
+          // Delete the event
+          if (eventId) {
+            try {
+              await ctx.db.delete(eventId);
+            } catch (cleanupError) {
+              console.error('Failed to cleanup event:', cleanupError);
+            }
+          }
+          
+          throw new Error(`Failed to create timeslot ${i + 1}: ${timeslotError instanceof Error ? timeslotError.message : 'Unknown error'}`);
+        }
+      }
+      
+      // Verify all timeslots were created successfully
+      if (timeslotResults.length !== timeslots.length) {
+        throw new Error(`Expected ${timeslots.length} timeslots but only created ${timeslotResults.length}`);
+      }
+      
+      // Update capabilities now that all timeslots are created successfully
+      if (eventId) {
+        const updatedEvent = await ctx.db.get(eventId);
+        if (updatedEvent) {
+          // Get the actual created timeslots from the database
+          const createdTimeslots = await ctx.db
+            .query("timeslots")
+            .filter((q) => q.eq(q.field("eventId"), eventId))
+            .collect();
+          const capabilities = computeEventCapabilities(updatedEvent, createdTimeslots, []);
+          await ctx.db.patch(eventId, { capabilities });
+        }
+      }
+      
+      return { 
+        eventId, 
+        timeslots: timeslotResults 
+      };
+      
+    } catch (error) {
+      // If we get here and eventId exists, ensure cleanup
+      if (eventId) {
+        // Clean up any created timeslots
+        for (const result of timeslotResults) {
+          try {
+            await ctx.db.delete(result.timeslotId);
+          } catch (cleanupError) {
+            console.error('Failed to cleanup timeslot in final catch:', cleanupError);
+          }
+        }
+        
+        // Delete the event
+        if (eventId) {
+          try {
+            await ctx.db.delete(eventId);
+          } catch (cleanupError) {
+            console.error('Failed to cleanup event in final catch:', cleanupError);
+          }
+        }
+      }
+      
+      // Re-throw the original error
+      throw error;
+    }
   },
 });
 
