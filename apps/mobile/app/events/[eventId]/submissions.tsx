@@ -56,8 +56,14 @@ export default function SubmissionsScreen() {
     );
   }
 
-  const formatDate = (dateString: string) => {
+  const formatDate = (dateString: string | number) => {
+    if (!dateString) return 'No date set';
+    
     const date = new Date(dateString);
+    if (isNaN(date.getTime())) {
+      return 'Invalid date';
+    }
+    
     return date.toLocaleDateString('en-US', { 
       month: 'short', 
       day: 'numeric',
@@ -67,8 +73,14 @@ export default function SubmissionsScreen() {
     });
   };
 
-  const formatTime = (timeString: string) => {
+  const formatTime = (timeString: string | number) => {
+    if (!timeString) return 'No time set';
+    
     const date = new Date(timeString);
+    if (isNaN(date.getTime())) {
+      return 'Invalid time';
+    }
+    
     return date.toLocaleTimeString('en-US', { 
       hour: 'numeric', 
       minute: '2-digit',

@@ -53,8 +53,14 @@ export default function EventDetailScreen() {
     );
   }
 
-  const formatDate = (dateString: string) => {
+  const formatDate = (dateString: string | number) => {
+    if (!dateString) return 'No date set';
+    
     const date = new Date(dateString);
+    if (isNaN(date.getTime())) {
+      return 'Invalid date';
+    }
+    
     return date.toLocaleDateString('en-US', { 
       weekday: 'long', 
       year: 'numeric', 
@@ -63,8 +69,14 @@ export default function EventDetailScreen() {
     });
   };
 
-  const formatTime = (timeString: string) => {
+  const formatTime = (timeString: string | number) => {
+    if (!timeString) return 'No time set';
+    
     const date = new Date(timeString);
+    if (isNaN(date.getTime())) {
+      return 'Invalid time';
+    }
+    
     return date.toLocaleTimeString('en-US', { 
       hour: 'numeric', 
       minute: '2-digit',
