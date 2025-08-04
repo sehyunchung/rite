@@ -20,6 +20,7 @@ import { MobileLayout } from '../../../components/MobileLayout';
 import { useMutation } from 'convex/react';
 import { toast } from 'sonner';
 import { Label, Textarea } from '@rite/ui';
+import { isValidConvexId } from '@/lib/utils';
 
 interface EventDetailClientProps {
   eventId: string;
@@ -41,6 +42,10 @@ export function EventDetailClient({ eventId, userId, locale }: EventDetailClient
   
   const deleteEvent = useMutation(api.events.deleteEvent);
   const cancelEvent = useMutation(api.events.cancelEvent);
+
+  // Validate IDs before using them
+  const isValidEventId = isValidConvexId(eventId);
+  const isValidUserId = isValidConvexId(userId);
 
   const handleDeleteEvent = async () => {
     if (!event) return;
@@ -83,11 +88,28 @@ export function EventDetailClient({ eventId, userId, locale }: EventDetailClient
   
   const event = useQuery(
     api.events.getEvent,
-    eventDeleted ? "skip" : { 
+    eventDeleted || !isValidEventId || !isValidUserId ? "skip" : { 
       eventId: eventId as Id<"events">,
       userId: userId as Id<"users">
     }
   );
+
+  // Handle invalid IDs
+  if (!isValidEventId || !isValidUserId) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <Typography variant="h2" className="mb-2">{t('invalidRequest')}</Typography>
+          <Typography variant="body" color="secondary" className="mb-4">
+            {t('invalidRequestMessage') || 'The request contains invalid parameters'}
+          </Typography>
+          <Button onClick={() => router.push(`/${locale}/dashboard`)}>
+            {t('backToDashboard')}
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   if (eventDeleted) {
     return (
