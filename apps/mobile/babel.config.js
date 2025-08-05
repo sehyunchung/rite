@@ -6,14 +6,6 @@ module.exports = function(api) {
       "nativewind/babel",
     ],
     plugins: [
-      [
-        '@tamagui/babel-plugin',
-        {
-          components: ['@rite/ui', 'tamagui'],
-          config: '../../packages/ui/src/tamagui.config.ts',
-          disableExtraction: process.env.NODE_ENV === 'development',
-        },
-      ],
       'react-native-reanimated/plugin',
     ],
   };
