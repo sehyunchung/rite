@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { SafeAreaView, ScrollView, View, Platform } from 'react-native'
-import { cn } from '@rite/ui/utils'
+import { cn } from '../../../../packages/ui/src/utils'
 
 interface ScreenContainerProps {
   children: React.ReactNode
