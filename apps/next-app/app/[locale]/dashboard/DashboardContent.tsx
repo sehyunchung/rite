@@ -9,7 +9,7 @@ import { Link } from '../../../i18n/routing';
 import { useSession } from 'next-auth/react';
 import { useTranslations } from 'next-intl';
 import { LoadingIndicator } from '@rite/ui';
-import { useValidatedEvents } from '@/hooks/useValidatedEvents';
+import { useEffectEvents } from '@/hooks/useEffectEvents';
 
 interface DashboardContentProps {
   userId: string;
@@ -20,8 +20,8 @@ export function DashboardContent({ userId }: DashboardContentProps) {
   const baseUrl = typeof window !== 'undefined' ? window.location.origin : '';
   const t = useTranslations('dashboard');
   
-  // Use validated events hook for type safety
-  const { events, isLoading } = useValidatedEvents(userId);
+  // Use Effect-validated events hook - eliminates undefined pollution
+  const { events, isLoading } = useEffectEvents(userId);
   
   // Show loading state while session or events are loading
   if (status === 'loading' || isLoading) {
@@ -107,8 +107,8 @@ export function DashboardContent({ userId }: DashboardContentProps) {
               eventName={event.name}
               venueName={event.venue.name}
               date={event.date}
-              djCount={event.timeslots?.length || 0}
-              dueDate={event.deadlines?.guestList || ''}
+              djCount={event.timeslots.length}
+              dueDate={event.deadlines.guestList}
               status={event.status === 'active' ? 'published' : 'draft'}
               onViewDetails={() => {
                 window.location.href = `/events/${event._id}`;

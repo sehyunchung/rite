@@ -1,8 +1,8 @@
 'use client';
 
-import { useQuery } from 'convex/react';
 import { api } from '@rite/backend/convex/_generated/api';
 import { Id, Doc } from '@rite/backend/convex/_generated/dataModel';
+import { useEffectEvent } from '@/hooks/useEffectEvents';
 import { Card, CardContent, CardHeader, CardTitle } from '@rite/ui';
 import { Badge } from '@rite/ui';
 import { Button } from '@rite/ui';
@@ -86,12 +86,10 @@ export function EventDetailClient({ eventId, userId, locale }: EventDetailClient
     setShowCancelConfirm(false);
   };
   
-  const event = useQuery(
-    api.events.getEvent,
-    eventDeleted || !isValidEventId || !isValidUserId ? "skip" : { 
-      eventId: eventId as Id<"events">,
-      userId: userId as Id<"users">
-    }
+  // Use Effect-validated event hook - eliminates undefined pollution
+  const { event, isLoading, exists } = useEffectEvent(
+    eventDeleted || !isValidEventId || !isValidUserId ? "" : eventId, 
+    userId
   );
 
   // Handle invalid IDs
@@ -124,13 +122,13 @@ export function EventDetailClient({ eventId, userId, locale }: EventDetailClient
     );
   }
 
-  if (event === undefined) {
+  if (isLoading) {
     return (
       <FullScreenLoading />
     );
   }
 
-  if (event === null) {
+  if (!exists || !event) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
@@ -194,9 +192,9 @@ export function EventDetailClient({ eventId, userId, locale }: EventDetailClient
                 </Button>
                 
                 {/* Delete/Cancel buttons */}
-                {event.phase !== 'CANCELLED' && event.phase !== 'COMPLETED' && (
+                {event.phase !== 'cancelled' && event.phase !== 'completed' && (
                   <>
-                    {event.timeslots?.some(slot => slot.submissionId) ? (
+                    {event.timeslots.some(slot => slot.submissionId) ? (
                       <Button 
                         variant="outline" 
                         size="sm"
@@ -245,10 +243,10 @@ export function EventDetailClient({ eventId, userId, locale }: EventDetailClient
               {/* DJ Timeslots */}
               <Card>
                 <CardHeader>
-                  <CardTitle>{t('djLineup', { count: event.timeslots?.length || 0 })}</CardTitle>
+                  <CardTitle>{t('djLineup', { count: event.timeslots.length })}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  {event.timeslots && event.timeslots.length > 0 ? (
+                  {event.timeslots.length > 0 ? (
                     <div className="space-y-4">
                       {event.timeslots.map((slot: Doc<"timeslots">) => (
                         <div key={slot._id} className="flex items-center justify-between p-4 bg-muted rounded-lg">

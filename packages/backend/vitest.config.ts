@@ -8,7 +8,7 @@ export default defineConfig({
     globals: true,
     include: ['convex/**/*.test.{ts,js}', '__tests__/**/*.test.{ts,js}'],
     coverage: {
-      provider: 'c8',
+      provider: 'v8',
       reporter: ['text', 'html', 'lcov'],
       exclude: ['node_modules/**/*', '**/*.config.{ts,js}', '**/*.d.ts', 'convex/_generated/**/*'],
       thresholds: {
