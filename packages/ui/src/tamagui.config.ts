@@ -1,6 +1,6 @@
 import { createTamagui, createFont } from '@tamagui/core'
 import { createAnimations } from '@tamagui/animations-react-native'
-import { themes } from './design-tokens/themes'
+import { tamaguiThemes } from './design-tokens/tamagui-themes'
 
 // Create animations
 const animations = createAnimations({
@@ -23,6 +23,7 @@ const animations = createAnimations({
 // Note: Tamagui supports HSL colors natively on both web and mobile
 
 // Create font using SUIT Variable
+// Note: Tamagui uses 'true' as the default fallback key, not 'default'
 const font = createFont({
   family: 'var(--font-suit), SUIT Variable, system-ui, -apple-system, BlinkMacSystemFont, sans-serif',
   size: {
@@ -42,6 +43,7 @@ const font = createFont({
     14: 64,
     15: 72,
     16: 96,
+    true: 16, // This is the actual default that Tamagui uses
   },
   lineHeight: {
     1: 16,
@@ -60,6 +62,7 @@ const font = createFont({
     14: 80,
     15: 88,
     16: 112,
+    true: 24, // This is the actual default that Tamagui uses
   },
   weight: {
     100: '100',
@@ -71,6 +74,7 @@ const font = createFont({
     700: '700',
     800: '800',
     900: '900',
+    true: '400', // This is the actual default that Tamagui uses
   },
   letterSpacing: {
     1: -0.5,
@@ -78,12 +82,13 @@ const font = createFont({
     3: 0,
     4: 0.25,
     5: 0.5,
+    true: 0, // This is the actual default that Tamagui uses
   },
 })
 
 // Extract tokens from Josh Comeau theme
-const joshTheme = themes.joshComeau
-const joshLightTheme = themes.joshComeauLight
+const joshTheme = tamaguiThemes.joshComeau
+const joshLightTheme = tamaguiThemes.joshComeauLight
 
 export const config = createTamagui({
   animations,
@@ -258,6 +263,11 @@ export const config = createTamagui({
       shadowColorPress: 'rgba(0,0,0,0.4)',
       shadowColorFocus: 'rgba(0,0,0,0.5)',
       
+      // Brand colors (add to theme)
+      brandPrimary: joshTheme.brand.primary,
+      brandPrimaryDark: joshTheme.brand.primaryDark,
+      brandPrimaryLight: joshTheme.brand.primaryLight,
+      
       // Button specific
       buttonPrimaryBg: joshTheme.brand.primary,
       buttonPrimaryBgHover: joshTheme.brand.primaryDark,
@@ -298,6 +308,11 @@ export const config = createTamagui({
       shadowColorHover: 'rgba(0,0,0,0.15)',
       shadowColorPress: 'rgba(0,0,0,0.05)',
       shadowColorFocus: 'rgba(0,0,0,0.1)',
+      
+      // Brand colors (add to theme)
+      brandPrimary: joshLightTheme.brand.primary,
+      brandPrimaryDark: joshLightTheme.brand.primaryDark,
+      brandPrimaryLight: joshLightTheme.brand.primaryLight,
       
       // Button specific
       buttonPrimaryBg: joshLightTheme.brand.primary,
