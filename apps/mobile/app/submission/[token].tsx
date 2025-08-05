@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { View, ScrollView, SafeAreaView, Platform, ActivityIndicator, Alert } from 'react-native';
-import { Typography, Card } from '@rite/ui';
-import { Button, Input, Textarea } from '@rite/ui';
+import { Typography, Card , Button, Input, Textarea } from '@rite/ui';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useQuery, useMutation } from 'convex/react';
 import { api } from '@rite/backend/convex/_generated/api';

@@ -1,0 +1,20 @@
+/* Tamagui CSS Reset */
+@tamagui-reset;
+
+/* Additional resets for better cross-browser consistency */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+/* Ensure Tamagui components use the custom font */
+[data-tamagui] {
+  font-family: var(--font-suit), SUIT Variable, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+}

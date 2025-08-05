@@ -1,3 +1,6 @@
+/* Import Tamagui CSS - must be before Tailwind */
+@import './tamagui.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

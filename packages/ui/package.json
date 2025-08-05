@@ -22,7 +22,8 @@
     "./src/components/dropzone/dropzone.dom": "./src/components/dropzone/dropzone.dom.tsx",
     "./src/components/dropzone/dropzone.native": "./src/components/dropzone/dropzone.native.tsx",
     "./types/*": "./src/types/*",
-    "./types/nativewind": "./src/types/nativewind.d.ts"
+    "./types/nativewind": "./src/types/nativewind.d.ts",
+    "./tamagui.config": "./src/tamagui.config.ts"
   },
   "dependencies": {
     "@radix-ui/react-alert-dialog": "^1.1.5",

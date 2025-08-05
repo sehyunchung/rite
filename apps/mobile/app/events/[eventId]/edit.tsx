@@ -15,8 +15,7 @@ import { api } from '@rite/backend/convex/_generated/api';
 import { Id } from '@rite/backend/convex/_generated/dataModel';
 import { Ionicons } from '@expo/vector-icons';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
-import { Typography, Card } from '@rite/ui';
-import { Button, Input } from '@rite/ui';
+import { Typography, Card , Button, Input } from '@rite/ui';
 import { useAuth } from '../../../contexts/AuthContext';
 
 export default function EditEventScreen() {

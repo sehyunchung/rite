@@ -1,4 +1,6 @@
 import createNextIntlPlugin from 'next-intl/plugin';
+import { withTamagui } from '@tamagui/next-plugin';
+import { join } from 'path';
 
 const withNextIntl = createNextIntlPlugin('./i18n/request.ts');
 
@@ -42,4 +44,14 @@ const nextConfig = {
   },
 }
 
-export default withNextIntl(nextConfig);
+const tamaguiPlugin = withTamagui({
+  config: '../../packages/ui/src/tamagui.config.ts',
+  components: ['@rite/ui', 'tamagui'],
+  appDir: true,
+  disableExtraction: process.env.NODE_ENV === 'development',
+  // Optimize for production
+  outputCSS: process.env.NODE_ENV === 'production' ? './public/tamagui.css' : null,
+  excludeReactNativeWebExports: ['Switch', 'ProgressBar', 'Picker', 'Modal'],
+})
+
+export default withNextIntl(tamaguiPlugin(nextConfig));

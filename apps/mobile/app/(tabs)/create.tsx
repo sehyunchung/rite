@@ -13,9 +13,8 @@ import { api } from '@rite/backend/convex/_generated/api';
 import { Id } from '@rite/backend/convex/_generated/dataModel';
 import { Ionicons } from '@expo/vector-icons';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
-import { Typography, Card } from '@rite/ui';
+import { Typography, Card , Input, Button } from '@rite/ui';
 import { useAuth } from '../../contexts/AuthContext';
-import { Input, Button } from '@rite/ui';
 
 export default function CreateTab() {
   const router = useRouter();
@@ -202,13 +201,13 @@ export default function CreateTab() {
             paddingBottom: Platform.OS === 'ios' ? 124 : 104 
           }}
         >
-          <Typography variant="h3" className="mb-8 text-white">
+          <Typography variant="h3" color="default" className="mb-8">
             Create Event
           </Typography>
           
           {/* Event Name */}
           <View className="mb-6">
-            <Typography variant="label" className="mb-2 text-white">
+            <Typography variant="label" color="default" className="mb-2">
               Event Name
             </Typography>
             <Input
@@ -222,23 +221,23 @@ export default function CreateTab() {
 
           {/* Date */}
           <View className="mb-6">
-            <Typography variant="label" className="mb-2 text-white">
+            <Typography variant="label" color="default" className="mb-2">
               Date
             </Typography>
             <TouchableOpacity 
               className="bg-neutral-700 border border-neutral-600 rounded-xl h-12 flex-row items-center px-4"
               onPress={() => setShowDatePicker(true)}
             >
-              <Typography variant="body" className="flex-1 text-white">
+              <Typography variant="body" color="default" className="flex-1">
                 {formatDate(selectedDate)}
               </Typography>
-              <Ionicons name="calendar-outline" size={20} color="var(--neutral-400)" />
+              <Ionicons name="calendar-outline" size={20} color="#8C8CA3" />
             </TouchableOpacity>
           </View>
 
           {/* Venue */}
           <View className="mb-6">
-            <Typography variant="label" className="mb-2 text-white">
+            <Typography variant="label" color="default" className="mb-2">
               Venue Name
             </Typography>
             <Input
@@ -251,7 +250,7 @@ export default function CreateTab() {
           </View>
 
           <View className="mb-6">
-            <Typography variant="label" className="mb-2 text-white">
+            <Typography variant="label" color="default" className="mb-2">
               Venue Address
             </Typography>
             <Input
@@ -265,7 +264,7 @@ export default function CreateTab() {
 
           {/* Description */}
           <View className="mb-6">
-            <Typography variant="label" className="mb-2 text-white">
+            <Typography variant="label" color="default" className="mb-2">
               Description (optional)
             </Typography>
             <Input
@@ -280,7 +279,7 @@ export default function CreateTab() {
 
           {/* Hashtags */}
           <View className="mb-6">
-            <Typography variant="label" className="mb-2 text-white">
+            <Typography variant="label" color="default" className="mb-2">
               Hashtags (optional)
             </Typography>
             <Input
@@ -294,11 +293,11 @@ export default function CreateTab() {
           {/* DJ Lineup */}
           <View className="mb-6">
             <View className="flex-row justify-between items-center mb-3">
-              <Typography variant="label" className="text-white">
+              <Typography variant="label" color="default">
                 DJ Lineup
               </Typography>
               <TouchableOpacity className="flex-row items-center" onPress={addDjSlot}>
-                <Ionicons name="add" size={20} color="var(--brand-primary)" />
+                <Ionicons name="add" size={20} color="#7C7CFF" />
                 <Typography variant="button" color="primary" className="ml-1">
                   Add Slot
                 </Typography>
@@ -308,12 +307,12 @@ export default function CreateTab() {
             {djSlots.map((slot, index) => (
               <Card key={slot.id} className="bg-neutral-700 border-neutral-600 p-4 mb-3">
                 <View className="flex-row justify-between items-center mb-3">
-                  <Typography variant="body" className="text-white">
+                  <Typography variant="body" color="default">
                     Slot {index + 1}
                   </Typography>
                   {djSlots.length > 1 && (
                     <TouchableOpacity onPress={() => removeDjSlot(slot.id)}>
-                      <Ionicons name="trash-outline" size={20} color="var(--color-error)" />
+                      <Ionicons name="trash-outline" size={20} color="#FF3366" />
                     </TouchableOpacity>
                   )}
                 </View>
@@ -322,7 +321,7 @@ export default function CreateTab() {
                   {/* Time Range */}
                   <View className="flex-row space-x-3">
                     <View className="flex-1">
-                      <Typography variant="caption" className="mb-1 text-neutral-400">
+                      <Typography variant="caption" color="secondary" className="mb-1">
                         Start Time
                       </Typography>
                       <Input
@@ -333,7 +332,7 @@ export default function CreateTab() {
                       />
                     </View>
                     <View className="flex-1">
-                      <Typography variant="caption" className="mb-1 text-neutral-400">
+                      <Typography variant="caption" color="secondary" className="mb-1">
                         End Time
                       </Typography>
                       <Input
@@ -347,7 +346,7 @@ export default function CreateTab() {
                   
                   {/* DJ Name */}
                   <View>
-                    <Typography variant="caption" className="mb-1 text-neutral-400">
+                    <Typography variant="caption" color="secondary" className="mb-1">
                       DJ Name (optional)
                     </Typography>
                     <Input
@@ -360,7 +359,7 @@ export default function CreateTab() {
                   
                   {/* Instagram Handle */}
                   <View>
-                    <Typography variant="caption" className="mb-1 text-neutral-400">
+                    <Typography variant="caption" color="secondary" className="mb-1">
                       Instagram Handle *
                     </Typography>
                     <Input

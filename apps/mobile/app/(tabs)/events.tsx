@@ -23,7 +23,7 @@ export default function EventsScreen() {
             paddingBottom: Platform.OS === 'ios' ? 124 : 104 
           }}
         >
-          <Typography variant="h3" className="text-white mb-2">
+          <Typography variant="h3" color="default" className="mb-2">
             Events
           </Typography>
           <Typography variant="body" color="secondary" className="mb-8">
@@ -32,15 +32,15 @@ export default function EventsScreen() {
           
           {events === undefined ? (
             <View className="p-8 items-center">
-              <ActivityIndicator size="large" color="var(--brand-primary)" />
+              <ActivityIndicator size="large" color="#7C7CFF" />
             </View>
           ) : events.length === 0 ? (
             <Card className="bg-neutral-700 border-neutral-600">
               <CardContent className="items-center">
-                <Typography variant="body" className="text-white text-center mb-1">
+                <Typography variant="body" color="default" className="text-center mb-1">
                   No events available
                 </Typography>
-                <Typography variant="caption" className="text-center text-neutral-400">
+                <Typography variant="caption" color="secondary" className="text-center">
                   Check back later for upcoming events
                 </Typography>
               </CardContent>

@@ -1,12 +1,10 @@
 import * as React from 'react';
-import { View, ScrollView, SafeAreaView, Platform, ActivityIndicator, Text } from 'react-native';
+import { View, ScrollView, SafeAreaView, Platform, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
-import { Typography, Card, CardContent, EventCard } from '@rite/ui';
+import { Typography, Card, CardContent, EventCard , Button } from '@rite/ui';
 import { useQuery } from 'convex/react';
 import { api } from '@rite/backend/convex/_generated/api';
 import { useAuth } from '../../contexts/AuthContext';
-import { Button } from '@rite/ui';
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -35,28 +33,30 @@ export default function HomeScreen() {
           {/* Create Event Button */}
           <Button 
             onPress={() => router.push('/(tabs)/create')}
-            className="flex-row items-center justify-center mt-4 mb-8"
+            variant="default"
+            size="default"
+            className="flex-row items-center justify-center mt-4 mb-8 rounded-lg"
           >
             Create New Event
           </Button>
           
           {/* Your Events Section */}
           <View className="mb-6">
-            <Typography variant="h5" className="mb-4 text-white">
+            <Typography variant="h5" color="default" className="mb-4">
               Your Events
             </Typography>
             
             {events === undefined ? (
               <View className="p-8">
-                <ActivityIndicator size="large" color="var(--brand-primary)" />
+                <ActivityIndicator size="large" color="#7C7CFF" />
               </View>
             ) : events.length === 0 ? (
-              <Card className="bg-neutral-700 border-neutral-600">
-                <CardContent>
-                  <Typography variant="body" className="text-center mb-1 text-white">
+              <Card className="bg-neutral-700 border-neutral-600 rounded-2xl">
+                <CardContent className="p-6">
+                  <Typography variant="body" color="default" className="text-center mb-1">
                     No events yet
                   </Typography>
-                  <Typography variant="caption" className="text-center text-neutral-400">
+                  <Typography variant="caption" color="secondary" className="text-center">
                     Create your first event to get started
                   </Typography>
                 </CardContent>

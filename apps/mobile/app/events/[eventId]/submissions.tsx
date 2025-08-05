@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { View, ScrollView, SafeAreaView, Platform, ActivityIndicator, Pressable } from 'react-native';
-import { Typography, Card, CardHeader, CardContent, CardTitle, Badge } from '@rite/ui';
+import { Typography, Card, CardHeader, CardContent, CardTitle } from '@rite/ui';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useQuery } from 'convex/react';
 import { api } from '@rite/backend/convex/_generated/api';
@@ -37,7 +37,7 @@ export default function SubmissionsScreen() {
     return (
       <SafeAreaView className="flex-1 bg-neutral-800">
         <View className="flex-1 items-center justify-center">
-          <ActivityIndicator size="large" color="var(--brand-primary)" />
+          <ActivityIndicator size="large" color="#7C7CFF" />
         </View>
       </SafeAreaView>
     );
@@ -112,22 +112,22 @@ export default function SubmissionsScreen() {
               onPress={() => router.back()}
               className="mr-3"
             >
-              <Ionicons name="arrow-back" size={24} color="var(--text-primary)" />
+              <Ionicons name="arrow-back" size={24} color="#E0E0E6" />
             </Pressable>
-            <Typography variant="h4" className="flex-1 text-white">
+            <Typography variant="h4" color="default" className="flex-1">
               Submissions
             </Typography>
           </View>
 
           {/* Event Info */}
-          <Card className="bg-neutral-700 border-neutral-600 mb-6">
-            <CardHeader>
-              <CardTitle className="text-white">
+          <Card className="bg-neutral-700 border-neutral-600 rounded-2xl mb-6">
+            <CardHeader className="p-6">
+              <CardTitle className="text-white text-2xl font-bold">
                 {event.name}
               </CardTitle>
             </CardHeader>
-            <CardContent>
-              <Typography variant="body" className="text-neutral-400">
+            <CardContent className="p-6 pt-0">
+              <Typography variant="body" color="secondary">
                 Total Submissions: {submissions.length}
               </Typography>
             </CardContent>
@@ -135,9 +135,9 @@ export default function SubmissionsScreen() {
 
           {/* Submissions by Timeslot */}
           {event.timeslots.length === 0 ? (
-            <Card className="bg-neutral-700 border-neutral-600">
-              <CardContent>
-                <Typography variant="body" className="text-center text-neutral-400">
+            <Card className="bg-neutral-700 border-neutral-600 rounded-2xl">
+              <CardContent className="p-6">
+                <Typography variant="body" color="secondary" className="text-center">
                   No timeslots configured for this event
                 </Typography>
               </CardContent>
@@ -151,7 +151,7 @@ export default function SubmissionsScreen() {
                   <View key={timeslot._id}>
                     <View className="flex-row items-center justify-between mb-3">
                       <View>
-                        <Typography variant="h6" className="text-white">
+                        <Typography variant="h6" color="default">
                           {formatTime(timeslot.startTime)} - {formatTime(timeslot.endTime)}
                         </Typography>
                         <Typography variant="caption" color="secondary">
@@ -159,15 +159,21 @@ export default function SubmissionsScreen() {
                           {timeslot.djInstagram && ` • @${timeslot.djInstagram}`}
                         </Typography>
                       </View>
-                      <Badge variant={slotSubmissions.length > 0 ? 'default' : 'outline'}>
-                        {`${slotSubmissions.length} submission${slotSubmissions.length !== 1 ? 's' : ''}`}
-                      </Badge>
+                      <View className={`rounded-full px-3 py-1 ${slotSubmissions.length > 0 ? 'bg-green-500/20' : 'bg-neutral-600'}`}>
+                        <Typography 
+                          variant="caption" 
+                          color={slotSubmissions.length > 0 ? 'success' : 'secondary'}
+                          className="text-xs font-medium"
+                        >
+                          {`${slotSubmissions.length} submission${slotSubmissions.length !== 1 ? 's' : ''}`}
+                        </Typography>
+                      </View>
                     </View>
                     
                     {slotSubmissions.length === 0 ? (
-                      <Card className="bg-neutral-700 border-neutral-600">
-                        <CardContent>
-                          <Typography variant="body" className="text-center text-neutral-400">
+                      <Card className="bg-neutral-700 border-neutral-600 rounded-2xl">
+                        <CardContent className="p-6">
+                          <Typography variant="body" color="secondary" className="text-center">
                             No submissions yet
                           </Typography>
                         </CardContent>
@@ -175,27 +181,31 @@ export default function SubmissionsScreen() {
                     ) : (
                       <View className="gap-3">
                         {slotSubmissions.map((submission) => (
-                          <Card key={submission._id} className="bg-neutral-700 border-neutral-600">
-                            <CardHeader>
+                          <Card key={submission._id} className="bg-neutral-700 border-neutral-600 rounded-2xl">
+                            <CardHeader className="p-6">
                               <View className="flex-row items-start justify-between">
                                 <View className="flex-1">
                                   <CardTitle className="text-white text-base">
                                     {submission.guestList.length > 0 ? submission.guestList[0].name : 'Anonymous Submission'}
                                   </CardTitle>
-                                  <Typography variant="caption" className="text-neutral-400">
+                                  <Typography variant="caption" color="secondary">
                                     Submitted {formatDate(submission.submittedAt || new Date().toISOString())}
                                   </Typography>
                                 </View>
-                                <Badge variant="default">Submitted</Badge>
+                                <View className="rounded-full px-3 py-1 bg-green-500/20">
+                                  <Typography variant="caption" color="success" className="text-xs font-medium">
+                                    Submitted
+                                  </Typography>
+                                </View>
                               </View>
                             </CardHeader>
-                            <CardContent>
+                            <CardContent className="p-6 pt-0">
                               {submission.guestList.length > 0 && (
                                 <View className="mb-3">
-                                  <Typography variant="caption" className="text-neutral-400 mb-1">
+                                  <Typography variant="caption" color="secondary" className="mb-1">
                                     Guests ({submission.guestList.length})
                                   </Typography>
-                                  <Typography variant="body" className="text-neutral-300">
+                                  <Typography variant="body" color="default">
                                     {submission.guestList.map(guest => `${guest.name}${guest.phone ? ` (${guest.phone})` : ''}`).join(', ')}
                                   </Typography>
                                 </View>
@@ -203,10 +213,10 @@ export default function SubmissionsScreen() {
                               
                               {submission.promoMaterials.description && (
                                 <View className="mb-3">
-                                  <Typography variant="caption" className="text-neutral-400 mb-1">
+                                  <Typography variant="caption" color="secondary" className="mb-1">
                                     Promo Description
                                   </Typography>
-                                  <Typography variant="body" className="text-neutral-300">
+                                  <Typography variant="body" color="default">
                                     {submission.promoMaterials.description}
                                   </Typography>
                                 </View>
@@ -214,7 +224,7 @@ export default function SubmissionsScreen() {
                               
                               {submission.promoMaterials.files.length > 0 && (
                                 <View>
-                                  <Typography variant="caption" className="text-brand-primary">
+                                  <Typography variant="caption" color="primary">
                                     {`📁 ${submission.promoMaterials.files.length} file${submission.promoMaterials.files.length !== 1 ? 's' : ''} uploaded`}
                                   </Typography>
                                 </View>
