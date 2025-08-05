@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, Platform } from 'react-native';
 import { cva, type VariantProps } from 'class-variance-authority';
 import '@rite/ui/types/nativewind';
 
@@ -46,10 +46,17 @@ export function Badge({ className = '', variant, children, ...props }: BadgeProp
   const badgeClass = `${badgeVariants({ variant })} ${className}`;
   const textClass = badgeTextVariants({ variant });
   
+  // Use SUIT font with semibold weight for badges
+  const fontFamily = Platform.select({
+    ios: 'SUIT-SemiBold',
+    android: 'SUIT-SemiBold',
+    default: 'System',
+  });
+  
   return (
     <View className={badgeClass} {...props}>
       {typeof children === 'string' ? (
-        <Text className={textClass}>{children}</Text>
+        <Text className={textClass} style={{ fontFamily }}>{children}</Text>
       ) : (
         children
       )}

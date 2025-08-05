@@ -1,5 +1,5 @@
 import React from 'react';
-import { TextInput, View } from 'react-native';
+import { TextInput, View, Platform } from 'react-native';
 import type { TextInputProps } from 'react-native';
 import '@rite/ui/types/nativewind';
 
@@ -14,6 +14,13 @@ export const Input = React.forwardRef<TextInput, InputProps>(
     const keyboardType = type === 'email' ? 'email-address' : type === 'number' ? 'numeric' : 'default';
     const secureTextEntry = type === 'password';
     
+    // Use SUIT font
+    const fontFamily = Platform.select({
+      ios: 'SUIT-Regular',
+      android: 'SUIT-Regular',
+      default: 'System',
+    });
+    
     return (
       <TextInput
         ref={ref}
@@ -21,7 +28,7 @@ export const Input = React.forwardRef<TextInput, InputProps>(
         placeholderTextColor="#7A7A88"
         keyboardType={keyboardType}
         secureTextEntry={secureTextEntry}
-        style={style}
+        style={[{ fontFamily }, style]}
         {...props}
       />
     );
