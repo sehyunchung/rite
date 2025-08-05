@@ -8,7 +8,6 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../contexts/AuthContext';
-import { typography } from '../constants/Typography';
 import { shadows } from '../utils/shadow';
 
 export default function AuthScreen() {
@@ -95,19 +94,20 @@ const styles = StyleSheet.create({
     marginBottom: 64,
   },
   title: {
-    ...typography.h1,
     color: 'var(--brand-primary)',
     marginBottom: 8,
     fontSize: 48,
+    fontWeight: '700',
     fontFamily: 'SUIT-Bold',
   },
   subtitle: {
-    ...typography.h5,
+    fontSize: 20,
+    fontWeight: '600',
     color: 'var(--neutral-0)',
     marginBottom: 16,
   },
   description: {
-    ...typography.body,
+    fontSize: 16,
     color: 'var(--neutral-400)',
     textAlign: 'center',
     lineHeight: 24,
@@ -128,7 +128,7 @@ const styles = StyleSheet.create({
     ...shadows.md,
   },
   googleButtonText: {
-    ...typography.button,
+    fontWeight: '600',
     color: 'var(--neutral-800)',
     fontSize: 16,
   },
@@ -147,7 +147,7 @@ const styles = StyleSheet.create({
     opacity: 0.5,
   },
   instagramButtonText: {
-    ...typography.button,
+    fontWeight: '600',
     color: 'var(--neutral-500)',
     fontSize: 16,
   },
@@ -155,7 +155,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   termsText: {
-    ...typography.caption,
+    fontSize: 14,
     color: 'var(--neutral-500)',
     textAlign: 'center',
     lineHeight: 20,
@@ -165,7 +165,7 @@ const styles = StyleSheet.create({
     opacity: 0.5,
   },
   configText: {
-    ...typography.caption,
+    fontSize: 14,
     color: 'var(--neutral-500)',
     textAlign: 'center',
     fontStyle: 'italic',
