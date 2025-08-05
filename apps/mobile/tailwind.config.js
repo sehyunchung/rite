@@ -52,12 +52,12 @@ module.exports = {
         'sans': ['SUIT', ...tokens.typography.fontFamily.sans],
       },
       colors: {
-        // Brand colors from design system (with CSS variable fallback for web)
+        // Brand colors using CSS variables for consistency with next-app
         'brand-primary': 'var(--brand-primary, hsl(225, 100%, 75%))',
         'brand-primary-dark': 'var(--brand-primary-dark, hsl(225, 100%, 60%))',
         'brand-primary-light': 'var(--brand-primary-light, hsl(225, 100%, 85%))',
         
-        // Neutral palette (with CSS variable fallback for web)
+        // Neutral palette with CSS variables for future theming
         neutral: {
           0: 'var(--neutral-0, hsl(210, 25%, 96%))',
           50: 'var(--neutral-50, hsl(210, 25%, 88%))',
@@ -72,32 +72,60 @@ module.exports = {
           900: 'var(--neutral-900, hsl(210, 15%, 6%))',
         },
         
-        // Semantic colors
-        success: defaultTheme.semantic.success,
-        warning: defaultTheme.semantic.warning,
-        error: defaultTheme.semantic.error,
-        info: defaultTheme.semantic.info,
+        // Semantic colors matching next-app
+        success: 'var(--color-success, hsl(160, 100%, 40%))',
+        warning: 'var(--color-warning, hsl(40, 100%, 50%))',
+        error: 'var(--color-error, hsl(340, 95%, 60%))',
+        info: 'var(--color-info, hsl(225, 100%, 80%))',
         
-        // Functional colors
-        border: defaultTheme.functional.border,
-        background: defaultTheme.neutral[800],
-        foreground: defaultTheme.functional.textPrimary,
+        // Component colors matching next-app for consistency
+        border: 'var(--border, hsl(210, 15%, 18%))',
+        'border-strong': 'var(--border-strong, hsl(210, 10%, 30%))',
+        input: 'var(--bg-secondary, hsl(210, 15%, 18%))',
+        ring: 'var(--brand-primary, hsl(225, 100%, 75%))',
+        background: 'var(--bg-primary, hsl(210, 15%, 12%))',
+        foreground: 'var(--text-primary, hsl(210, 10%, 90%))',
         
-        // Text colors for Typography component (with CSS variable fallback for web)
+        // Background colors for semantic usage
+        'bg-primary': 'var(--bg-primary, hsl(210, 15%, 12%))',
+        'bg-secondary': 'var(--bg-secondary, hsl(210, 15%, 18%))',
+        'bg-tertiary': 'var(--bg-tertiary, hsl(210, 10%, 30%))',
+        'bg-elevated': 'var(--bg-elevated, hsl(210, 25%, 25%))',
+        
+        // Text colors for consistency
         'text-primary': 'var(--text-primary, hsl(210, 10%, 90%))',
         'text-secondary': 'var(--text-secondary, hsl(210, 12%, 55%))',
         'text-muted': 'var(--text-muted, hsl(210, 8%, 50%))',
+        'text-disabled': 'var(--text-disabled, hsl(210, 10%, 30%))',
+        
+        // Component color variants matching next-app
         primary: {
-          DEFAULT: defaultTheme.brand.primary,
-          foreground: defaultTheme.neutral[0],
+          DEFAULT: 'var(--brand-primary, hsl(225, 100%, 75%))',
+          foreground: 'var(--button-primary-text, hsl(210, 25%, 96%))',
         },
         secondary: {
-          DEFAULT: defaultTheme.neutral[600],
-          foreground: defaultTheme.functional.textPrimary,
+          DEFAULT: 'var(--bg-tertiary, hsl(210, 15%, 18%))',
+          foreground: 'var(--text-primary, hsl(210, 10%, 90%))',
+        },
+        destructive: {
+          DEFAULT: 'var(--color-error, hsl(340, 95%, 60%))',
+          foreground: 'var(--button-primary-text, hsl(210, 25%, 96%))',
         },
         muted: {
-          DEFAULT: defaultTheme.neutral[700],
-          foreground: defaultTheme.functional.textSecondary,
+          DEFAULT: 'var(--bg-secondary, hsl(210, 15%, 18%))',
+          foreground: 'var(--text-secondary, hsl(210, 12%, 55%))',
+        },
+        accent: {
+          DEFAULT: 'var(--bg-tertiary, hsl(210, 15%, 18%))',
+          foreground: 'var(--text-primary, hsl(210, 10%, 90%))',
+        },
+        popover: {
+          DEFAULT: 'var(--bg-elevated, hsl(210, 25%, 25%))',
+          foreground: 'var(--text-primary, hsl(210, 10%, 90%))',
+        },
+        card: {
+          DEFAULT: 'var(--bg-elevated, hsl(210, 15%, 18%))',
+          foreground: 'var(--text-primary, hsl(210, 10%, 90%))',
         },
       },
       spacing: Object.fromEntries(

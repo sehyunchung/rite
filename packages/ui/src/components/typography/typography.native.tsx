@@ -44,9 +44,9 @@ const variantStyles = {
 }
 
 const colorStyles = {
-  default: 'text-white',
-  secondary: 'text-neutral-400',
-  muted: 'text-neutral-500',
+  default: 'text-foreground',
+  secondary: 'text-text-secondary',
+  muted: 'text-text-muted',
   primary: 'text-brand-primary',
   error: 'text-error',
   success: 'text-success',

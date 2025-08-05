@@ -38,7 +38,7 @@ export const Card = React.forwardRef<View, CardProps>(
       ref={ref}
       // @ts-ignore - NativeWind className support
       className={cn(
-        "rounded-lg border border-gray-200 bg-white shadow-sm",
+        "rounded-lg border border-border bg-card shadow-sm",
         className
       )}
       {...props}
@@ -64,7 +64,7 @@ export const CardTitle = React.forwardRef<Text, CardTitleProps>(
     <Text
       ref={ref}
       // @ts-ignore - NativeWind className support
-      className={cn("text-2xl font-semibold leading-none tracking-tight", className)}
+      className={cn("text-2xl font-semibold leading-none tracking-tight text-card-foreground", className)}
       {...props}
     />
   )
@@ -76,7 +76,7 @@ export const CardDescription = React.forwardRef<Text, CardDescriptionProps>(
     <Text
       ref={ref}
       // @ts-ignore - NativeWind className support
-      className={cn("text-sm text-gray-500", className)}
+      className={cn("text-sm text-muted-foreground", className)}
       {...props}
     />
   )
