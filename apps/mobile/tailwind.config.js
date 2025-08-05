@@ -48,17 +48,29 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        'suit': tokens.typography.fontFamily.sans,
-        'sans': tokens.typography.fontFamily.sans,
+        'suit': ['SUIT', ...tokens.typography.fontFamily.sans],
+        'sans': ['SUIT', ...tokens.typography.fontFamily.sans],
       },
       colors: {
-        // Brand colors from design system
-        'brand-primary': defaultTheme.brand.primary,
-        'brand-primary-dark': defaultTheme.brand.primaryDark,
-        'brand-primary-light': defaultTheme.brand.primaryLight,
+        // Brand colors from design system (with CSS variable fallback for web)
+        'brand-primary': 'var(--brand-primary, hsl(225 100% 75%))',
+        'brand-primary-dark': 'var(--brand-primary-dark, hsl(225 100% 60%))',
+        'brand-primary-light': 'var(--brand-primary-light, hsl(225 100% 85%))',
         
-        // Neutral palette
-        neutral: defaultTheme.neutral,
+        // Neutral palette (with CSS variable fallback for web)
+        neutral: {
+          0: 'var(--neutral-0, hsl(210 25% 96%))',
+          50: 'var(--neutral-50, hsl(210 25% 88%))',
+          100: 'var(--neutral-100, hsl(210 20% 77%))',
+          200: 'var(--neutral-200, hsl(210 14% 66%))',
+          300: 'var(--neutral-300, hsl(210 12% 55%))',
+          400: 'var(--neutral-400, hsl(210 8% 50%))',
+          500: 'var(--neutral-500, hsl(210 9% 40%))',
+          600: 'var(--neutral-600, hsl(210 10% 30%))',
+          700: 'var(--neutral-700, hsl(210 15% 18%))',
+          800: 'var(--neutral-800, hsl(210 15% 12%))',
+          900: 'var(--neutral-900, hsl(210 15% 6%))',
+        },
         
         // Semantic colors
         success: defaultTheme.semantic.success,
@@ -70,6 +82,11 @@ module.exports = {
         border: defaultTheme.functional.border,
         background: defaultTheme.neutral[800],
         foreground: defaultTheme.functional.textPrimary,
+        
+        // Text colors for Typography component (with CSS variable fallback for web)
+        'text-primary': 'var(--text-primary, hsl(210 10% 90%))',
+        'text-secondary': 'var(--text-secondary, hsl(210 12% 55%))',
+        'text-muted': 'var(--text-muted, hsl(210 8% 50%))',
         primary: {
           DEFAULT: defaultTheme.brand.primary,
           foreground: defaultTheme.neutral[0],

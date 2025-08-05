@@ -9,6 +9,7 @@
     "ios": "npx expo start --ios",
     "web": "npx expo start --web",
     "lint": "npx expo lint",
+    "type-check": "tsc --noEmit",
     "build:development": "eas build --profile development",
     "build:preview": "eas build --profile preview",
     "build:production": "eas build --profile production",

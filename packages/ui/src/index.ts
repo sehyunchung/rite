@@ -15,9 +15,10 @@ export * from './components/list-item';
 export * from './components/action-card';
 export * from './components/event-card';
 export * from './components/typography';
+export * from './components/text';
 
 // Export utilities
-export * from './utils';
+export * from './lib/utils';
 
 // Export design tokens
 export * from './design-tokens';

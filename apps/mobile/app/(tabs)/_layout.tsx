@@ -5,20 +5,20 @@ import { Ionicons } from '@expo/vector-icons';
 
 import { HapticTab } from '@/components/HapticTab';
 import TabBarBackground from '@/components/ui/TabBarBackground';
-import { Colors } from '@/constants/Colors';
+import { themeColors } from '@/lib/theme-colors';
 
 export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors.dark.tint,
-        tabBarInactiveTintColor: Colors.dark.tabIconDefault,
+        tabBarActiveTintColor: themeColors.brand.primary,
+        tabBarInactiveTintColor: themeColors.neutral[400],
         headerShown: false,
         tabBarButton: HapticTab,
         tabBarBackground: TabBarBackground,
         tabBarStyle: {
-          backgroundColor: Colors.dark.surface,
-          borderTopColor: Colors.dark.border,
+          backgroundColor: themeColors.neutral[700],
+          borderTopColor: themeColors.neutral[700],
           borderTopWidth: 1,
           height: Platform.OS === 'ios' ? 84 : 64,
           paddingBottom: Platform.OS === 'ios' ? 24 : 8,
@@ -86,7 +86,7 @@ export default function TabLayout() {
               <Ionicons 
                 name="add" 
                 size={20} 
-                color={Colors.dark.background}
+                color={themeColors.neutral[800]}
               />
             </View>
           ),

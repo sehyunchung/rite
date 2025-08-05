@@ -15,11 +15,16 @@ export function usePostHogTracking() {
     
     // Identify user for better tracking
     if (userId) {
-      posthog?.identify(userId, {
-        signup_date: isNewUser ? new Date().toISOString() : undefined,
+      const identifyData: Record<string, string | number | boolean> = {
         auth_provider: provider,
         platform: 'mobile'
-      })
+      }
+      
+      if (isNewUser) {
+        identifyData.signup_date = new Date().toISOString()
+      }
+      
+      posthog?.identify(userId, identifyData)
     }
   }
   
@@ -40,12 +45,17 @@ export function usePostHogTracking() {
   }
   
   const trackOAuthConnection = (provider: 'instagram' | 'google', success: boolean, error?: string) => {
-    posthog?.capture(DJ_PLATFORM_EVENTS.OAUTH_CONNECTED, {
+    const captureData: Record<string, string | boolean> = {
       provider,
       success,
-      error_type: success ? undefined : error || 'connection_failed',
       platform: 'mobile'
-    })
+    }
+    
+    if (!success) {
+      captureData.error_type = error || 'connection_failed'
+    }
+    
+    posthog?.capture(DJ_PLATFORM_EVENTS.OAUTH_CONNECTED, captureData)
   }
   
   // Event management tracking
@@ -77,13 +87,18 @@ export function usePostHogTracking() {
   }
   
   const trackSubmissionCompleted = (submissionId: string, eventId: string, fileType: string, fileSizeMB?: number) => {
-    posthog?.capture(DJ_PLATFORM_EVENTS.SUBMISSION_COMPLETED, {
+    const captureData: Record<string, string | number> = {
       submission_id: submissionId,
       event_id: eventId,
       file_type: fileType,
-      file_size_mb: fileSizeMB,
       platform: 'mobile'
-    })
+    }
+    
+    if (fileSizeMB !== undefined) {
+      captureData.file_size_mb = fileSizeMB
+    }
+    
+    posthog?.capture(DJ_PLATFORM_EVENTS.SUBMISSION_COMPLETED, captureData)
   }
   
   // Navigation tracking (screen views are auto-captured by PostHog)
