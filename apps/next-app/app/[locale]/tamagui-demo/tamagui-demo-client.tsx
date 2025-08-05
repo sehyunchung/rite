@@ -6,6 +6,7 @@ import { YStack, XStack } from '@tamagui/stacks'
 import { useTheme } from 'next-themes'
 import config from '../../../../../packages/ui/src/tamagui.config'
 import { Button } from '../../../../../packages/ui/src/components/tamagui-button/button'
+import { ButtonWithText, ButtonV2 } from '../../../../../packages/ui/src/components/tamagui-button/button-v2'
 import { 
   H1, H2, H3, H4, H5, H6, 
   Body, BodyLarge, BodySmall, 
@@ -65,9 +66,49 @@ export function TamaguiDemoClient() {
             <Label>LABEL TEXT FOR FORMS</Label>
           </YStack>
           
-          {/* Button Variants */}
+          {/* Button V2 Test */}
           <YStack space="$4">
-            <H2 color="primary">Button Components</H2>
+            <H2 color="primary">Button V2 Components (New Implementation)</H2>
+            
+            {/* Size Variants */}
+            <YStack space="$3">
+              <H4>Sizes</H4>
+              <XStack space="$3" flexWrap="wrap">
+                <ButtonV2 size="sm">
+                  <ButtonV2.Text>Small Button</ButtonV2.Text>
+                </ButtonV2>
+                <ButtonV2 size="md">
+                  <ButtonV2.Text>Medium Button</ButtonV2.Text>
+                </ButtonV2>
+                <ButtonV2 size="lg">
+                  <ButtonV2.Text>Large Button</ButtonV2.Text>
+                </ButtonV2>
+              </XStack>
+            </YStack>
+            
+            {/* Style Variants */}
+            <YStack space="$3">
+              <H4>Variants</H4>
+              <XStack space="$3" flexWrap="wrap">
+                <ButtonV2 variant="primary">
+                  <ButtonV2.Text>Primary</ButtonV2.Text>
+                </ButtonV2>
+                <ButtonV2 variant="secondary">
+                  <ButtonV2.Text>Secondary</ButtonV2.Text>
+                </ButtonV2>
+                <ButtonV2 variant="outline">
+                  <ButtonV2.Text>Outline</ButtonV2.Text>
+                </ButtonV2>
+                <ButtonV2 variant="ghost">
+                  <ButtonV2.Text>Ghost</ButtonV2.Text>
+                </ButtonV2>
+              </XStack>
+            </YStack>
+          </YStack>
+
+          {/* Original Button Variants */}
+          <YStack space="$4">
+            <H2 color="primary">Button Components (Original)</H2>
             
             {/* Size Variants */}
             <YStack space="$3">
