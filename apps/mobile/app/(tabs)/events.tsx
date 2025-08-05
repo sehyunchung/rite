@@ -5,6 +5,7 @@ import { useQuery } from 'convex/react';
 import { api } from '@rite/backend/convex/_generated/api';
 import { useRouter } from 'expo-router';
 import { useAuth } from '../../contexts/AuthContext';
+import { riteColors } from '../../constants/Colors';
 
 export default function EventsScreen() {
   const router = useRouter();
@@ -32,7 +33,7 @@ export default function EventsScreen() {
           
           {events === undefined ? (
             <View className="p-8 items-center">
-              <ActivityIndicator size="large" color="#7C7CFF" />
+              <ActivityIndicator size="large" color={riteColors.brand.primary} />
             </View>
           ) : events.length === 0 ? (
             <Card className="bg-neutral-700 border-neutral-600">

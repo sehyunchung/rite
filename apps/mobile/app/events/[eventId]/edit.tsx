@@ -12,11 +12,11 @@ import {
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useMutation, useQuery } from 'convex/react';
 import { api } from '@rite/backend/convex/_generated/api';
-import { Id } from '@rite/backend/convex/_generated/dataModel';
 import { Ionicons } from '@expo/vector-icons';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { Typography, Card , Button, Input } from '@rite/ui';
 import { useAuth } from '../../../contexts/AuthContext';
+import { validateEventId } from '../../../lib/validation';
 
 export default function EditEventScreen() {
   const router = useRouter();
@@ -25,8 +25,9 @@ export default function EditEventScreen() {
   const updateEvent = useMutation(api.events.updateEvent);
   
   // Fetch existing event data
+  const validatedEventId = validateEventId(eventId);
   const event = useQuery(api.events.getEvent, 
-    eventId && user ? { eventId: eventId as Id<"events">, userId: user._id } : "skip"
+    validatedEventId && user ? { eventId: validatedEventId, userId: user._id } : "skip"
   );
   
   // Form state
@@ -165,8 +166,13 @@ export default function EditEventScreen() {
         djInstagram: slot.djInstagram.trim(),
       }));
 
+      if (!validatedEventId) {
+        Alert.alert('Error', 'Invalid event ID');
+        return;
+      }
+
       await updateEvent({
-        eventId: eventId as Id<"events">,
+        eventId: validatedEventId,
         userId: user._id,
         name: eventName.trim(),
         date: eventDate,

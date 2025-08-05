@@ -4,21 +4,23 @@ import { Typography, Card, CardHeader, CardContent, CardTitle } from '@rite/ui';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useQuery } from 'convex/react';
 import { api } from '@rite/backend/convex/_generated/api';
-import { Id } from '@rite/backend/convex/_generated/dataModel';
 import { useAuth } from '../../../contexts/AuthContext';
 import { Ionicons } from '@expo/vector-icons';
+import { riteColors } from '../../../constants/Colors';
+import { validateEventId } from '../../../lib/validation';
 
 export default function SubmissionsScreen() {
   const { eventId } = useLocalSearchParams<{ eventId: string }>();
   const router = useRouter();
   const { user } = useAuth();
   
+  const validatedEventId = validateEventId(eventId);
   const event = useQuery(api.events.getEvent, 
-    eventId && user ? { eventId: eventId as Id<"events">, userId: user._id } : "skip"
+    validatedEventId && user ? { eventId: validatedEventId, userId: user._id } : "skip"
   );
   
   const submissions = useQuery(api.submissions.getSubmissionsByEvent,
-    eventId && user ? { eventId: eventId as Id<"events">, userId: user._id } : "skip"
+    validatedEventId && user ? { eventId: validatedEventId, userId: user._id } : "skip"
   );
 
   if (!eventId) {
@@ -37,7 +39,7 @@ export default function SubmissionsScreen() {
     return (
       <SafeAreaView className="flex-1 bg-neutral-800">
         <View className="flex-1 items-center justify-center">
-          <ActivityIndicator size="large" color="#7C7CFF" />
+          <ActivityIndicator size="large" color={riteColors.brand.primary} />
         </View>
       </SafeAreaView>
     );

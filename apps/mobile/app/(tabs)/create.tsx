@@ -15,6 +15,7 @@ import { Ionicons } from '@expo/vector-icons';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { Typography, Card , Input, Button } from '@rite/ui';
 import { useAuth } from '../../contexts/AuthContext';
+import { riteColors } from '../../constants/Colors';
 
 export default function CreateTab() {
   const router = useRouter();
@@ -297,7 +298,7 @@ export default function CreateTab() {
                 DJ Lineup
               </Typography>
               <TouchableOpacity className="flex-row items-center" onPress={addDjSlot}>
-                <Ionicons name="add" size={20} color="#7C7CFF" />
+                <Ionicons name="add" size={20} color={riteColors.brand.primary} />
                 <Typography variant="button" color="primary" className="ml-1">
                   Add Slot
                 </Typography>

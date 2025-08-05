@@ -5,6 +5,7 @@ import { Typography, Card, CardContent, EventCard , Button } from '@rite/ui';
 import { useQuery } from 'convex/react';
 import { api } from '@rite/backend/convex/_generated/api';
 import { useAuth } from '../../contexts/AuthContext';
+import { riteColors } from '../../constants/Colors';
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -48,7 +49,7 @@ export default function HomeScreen() {
             
             {events === undefined ? (
               <View className="p-8">
-                <ActivityIndicator size="large" color="#7C7CFF" />
+                <ActivityIndicator size="large" color={riteColors.brand.primary} />
               </View>
             ) : events.length === 0 ? (
               <Card className="bg-neutral-700 border-neutral-600 rounded-2xl">
