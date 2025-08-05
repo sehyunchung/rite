@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { Pressable, Text, View } from 'react-native';
 import { cva, type VariantProps } from 'class-variance-authority';
 import '@rite/ui/types/nativewind';
@@ -35,7 +35,7 @@ export interface ButtonProps extends VariantProps<typeof buttonVariants> {
   className?: string;
 }
 
-export function Button({
+export const Button = React.forwardRef<View, ButtonProps>(({
   variant,
   size,
   className = '',
@@ -43,7 +43,7 @@ export function Button({
   disabled,
   children,
   ...props
-}: ButtonProps) {
+}: ButtonProps, ref) => {
   const buttonClass = `${buttonVariants({ variant, size })} ${className}`;
   
   return (
@@ -72,4 +72,6 @@ export function Button({
       )}
     </Pressable>
   );
-}
+})
+
+Button.displayName = 'Button'
