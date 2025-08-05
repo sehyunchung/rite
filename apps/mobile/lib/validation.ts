@@ -1,75 +1,65 @@
 /**
  * Validation utilities for mobile app
- * Provides type-safe validation functions for Convex IDs and other types
+ * Provides type-safe validation functions for Convex IDs
  */
 
 import { Id } from '@rite/backend/convex/_generated/dataModel';
 
 /**
- * Validates and converts a string to a Convex event ID
- * @param value - The value to validate
- * @returns The validated ID or null if invalid
+ * Type guard to check if a value is a valid Convex ID string
+ * @param value - The value to check
+ * @returns True if the value is a non-empty string
  */
-export function validateEventId(value: string | null | undefined): Id<"events"> | null {
-  if (!value || typeof value !== 'string') {
-    return null;
-  }
-  
-  // Basic validation - Convex IDs are non-empty strings
-  if (value.trim().length === 0) {
-    return null;
-  }
-  
-  // Return the value as the proper ID type
-  // This is still a type assertion, but it's centralized and validated
-  return value as Id<"events">;
-}
-
-/**
- * Validates and converts a string to a Convex user ID
- * @param value - The value to validate
- * @returns The validated ID or null if invalid
- */
-export function validateUserId(value: string | null | undefined): Id<"users"> | null {
-  if (!value || typeof value !== 'string') {
-    return null;
-  }
-  
-  if (value.trim().length === 0) {
-    return null;
-  }
-  
-  return value as Id<"users">;
-}
-
-/**
- * Generic validation function for any table
- * @param value - The value to validate
- * @param _table - The table name (for documentation purposes)
- * @returns The validated ID or null if invalid
- */
-export function validateId(value: string | null | undefined, _table: string): any {
-  if (!value || typeof value !== 'string') {
-    return null;
-  }
-  
-  if (value.trim().length === 0) {
-    return null;
-  }
-  
-  return value;
+function isValidIdString(value: unknown): value is string {
+  return typeof value === 'string' && value.trim().length > 0;
 }
 
 /**
  * Type guard to check if a value is a valid event ID
+ * This uses TypeScript's type predicate to avoid type casting
  */
-export function isValidEventId(value: string | null | undefined): value is Id<"events"> {
-  return validateEventId(value) !== null;
+export function isValidEventId(value: unknown): value is Id<"events"> {
+  // In a real application, you might want to check the ID format
+  // For now, we just check it's a non-empty string
+  return isValidIdString(value);
 }
 
 /**
  * Type guard to check if a value is a valid user ID
  */
-export function isValidUserId(value: string | null | undefined): value is Id<"users"> {
-  return validateUserId(value) !== null;
+export function isValidUserId(value: unknown): value is Id<"users"> {
+  return isValidIdString(value);
+}
+
+/**
+ * Validates and returns an event ID or null
+ * Uses type guard to ensure type safety without casting
+ */
+export function validateEventId(value: unknown): Id<"events"> | null {
+  if (isValidEventId(value)) {
+    return value; // TypeScript knows this is Id<"events"> due to type guard
+  }
+  return null;
+}
+
+/**
+ * Validates and returns a user ID or null
+ * Uses type guard to ensure type safety without casting
+ */
+export function validateUserId(value: unknown): Id<"users"> | null {
+  if (isValidUserId(value)) {
+    return value; // TypeScript knows this is Id<"users"> due to type guard
+  }
+  return null;
+}
+
+/**
+ * Generic ID validation for any table
+ * @deprecated Use specific validators instead
+ */
+export function validateId(value: unknown, _table: string): string | null {
+  if (isValidIdString(value)) {
+    return value;
+  }
+  return null;
 }

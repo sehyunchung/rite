@@ -7,8 +7,8 @@ import { api } from '@rite/backend/convex/_generated/api';
 // Design system colors via Tailwind CSS variables
 import { useAuth } from '../../contexts/AuthContext';
 import { Ionicons } from '@expo/vector-icons';
-import { riteColors } from '../../constants/Colors';
 import { validateEventId } from '../../lib/validation';
+import { themeColors } from '../../lib/theme-colors';
 
 export default function EventDetailScreen() {
   const { eventId } = useLocalSearchParams<{ eventId: string }>();
@@ -36,7 +36,7 @@ export default function EventDetailScreen() {
     return (
       <SafeAreaView className="flex-1 bg-neutral-800">
         <View className="flex-1 items-center justify-center">
-          <ActivityIndicator size="large" color={riteColors.brand.primary} />
+          <ActivityIndicator size="large" color={themeColors.brand.primary} />
         </View>
       </SafeAreaView>
     );

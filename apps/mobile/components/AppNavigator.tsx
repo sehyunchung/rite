@@ -3,19 +3,15 @@ import { Stack } from 'expo-router';
 import { useAuth } from '../contexts/AuthContext';
 import AuthScreen from '../app/auth';
 import { View, Text } from 'react-native';
+import { themeColors } from '../lib/theme-colors';
 
 export default function AppNavigator() {
   const { user, isLoading } = useAuth();
 
   if (isLoading) {
     return (
-      <View style={{ 
-        flex: 1, 
-        justifyContent: 'center', 
-        alignItems: 'center', 
-        backgroundColor: 'var(--neutral-800)' 
-      }}>
-        <Text style={{ color: 'var(--brand-primary)', fontSize: 24 }}>
+      <View className="flex-1 justify-center items-center bg-neutral-800">
+        <Text className="text-brand-primary text-2xl">
           Loading...
         </Text>
       </View>
@@ -35,7 +31,7 @@ export default function AppNavigator() {
           headerShown: true,
           title: 'Settings',
           headerStyle: {
-            backgroundColor: '#2A1F3F',
+            backgroundColor: themeColors.neutral[800],
           },
           headerTintColor: '#FFFFFF',
           headerTitleStyle: {

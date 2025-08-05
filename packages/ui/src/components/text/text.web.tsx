@@ -39,20 +39,20 @@ const textVariants = cva('', {
   },
 })
 
-export interface TextProps extends Omit<React.HTMLAttributes<HTMLSpanElement>, 'color'>, VariantProps<typeof textVariants> {
+export interface TextProps extends Omit<React.HTMLAttributes<HTMLElement>, 'color'>, VariantProps<typeof textVariants> {
   as?: React.ElementType
 }
 
-// Base Text component
-export const Text = React.forwardRef<HTMLSpanElement, TextProps>(
+// Base Text component with proper typing
+export const Text = React.forwardRef<HTMLElement, TextProps>(
   ({ className, variant, color, align, as: Component = 'span', ...props }, ref) => {
-    const Comp = Component as any
-    return (
-      <Comp
-        ref={ref}
-        className={cn(textVariants({ variant, color, align }), className)}
-        {...props}
-      />
+    return React.createElement(
+      Component,
+      {
+        ref,
+        className: cn(textVariants({ variant, color, align }), className),
+        ...props
+      }
     )
   }
 )
@@ -61,42 +61,42 @@ Text.displayName = 'Text'
 // Convenience components
 export const H1 = React.forwardRef<HTMLHeadingElement, Omit<TextProps, 'as'>>(
   ({ className, ...props }, ref) => (
-    <Text ref={ref as any} as="h1" variant="h1" className={className} {...props} />
+    <Text ref={ref as React.Ref<HTMLElement>} as="h1" variant="h1" className={className} {...props} />
   )
 )
 H1.displayName = 'H1'
 
 export const H2 = React.forwardRef<HTMLHeadingElement, Omit<TextProps, 'as'>>(
   ({ className, ...props }, ref) => (
-    <Text ref={ref as any} as="h2" variant="h2" className={className} {...props} />
+    <Text ref={ref as React.Ref<HTMLElement>} as="h2" variant="h2" className={className} {...props} />
   )
 )
 H2.displayName = 'H2'
 
 export const H3 = React.forwardRef<HTMLHeadingElement, Omit<TextProps, 'as'>>(
   ({ className, ...props }, ref) => (
-    <Text ref={ref as any} as="h3" variant="h3" className={className} {...props} />
+    <Text ref={ref as React.Ref<HTMLElement>} as="h3" variant="h3" className={className} {...props} />
   )
 )
 H3.displayName = 'H3'
 
 export const H4 = React.forwardRef<HTMLHeadingElement, Omit<TextProps, 'as'>>(
   ({ className, ...props }, ref) => (
-    <Text ref={ref as any} as="h4" variant="h4" className={className} {...props} />
+    <Text ref={ref as React.Ref<HTMLElement>} as="h4" variant="h4" className={className} {...props} />
   )
 )
 H4.displayName = 'H4'
 
 export const H5 = React.forwardRef<HTMLHeadingElement, Omit<TextProps, 'as'>>(
   ({ className, ...props }, ref) => (
-    <Text ref={ref as any} as="h5" variant="h5" className={className} {...props} />
+    <Text ref={ref as React.Ref<HTMLElement>} as="h5" variant="h5" className={className} {...props} />
   )
 )
 H5.displayName = 'H5'
 
 export const H6 = React.forwardRef<HTMLHeadingElement, Omit<TextProps, 'as'>>(
   ({ className, ...props }, ref) => (
-    <Text ref={ref as any} as="h6" variant="h6" className={className} {...props} />
+    <Text ref={ref as React.Ref<HTMLElement>} as="h6" variant="h6" className={className} {...props} />
   )
 )
 H6.displayName = 'H6'

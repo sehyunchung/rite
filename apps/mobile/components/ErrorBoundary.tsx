@@ -40,66 +40,28 @@ export class ErrorBoundary extends Component<Props, State> {
 
       return (
         <ScrollView 
-          style={{ flex: 1, backgroundColor: '#FEF2F2' }}
-          contentContainerStyle={{ 
-            flex: 1, 
-            justifyContent: 'center', 
-            alignItems: 'center',
-            padding: 20,
-          }}
+          className="flex-1 bg-red-50"
+          contentContainerClassName="flex-1 justify-center items-center p-5"
         >
-          <View style={{ alignItems: 'center', maxWidth: 300 }}>
-            <Text style={{ 
-              fontSize: 24, 
-              fontWeight: 'bold', 
-              color: '#DC2626', 
-              marginBottom: 16,
-              textAlign: 'center',
-            }}>
+          <View className="items-center" style={{ maxWidth: 300 }}>
+            <Text className="text-2xl font-bold text-red-600 mb-4 text-center">
               Something went wrong
             </Text>
             
-            <Text style={{ 
-              fontSize: 16, 
-              textAlign: 'center', 
-              color: '#6B7280', 
-              marginBottom: 24,
-              lineHeight: 24,
-            }}>
+            <Text className="text-base text-center text-gray-500 mb-6 leading-6">
               We&apos;re sorry, but an unexpected error occurred. Please restart the app or contact support if the problem persists.
             </Text>
 
             {__DEV__ && this.state.error && (
-              <View style={{ 
-                backgroundColor: '#F3F4F6',
-                padding: 12,
-                borderRadius: 8,
-                width: '100%',
-                marginTop: 16,
-              }}>
-                <Text style={{ 
-                  fontSize: 12, 
-                  fontFamily: 'monospace',
-                  color: '#374151',
-                  marginBottom: 8,
-                  fontWeight: 'bold',
-                }}>
+              <View className="bg-gray-100 p-3 rounded-lg w-full mt-4">
+                <Text className="text-xs font-mono text-gray-700 mb-2 font-bold">
                   Error Details (Development Mode):
                 </Text>
-                <Text style={{ 
-                  fontSize: 10, 
-                  fontFamily: 'monospace',
-                  color: '#6B7280',
-                }}>
+                <Text className="text-xs font-mono text-gray-500">
                   {this.state.error.message}
                 </Text>
                 {this.state.error.stack && (
-                  <Text style={{ 
-                    fontSize: 9, 
-                    fontFamily: 'monospace',
-                    color: '#9CA3AF',
-                    marginTop: 8,
-                  }}>
+                  <Text className="text-xs font-mono text-gray-400 mt-2">
                     {this.state.error.stack}
                   </Text>
                 )}
