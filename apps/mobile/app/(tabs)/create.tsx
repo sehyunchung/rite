@@ -13,7 +13,7 @@ import { api } from '@rite/backend/convex/_generated/api';
 import { Id } from '@rite/backend/convex/_generated/dataModel';
 import { Ionicons } from '@expo/vector-icons';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
-import { Typography, Card , Input, Button } from '@rite/ui';
+import { Typography, Card , Input, Button } from '../../lib/ui-native';
 import { useAuth } from '../../contexts/AuthContext';
 import { riteColors } from '../../constants/Colors';
 
@@ -327,7 +327,7 @@ export default function CreateTab() {
                       </Typography>
                       <Input
                         value={slot.startTime}
-                        onChangeText={(value) => updateDjSlot(slot.id, 'startTime', value)}
+                        onChangeText={(value: string) => updateDjSlot(slot.id, 'startTime', value)}
                         placeholder="22:00"
                         className="bg-neutral-800 border-neutral-600 text-xs"
                       />
@@ -338,7 +338,7 @@ export default function CreateTab() {
                       </Typography>
                       <Input
                         value={slot.endTime}
-                        onChangeText={(value) => updateDjSlot(slot.id, 'endTime', value)}
+                        onChangeText={(value: string) => updateDjSlot(slot.id, 'endTime', value)}
                         placeholder="23:00"
                         className="bg-neutral-800 border-neutral-600 text-xs"
                       />
@@ -352,7 +352,7 @@ export default function CreateTab() {
                     </Typography>
                     <Input
                       value={slot.djName}
-                      onChangeText={(value) => updateDjSlot(slot.id, 'djName', value)}
+                      onChangeText={(value: string) => updateDjSlot(slot.id, 'djName', value)}
                       placeholder="DJ Name"
                       className="bg-neutral-800 border-neutral-600"
                     />
@@ -365,7 +365,7 @@ export default function CreateTab() {
                     </Typography>
                     <Input
                       value={slot.djInstagram}
-                      onChangeText={(value) => updateDjSlot(slot.id, 'djInstagram', value)}
+                      onChangeText={(value: string) => updateDjSlot(slot.id, 'djInstagram', value)}
                       placeholder="@username"
                       className="bg-neutral-800 border-neutral-600"
                     />

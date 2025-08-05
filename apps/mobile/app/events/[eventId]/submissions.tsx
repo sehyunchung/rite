@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { View, ScrollView, SafeAreaView, Platform, ActivityIndicator, Pressable } from 'react-native';
-import { Typography, Card, CardHeader, CardContent, CardTitle } from '@rite/ui';
+import { Typography, Card, CardHeader, CardContent, CardTitle } from '../../../lib/ui-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useQuery } from 'convex/react';
 import { api } from '@rite/backend/convex/_generated/api';

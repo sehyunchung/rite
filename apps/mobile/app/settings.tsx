@@ -7,7 +7,7 @@ import {
 } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { Typography, Card , Button } from '@rite/ui';
+import { Typography, Card , Button } from '../lib/ui-native';
 
 interface SettingItemProps {
   icon: keyof typeof Ionicons.glyphMap;
