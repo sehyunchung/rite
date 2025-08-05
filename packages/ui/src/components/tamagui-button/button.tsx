@@ -46,26 +46,31 @@ export const Button = styled(TamaguiButton, {
     // Size variants
     size: {
       sm: {
-        paddingHorizontal: '$4',
-        paddingVertical: '$2',
-        fontSize: '$3',
+        paddingHorizontal: '$3',
+        paddingVertical: '$1.5',
+        fontSize: '$2',
         borderRadius: '$2',
+        minHeight: '$8',
       },
       default: {
+        paddingHorizontal: '$4',
+        paddingVertical: '$2.5',
+        fontSize: '$3',
+        minHeight: '$10',
+      },
+      lg: {
         paddingHorizontal: '$6',
         paddingVertical: '$3',
         fontSize: '$4',
-      },
-      lg: {
-        paddingHorizontal: '$8',
-        paddingVertical: '$4',
-        fontSize: '$5',
-        borderRadius: '$4',
+        borderRadius: '$3',
+        minHeight: '$12',
       },
       icon: {
-        width: '$12',
-        height: '$12',
+        width: '$10',
+        height: '$10',
         padding: 0,
+        minWidth: '$10',
+        minHeight: '$10',
       },
     },
     
