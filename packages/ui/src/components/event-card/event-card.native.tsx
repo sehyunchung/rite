@@ -48,7 +48,7 @@ export function EventCard({
         <Text className="text-2xl font-bold text-white">{eventName}</Text>
         <Text className="mt-1 text-sm text-neutral-300">{venueName}</Text>
         
-        <View className="mt-6 space-y-2">
+        <View className="mt-6 flex gap-2">
           <Text className="text-lg text-white">{date}</Text>
           <Text className="text-sm text-brand-primary font-medium">{djCount} DJs</Text>
         </View>

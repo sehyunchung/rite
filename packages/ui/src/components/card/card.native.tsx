@@ -52,7 +52,7 @@ export const CardHeader = React.forwardRef<View, CardHeaderProps>(
     <View
       ref={ref}
       // @ts-ignore - NativeWind className support
-      className={cn("flex flex-col space-y-1.5 p-6", className)}
+      className={cn("flex flex-col gap-1.5 p-6", className)}
       {...props}
     />
   )

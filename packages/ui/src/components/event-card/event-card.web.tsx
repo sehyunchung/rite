@@ -55,7 +55,7 @@ const EventCard = React.forwardRef<HTMLDivElement, EventCardProps>(
           <h3 className="text-2xl font-bold text-text-primary">{eventName}</h3>
           <p className="mt-1 text-sm text-text-secondary">{venueName}</p>
           
-          <div className="mt-6 space-y-2">
+          <div className="mt-6 flex flex-col gap-2">
             <p className="text-lg text-text-primary">{date}</p>
             <p className="text-sm text-brand-primary font-medium">{djCount} DJs</p>
           </div>
