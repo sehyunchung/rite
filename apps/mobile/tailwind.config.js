@@ -3,34 +3,34 @@ const { tokens } = require('@rite/ui/design-tokens');
 // Josh Comeau theme static values for mobile (from themes.ts)
 const defaultTheme = {
   brand: {
-    primary: 'hsl(225 100% 75%)',      // #7C7CFF
-    primaryDark: 'hsl(225 100% 60%)',  // #5C5CFF
-    primaryLight: 'hsl(225 100% 85%)', // #9C9CFF
+    primary: 'hsl(225, 100%, 75%)',      // #7C7CFF
+    primaryDark: 'hsl(225, 100%, 60%)',  // #5C5CFF
+    primaryLight: 'hsl(225, 100%, 85%)', // #9C9CFF
   },
   neutral: {
-    0: 'hsl(210 25% 96%)',     // #F5F5F8
-    50: 'hsl(210 25% 88%)',    // #DDDDE5
-    100: 'hsl(210 20% 77%)',   // #C4C4D1
-    200: 'hsl(210 14% 66%)',   // #A8A8BD
-    300: 'hsl(210 12% 55%)',   // #8C8CA3
-    400: 'hsl(210 8% 50%)',    // #70707F
-    500: 'hsl(210 9% 40%)',    // #616166
-    600: 'hsl(210 10% 30%)',   // #47474D
-    700: 'hsl(210 15% 18%)',   // #26262E
-    800: 'hsl(210 15% 12%)',   // #1A1A1F
-    900: 'hsl(210 15% 6%)',    // #0F0F10
+    0: 'hsl(210, 25%, 96%)',     // #F5F5F8
+    50: 'hsl(210, 25%, 88%)',    // #DDDDE5
+    100: 'hsl(210, 20%, 77%)',   // #C4C4D1
+    200: 'hsl(210, 14%, 66%)',   // #A8A8BD
+    300: 'hsl(210, 12%, 55%)',   // #8C8CA3
+    400: 'hsl(210, 8%, 50%)',    // #70707F
+    500: 'hsl(210, 9%, 40%)',    // #616166
+    600: 'hsl(210, 10%, 30%)',   // #47474D
+    700: 'hsl(210, 15%, 18%)',   // #26262E
+    800: 'hsl(210, 15%, 12%)',   // #1A1A1F
+    900: 'hsl(210, 15%, 6%)',    // #0F0F10
   },
   semantic: {
-    success: 'hsl(160 100% 40%)',  // #00CC66
-    warning: 'hsl(40 100% 50%)',   // #FFCC00
-    error: 'hsl(340 95% 60%)',     // #FF3366
-    info: 'hsl(225 100% 80%)',     // #9999FF
+    success: 'hsl(160, 100%, 40%)',  // #00CC66
+    warning: 'hsl(40, 100%, 50%)',   // #FFCC00
+    error: 'hsl(340, 95%, 60%)',     // #FF3366
+    info: 'hsl(225, 100%, 80%)',     // #9999FF
   },
   functional: {
-    textPrimary: 'hsl(210 10% 90%)',     // #E0E0E6
-    textSecondary: 'hsl(210 12% 55%)',   // #8C8CA3
-    textMuted: 'hsl(210 8% 50%)',        // #70707F
-    border: 'hsl(210 15% 18%)',          // #26262E
+    textPrimary: 'hsl(210, 10%, 90%)',     // #E0E0E6
+    textSecondary: 'hsl(210, 12%, 55%)',   // #8C8CA3
+    textMuted: 'hsl(210, 8%, 50%)',        // #70707F
+    border: 'hsl(210, 15%, 18%)',          // #26262E
   },
 };
 
@@ -53,23 +53,23 @@ module.exports = {
       },
       colors: {
         // Brand colors from design system (with CSS variable fallback for web)
-        'brand-primary': 'var(--brand-primary, hsl(225 100% 75%))',
-        'brand-primary-dark': 'var(--brand-primary-dark, hsl(225 100% 60%))',
-        'brand-primary-light': 'var(--brand-primary-light, hsl(225 100% 85%))',
+        'brand-primary': 'var(--brand-primary, hsl(225, 100%, 75%))',
+        'brand-primary-dark': 'var(--brand-primary-dark, hsl(225, 100%, 60%))',
+        'brand-primary-light': 'var(--brand-primary-light, hsl(225, 100%, 85%))',
         
         // Neutral palette (with CSS variable fallback for web)
         neutral: {
-          0: 'var(--neutral-0, hsl(210 25% 96%))',
-          50: 'var(--neutral-50, hsl(210 25% 88%))',
-          100: 'var(--neutral-100, hsl(210 20% 77%))',
-          200: 'var(--neutral-200, hsl(210 14% 66%))',
-          300: 'var(--neutral-300, hsl(210 12% 55%))',
-          400: 'var(--neutral-400, hsl(210 8% 50%))',
-          500: 'var(--neutral-500, hsl(210 9% 40%))',
-          600: 'var(--neutral-600, hsl(210 10% 30%))',
-          700: 'var(--neutral-700, hsl(210 15% 18%))',
-          800: 'var(--neutral-800, hsl(210 15% 12%))',
-          900: 'var(--neutral-900, hsl(210 15% 6%))',
+          0: 'var(--neutral-0, hsl(210, 25%, 96%))',
+          50: 'var(--neutral-50, hsl(210, 25%, 88%))',
+          100: 'var(--neutral-100, hsl(210, 20%, 77%))',
+          200: 'var(--neutral-200, hsl(210, 14%, 66%))',
+          300: 'var(--neutral-300, hsl(210, 12%, 55%))',
+          400: 'var(--neutral-400, hsl(210, 8%, 50%))',
+          500: 'var(--neutral-500, hsl(210, 9%, 40%))',
+          600: 'var(--neutral-600, hsl(210, 10%, 30%))',
+          700: 'var(--neutral-700, hsl(210, 15%, 18%))',
+          800: 'var(--neutral-800, hsl(210, 15%, 12%))',
+          900: 'var(--neutral-900, hsl(210, 15%, 6%))',
         },
         
         // Semantic colors
@@ -84,9 +84,9 @@ module.exports = {
         foreground: defaultTheme.functional.textPrimary,
         
         // Text colors for Typography component (with CSS variable fallback for web)
-        'text-primary': 'var(--text-primary, hsl(210 10% 90%))',
-        'text-secondary': 'var(--text-secondary, hsl(210 12% 55%))',
-        'text-muted': 'var(--text-muted, hsl(210 8% 50%))',
+        'text-primary': 'var(--text-primary, hsl(210, 10%, 90%))',
+        'text-secondary': 'var(--text-secondary, hsl(210, 12%, 55%))',
+        'text-muted': 'var(--text-muted, hsl(210, 8%, 50%))',
         primary: {
           DEFAULT: defaultTheme.brand.primary,
           foreground: defaultTheme.neutral[0],
