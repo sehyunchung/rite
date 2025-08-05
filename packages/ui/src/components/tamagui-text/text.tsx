@@ -5,6 +5,7 @@ export const Text = styled(TamaguiText, {
   name: 'Text',
   color: '$color',
   fontFamily: '$body',
+  fontSize: '$4', // Default font size
   
   variants: {
     // Color variants based on RITE design system
@@ -13,13 +14,13 @@ export const Text = styled(TamaguiText, {
         color: '$color',
       },
       primary: {
-        color: '$buttonPrimaryBg',
+        color: '$brandPrimary',
       },
       secondary: {
         color: '$colorPress',
       },
       muted: {
-        color: '$neutral400Dark',
+        color: '$colorPress',
       },
       success: {
         color: '$successBg',
