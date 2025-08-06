@@ -1,3 +1,9 @@
+// Import design system colors
+const { themes } = require('@rite/ui/design-tokens');
+
+// Use Josh Comeau dark theme as default
+const defaultTheme = themes.joshComeau;
+
 export default {
   expo: {
     name: "RITE",
@@ -54,7 +60,18 @@ export default {
     web: {
       bundler: "metro",
       output: "static",
-      favicon: "./assets/images/favicon.png"
+      favicon: "./assets/images/favicon.png",
+      name: "RITE",
+      shortName: "RITE",
+      description: "DJ event management platform",
+      lang: "en",
+      themeColor: defaultTheme.brand.primary,
+      backgroundColor: defaultTheme.neutral[800],
+      display: "standalone",
+      scope: "/",
+      startUrl: "/",
+      orientation: "portrait",
+      preferRelatedApplications: false
     },
     plugins: [
       "expo-router",
