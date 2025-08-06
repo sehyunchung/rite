@@ -1,27 +1,9 @@
 import * as React from 'react';
-import { Pressable, Text, View, Platform } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 import { cva, type VariantProps } from 'class-variance-authority';
 import '@rite/ui/types/nativewind';
 import { cn } from '../../lib/utils';
-
-// Map font weights to specific font files for React Native
-const getFontFamily = (weight: string) => {
-  const weightMap: Record<string, string> = {
-    'font-thin': 'SUIT-Regular',
-    'font-light': 'SUIT-Regular', 
-    'font-normal': 'SUIT-Regular',
-    'font-medium': 'SUIT-Medium',
-    'font-semibold': 'SUIT-SemiBold',
-    'font-bold': 'SUIT-Bold',
-    'font-black': 'SUIT-Bold',
-  };
-  
-  return Platform.select({
-    ios: weightMap[weight] || 'SUIT-Medium',
-    android: weightMap[weight] || 'SUIT-Medium',
-    default: 'System',
-  });
-};
+import { getFontFamily } from '../../lib/font-mapping.native';
 
 const buttonVariants = cva(
   'flex items-center justify-center rounded-lg font-medium disabled:opacity-50',

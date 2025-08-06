@@ -89,7 +89,7 @@ export default function EventDetailScreen() {
               onPress={() => router.back()}
               className="mr-3"
             >
-              <Ionicons name="arrow-back" size={24} color="#E0E0E6" />
+              <Ionicons name="arrow-back" size={24} color={themeColors.text.primary} />
             </Pressable>
             <Typography variant="h4" color="default" className="flex-1">
               Event Details
@@ -121,14 +121,14 @@ export default function EventDetailScreen() {
             <CardContent className="p-6 pt-0">
               <View className="gap-3">
                 <View className="flex-row items-center">
-                  <Ionicons name="location" size={20} color="#8C8CA3" />
+                  <Ionicons name="location" size={20} color={themeColors.text.secondary} />
                   <Typography variant="body" color="secondary" className="ml-2">
                     {event.venue.name}
                   </Typography>
                 </View>
                 
                 <View className="flex-row items-center">
-                  <Ionicons name="calendar" size={20} color="#8C8CA3" />
+                  <Ionicons name="calendar" size={20} color={themeColors.text.secondary} />
                   <Typography variant="body" color="secondary" className="ml-2">
                     {formatDate(event.date)}
                   </Typography>
