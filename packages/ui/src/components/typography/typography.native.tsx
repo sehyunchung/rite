@@ -1,25 +1,7 @@
 import * as React from 'react'
-import { Text, TextProps, Platform } from 'react-native'
+import { Text, TextProps } from 'react-native'
 import '@rite/ui/types/nativewind';
-
-// Map font weights to specific font files for React Native
-const getFontFamily = (weight: string) => {
-  const weightMap: Record<string, string> = {
-    'font-thin': 'SUIT-Regular',
-    'font-light': 'SUIT-Regular', 
-    'font-normal': 'SUIT-Regular',
-    'font-medium': 'SUIT-Medium',
-    'font-semibold': 'SUIT-SemiBold',
-    'font-bold': 'SUIT-Bold',
-    'font-black': 'SUIT-Bold',
-  };
-  
-  return Platform.select({
-    ios: weightMap[weight] || 'SUIT-Regular',
-    android: weightMap[weight] || 'SUIT-Regular',
-    default: 'System',
-  });
-};
+import { getFontFamily } from '../../lib/font-mapping.native';
 
 export interface TypographyProps extends Omit<TextProps, 'className'> {
   variant?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'body' | 'body-lg' | 'body-sm' | 'caption' | 'label' | 'button'
@@ -44,9 +26,9 @@ const variantStyles = {
 }
 
 const colorStyles = {
-  default: 'text-white',
-  secondary: 'text-neutral-400',
-  muted: 'text-neutral-500',
+  default: 'text-foreground',
+  secondary: 'text-text-secondary',
+  muted: 'text-text-muted',
   primary: 'text-brand-primary',
   error: 'text-error',
   success: 'text-success',

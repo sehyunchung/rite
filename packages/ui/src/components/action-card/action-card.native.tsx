@@ -30,7 +30,7 @@ export function ActionCard({
       onPress={onPress}
       className={`w-full rounded-2xl border-2 border-dashed border-neutral-600 bg-neutral-700/50 p-8 active:bg-neutral-700 active:scale-[0.98] ${className}`}
     >
-      <View className="items-center space-y-4">
+      <View className="items-center flex gap-4">
         <View className={`h-16 w-16 items-center justify-center rounded-full ${iconColors[variant]}`}>
           {icon}
         </View>

@@ -37,3 +37,11 @@ yarn-error.*
 *.tsbuildinfo
 
 app-example
+.vercel
+
+# Visual testing
+visual-tests/test-results/
+visual-tests/playwright-report/
+test-results/
+playwright-report/
+playwright/.cache/

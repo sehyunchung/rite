@@ -185,6 +185,83 @@ When adding mobile-specific features:
 4. Consider tablet layouts
 5. Ensure offline functionality where appropriate
 
+## Web Deployment
+
+The mobile app can be deployed as a Progressive Web App (PWA) using Expo's web export.
+
+### Build for Web
+
+```bash
+# Build static web files
+pnpm run build:web
+
+# Preview locally
+pnpm run preview:web
+```
+
+This creates a static build in the `dist` directory.
+
+### Deploy to Vercel
+
+#### Vercel Dashboard Configuration (Recommended for Monorepo)
+
+1. Import your GitHub repository on [vercel.com](https://vercel.com)
+2. Configure the following settings:
+   - **Root Directory**: `apps/mobile`
+   - **Build Command**: `pnpm expo export -p web`
+   - **Output Directory**: `dist`
+   - **Install Command**: `pnpm install` (auto-detected for monorepo)
+
+3. Add environment variables:
+   - `EXPO_PUBLIC_CONVEX_URL`
+   - `EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID`
+   - `EXPO_PUBLIC_WEB_URL` (optional, for OAuth redirects in production)
+   - Any other `EXPO_PUBLIC_*` variables
+
+4. Deploy!
+
+The `vercel.json` file contains SPA routing configuration for Expo Router.
+
+#### Vercel CLI Deployment
+
+```bash
+# Install Vercel CLI
+pnpm add -g vercel
+
+# Build the app first
+pnpm run build:web
+
+# Deploy from the mobile directory
+cd apps/mobile
+vercel --prod
+```
+
+### Environment Variables for Web
+
+For web deployment, ensure these are set:
+
+```bash
+EXPO_PUBLIC_CONVEX_URL=your_convex_url
+EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID=your_google_client_id
+EXPO_PUBLIC_WEB_URL=https://your-production-url.vercel.app  # Optional, for OAuth redirects
+# Add other EXPO_PUBLIC_ variables as needed
+```
+
+### Web-Specific Configuration
+
+The app uses:
+- Static output for better performance
+- Metro bundler for web compatibility
+- Responsive design with `@rite/ui` components
+- PWA capabilities (can be installed as an app)
+
+### Web Limitations
+
+Some features may not work on web:
+- Native device APIs (camera, biometrics)
+- Push notifications (use web push instead)
+- Deep linking (use standard web URLs)
+
 ## Resources
 
 - [Expo Documentation](https://docs.expo.dev/)

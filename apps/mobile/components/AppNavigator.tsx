@@ -26,6 +26,24 @@ export default function AppNavigator() {
     <Stack>
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       <Stack.Screen 
+        name="events/[eventId]" 
+        options={{ 
+          headerShown: false 
+        }} 
+      />
+      <Stack.Screen 
+        name="events/[eventId]/edit" 
+        options={{ 
+          headerShown: false 
+        }} 
+      />
+      <Stack.Screen 
+        name="events/[eventId]/submissions" 
+        options={{ 
+          headerShown: false 
+        }} 
+      />
+      <Stack.Screen 
         name="settings" 
         options={{ 
           headerShown: true,

@@ -13,7 +13,13 @@
     "build:development": "eas build --profile development",
     "build:preview": "eas build --profile preview",
     "build:production": "eas build --profile production",
-    "submit:production": "eas submit --profile production"
+    "submit:production": "eas submit --profile production",
+    "build:web": "npx expo export -p web",
+    "preview:web": "npx serve dist",
+    "test:visual": "playwright test",
+    "test:visual:update": "playwright test --update-snapshots",
+    "test:visual:ui": "playwright test --ui",
+    "test:visual:report": "playwright show-report visual-tests/playwright-report"
   },
   "dependencies": {
     "@expo/vector-icons": "^14.1.0",
@@ -64,6 +70,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
+    "@playwright/test": "^1.49.0",
     "@types/react": "~19.0.14",
     "comment-json": "^4.2.5",
     "eslint": "^9.25.0",

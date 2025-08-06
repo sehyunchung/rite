@@ -2,6 +2,7 @@ import { DarkTheme, ThemeProvider } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
 import { StatusBar } from 'expo-status-bar';
 import { View, Text } from 'react-native';
+import { useEffect } from 'react';
 import 'react-native-reanimated';
 import '../global.css';
 import './index.css';
@@ -10,8 +11,14 @@ import { PostHogProviderWrapper } from '../providers/PostHogProvider';
 import { AuthProvider } from '../contexts/AuthContext';
 import { ErrorBoundary } from '../components/ErrorBoundary';
 import AppNavigator from '../components/AppNavigator';
+import { registerServiceWorker } from './registerServiceWorker';
 
 export default function RootLayout() {
+  // Register service worker for PWA support on web
+  useEffect(() => {
+    registerServiceWorker();
+  }, []);
+
   const [loaded, error] = useFonts({
     'SUIT-Regular': require('../assets/fonts/SUIT-Regular.otf'),
     'SUIT-Medium': require('../assets/fonts/SUIT-Medium.otf'),

@@ -2,6 +2,8 @@ import * as React from 'react';
 import { Pressable, Text, View } from 'react-native';
 import { cva, type VariantProps } from 'class-variance-authority';
 import '@rite/ui/types/nativewind';
+import { cn } from '../../lib/utils';
+import { getFontFamily } from '../../lib/font-mapping.native';
 
 const buttonVariants = cva(
   'flex items-center justify-center rounded-lg font-medium disabled:opacity-50',
@@ -28,6 +30,31 @@ const buttonVariants = cva(
   }
 );
 
+const textVariants = cva(
+  'text-center font-medium',
+  {
+    variants: {
+      variant: {
+        default: 'text-neutral-0',
+        destructive: 'text-neutral-0',
+        outline: 'text-neutral-0',
+        secondary: 'text-neutral-0',
+        ghost: 'text-neutral-0',
+      },
+      size: {
+        default: 'text-base',
+        sm: 'text-sm',
+        lg: 'text-lg',
+        icon: 'text-base',
+      },
+    },
+    defaultVariants: {
+      variant: 'default',
+      size: 'default',
+    },
+  }
+);
+
 export interface ButtonProps extends VariantProps<typeof buttonVariants> {
   onPress?: () => void;
   disabled?: boolean;
@@ -44,7 +71,11 @@ export const Button = React.forwardRef<View, ButtonProps>(({
   children,
   ...props
 }: ButtonProps, ref) => {
-  const buttonClass = `${buttonVariants({ variant, size })} ${className}`;
+  const buttonClass = cn(buttonVariants({ variant, size }), className);
+  const textClass = textVariants({ variant, size });
+  
+  // Get the font family based on the weight (buttons use font-medium)
+  const fontFamily = getFontFamily('font-medium');
   
   return (
     <Pressable
@@ -54,17 +85,10 @@ export const Button = React.forwardRef<View, ButtonProps>(({
       {...props}
     >
       {typeof children === 'string' ? (
-        <Text className={`text-center font-medium ${
-          variant === 'default' || variant === 'destructive' || variant === 'secondary' 
-            ? 'text-white' 
-            : variant === 'outline' 
-            ? 'text-white'
-            : variant === 'ghost'
-            ? 'text-white'
-            : 'text-brand-primary'
-        } ${
-          size === 'sm' ? 'text-sm' : size === 'lg' ? 'text-lg' : 'text-base'
-        }`}>
+        <Text 
+          className={textClass}
+          style={{ fontFamily }}
+        >
           {children}
         </Text>
       ) : (

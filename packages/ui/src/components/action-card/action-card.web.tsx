@@ -28,7 +28,7 @@ const ActionCard = React.forwardRef<HTMLButtonElement, ActionCardProps>(
         )}
         {...props}
       >
-        <div className="flex flex-col items-center space-y-4">
+        <div className="flex flex-col items-center gap-4">
           <div className={cn(
             "flex h-16 w-16 items-center justify-center rounded-full",
             iconColors[variant]

@@ -1,8 +1,8 @@
-import React, { Component, ReactNode } from 'react'
+import * as React from 'react'
 
 interface PostHogErrorBoundaryProps {
-  children: ReactNode
-  fallback?: ReactNode
+  children: React.ReactNode
+  fallback?: React.ReactNode
   onError?: (error: Error, errorInfo: React.ErrorInfo) => void
 }
 
@@ -11,7 +11,7 @@ interface PostHogErrorBoundaryState {
   error?: Error
 }
 
-export class PostHogErrorBoundary extends Component<PostHogErrorBoundaryProps, PostHogErrorBoundaryState> {
+export class PostHogErrorBoundary extends React.Component<PostHogErrorBoundaryProps, PostHogErrorBoundaryState> {
   constructor(props: PostHogErrorBoundaryProps) {
     super(props)
     this.state = { hasError: false }

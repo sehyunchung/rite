@@ -66,7 +66,14 @@ export const getRedirectUri = () => {
   let redirectUri: string;
   
   if (isWeb) {
-    redirectUri = 'http://localhost:8081';
+    // Use the current window location for web platform
+    if (typeof window !== 'undefined') {
+      const { protocol, host } = window.location;
+      redirectUri = `${protocol}//${host}`;
+    } else {
+      // Fallback for SSR or when window is not available
+      redirectUri = process.env.EXPO_PUBLIC_WEB_URL || 'http://localhost:8081';
+    }
   } else if (isExpoGo || platform === 'ios') {
     const scheme = getGoogleIOSScheme();
     redirectUri = `${scheme}://`;

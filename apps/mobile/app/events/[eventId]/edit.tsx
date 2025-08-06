@@ -382,9 +382,9 @@ export default function EditEventScreen() {
                   )}
                 </View>
                 
-                <View className="space-y-3">
+                <View className="flex gap-3">
                   {/* Time Range */}
-                  <View className="flex-row space-x-3">
+                  <View className="flex-row gap-3">
                     <View className="flex-1">
                       <Typography variant="caption" className="mb-1 text-neutral-400">
                         Start Time

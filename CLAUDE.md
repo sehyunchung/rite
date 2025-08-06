@@ -635,3 +635,4 @@ pnpm android
 - SUIT Variable font for all text
 - Platform-specific implementations when needed
 - HSL color format for all new themes (better manipulation)
+- **Never use `space-x-` or `space-y-`**: Use flex and gap instead (React Native compatibility)

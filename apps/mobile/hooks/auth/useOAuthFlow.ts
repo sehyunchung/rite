@@ -2,6 +2,7 @@ import { useEffect, useCallback } from 'react';
 import { Platform } from 'react-native';
 import * as Google from 'expo-auth-session/providers/google';
 import { ConvexReactClient } from 'convex/react';
+import { useRouter } from 'expo-router';
 import { User, AuthError } from '../../lib/auth/types';
 import { getGoogleOAuthConfig, hasGoogleConfig } from '../../lib/auth/oauth-config';
 import { useGoogleAuth } from './useGoogleAuth';
@@ -14,6 +15,7 @@ export const useOAuthFlow = (
   onAuthSuccess: (user: User) => void
 ) => {
   const config = getGoogleOAuthConfig();
+  const router = useRouter();
   const { handleGoogleAuth, handleWebRedirect } = useGoogleAuth(convex);
   
   const [request, response, promptAsync] = Google.useAuthRequest(config);
@@ -74,6 +76,8 @@ export const useOAuthFlow = (
         .then((user) => {
           if (user) {
             onAuthSuccess(user);
+            // Ensure we're on the home screen after successful auth
+            router.replace('/');
           }
         })
         .catch((error) => {
@@ -81,7 +85,7 @@ export const useOAuthFlow = (
           console.error('Web redirect error:', error);
         });
     }
-  }, [handleWebRedirect, onAuthSuccess]);
+  }, [handleWebRedirect, onAuthSuccess, router]);
 
   return {
     signIn,

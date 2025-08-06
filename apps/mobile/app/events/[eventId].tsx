@@ -1,14 +1,14 @@
 import * as React from 'react';
-import { View, ScrollView, SafeAreaView, Platform, ActivityIndicator, Pressable } from 'react-native';
+import { View, ActivityIndicator, Pressable } from 'react-native';
 import { Typography, Card, CardHeader, CardContent, CardTitle, Button } from '../../lib/ui-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useQuery } from 'convex/react';
 import { api } from '@rite/backend/convex/_generated/api';
-// Design system colors via Tailwind CSS variables
 import { useAuth } from '../../contexts/AuthContext';
 import { Ionicons } from '@expo/vector-icons';
 import { validateEventId } from '../../lib/validation';
 import { themeColors } from '../../lib/theme-colors';
+import { ScreenContainer } from '../../components/layout/ScreenContainer';
 
 export default function EventDetailScreen() {
   const { eventId } = useLocalSearchParams<{ eventId: string }>();
@@ -22,35 +22,31 @@ export default function EventDetailScreen() {
 
   if (!eventId) {
     return (
-      <SafeAreaView className="flex-1 bg-neutral-800">
-        <View className="p-6">
-          <Typography variant="body" color="secondary">
-            No event ID provided
-          </Typography>
-        </View>
-      </SafeAreaView>
+      <ScreenContainer scroll={false}>
+        <Typography variant="body" color="secondary">
+          No event ID provided
+        </Typography>
+      </ScreenContainer>
     );
   }
 
   if (event === undefined) {
     return (
-      <SafeAreaView className="flex-1 bg-neutral-800">
+      <ScreenContainer scroll={false}>
         <View className="flex-1 items-center justify-center">
           <ActivityIndicator size="large" color={themeColors.brand.primary} />
         </View>
-      </SafeAreaView>
+      </ScreenContainer>
     );
   }
 
   if (!event) {
     return (
-      <SafeAreaView className="flex-1 bg-neutral-800">
-        <View className="p-6">
-          <Typography variant="body" color="secondary">
-            Event not found
-          </Typography>
-        </View>
-      </SafeAreaView>
+      <ScreenContainer scroll={false}>
+        <Typography variant="body" color="secondary">
+          Event not found
+        </Typography>
+      </ScreenContainer>
     );
   }
 
@@ -86,21 +82,14 @@ export default function EventDetailScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-neutral-800">
-      <ScrollView className="flex-1">
-        <View 
-          className="p-6" 
-          style={{ 
-            paddingBottom: Platform.OS === 'ios' ? 80 : 60 
-          }}
-        >
+    <ScreenContainer className="p-6">
           {/* Header */}
           <View className="flex-row items-center mb-6">
             <Pressable 
               onPress={() => router.back()}
               className="mr-3"
             >
-              <Ionicons name="arrow-back" size={24} color="#E0E0E6" />
+              <Ionicons name="arrow-back" size={24} color={themeColors.text.primary} />
             </Pressable>
             <Typography variant="h4" color="default" className="flex-1">
               Event Details
@@ -108,10 +97,10 @@ export default function EventDetailScreen() {
           </View>
 
           {/* Event Info */}
-          <Card className="mb-6 bg-neutral-700 border-neutral-600 rounded-2xl">
+          <Card className="mb-6 bg-card border-border rounded-lg">
             <CardHeader className="p-6">
               <View className="flex-row items-center justify-between">
-                <CardTitle className="text-white text-2xl font-bold">
+                <CardTitle className="text-foreground text-2xl font-bold">
                   {event.name}
                 </CardTitle>
                 <View className={`rounded-full px-3 py-1 ${
@@ -132,14 +121,14 @@ export default function EventDetailScreen() {
             <CardContent className="p-6 pt-0">
               <View className="gap-3">
                 <View className="flex-row items-center">
-                  <Ionicons name="location" size={20} color="#8C8CA3" />
+                  <Ionicons name="location" size={20} color={themeColors.text.secondary} />
                   <Typography variant="body" color="secondary" className="ml-2">
                     {event.venue.name}
                   </Typography>
                 </View>
                 
                 <View className="flex-row items-center">
-                  <Ionicons name="calendar" size={20} color="#8C8CA3" />
+                  <Ionicons name="calendar" size={20} color={themeColors.text.secondary} />
                   <Typography variant="body" color="secondary" className="ml-2">
                     {formatDate(event.date)}
                   </Typography>
@@ -161,7 +150,7 @@ export default function EventDetailScreen() {
           
           <View className="gap-3 mb-6">
             {event.timeslots.map((slot, index) => (
-              <Card key={slot._id} className="bg-neutral-700 border-neutral-600 rounded-2xl">
+              <Card key={slot._id} className="bg-card border-border rounded-lg">
                 <CardContent className="p-6">
                   <View className="flex-row items-center justify-between">
                     <View className="flex-1">
@@ -186,7 +175,7 @@ export default function EventDetailScreen() {
             Event Information
           </Typography>
           
-          <Card className="bg-neutral-700 border-neutral-600 rounded-2xl mb-6">
+          <Card className="bg-card border-border rounded-lg mb-6">
             <CardContent className="p-6">
               <View className="gap-4">
                 <View>
@@ -257,14 +246,12 @@ export default function EventDetailScreen() {
                 onPress={() => router.push(`/events/${eventId}/submissions`)}
                 variant="outline"
                 size="default"
-                className="rounded-lg border-neutral-600"
+                className="rounded-lg border-border"
               >
                 {`View Submissions (${event.submissionCount || 0})`}
               </Button>
             </View>
           )}
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+    </ScreenContainer>
   );
 }

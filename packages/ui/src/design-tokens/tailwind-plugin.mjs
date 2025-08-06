@@ -1,7 +1,7 @@
 // RITE Design System - Tailwind Plugin
 // Converts design tokens to Tailwind configuration
 
-const { colors, spacing, radius, typography } = require('./index')
+import { themes, spacing, radius, typography } from './index'
 
 // Convert numeric spacing to pixel strings
 const spacingWithUnits = Object.entries(spacing).reduce((acc, [key, value]) => {
@@ -21,65 +21,65 @@ const fontSizeWithUnits = Object.entries(typography.fontSize).reduce((acc, [key,
   return acc
 }, {})
 
-module.exports = {
+export default {
   theme: {
     extend: {
       colors: {
         // Brand colors
-        'brand-primary': colors.brand.primary,
-        'brand-primary-dark': colors.brand.primaryDark,
-        'brand-primary-light': colors.brand.primaryLight,
+        'brand-primary': themes.joshComeau.brand.primary,
+        'brand-primary-dark': themes.joshComeau.brand.primaryDark,
+        'brand-primary-light': themes.joshComeau.brand.primaryLight,
         
         // Neutrals
-        neutral: colors.neutral,
+        neutral: themes.joshComeau.neutral,
         
         // Semantic
-        success: colors.semantic.success,
-        warning: colors.semantic.warning,
-        error: colors.semantic.error,
-        info: colors.semantic.info,
+        success: themes.joshComeau.semantic.success,
+        warning: themes.joshComeau.semantic.warning,
+        error: themes.joshComeau.semantic.error,
+        info: themes.joshComeau.semantic.info,
         
         // Functional
-        'text-primary': colors.functional.textPrimary,
-        'text-secondary': colors.functional.textSecondary,
-        'text-muted': colors.functional.textMuted,
-        'border-default': colors.functional.border,
-        'divider': colors.functional.divider,
+        'text-primary': themes.joshComeau.functional.textPrimary,
+        'text-secondary': themes.joshComeau.functional.textSecondary,
+        'text-muted': themes.joshComeau.functional.textMuted,
+        'border-default': themes.joshComeau.functional.border,
+        'divider': themes.joshComeau.functional.divider,
         
         // Component-specific (backwards compatibility)
-        background: colors.neutral[800],
-        foreground: colors.functional.textPrimary,
+        background: themes.joshComeau.neutral[800],
+        foreground: themes.joshComeau.functional.textPrimary,
         card: {
-          DEFAULT: colors.neutral[700],
-          foreground: colors.functional.textPrimary,
+          DEFAULT: themes.joshComeau.neutral[700],
+          foreground: themes.joshComeau.functional.textPrimary,
         },
         popover: {
-          DEFAULT: colors.neutral[700],
-          foreground: colors.functional.textPrimary,
+          DEFAULT: themes.joshComeau.neutral[700],
+          foreground: themes.joshComeau.functional.textPrimary,
         },
         primary: {
-          DEFAULT: colors.brand.primary,
-          foreground: colors.neutral[0],
+          DEFAULT: themes.joshComeau.brand.primary,
+          foreground: themes.joshComeau.neutral[0],
         },
         secondary: {
-          DEFAULT: colors.neutral[600],
-          foreground: colors.functional.textPrimary,
+          DEFAULT: themes.joshComeau.neutral[600],
+          foreground: themes.joshComeau.functional.textPrimary,
         },
         muted: {
-          DEFAULT: colors.neutral[700],
-          foreground: colors.functional.textSecondary,
+          DEFAULT: themes.joshComeau.neutral[700],
+          foreground: themes.joshComeau.functional.textSecondary,
         },
         accent: {
-          DEFAULT: colors.neutral[600],
-          foreground: colors.functional.textPrimary,
+          DEFAULT: themes.joshComeau.neutral[600],
+          foreground: themes.joshComeau.functional.textPrimary,
         },
         destructive: {
-          DEFAULT: colors.semantic.error,
-          foreground: colors.neutral[0],
+          DEFAULT: themes.joshComeau.semantic.error,
+          foreground: themes.joshComeau.neutral[0],
         },
-        border: colors.functional.border,
-        input: colors.neutral[700],
-        ring: colors.brand.primary,
+        border: themes.joshComeau.functional.border,
+        input: themes.joshComeau.neutral[700],
+        ring: themes.joshComeau.brand.primary,
       },
       
       spacing: spacingWithUnits,
