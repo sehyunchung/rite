@@ -13,7 +13,9 @@
     "build:development": "eas build --profile development",
     "build:preview": "eas build --profile preview",
     "build:production": "eas build --profile production",
-    "submit:production": "eas submit --profile production"
+    "submit:production": "eas submit --profile production",
+    "build:web": "npx expo export -p web",
+    "preview:web": "npx serve dist"
   },
   "dependencies": {
     "@expo/vector-icons": "^14.1.0",
