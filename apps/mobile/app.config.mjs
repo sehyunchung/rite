@@ -1,5 +1,5 @@
-// Import design system colors
-const { themes } = require('../../packages/ui/src/design-tokens/themes.js');
+// Import design system colors using ES modules
+import { themes } from '@rite/ui/design-tokens';
 
 // Use Josh Comeau dark theme as default
 const defaultTheme = themes.joshComeau;
