@@ -137,21 +137,21 @@ export const useGoogleAuth = (convex: ConvexReactClient) => {
         const code = urlParams.get('code');
         
         if (accessToken && state) {
+          // Clean up URL immediately to prevent Expo Router from trying to parse it
+          window.history.replaceState({}, document.title, '/');
+          
           // Process the access token directly (implicit flow)
           handleGoogleAuth(accessToken)
             .then(resolve)
             .catch(reject);
-          
-          // Clear URL parameters and hash to clean up the browser
-          window.history.replaceState({}, document.title, window.location.pathname);
         } else if (code && state) {
+          // Clean up URL immediately to prevent Expo Router from trying to parse it
+          window.history.replaceState({}, document.title, '/');
+          
           // Process the code manually (code flow - fallback)
           exchangeCodeForToken(code)
             .then(resolve)
             .catch(reject);
-          
-          // Clear URL parameters to clean up the browser
-          window.history.replaceState({}, document.title, window.location.pathname);
         } else {
           resolve(null);
         }
