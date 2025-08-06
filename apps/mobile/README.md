@@ -215,6 +215,7 @@ This creates a static build in the `dist` directory.
 3. Add environment variables:
    - `EXPO_PUBLIC_CONVEX_URL`
    - `EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID`
+   - `EXPO_PUBLIC_WEB_URL` (optional, for OAuth redirects in production)
    - Any other `EXPO_PUBLIC_*` variables
 
 4. Deploy!
@@ -242,6 +243,7 @@ For web deployment, ensure these are set:
 ```bash
 EXPO_PUBLIC_CONVEX_URL=your_convex_url
 EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID=your_google_client_id
+EXPO_PUBLIC_WEB_URL=https://your-production-url.vercel.app  # Optional, for OAuth redirects
 # Add other EXPO_PUBLIC_ variables as needed
 ```
 
