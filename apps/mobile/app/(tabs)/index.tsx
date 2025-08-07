@@ -17,19 +17,37 @@ export default function HomeScreen() {
   
   return (
     <SafeAreaView className="flex-1 bg-neutral-800">
-      <ScrollView className="flex-1">
+      <ScrollView 
+        className="flex-1"
+        accessible={true}
+        accessibilityLabel="Dashboard content"
+      >
         <View 
           className="p-6" 
           style={{ 
             paddingBottom: Platform.OS === 'ios' ? 124 : 104 
           }}
+          accessibilityRole="main"
         >
-          <Typography variant="h3" color="primary" className="mb-2">
-            RITE
-          </Typography>
-          <Typography variant="body" color="secondary" className="mb-6">
-            DJ Event Management
-          </Typography>
+          <View accessibilityRole="header">
+            <Typography 
+              variant="h3" 
+              color="primary" 
+              className="mb-2"
+              accessibilityRole="text"
+              accessibilityLabel="RITE - DJ Event Management Platform"
+            >
+              RITE
+            </Typography>
+            <Typography 
+              variant="body" 
+              color="secondary" 
+              className="mb-6"
+              accessibilityRole="text"
+            >
+              DJ Event Management
+            </Typography>
+          </View>
           
           {/* Create Event Button */}
           <Button 
@@ -37,22 +55,40 @@ export default function HomeScreen() {
             variant="default"
             size="default"
             className="flex-row items-center justify-center mt-4 mb-8 rounded-lg"
+            accessibilityLabel="Create New Event"
+            accessibilityHint="Navigate to create event form"
+            testID="create-event-button"
           >
             Create New Event
           </Button>
           
           {/* Your Events Section */}
-          <View className="mb-6">
-            <Typography variant="h5" color="default" className="mb-4">
+          <View className="mb-6" accessibilityRole="region" accessibilityLabel="Your events section">
+            <Typography 
+              variant="h5" 
+              color="default" 
+              className="mb-4"
+              accessibilityRole="text"
+            >
               Your Events
             </Typography>
             
             {events === undefined ? (
-              <View className="p-8">
+              <View 
+                className="p-8"
+                accessible={true}
+                accessibilityLabel="Loading your events"
+                accessibilityRole="progressbar"
+              >
                 <ActivityIndicator size="large" color={themeColors.brand.primary} />
               </View>
             ) : events.length === 0 ? (
-              <Card className="bg-neutral-700 border-neutral-600 rounded-2xl">
+              <Card 
+                className="bg-neutral-700 border-neutral-600 rounded-2xl"
+                accessible={true}
+                accessibilityRole="text"
+                accessibilityLabel="No events yet. Create your first event to get started."
+              >
                 <CardContent className="p-6">
                   <Typography variant="body" color="default" className="text-center mb-1">
                     No events yet
@@ -63,8 +99,13 @@ export default function HomeScreen() {
                 </CardContent>
               </Card>
             ) : (
-              <View className="gap-4">
-                {events.map((event) => (
+              <View 
+                className="gap-4"
+                accessible={true}
+                accessibilityRole="list"
+                accessibilityLabel={`${events.length} events available`}
+              >
+                {events.map((event, index) => (
                   <EventCard
                     key={event._id}
                     eventName={event.name}
@@ -79,6 +120,11 @@ export default function HomeScreen() {
                     onShare={() => {
                       // TODO: Implement share functionality
                     }}
+                    // Add accessibility for EventCard as list item
+                    accessible={true}
+                    accessibilityRole="listitem"
+                    accessibilityLabel={`Event ${index + 1} of ${events.length}: ${event.name} at ${event.venue.name}`}
+                    accessibilityHint="Double tap to view event details"
                   />
                 ))}
               </View>

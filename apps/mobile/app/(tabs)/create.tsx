@@ -208,7 +208,12 @@ export default function CreateTab() {
           
           {/* Event Name */}
           <View className="mb-6">
-            <Typography variant="label" color="default" className="mb-2">
+            <Typography 
+              variant="label" 
+              color="default" 
+              className="mb-2"
+              accessibilityRole="text"
+            >
               Event Name
             </Typography>
             <Input
@@ -217,22 +222,40 @@ export default function CreateTab() {
               onChangeText={setEventName}
               autoCapitalize="words"
               className="bg-neutral-700 border-neutral-600"
+              accessible={true}
+              accessibilityLabel="Event name input field"
+              accessibilityHint="Enter the name for your event"
+              accessibilityRequired={true}
             />
           </View>
 
           {/* Date */}
           <View className="mb-6">
-            <Typography variant="label" color="default" className="mb-2">
+            <Typography 
+              variant="label" 
+              color="default" 
+              className="mb-2"
+              accessibilityRole="text"
+            >
               Date
             </Typography>
             <TouchableOpacity 
               className="bg-neutral-700 border border-neutral-600 rounded-xl h-12 flex-row items-center px-4"
               onPress={() => setShowDatePicker(true)}
+              accessible={true}
+              accessibilityRole="button"
+              accessibilityLabel={`Event date selector. Currently selected: ${formatDate(selectedDate)}`}
+              accessibilityHint="Tap to change the event date"
             >
               <Typography variant="body" color="default" className="flex-1">
                 {formatDate(selectedDate)}
               </Typography>
-              <Ionicons name="calendar-outline" size={20} color="#8C8CA3" />
+              <Ionicons 
+                name="calendar-outline" 
+                size={20} 
+                color="#8C8CA3" 
+                accessibilityElementsHidden={true}
+              />
             </TouchableOpacity>
           </View>
 
@@ -380,6 +403,13 @@ export default function CreateTab() {
             onPress={handleCreateEvent}
             className="mt-4"
             disabled={isSubmitting}
+            accessibilityLabel={isSubmitting ? 'Creating event, please wait' : 'Create Event'}
+            accessibilityHint="Tap to submit the event form and create your event"
+            accessibilityState={{ 
+              disabled: isSubmitting,
+              busy: isSubmitting 
+            }}
+            testID="submit-create-event-button"
           >
             {isSubmitting ? 'Creating...' : 'Create Event'}
           </Button>

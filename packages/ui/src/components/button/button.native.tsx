@@ -60,6 +60,9 @@ export interface ButtonProps extends VariantProps<typeof buttonVariants> {
   disabled?: boolean;
   children?: React.ReactNode;
   className?: string;
+  accessibilityLabel?: string;
+  accessibilityHint?: string;
+  testID?: string;
 }
 
 export const Button = React.forwardRef<View, ButtonProps>(({
@@ -69,6 +72,9 @@ export const Button = React.forwardRef<View, ButtonProps>(({
   onPress,
   disabled,
   children,
+  accessibilityLabel,
+  accessibilityHint,
+  testID,
   ...props
 }: ButtonProps, ref) => {
   const buttonClass = cn(buttonVariants({ variant, size }), className);
@@ -82,6 +88,12 @@ export const Button = React.forwardRef<View, ButtonProps>(({
       onPress={onPress}
       disabled={disabled}
       className={buttonClass}
+      accessible={true}
+      accessibilityRole="button"
+      accessibilityLabel={accessibilityLabel || (typeof children === 'string' ? children : 'Button')}
+      accessibilityHint={accessibilityHint}
+      accessibilityState={{ disabled: !!disabled }}
+      testID={testID}
       {...props}
     >
       {typeof children === 'string' ? (

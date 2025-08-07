@@ -10,8 +10,17 @@ export default function AppNavigator() {
 
   if (isLoading) {
     return (
-      <View className="flex-1 justify-center items-center bg-neutral-800">
-        <Text className="text-brand-primary text-2xl">
+      <View 
+        className="flex-1 justify-center items-center bg-neutral-800"
+        accessible={true}
+        accessibilityRole="progressbar"
+        accessibilityLabel="Loading application"
+      >
+        <Text 
+          className="text-brand-primary text-2xl"
+          accessible={true}
+          accessibilityRole="text"
+        >
           Loading...
         </Text>
       </View>

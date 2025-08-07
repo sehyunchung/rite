@@ -24,22 +24,58 @@ export default function AuthScreen() {
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
         {/* Logo/Title */}
-        <View style={styles.header}>
-          <Text style={styles.title}>RITE</Text>
-          <Text style={styles.subtitle}>DJ Event Management</Text>
-          <Text style={styles.description}>
+        <View style={styles.header} accessibilityRole="header">
+          <Text 
+            style={styles.title}
+            accessibilityRole="text"
+            accessibilityLabel="RITE - DJ Event Management Platform"
+          >
+            RITE
+          </Text>
+          <Text 
+            style={styles.subtitle}
+            accessibilityRole="text"
+          >
+            DJ Event Management
+          </Text>
+          <Text 
+            style={styles.description}
+            accessibilityRole="text"
+            accessibilityHint="Application description"
+          >
             Sign in to create events, manage DJ lineups, and connect with the music community
           </Text>
         </View>
 
         {/* Auth Buttons */}
-        <View style={styles.authSection}>
+        <View style={styles.authSection} accessibilityRole="group" accessibilityLabel="Authentication options">
           <TouchableOpacity 
             style={[styles.googleButton, !hasGoogleConfig && styles.disabledButton]}
             onPress={signIn}
             disabled={isLoading || !hasGoogleConfig}
+            accessible={true}
+            accessibilityRole="button"
+            accessibilityLabel={!hasGoogleConfig 
+              ? 'Google OAuth Not Configured - button disabled' 
+              : isLoading 
+                ? 'Signing in with Google, please wait' 
+                : 'Continue with Google'
+            }
+            accessibilityHint={!hasGoogleConfig 
+              ? 'Google OAuth credentials need to be configured' 
+              : 'Sign in using your Google account'
+            }
+            accessibilityState={{ 
+              disabled: isLoading || !hasGoogleConfig,
+              busy: isLoading 
+            }}
           >
-            <Ionicons name="logo-google" size={20} color="var(--neutral-800)" />
+            <Ionicons 
+              name="logo-google" 
+              size={20} 
+              color="var(--neutral-800)" 
+              accessibilityElementsHidden={true}
+            />
             <Text style={styles.googleButtonText}>
               {!hasGoogleConfig 
                 ? 'Google OAuth Not Configured' 
@@ -51,7 +87,11 @@ export default function AuthScreen() {
           </TouchableOpacity>
 
           {!hasGoogleConfig && (
-            <Text style={styles.configText}>
+            <Text 
+              style={styles.configText}
+              accessibilityRole="text"
+              accessibilityLabel="Configuration message: Add Google OAuth credentials to environment file to enable authentication"
+            >
               Add Google OAuth credentials to .env file to enable authentication
             </Text>
           )}
@@ -60,8 +100,18 @@ export default function AuthScreen() {
           <TouchableOpacity 
             style={[styles.instagramButton, styles.comingSoon]}
             disabled={true}
+            accessible={true}
+            accessibilityRole="button"
+            accessibilityLabel="Continue with Instagram - Coming Soon"
+            accessibilityHint="Instagram authentication is not yet available"
+            accessibilityState={{ disabled: true }}
           >
-            <Ionicons name="logo-instagram" size={20} color="var(--neutral-500)" />
+            <Ionicons 
+              name="logo-instagram" 
+              size={20} 
+              color="var(--neutral-500)" 
+              accessibilityElementsHidden={true}
+            />
             <Text style={styles.instagramButtonText}>
               Continue with Instagram (Coming Soon)
             </Text>
@@ -70,7 +120,11 @@ export default function AuthScreen() {
 
         {/* Terms */}
         <View style={styles.termsSection}>
-          <Text style={styles.termsText}>
+          <Text 
+            style={styles.termsText}
+            accessibilityRole="text"
+            accessibilityLabel="Legal terms: By continuing, you agree to our Terms of Service and Privacy Policy"
+          >
             By continuing, you agree to our Terms of Service and Privacy Policy
           </Text>
         </View>
