@@ -73,6 +73,12 @@ export default defineSchema({
     eventId: v.id("events"),
     timeslotId: v.id("timeslots"),
     uniqueLink: v.string(),
+    // DJ contact information for notifications
+    djContact: v.object({
+      email: v.string(),
+      phone: v.optional(v.string()),
+      preferredContactMethod: v.optional(v.union(v.literal("email"), v.literal("phone"), v.literal("both"))),
+    }),
     promoMaterials: v.object({
       files: v.array(
         v.object({
@@ -98,6 +104,7 @@ export default defineSchema({
       residentNumber: v.string(), // encrypted
       preferDirectContact: v.boolean(),
     }),
+    status: v.optional(v.union(v.literal("pending"), v.literal("accepted"), v.literal("rejected"))),
     submittedAt: v.optional(v.string()),
     lastUpdatedAt: v.optional(v.string()),
   }),

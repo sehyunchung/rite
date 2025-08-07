@@ -221,19 +221,66 @@ export const venueAddressValidator = (address: string): ValidationResult => {
     };
   }
   
-  // Simple heuristic for address completeness
-  const hasNumber = /\d/.test(address);
-  const hasComma = address.includes(',');
+  // Enhanced address validation patterns
+  const hasStreetNumber = /^\d+\s/.test(address.trim()) || /\s\d+(?:\s|$)/.test(address);
+  const hasStreetName = /[a-zA-Z]{2,}/.test(address);
+  const hasCommaOrCommonSeparators = /[,\s-]/.test(address);
+  const hasKoreanAddress = /[가-힣]+/.test(address); // Korean characters for Korean addresses
+  const hasCommonAddressWords = /\b(street|st|avenue|ave|road|rd|lane|ln|boulevard|blvd|drive|dr|court|ct|place|pl|way|circle|cir|동|구|시|로|가)\b/i.test(address);
   
-  if (!hasNumber || !hasComma) {
+  // Check for PO Box (usually invalid for venue addresses)
+  const isPOBox = /\b(p\.?o\.?\s*box|post office box)\b/i.test(address);
+  if (isPOBox) {
     return {
-      isValid: true,
-      suggestion: 'Include street number and city for better accuracy',
+      isValid: false,
+      error: 'Please provide a physical venue address, not a P.O. Box'
+    };
+  }
+  
+  // Very basic structure validation
+  if (!hasStreetName) {
+    return {
+      isValid: false,
+      error: 'Address should include a street or location name'
+    };
+  }
+  
+  // Enhanced scoring system for address completeness
+  let completenessScore = 0;
+  let suggestions = [];
+  
+  if (hasStreetNumber) completenessScore += 2;
+  else suggestions.push('street number');
+  
+  if (hasCommaOrCommonSeparators) completenessScore += 1;
+  
+  if (hasKoreanAddress || hasCommonAddressWords) completenessScore += 2;
+  else suggestions.push('city or district');
+  
+  // Check for minimum completeness
+  if (completenessScore < 3) {
+    const missingSuggestion = suggestions.length > 0 
+      ? `Consider including: ${suggestions.join(', ')}`
+      : 'Include more location details for better accuracy';
+    
+    return {
+      isValid: completenessScore >= 2, // Minimum viable address
+      error: completenessScore < 2 ? 'Address appears incomplete' : undefined,
+      suggestion: missingSuggestion,
       confidence: 'medium'
     };
   }
   
-  return { isValid: true, confidence: 'high' };
+  // High quality address detected
+  if (completenessScore >= 4) {
+    return { isValid: true, confidence: 'high' };
+  }
+  
+  return { 
+    isValid: true, 
+    suggestion: 'Address looks good! Consider adding more details if needed',
+    confidence: 'medium' 
+  };
 };
 
 export const guestListDeadlineValidator = (deadline: string, context?: { eventDate?: string }): ValidationResult => {
@@ -315,23 +362,76 @@ export const promoDeadlineValidator = (deadline: string, context?: { eventDate?:
   return { isValid: true, confidence: 'high' };
 };
 
-export const timeslotTimeValidator = (startTime: string, endTime: string): ValidationResult => {
+export const timeslotTimeValidator = (
+  startTime: string, 
+  endTime: string, 
+  context?: { timezone?: string; eventDate?: string }
+): ValidationResult => {
   if (!startTime || !endTime) {
     return { isValid: false, error: 'Both start and end times are required' };
   }
   
-  const start = new Date(`2000-01-01T${startTime}:00`);
-  let end = new Date(`2000-01-01T${endTime}:00`);
-  
-  // Handle cross-midnight timeslots
-  if (end <= start) {
-    end = new Date(`2000-01-02T${endTime}:00`);
+  // Validate time format
+  const timeRegex = /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/;
+  if (!timeRegex.test(startTime)) {
+    return { isValid: false, error: 'Start time must be in HH:MM format' };
+  }
+  if (!timeRegex.test(endTime)) {
+    return { isValid: false, error: 'End time must be in HH:MM format' };
   }
   
-  const durationMinutes = (end.getTime() - start.getTime()) / (1000 * 60);
+  // Use event date if provided for better timezone context
+  const baseDate = context?.eventDate || '2000-01-01';
+  const start = new Date(`${baseDate}T${startTime}:00`);
+  let end = new Date(`${baseDate}T${endTime}:00`);
   
+  // Enhanced cross-midnight handling
+  const startMinutes = parseInt(startTime.split(':')[0]) * 60 + parseInt(startTime.split(':')[1]);
+  const endMinutes = parseInt(endTime.split(':')[0]) * 60 + parseInt(endTime.split(':')[1]);
+  
+  let durationMinutes: number;
+  let crossesMidnight = false;
+  
+  if (endMinutes <= startMinutes) {
+    // Cross-midnight scenario
+    crossesMidnight = true;
+    durationMinutes = (24 * 60) - startMinutes + endMinutes;
+    
+    // Adjust end date for calculation
+    const nextDay = new Date(start);
+    nextDay.setDate(nextDay.getDate() + 1);
+    end = new Date(`${nextDay.toISOString().split('T')[0]}T${endTime}:00`);
+  } else {
+    durationMinutes = endMinutes - startMinutes;
+  }
+  
+  // Validation checks
   if (durationMinutes < 15) {
     return { isValid: false, error: 'Timeslot must be at least 15 minutes' };
+  }
+  
+  if (durationMinutes > 12 * 60) { // 12 hours max
+    return {
+      isValid: false,
+      error: 'Timeslot cannot exceed 12 hours. Please split into multiple slots.'
+    };
+  }
+  
+  // Provide contextual feedback
+  if (crossesMidnight && durationMinutes > 8 * 60) {
+    return {
+      isValid: true,
+      suggestion: 'Very long cross-midnight sets may require special venue arrangements',
+      confidence: 'medium'
+    };
+  }
+  
+  if (crossesMidnight) {
+    return {
+      isValid: true,
+      suggestion: `${Math.floor(durationMinutes / 60)}h ${durationMinutes % 60}m cross-midnight set - confirm venue hours`,
+      confidence: 'medium'
+    };
   }
   
   if (durationMinutes < 30) {
@@ -350,7 +450,11 @@ export const timeslotTimeValidator = (startTime: string, endTime: string): Valid
     };
   }
   
-  return { isValid: true, confidence: 'high' };
+  return { 
+    isValid: true, 
+    confidence: 'high',
+    suggestion: `${Math.floor(durationMinutes / 60)}h ${durationMinutes % 60}m duration`
+  };
 };
 
 export const djPaymentValidator = (amount: number): ValidationResult => {
@@ -383,6 +487,96 @@ export const djPaymentValidator = (amount: number): ValidationResult => {
   }
   
   return { isValid: true, confidence: 'high' };
+};
+
+export const djEmailValidator = (email: string): ValidationResult => {
+  if (!email || email.trim().length === 0) {
+    return { isValid: false, error: 'Email address is required for notifications' };
+  }
+  
+  // Enhanced email validation regex
+  const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+  
+  if (!emailRegex.test(email)) {
+    return { isValid: false, error: 'Please enter a valid email address' };
+  }
+  
+  // Check for common mistakes
+  const commonDomains = ['gmail.com', 'yahoo.com', 'hotmail.com', 'outlook.com', 'naver.com', 'daum.net', 'hanmail.net'];
+  const domain = email.split('@')[1]?.toLowerCase();
+  
+  if (domain && !commonDomains.includes(domain)) {
+    // Check for common typos in popular domains
+    const typoSuggestions: Record<string, string> = {
+      'gmial.com': 'gmail.com',
+      'gmai.com': 'gmail.com',
+      'yahooo.com': 'yahoo.com',
+      'yaho.com': 'yahoo.com',
+      'hotmai.com': 'hotmail.com',
+      'outlok.com': 'outlook.com',
+      'navr.com': 'naver.com',
+      'daun.net': 'daum.net'
+    };
+    
+    const suggestion = typoSuggestions[domain];
+    if (suggestion) {
+      return {
+        isValid: true,
+        suggestion: `Did you mean ${email.replace(domain, suggestion)}?`,
+        confidence: 'medium'
+      };
+    }
+  }
+  
+  // Check for temporary/disposable email domains (basic check)
+  const disposableDomains = ['10minutemail.com', 'tempmail.org', 'guerrillamail.com', 'mailinator.com'];
+  if (domain && disposableDomains.includes(domain)) {
+    return {
+      isValid: false,
+      error: 'Please use a permanent email address for notifications'
+    };
+  }
+  
+  return { isValid: true, confidence: 'high' };
+};
+
+export const djPhoneValidator = (phone: string): ValidationResult => {
+  if (!phone || phone.trim().length === 0) {
+    return {
+      isValid: true,
+      suggestion: 'Phone number helps organizers contact you directly',
+      confidence: 'medium'
+    };
+  }
+  
+  // Remove common formatting characters
+  const cleanPhone = phone.replace(/[\s\-\(\)\+]/g, '');
+  
+  // Basic phone number validation (supports international formats)
+  const phoneRegex = /^\d{8,15}$/;
+  
+  if (!phoneRegex.test(cleanPhone)) {
+    return {
+      isValid: false,
+      error: 'Please enter a valid phone number (8-15 digits)'
+    };
+  }
+  
+  // Korean phone number specific validation
+  if (cleanPhone.length === 11 && cleanPhone.startsWith('010')) {
+    return { isValid: true, confidence: 'high' };
+  }
+  
+  // International format validation
+  if (cleanPhone.length >= 10 && cleanPhone.length <= 15) {
+    return { isValid: true, confidence: 'high' };
+  }
+  
+  return {
+    isValid: true,
+    suggestion: 'Verify phone number format for your region',
+    confidence: 'medium'
+  };
 };
 
 // Composite validator for the entire event form

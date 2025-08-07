@@ -445,11 +445,17 @@ export const triggerDJStatusNotification = action({
         throw new Error(`Unsupported notification status: ${args.status}`);
     }
     
+    // Get DJ email from submission
+    const djEmail = submission.djContact?.email;
+    if (!djEmail) {
+      throw new Error("DJ email not found in submission. Unable to send notification.");
+    }
+
     // Create notification record
     const notificationId = await ctx.runMutation(api.notifications.createNotification, {
       submissionId: args.submissionId,
       type: notificationType,
-      recipientEmail: organizer.email, // TODO: Get DJ email from submission
+      recipientEmail: djEmail,
       recipientName: timeslot.djName,
       status: "pending",
       emailContent: template,
@@ -457,7 +463,7 @@ export const triggerDJStatusNotification = action({
     
     // Send the email
     await ctx.runAction(api.notifications.sendEmailNotification, {
-      to: organizer.email, // TODO: Use DJ email
+      to: djEmail,
       subject: template.subject,
       htmlContent: template.htmlContent,
       textContent: template.textContent,
@@ -519,10 +525,17 @@ export const scheduleEventReminders = action({
       
       const template = emailTemplates.eventReminder(context);
       
+      // Get DJ email from submission
+      const djEmail = submission.djContact?.email;
+      if (!djEmail) {
+        console.warn(`Skipping reminder for submission ${submission._id}: DJ email not found`);
+        continue;
+      }
+
       const notificationId = await ctx.runMutation(api.notifications.createNotification, {
         submissionId: submission._id,
         type: "event_reminder",
-        recipientEmail: organizer.email, // TODO: Use DJ email
+        recipientEmail: djEmail,
         recipientName: timeslot.djName,
         status: "pending",
         emailContent: template,
