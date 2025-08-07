@@ -1,15 +1,12 @@
 import * as React from 'react';
 import { 
-  validateEvent, 
-  validateTimeslot, 
   validateInstagramHandle,
   validateDate,
   validateDeadlineDate,
   validateDeadlineOrder,
   getDefaultGuestListDeadline,
   getDefaultPromoDeadline,
-  type EventFormData,
-  type Timeslot
+  type EventFormData
 } from './validation';
 
 // Validation state types
@@ -84,7 +81,7 @@ export function useProgressiveValidation<T>(
     status: 'pristine'
   });
 
-  const validatorRef = React.useRef<ProgressiveValidator<T>>();
+  const validatorRef = React.useRef<ProgressiveValidator<T> | undefined>(undefined);
 
   React.useEffect(() => {
     validatorRef.current = new ProgressiveValidator<T>(debounceMs);

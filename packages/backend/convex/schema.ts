@@ -184,4 +184,30 @@ export default defineSchema({
     error: v.optional(v.string()),
     publishedAt: v.optional(v.string()),
   }).index("by_user_id", ["userId"]).index("by_status", ["status"]),
+
+  // Email notification system
+  notifications: defineTable({
+    submissionId: v.id("submissions"),
+    type: v.union(
+      v.literal("submission_received"), 
+      v.literal("submission_accepted"), 
+      v.literal("submission_rejected"),
+      v.literal("event_reminder")
+    ),
+    recipientEmail: v.string(),
+    recipientName: v.string(),
+    status: v.union(v.literal("pending"), v.literal("sent"), v.literal("failed")),
+    emailContent: v.object({
+      subject: v.string(),
+      htmlContent: v.string(),
+      textContent: v.string(),
+    }),
+    scheduledFor: v.optional(v.string()),
+    sentAt: v.optional(v.string()),
+    error: v.optional(v.string()),
+    createdAt: v.string(),
+  })
+    .index("by_submission_id", ["submissionId"])
+    .index("by_status", ["status"])
+    .index("by_scheduled", ["scheduledFor"]),
 });
