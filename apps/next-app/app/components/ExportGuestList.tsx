@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { useQuery } from 'convex/react';
+import { useQuery, useConvex } from 'convex/react';
 import { api } from '@rite/backend/convex/_generated/api';
 import { Id } from '@rite/backend/convex/_generated/dataModel';
 import { Card, CardContent, CardHeader, CardTitle, Button } from '@rite/ui';
@@ -213,6 +213,7 @@ interface ExportGuestListProps {
 
 export function ExportGuestList({ eventId, userId }: ExportGuestListProps) {
   const t = useTranslations('events.submissions.exports');
+  const convex = useConvex();
   const [loadingFormat, setLoadingFormat] = React.useState<string | null>(null);
   
   // Get guest list data preview for statistics
@@ -223,6 +224,11 @@ export function ExportGuestList({ eventId, userId }: ExportGuestListProps) {
       userId: userId as Id<"users">
     }
   );
+
+  // Fetch data for other formats only when needed
+  const [excelData, setExcelData] = React.useState<any>(null);
+  const [pdfData, setPdfData] = React.useState<any>(null);
+  const [googleSheetsData, setGoogleSheetsData] = React.useState<any>(null);
 
   const handleExport = React.useCallback(async (format: 'csv' | 'excel' | 'pdf' | 'google_sheets') => {
     setLoadingFormat(format);
@@ -235,16 +241,43 @@ export function ExportGuestList({ eventId, userId }: ExportGuestListProps) {
           exportData = csvData;
           break;
         case 'excel':
-          // Would use api.exports.exportGuestListExcel in real implementation
-          exportData = csvData;
+          // Fetch Excel data if not already loaded
+          if (!excelData) {
+            const data = await convex.query(api.exports.exportGuestListExcel, {
+              eventId: eventId as Id<"events">,
+              userId: userId as Id<"users">
+            });
+            setExcelData(data);
+            exportData = data;
+          } else {
+            exportData = excelData;
+          }
           break;
         case 'pdf':
-          // Would use api.exports.exportGuestListPDF in real implementation
-          exportData = csvData;
+          // Fetch PDF data if not already loaded
+          if (!pdfData) {
+            const data = await convex.query(api.exports.exportGuestListPDF, {
+              eventId: eventId as Id<"events">,
+              userId: userId as Id<"users">
+            });
+            setPdfData(data);
+            exportData = data;
+          } else {
+            exportData = pdfData;
+          }
           break;
         case 'google_sheets':
-          // Would use api.exports.exportGuestListGoogleSheets in real implementation
-          exportData = csvData;
+          // Fetch Google Sheets data if not already loaded
+          if (!googleSheetsData) {
+            const data = await convex.query(api.exports.exportGuestListGoogleSheets, {
+              eventId: eventId as Id<"events">,
+              userId: userId as Id<"users">
+            });
+            setGoogleSheetsData(data);
+            exportData = data;
+          } else {
+            exportData = googleSheetsData;
+          }
           break;
       }
       
@@ -269,7 +302,7 @@ export function ExportGuestList({ eventId, userId }: ExportGuestListProps) {
     } finally {
       setLoadingFormat(null);
     }
-  }, [csvData, t]);
+  }, [csvData, excelData, pdfData, googleSheetsData, convex, eventId, userId, t]);
 
   // Don't render if no data available yet
   if (csvData === undefined) {
@@ -309,8 +342,15 @@ export function ExportGuestList({ eventId, userId }: ExportGuestListProps) {
     );
   }
 
-  // Extract guest count from CSV content for preview
-  const guestCount = csvData && 'content' in csvData ? csvData.content.split('\n').length - 2 : 0; // -2 for header and empty line
+  // Extract guest count from CSV content for preview - memoized for performance
+  const guestCount = React.useMemo(() => {
+    if (csvData && 'content' in csvData) {
+      // Split by newline and filter out empty lines, then subtract header
+      const lines = csvData.content.split('\n').filter(line => line.trim());
+      return Math.max(0, lines.length - 1); // -1 for header
+    }
+    return 0;
+  }, [csvData]);
 
   return (
     <Card>

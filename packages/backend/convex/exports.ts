@@ -70,10 +70,10 @@ interface ExportData {
 }
 
 // Effect functions for data retrieval
-const validateEvent = (ctx: QueryCtx, eventId: string, userId: string): Effect.Effect<Doc<"events">, ExportValidationError | DataRetrievalError, never> =>
+const validateEvent = (ctx: QueryCtx, eventId: Id<"events">, userId: Id<"users">): Effect.Effect<Doc<"events">, ExportValidationError | DataRetrievalError, never> =>
   Effect.gen(function* () {
     const event = yield* Effect.tryPromise({
-      try: () => ctx.db.get(eventId as Id<"events">),
+      try: () => ctx.db.get(eventId),
       catch: (error) => new DataRetrievalError(
         "Failed to retrieve event",
         "get_event",
@@ -175,6 +175,19 @@ const aggregateGuestData = (
     return exportData;
   });
 
+// Helper function to sanitize CSV cells against injection attacks
+const sanitizeCSVCell = (cell: string): string => {
+  // Prevent formula injection by prefixing dangerous characters with a single quote
+  if (/^[=+\-@]/.test(cell)) {
+    return `'${cell}`;
+  }
+  // Handle quotes and commas
+  if (cell.includes(',') || cell.includes('"') || cell.includes('\n') || cell.includes('\r')) {
+    return `"${cell.replace(/"/g, '""')}"`;
+  }
+  return cell;
+};
+
 const generateCSVData = (data: ExportData) =>
   Effect.gen(function* () {
     const headers = ["Guest Name", "Phone", "DJ Name", "DJ Instagram", "Time Slot"];
@@ -188,9 +201,7 @@ const generateCSVData = (data: ExportData) =>
 
     const csvContent = [
       headers.join(","),
-      ...rows.map(row => row.map(cell => 
-        cell.includes(",") || cell.includes('"') ? `"${cell.replace(/"/g, '""')}"` : cell
-      ).join(","))
+      ...rows.map(row => row.map(sanitizeCSVCell).join(","))
     ].join("\n");
 
     return {
@@ -304,8 +315,8 @@ const generateGoogleSheetsData = (data: ExportData) =>
 // Main Effect pipeline for export operations
 const exportGuestListEffect = (
   ctx: QueryCtx,
-  eventId: string,
-  userId: string,
+  eventId: Id<"events">,
+  userId: Id<"users">,
   format: "csv" | "excel" | "pdf" | "google_sheets"
 ) =>
   Effect.gen(function* () {
