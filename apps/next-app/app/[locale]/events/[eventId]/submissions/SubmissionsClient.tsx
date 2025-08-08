@@ -11,6 +11,7 @@ import { Typography } from '@rite/ui';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { MobileLayout } from '@/components/MobileLayout';
+import { ExportGuestList } from '@/components/ExportGuestList';
 import { ArrowLeft, User, Instagram, Clock, FileText, Users } from 'lucide-react';
 import { isValidConvexId } from '@/lib/utils';
 
@@ -117,6 +118,11 @@ export function SubmissionsClient({ eventId, userId, locale }: SubmissionsClient
                 <span>{event.date}</span>
               </div>
             </div>
+          </div>
+
+          {/* Export Section */}
+          <div className="mb-8">
+            <ExportGuestList eventId={eventId} userId={userId} />
           </div>
 
           {/* Submissions List */}

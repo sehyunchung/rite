@@ -186,7 +186,23 @@
       "promoFiles": "Promo Files",
       "submittedOn": "Submitted on",
       "awaitingSubmission": "Awaiting submission from DJ",
-      "noTimeslots": "No DJ timeslots have been created for this event yet."
+      "noTimeslots": "No DJ timeslots have been created for this event yet.",
+      "exports": {
+        "title": "Export Guest List",
+        "guestCount": "{count} guests available for export",
+        "guestCount_plural": "{count} guests available for export",
+        "noGuests": "No guest submissions available yet.",
+        "description": "Export guest list data in various formats for venue management and reporting.",
+        "success": {
+          "downloaded": "File downloaded successfully",
+          "googleSheets": "Data copied to clipboard. Google Sheets opened in new tab."
+        },
+        "errors": {
+          "noData": "No data available for export",
+          "exportFailed": "Failed to export file",
+          "accessDenied": "Unable to access export data. Please check your permissions."
+        }
+      }
     }
   },
   "status": {
