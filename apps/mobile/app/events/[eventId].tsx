@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { View, ActivityIndicator, Pressable } from 'react-native';
 import { Typography, Card, CardHeader, CardContent, CardTitle, Button } from '../../lib/ui-native';
-import { useLocalSearchParams, useRouter, Href } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useQuery } from 'convex/react';
 import { api } from '@rite/backend/convex/_generated/api';
 import { useAuth } from '../../contexts/AuthContext';
@@ -9,6 +9,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { validateEventId } from '../../lib/validation';
 import { themeColors } from '../../lib/theme-colors';
 import { ScreenContainer } from '../../components/layout/ScreenContainer';
+import { routes } from '../../lib/navigation';
 
 export default function EventDetailScreen() {
   const { eventId } = useLocalSearchParams<{ eventId: string }>();
@@ -221,7 +222,7 @@ export default function EventDetailScreen() {
           {event.capabilities.canEdit && (
             <View className="gap-3">
               <Button 
-                onPress={() => router.push(`/events/${eventId}/edit` as Href)}
+                onPress={() => router.push(routes.eventEdit(eventId))}
                 variant="default"
                 size="default"
                 className="rounded-lg"
@@ -243,7 +244,7 @@ export default function EventDetailScreen() {
               )}
               
               <Button 
-                onPress={() => router.push(`/events/${eventId}/submissions` as Href)}
+                onPress={() => router.push(routes.eventSubmissions(eventId))}
                 variant="outline"
                 size="default"
                 className="rounded-lg border-border"

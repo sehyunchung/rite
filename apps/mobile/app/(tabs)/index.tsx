@@ -1,11 +1,12 @@
 import * as React from 'react';
 import { View, ScrollView, SafeAreaView, Platform, ActivityIndicator } from 'react-native';
-import { useRouter, Href } from 'expo-router';
+import { useRouter } from 'expo-router';
 import { Typography, Card, CardContent, EventCard , Button } from '../../lib/ui-native';
 import { useQuery } from 'convex/react';
 import { api } from '@rite/backend/convex/_generated/api';
 import { useAuth } from '../../contexts/AuthContext';
 import { themeColors } from '../../lib/theme-colors';
+import { routes } from '../../lib/navigation';
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -74,7 +75,7 @@ export default function HomeScreen() {
                     dueDate={event.deadlines?.guestList || ''}
                     status={event.status === 'active' ? 'published' : 'draft'}
                     onViewDetails={() => {
-                      router.push(`/events/${event._id}` as Href);
+                      router.push(routes.event(event._id));
                     }}
                     onShare={() => {
                       // TODO: Implement share functionality
