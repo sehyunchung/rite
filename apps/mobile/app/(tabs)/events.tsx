@@ -3,7 +3,7 @@ import { View, ScrollView, SafeAreaView, Platform, ActivityIndicator } from 'rea
 import { Typography, Card, CardContent, EventCard } from '../../lib/ui-native';
 import { useQuery } from 'convex/react';
 import { api } from '@rite/backend/convex/_generated/api';
-import { useRouter } from 'expo-router';
+import { useRouter, Href } from 'expo-router';
 import { useAuth } from '../../contexts/AuthContext';
 import { themeColors } from '../../lib/theme-colors';
 
@@ -58,7 +58,7 @@ export default function EventsScreen() {
                   dueDate={event.deadlines?.guestList || ''}
                   status={event.status === 'active' ? 'published' : 'draft'}
                   onViewDetails={() => {
-                    router.push(`/events/${event._id}`);
+                    router.push(`/events/${event._id}` as Href);
                   }}
                   onShare={() => {
                     // TODO: Implement share functionality

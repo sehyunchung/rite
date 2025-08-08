@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { View, ActivityIndicator, Pressable } from 'react-native';
 import { Typography, Card, CardHeader, CardContent, CardTitle, Button } from '../../lib/ui-native';
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter, Href } from 'expo-router';
 import { useQuery } from 'convex/react';
 import { api } from '@rite/backend/convex/_generated/api';
 import { useAuth } from '../../contexts/AuthContext';
@@ -221,7 +221,7 @@ export default function EventDetailScreen() {
           {event.capabilities.canEdit && (
             <View className="gap-3">
               <Button 
-                onPress={() => router.push(`/events/${eventId}/edit`)}
+                onPress={() => router.push(`/events/${eventId}/edit` as Href)}
                 variant="default"
                 size="default"
                 className="rounded-lg"
@@ -243,7 +243,7 @@ export default function EventDetailScreen() {
               )}
               
               <Button 
-                onPress={() => router.push(`/events/${eventId}/submissions`)}
+                onPress={() => router.push(`/events/${eventId}/submissions` as Href)}
                 variant="outline"
                 size="default"
                 className="rounded-lg border-border"
