@@ -187,6 +187,32 @@
       "submittedOn": "Submitted on",
       "awaitingSubmission": "Awaiting submission from DJ",
       "noTimeslots": "No DJ timeslots have been created for this event yet."
+    },
+    "export": {
+      "title": "Export Guest List",
+      "description": "Download your event guest list in various formats",
+      "noGuests": "No guest submissions yet",
+      "noGuestsHint": "Guest lists will appear here after DJs submit their information",
+      "csv": "Download CSV",
+      "excel": "Download Excel", 
+      "pdf": "Export PDF",
+      "sheets": "Google Sheets",
+      "success": {
+        "csv": "CSV file downloaded successfully",
+        "excel": "Excel file downloaded successfully",
+        "pdf": "PDF opened for download",
+        "sheets": "Google Sheets data prepared"
+      },
+      "error": {
+        "csv": "Failed to export CSV file",
+        "excel": "Failed to export Excel file", 
+        "pdf": "Failed to export PDF file",
+        "sheets": "Failed to prepare Google Sheets data"
+      },
+      "sheetsDialog": {
+        "title": "Export to Google Sheets",
+        "instructions": "Follow these steps:"
+      }
     }
   },
   "status": {
