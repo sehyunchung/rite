@@ -6,6 +6,7 @@ import { api } from '@rite/backend/convex/_generated/api';
 import { useRouter } from 'expo-router';
 import { useAuth } from '../../contexts/AuthContext';
 import { themeColors } from '../../lib/theme-colors';
+import { routes } from '../../lib/navigation';
 
 export default function EventsScreen() {
   const router = useRouter();
@@ -58,7 +59,7 @@ export default function EventsScreen() {
                   dueDate={event.deadlines?.guestList || ''}
                   status={event.status === 'active' ? 'published' : 'draft'}
                   onViewDetails={() => {
-                    router.push(`/events/${event._id}`);
+                    router.push(routes.event(event._id));
                   }}
                   onShare={() => {
                     // TODO: Implement share functionality

@@ -26,7 +26,8 @@
     "happy-dom": "^18.0.1",
     "msw": "^2.10.4",
     "turbo": "^2.5.0",
-    "vitest": "^3.2.4"
+    "vitest": "^3.2.4",
+    "vite": "^5.4.9"
   },
   "dependencies": {
     "@tamagui/animations-react-native": "^1.132.15",

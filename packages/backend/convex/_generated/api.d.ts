@@ -17,6 +17,7 @@ import type * as auth from "../auth.js";
 import type * as eventStatus from "../eventStatus.js";
 import type * as events from "../events.js";
 import type * as eventsEffect from "../eventsEffect.js";
+import type * as exports from "../exports.js";
 import type * as instagram from "../instagram.js";
 import type * as migrations_removeDeprecatedFields from "../migrations/removeDeprecatedFields.js";
 import type * as submissions from "../submissions.js";
@@ -35,6 +36,7 @@ declare const fullApi: ApiFromModules<{
   eventStatus: typeof eventStatus;
   events: typeof events;
   eventsEffect: typeof eventsEffect;
+  exports: typeof exports;
   instagram: typeof instagram;
   "migrations/removeDeprecatedFields": typeof migrations_removeDeprecatedFields;
   submissions: typeof submissions;

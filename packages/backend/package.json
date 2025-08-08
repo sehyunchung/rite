@@ -13,7 +13,9 @@
     "dev": "convex dev",
     "deploy": "convex deploy",
     "deploy:prod": "convex deploy",
-    "build": "echo 'Backend validation completed'"
+    "build": "echo 'Backend validation completed'",
+    "test": "vitest",
+    "test:watch": "vitest --watch"
   },
   "dependencies": {
     "@convex-dev/auth": "^0.0.87",

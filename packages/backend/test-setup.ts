@@ -1,14 +1,7 @@
-import { beforeAll, vi } from 'vitest'
+// Minimal Vitest test setup for backend package
+import { afterEach } from 'vitest';
 
-// Mock Convex environment
-vi.mock('convex/server', () => ({
-  query: vi.fn(),
-  mutation: vi.fn(),
-  action: vi.fn(),
-  httpAction: vi.fn(),
-}))
-
-// Global test setup
-beforeAll(() => {
-  // Setup any global test configuration
-})
+// Reset mocks between tests
+afterEach(() => {
+  // nothing for now; placeholder to satisfy config reference
+});

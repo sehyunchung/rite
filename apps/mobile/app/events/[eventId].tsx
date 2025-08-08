@@ -9,6 +9,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { validateEventId } from '../../lib/validation';
 import { themeColors } from '../../lib/theme-colors';
 import { ScreenContainer } from '../../components/layout/ScreenContainer';
+import { routes } from '../../lib/navigation';
 
 export default function EventDetailScreen() {
   const { eventId } = useLocalSearchParams<{ eventId: string }>();
@@ -221,7 +222,7 @@ export default function EventDetailScreen() {
           {event.capabilities.canEdit && (
             <View className="gap-3">
               <Button 
-                onPress={() => router.push(`/events/${eventId}/edit`)}
+                onPress={() => router.push(routes.eventEdit(eventId))}
                 variant="default"
                 size="default"
                 className="rounded-lg"
@@ -243,7 +244,7 @@ export default function EventDetailScreen() {
               )}
               
               <Button 
-                onPress={() => router.push(`/events/${eventId}/submissions`)}
+                onPress={() => router.push(routes.eventSubmissions(eventId))}
                 variant="outline"
                 size="default"
                 className="rounded-lg border-border"
