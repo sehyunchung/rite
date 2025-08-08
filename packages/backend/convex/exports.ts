@@ -1,4 +1,4 @@
-import { query } from "./_generated/server";
+import { query, QueryCtx } from "./_generated/server";
 import { v } from "convex/values";
 import { Effect } from "effect";
 import type { Id, Doc } from "./_generated/dataModel";
@@ -70,39 +70,39 @@ interface ExportData {
 }
 
 // Effect functions for data retrieval
-const validateEvent = (ctx: any, eventId: string, userId: string) =>
-  Effect.gen(function* (_) {
-    const event = yield* _(Effect.tryPromise({
+const validateEvent = (ctx: QueryCtx, eventId: string, userId: string): Effect.Effect<Doc<"events">, ExportValidationError | DataRetrievalError, never> =>
+  Effect.gen(function* () {
+    const event = yield* Effect.tryPromise({
       try: () => ctx.db.get(eventId as Id<"events">),
       catch: (error) => new DataRetrievalError(
         "Failed to retrieve event",
         "get_event",
         error
       )
-    }));
+    });
 
     if (!event) {
-      return yield* _(Effect.fail(new ExportValidationError(
+      return yield* Effect.fail(new ExportValidationError(
         "Event not found",
         eventId
-      )));
+      ));
     }
 
     if (event.organizerId !== userId) {
-      return yield* _(Effect.fail(new ExportValidationError(
+      return yield* Effect.fail(new ExportValidationError(
         "Access denied: User is not the event organizer",
         eventId
-      )));
+      ));
     }
 
     return event;
   });
 
-const getEventTimeslots = (ctx: any, eventId: Id<"events">) =>
+const getEventTimeslots = (ctx: QueryCtx, eventId: Id<"events">): Effect.Effect<Doc<"timeslots">[], DataRetrievalError, never> =>
   Effect.tryPromise({
     try: () => ctx.db
       .query("timeslots")
-      .filter((q: any) => q.eq(q.field("eventId"), eventId))
+      .filter(q => q.eq(q.field("eventId"), eventId))
       .collect(),
     catch: (error) => new DataRetrievalError(
       "Failed to retrieve timeslots",
@@ -111,11 +111,11 @@ const getEventTimeslots = (ctx: any, eventId: Id<"events">) =>
     )
   });
 
-const getEventSubmissions = (ctx: any, eventId: Id<"events">) =>
+const getEventSubmissions = (ctx: QueryCtx, eventId: Id<"events">): Effect.Effect<Doc<"submissions">[], DataRetrievalError, never> =>
   Effect.tryPromise({
     try: () => ctx.db
       .query("submissions")
-      .filter((q: any) => q.eq(q.field("eventId"), eventId))
+      .filter(q => q.eq(q.field("eventId"), eventId))
       .collect(),
     catch: (error) => new DataRetrievalError(
       "Failed to retrieve submissions",
@@ -128,8 +128,8 @@ const aggregateGuestData = (
   event: Doc<"events">,
   timeslots: Doc<"timeslots">[],
   submissions: Doc<"submissions">[]
-) =>
-  Effect.gen(function* (_) {
+): Effect.Effect<ExportData, never, never> =>
+  Effect.gen(function* () {
     const timeslotMap = new Map(timeslots.map(t => [t._id, t]));
     const guests: Array<{
       name: string;
@@ -176,7 +176,7 @@ const aggregateGuestData = (
   });
 
 const generateCSVData = (data: ExportData) =>
-  Effect.gen(function* (_) {
+  Effect.gen(function* () {
     const headers = ["Guest Name", "Phone", "DJ Name", "DJ Instagram", "Time Slot"];
     const rows = data.guests.map(guest => [
       guest.name,
@@ -201,7 +201,7 @@ const generateCSVData = (data: ExportData) =>
   });
 
 const generateExcelData = (data: ExportData) =>
-  Effect.gen(function* (_) {
+  Effect.gen(function* () {
     // For now, return structured data that can be processed client-side
     // This avoids server-side Excel generation which requires additional dependencies
     return {
@@ -252,7 +252,7 @@ const generateExcelData = (data: ExportData) =>
   });
 
 const generatePDFData = (data: ExportData) =>
-  Effect.gen(function* (_) {
+  Effect.gen(function* () {
     // Structure data for client-side PDF generation
     return {
       event: data.event,
@@ -281,7 +281,7 @@ const generatePDFData = (data: ExportData) =>
   });
 
 const generateGoogleSheetsData = (data: ExportData) =>
-  Effect.gen(function* (_) {
+  Effect.gen(function* () {
     const sheetsData = [
       ["Guest Name", "Phone", "DJ Name", "DJ Instagram", "Time Slot"],
       ...data.guests.map(guest => [
@@ -303,28 +303,28 @@ const generateGoogleSheetsData = (data: ExportData) =>
 
 // Main Effect pipeline for export operations
 const exportGuestListEffect = (
-  ctx: any,
+  ctx: QueryCtx,
   eventId: string,
   userId: string,
   format: "csv" | "excel" | "pdf" | "google_sheets"
 ) =>
-  Effect.gen(function* (_) {
+  Effect.gen(function* () {
     // 1. Validate event access
-    const event = yield* _(validateEvent(ctx, eventId, userId));
+    const event = yield* validateEvent(ctx, eventId, userId);
     
     // 2. Get related data
-    const [timeslots, submissions] = yield* _(
+    const [timeslots, submissions] = yield* 
       Effect.all([
         getEventTimeslots(ctx, event._id),
         getEventSubmissions(ctx, event._id)
       ], { concurrency: 2 })
-    );
+    
     
     // 3. Aggregate guest data
-    const aggregatedData = yield* _(aggregateGuestData(event, timeslots, submissions));
+    const aggregatedData = yield* aggregateGuestData(event, timeslots, submissions);
     
     // 4. Generate format-specific data
-    const formatData = yield* _(
+    const formatData = yield* 
       format === "csv" ? generateCSVData(aggregatedData) :
       format === "excel" ? generateExcelData(aggregatedData) :
       format === "pdf" ? generatePDFData(aggregatedData) :
@@ -333,8 +333,7 @@ const exportGuestListEffect = (
         `Unsupported export format: ${format}`,
         format,
         undefined
-      ))
-    );
+      ));
     
     return formatData;
   }).pipe(

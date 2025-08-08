@@ -310,7 +310,7 @@ export function ExportGuestList({ eventId, userId }: ExportGuestListProps) {
   }
 
   // Extract guest count from CSV content for preview
-  const guestCount = csvData.content ? csvData.content.split('\n').length - 2 : 0; // -2 for header and empty line
+  const guestCount = csvData && 'content' in csvData ? csvData.content.split('\n').length - 2 : 0; // -2 for header and empty line
 
   return (
     <Card>
@@ -346,7 +346,7 @@ export function ExportGuestList({ eventId, userId }: ExportGuestListProps) {
                 className="flex flex-col items-center space-y-2 h-auto py-4"
               >
                 {loadingFormat === 'csv' ? (
-                  <LoadingIndicator size="sm" />
+                  <LoadingIndicator />
                 ) : (
                   <FileText className="w-6 h-6" />
                 )}
@@ -361,7 +361,7 @@ export function ExportGuestList({ eventId, userId }: ExportGuestListProps) {
                 className="flex flex-col items-center space-y-2 h-auto py-4"
               >
                 {loadingFormat === 'excel' ? (
-                  <LoadingIndicator size="sm" />
+                  <LoadingIndicator />
                 ) : (
                   <FileSpreadsheet className="w-6 h-6" />
                 )}
@@ -376,7 +376,7 @@ export function ExportGuestList({ eventId, userId }: ExportGuestListProps) {
                 className="flex flex-col items-center space-y-2 h-auto py-4"
               >
                 {loadingFormat === 'pdf' ? (
-                  <LoadingIndicator size="sm" />
+                  <LoadingIndicator />
                 ) : (
                   <FileImage className="w-6 h-6" />
                 )}
@@ -391,7 +391,7 @@ export function ExportGuestList({ eventId, userId }: ExportGuestListProps) {
                 className="flex flex-col items-center space-y-2 h-auto py-4"
               >
                 {loadingFormat === 'google_sheets' ? (
-                  <LoadingIndicator size="sm" />
+                  <LoadingIndicator />
                 ) : (
                   <ExternalLink className="w-6 h-6" />
                 )}
