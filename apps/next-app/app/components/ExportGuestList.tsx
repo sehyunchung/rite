@@ -23,6 +23,62 @@ import {
 // Effect TypeScript Implementation for Client-side Export Processing
 // =================================
 
+// Type definitions for export data
+interface ExcelSheetData {
+  headers: string[];
+  data: (string | number)[][];
+}
+
+interface ExcelExportData {
+  sheets: Record<string, ExcelSheetData>;
+  filename: string;
+  mimeType: string;
+}
+
+interface PDFGuestData {
+  name: string;
+  phone: string;
+}
+
+interface PDFDJData {
+  djName: string;
+  djInstagram: string;
+  timeslot: string;
+  guests: PDFGuestData[];
+}
+
+interface PDFExportData {
+  event: {
+    name: string;
+    date: string;
+    venue: {
+      name: string;
+      address: string;
+    };
+  };
+  summary: {
+    totalGuests: number;
+    totalDJs: number;
+    submittedDJs: number;
+  };
+  guestsByDJ: PDFDJData[];
+  filename: string;
+  mimeType: string;
+}
+
+interface GoogleSheetsData {
+  data: (string | number)[][];
+  title: string;
+  filename: string;
+  mimeType: string;
+}
+
+type ExportData = 
+  | { content: string; filename: string; mimeType: string } // CSV
+  | ExcelExportData
+  | PDFExportData
+  | GoogleSheetsData;
+
 // Error types for client-side operations
 class ExportProcessingError extends Error {
   readonly _tag = 'ExportProcessingError';
@@ -75,14 +131,14 @@ const downloadFile = (content: string, filename: string, mimeType: string) =>
     }
   });
 
-const generateExcelClientSide = (excelData: any) =>
+const generateExcelClientSide = (excelData: ExcelExportData) =>
   Effect.gen(function* (_) {
     // Generate CSV as fallback for Excel (client-side Excel generation requires additional dependencies)
     const sheets = Object.entries(excelData.sheets);
     let csvContent = '';
     
     for (const [sheetName, sheetData] of sheets) {
-      const data = sheetData as { headers: string[], data: any[][] };
+      const data = sheetData as ExcelSheetData;
       csvContent += `# ${sheetName}\n`;
       csvContent += data.headers.join(',') + '\n';
       csvContent += data.data.map(row => 
@@ -101,7 +157,7 @@ const generateExcelClientSide = (excelData: any) =>
     };
   });
 
-const generatePDFClientSide = (pdfData: any) =>
+const generatePDFClientSide = (pdfData: PDFExportData) =>
   Effect.gen(function* (_) {
     // Generate formatted text as fallback for PDF (client-side PDF generation requires additional dependencies)
     let content = `${pdfData.event.name}\n`;
@@ -112,11 +168,11 @@ const generatePDFClientSide = (pdfData: any) =>
     content += `Total DJs: ${pdfData.summary.totalDJs}\n`;
     content += `Submitted DJs: ${pdfData.summary.submittedDJs}\n\n`;
     
-    pdfData.guestsByDJ.forEach((dj: any, index: number) => {
+    pdfData.guestsByDJ.forEach((dj: PDFDJData, index: number) => {
       content += `${index + 1}. ${dj.djName} (${dj.timeslot})\n`;
       content += `Instagram: ${dj.djInstagram}\n`;
       content += `Guests (${dj.guests.length}):\n`;
-      dj.guests.forEach((guest: any) => {
+      dj.guests.forEach((guest: PDFGuestData) => {
         content += `  • ${guest.name}${guest.phone ? ` - ${guest.phone}` : ''}\n`;
       });
       content += '\n';
@@ -129,10 +185,10 @@ const generatePDFClientSide = (pdfData: any) =>
     };
   });
 
-const copyToClipboardAndOpenSheets = (sheetsData: any) =>
+const copyToClipboardAndOpenSheets = (sheetsData: GoogleSheetsData) =>
   Effect.gen(function* (_) {
     const data = sheetsData.data;
-    const tsvContent = data.map((row: any[]) => row.join('\t')).join('\n');
+    const tsvContent = data.map((row: (string | number)[]) => row.join('\t')).join('\n');
     
     try {
       yield* _(Effect.tryPromise({
@@ -162,42 +218,70 @@ const copyToClipboardAndOpenSheets = (sheetsData: any) =>
     }
   });
 
+// Type guard functions
+const isCSVData = (data: ExportData): data is { content: string; filename: string; mimeType: string } => {
+  return 'content' in data && !('sheets' in data) && !('event' in data) && !('data' in data);
+};
+
+const isExcelData = (data: ExportData): data is ExcelExportData => {
+  return 'sheets' in data;
+};
+
+const isPDFData = (data: ExportData): data is PDFExportData => {
+  return 'event' in data && 'guestsByDJ' in data;
+};
+
+const isGoogleSheetsData = (data: ExportData): data is GoogleSheetsData => {
+  return 'data' in data && 'title' in data;
+};
+
 // Main Effect pipeline for client-side export processing
-const processExportEffect = (exportData: any, format: string) =>
+const processExportEffect = (exportData: ExportData, format: string) =>
   Effect.gen(function* (_) {
     switch (format) {
       case 'csv':
-        return yield* _(downloadFile(
-          exportData.content,
-          exportData.filename,
-          exportData.mimeType
-        ));
+        if (isCSVData(exportData)) {
+          return yield* _(downloadFile(
+            exportData.content,
+            exportData.filename,
+            exportData.mimeType
+          ));
+        }
+        break;
         
       case 'excel':
-        const excelResult = yield* _(generateExcelClientSide(exportData));
-        return yield* _(downloadFile(
-          excelResult.content,
-          excelResult.filename,
-          excelResult.mimeType
-        ));
+        if (isExcelData(exportData)) {
+          const excelResult = yield* _(generateExcelClientSide(exportData));
+          return yield* _(downloadFile(
+            excelResult.content,
+            excelResult.filename,
+            excelResult.mimeType
+          ));
+        }
+        break;
         
       case 'pdf':
-        const pdfResult = yield* _(generatePDFClientSide(exportData));
-        return yield* _(downloadFile(
-          pdfResult.content,
-          pdfResult.filename,
-          pdfResult.mimeType
-        ));
+        if (isPDFData(exportData)) {
+          const pdfResult = yield* _(generatePDFClientSide(exportData));
+          return yield* _(downloadFile(
+            pdfResult.content,
+            pdfResult.filename,
+            pdfResult.mimeType
+          ));
+        }
+        break;
         
       case 'google_sheets':
-        return yield* _(copyToClipboardAndOpenSheets(exportData));
-        
-      default:
-        return yield* _(Effect.fail(new ExportProcessingError(
-          `Unsupported export format: ${format}`,
-          format
-        )));
+        if (isGoogleSheetsData(exportData)) {
+          return yield* _(copyToClipboardAndOpenSheets(exportData));
+        }
+        break;
     }
+    
+    return yield* _(Effect.fail(new ExportProcessingError(
+      `Invalid data format for ${format} export`,
+      format
+    )));
   }).pipe(
     Effect.withSpan('processExport', { attributes: { format } }),
     Effect.catchAll((error) => {
@@ -226,9 +310,19 @@ export function ExportGuestList({ eventId, userId }: ExportGuestListProps) {
   );
 
   // Fetch data for other formats only when needed
-  const [excelData, setExcelData] = React.useState<any>(null);
-  const [pdfData, setPdfData] = React.useState<any>(null);
-  const [googleSheetsData, setGoogleSheetsData] = React.useState<any>(null);
+  const [excelData, setExcelData] = React.useState<ExcelExportData | null>(null);
+  const [pdfData, setPdfData] = React.useState<PDFExportData | null>(null);
+  const [googleSheetsData, setGoogleSheetsData] = React.useState<GoogleSheetsData | null>(null);
+
+  // Extract guest count from CSV content for preview - memoized for performance
+  const guestCount = React.useMemo(() => {
+    if (csvData && 'content' in csvData) {
+      // Split by newline and filter out empty lines, then subtract header
+      const lines = csvData.content.split('\n').filter(line => line.trim());
+      return Math.max(0, lines.length - 1); // -1 for header
+    }
+    return 0;
+  }, [csvData]);
 
   const handleExport = React.useCallback(async (format: 'csv' | 'excel' | 'pdf' | 'google_sheets') => {
     setLoadingFormat(format);
@@ -247,7 +341,7 @@ export function ExportGuestList({ eventId, userId }: ExportGuestListProps) {
               eventId: eventId as Id<"events">,
               userId: userId as Id<"users">
             });
-            setExcelData(data);
+            setExcelData(data as ExcelExportData);
             exportData = data;
           } else {
             exportData = excelData;
@@ -260,7 +354,7 @@ export function ExportGuestList({ eventId, userId }: ExportGuestListProps) {
               eventId: eventId as Id<"events">,
               userId: userId as Id<"users">
             });
-            setPdfData(data);
+            setPdfData(data as PDFExportData);
             exportData = data;
           } else {
             exportData = pdfData;
@@ -273,7 +367,7 @@ export function ExportGuestList({ eventId, userId }: ExportGuestListProps) {
               eventId: eventId as Id<"events">,
               userId: userId as Id<"users">
             });
-            setGoogleSheetsData(data);
+            setGoogleSheetsData(data as GoogleSheetsData);
             exportData = data;
           } else {
             exportData = googleSheetsData;
@@ -341,16 +435,6 @@ export function ExportGuestList({ eventId, userId }: ExportGuestListProps) {
       </Card>
     );
   }
-
-  // Extract guest count from CSV content for preview - memoized for performance
-  const guestCount = React.useMemo(() => {
-    if (csvData && 'content' in csvData) {
-      // Split by newline and filter out empty lines, then subtract header
-      const lines = csvData.content.split('\n').filter(line => line.trim());
-      return Math.max(0, lines.length - 1); // -1 for header
-    }
-    return 0;
-  }, [csvData]);
 
   return (
     <Card>
