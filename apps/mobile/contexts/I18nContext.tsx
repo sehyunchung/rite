@@ -14,7 +14,7 @@ import {
   type TranslationKey,
   type TranslationValues,
 } from '../lib/i18n';
-import { getTranslations } from '../lib/i18n/translations';
+import { getTranslations, type TranslationSchema } from '../lib/i18n/translations';
 
 interface I18nContextType {
   locale: SupportedLocale;
@@ -34,7 +34,7 @@ interface I18nProviderProps {
 export function I18nProvider({ children }: I18nProviderProps) {
   const [locale, setLocaleState] = React.useState<SupportedLocale>('en');
   const [isLoading, setIsLoading] = React.useState(true);
-  const [translations, setTranslations] = React.useState<Record<string, any>>({});
+  const [translations, setTranslations] = React.useState<TranslationSchema | {}>({});
 
   // Initialize locale on mount
   React.useEffect(() => {
@@ -80,7 +80,7 @@ export function I18nProvider({ children }: I18nProviderProps) {
         
         // Return key as fallback if no translation found
         console.warn(`Missing translation for key: ${key}`);
-        return key;
+        return __DEV__ ? `[${key}]` : 'Translation missing';
       }
       
       return interpolate(translation, values);

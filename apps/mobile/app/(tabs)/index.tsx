@@ -19,6 +19,13 @@ export default function HomeScreen() {
   const isLargeScreen = width > 768;
   const isDesktop = width > 1024;
   
+  // Memoize className strings for performance
+  const gridClassName = React.useMemo(() => 
+    isLargeScreen 
+      ? (isDesktop ? "grid grid-cols-3 gap-6" : "grid grid-cols-2 gap-4") 
+      : "gap-4"
+  , [isLargeScreen, isDesktop]);
+  
   const events = useQuery(api.events.listEvents, 
     user ? { userId: user._id } : "skip"
   );
@@ -151,7 +158,7 @@ export default function HomeScreen() {
               </Card>
             ) : (
               <View 
-                className={isLargeScreen ? (isDesktop ? "grid grid-cols-3 gap-6" : "grid grid-cols-2 gap-4") : "gap-4"}
+                className={gridClassName}
                 accessible={true}
                 accessibilityRole="list"
                 accessibilityLabel={`${events.length} events available`}

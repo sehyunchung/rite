@@ -24,8 +24,10 @@ export function ThemeSwitcher({
   const { locale } = useI18n();
 
   const handleThemeChange = async (themeKey: string) => {
-    if (themeKey !== currentTheme) {
-      await setTheme(themeKey as any);
+    // Type guard to ensure we only accept valid theme keys
+    const validThemeKeys = availableThemes.map(t => t.key);
+    if (themeKey !== currentTheme && validThemeKeys.includes(themeKey as any)) {
+      await setTheme(themeKey as import('@rite/ui/design-tokens').ThemeKey);
     }
   };
 
@@ -124,7 +126,11 @@ export function CompactThemeSwitcher() {
   const toggleOptions = () => setShowOptions(!showOptions);
 
   const handleThemeSelect = async (themeKey: string) => {
-    await setTheme(themeKey as any);
+    // Type guard to ensure we only accept valid theme keys
+    const validThemeKeys = availableThemes.map(t => t.key);
+    if (validThemeKeys.includes(themeKey as any)) {
+      await setTheme(themeKey as import('@rite/ui/design-tokens').ThemeKey);
+    }
     setShowOptions(false);
   };
 

@@ -4,8 +4,116 @@
  */
 import type { SupportedLocale } from './index';
 
+// Translation schema type definition
+export interface TranslationSchema {
+  common: {
+    loading: string;
+    error: string;
+    save: string;
+    cancel: string;
+    delete: string;
+    edit: string;
+    create: string;
+    copy: string;
+    copied: string;
+    back: string;
+    submit: string;
+    close: string;
+  };
+  navigation: {
+    dashboard: string;
+    events: string;
+    createEvent: string;
+    profile: string;
+    signOut: string;
+  };
+  dashboard: {
+    title: string;
+    subtitle: string;
+    welcome: string;
+    createNewEvent: string;
+    noEvents: string;
+    noEventsDescription: string;
+    yourEvents: string;
+    actions: {
+      createEvent: string;
+      createEventDescription: string;
+      viewEvents: string;
+      viewEventsDescription: string;
+      profile: string;
+      profileDescription: string;
+    };
+  };
+  events: {
+    create: {
+      title: string;
+      eventName: string;
+      eventNamePlaceholder: string;
+      date: string;
+      venueName: string;
+      venueNamePlaceholder: string;
+      venueAddress: string;
+      venueAddressPlaceholder: string;
+      description: string;
+      descriptionPlaceholder: string;
+      hashtags: string;
+      hashtagsPlaceholder: string;
+      djLineup: string;
+      addSlot: string;
+      startTime: string;
+      endTime: string;
+      djName: string;
+      djNamePlaceholder: string;
+      instagramHandle: string;
+      instagramPlaceholder: string;
+      createEvent: string;
+      creating: string;
+      slot: string;
+      success: string;
+      error: string;
+    };
+    detail: {
+      backToDashboard: string;
+      edit: string;
+      submissions: string;
+      djLineup: string;
+      noDJsScheduled: string;
+    };
+    list: {
+      title: string;
+      noEvents: string;
+      viewDetails: string;
+    };
+  };
+  validation: {
+    required: string;
+    eventNameRequired: string;
+    venueNameRequired: string;
+    venueAddressRequired: string;
+    pastDate: string;
+    djSlotsRequired: string;
+    timeRequired: string;
+    instagramRequired: string;
+  };
+  auth: {
+    signIn: string;
+    signOut: string;
+    continueWithGoogle: string;
+    continueWithApple: string;
+    continueWithInstagram: string;
+    loginRequired: string;
+  };
+  status: {
+    active: string;
+    inactive: string;
+    draft: string;
+    completed: string;
+    published: string;
+  };
+}
+
 // Core translations needed for mobile app
-export const translations: Record<SupportedLocale, Record<string, any>> = {
+export const translations: Record<SupportedLocale, TranslationSchema> = {
   en: {
     common: {
       loading: 'Loading...',
