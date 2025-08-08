@@ -12,12 +12,13 @@ import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { MobileLayout } from '@/components/MobileLayout';
 import { ExportGuestList } from '@/components/ExportGuestList';
-import { ArrowLeft, User, Instagram, Clock, FileText, Users } from 'lucide-react';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
+import { ArrowLeft, User, Instagram, Clock, FileText, Users, AlertCircle } from 'lucide-react';
 import { isValidConvexId } from '@/lib/utils';
 
 interface SubmissionsClientProps {
-  eventId: string;
-  userId: string;
+  eventId: Id<"events">;
+  userId: Id<"users">;
   locale: string;
 }
 
@@ -31,18 +32,18 @@ export function SubmissionsClient({ eventId, userId, locale }: SubmissionsClient
 
   const event = useQuery(
     api.events.getEvent,
-    isValidEventId && isValidUserId ? { 
-      eventId: eventId as Id<"events">,
-      userId: userId as Id<"users">
+    isValidEventId && isValidUserId ? {
+      eventId,
+      userId
     } : "skip"
   );
 
   // Get submissions for this event - must be called before any conditional returns
   const submissions = useQuery(
     api.submissions.getSubmissionsByEvent,
-    isValidEventId && isValidUserId ? { 
-      eventId: eventId as Id<"events">,
-      userId: userId as Id<"users">
+    isValidUserId ? {
+      eventId,
+      userId
     } : "skip"
   );
 
@@ -106,7 +107,7 @@ export function SubmissionsClient({ eventId, userId, locale }: SubmissionsClient
             <Typography variant="body-lg" color="secondary" className="mb-4">
               {t('subtitle')}
             </Typography>
-            
+
             {/* Stats */}
             <div className="flex flex-wrap gap-4 text-sm">
               <div className="flex items-center space-x-2">
@@ -122,7 +123,31 @@ export function SubmissionsClient({ eventId, userId, locale }: SubmissionsClient
 
           {/* Export Section */}
           <div className="mb-8">
-            <ExportGuestList eventId={eventId} userId={userId} />
+            <ErrorBoundary
+              fallback={(error, reset) => (
+                <Card className="border-destructive">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2 text-destructive">
+                      <AlertCircle className="h-5 w-5" />
+                      Export Error
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <p className="text-sm text-muted-foreground">
+                      Unable to load export functionality. Please try refreshing the page.
+                    </p>
+                    <Button onClick={reset} variant="outline" size="sm">
+                      Try Again
+                    </Button>
+                  </CardContent>
+                </Card>
+              )}
+              onError={(error, errorInfo) => {
+                console.error('Export component error:', error, errorInfo);
+              }}
+            >
+              <ExportGuestList eventId={eventId} userId={userId} />
+            </ErrorBoundary>
           </div>
 
           {/* Submissions List */}
@@ -130,7 +155,7 @@ export function SubmissionsClient({ eventId, userId, locale }: SubmissionsClient
             {event.timeslots && event.timeslots.length > 0 ? (
               event.timeslots.map((slot: Doc<"timeslots">) => {
                 const submission = submissions?.find(sub => sub.timeslotId === slot._id);
-                
+
                 return (
                   <Card key={slot._id} className="w-full">
                     <CardHeader>
@@ -155,7 +180,7 @@ export function SubmissionsClient({ eventId, userId, locale }: SubmissionsClient
                             <Instagram className="w-4 h-4" />
                             <span className="text-brand-primary">{slot.djInstagram}</span>
                           </div>
-                          
+
                           {submission && (
                             <>
                               {/* Guest List */}
@@ -171,7 +196,7 @@ export function SubmissionsClient({ eventId, userId, locale }: SubmissionsClient
                                   </div>
                                 </div>
                               )}
-                              
+
                               {/* Submission Description */}
                               {submission.promoMaterials.description && (
                                 <div>

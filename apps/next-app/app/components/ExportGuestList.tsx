@@ -9,11 +9,11 @@ import { LoadingIndicator } from '@rite/ui';
 import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 import { Effect } from 'effect';
-import { 
-  Download, 
-  FileSpreadsheet, 
-  FileText, 
-  FileImage, 
+import {
+  Download,
+  FileSpreadsheet,
+  FileText,
+  FileImage,
   ExternalLink,
   Users,
   AlertCircle
@@ -73,7 +73,7 @@ interface GoogleSheetsData {
   mimeType: string;
 }
 
-type ExportData = 
+type ExportData =
   | { content: string; filename: string; mimeType: string } // CSV
   | ExcelExportData
   | PDFExportData
@@ -82,7 +82,7 @@ type ExportData =
 // Error types for client-side operations
 class ExportProcessingError extends Error {
   readonly _tag = 'ExportProcessingError';
-  
+
   constructor(
     public readonly message: string,
     public readonly format: string,
@@ -94,7 +94,7 @@ class ExportProcessingError extends Error {
 
 class FileDownloadError extends Error {
   readonly _tag = 'FileDownloadError';
-  
+
   constructor(
     public readonly message: string,
     public readonly filename: string,
@@ -110,17 +110,17 @@ const downloadFile = (content: string, filename: string, mimeType: string) =>
     try {
       const blob = new Blob([content], { type: mimeType });
       const url = URL.createObjectURL(blob);
-      
+
       const link = document.createElement('a');
       link.href = url;
       link.download = filename;
       document.body.appendChild(link);
       link.click();
-      
+
       // Cleanup
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
-      
+
       return { success: true, filename };
     } catch (error) {
       return yield* _(Effect.fail(new FileDownloadError(
@@ -132,24 +132,24 @@ const downloadFile = (content: string, filename: string, mimeType: string) =>
   });
 
 const generateExcelClientSide = (excelData: ExcelExportData) =>
-  Effect.gen(function* (_) {
+  Effect.gen(function* () {
     // Generate CSV as fallback for Excel (client-side Excel generation requires additional dependencies)
     const sheets = Object.entries(excelData.sheets);
     let csvContent = '';
-    
+
     for (const [sheetName, sheetData] of sheets) {
       const data = sheetData as ExcelSheetData;
       csvContent += `# ${sheetName}\n`;
       csvContent += data.headers.join(',') + '\n';
-      csvContent += data.data.map(row => 
-        row.map(cell => 
-          String(cell).includes(',') || String(cell).includes('"') 
-            ? `"${String(cell).replace(/"/g, '""')}"` 
+      csvContent += data.data.map(row =>
+        row.map(cell =>
+          String(cell).includes(',') || String(cell).includes('"')
+            ? `"${String(cell).replace(/"/g, '""')}"`
             : String(cell)
         ).join(',')
       ).join('\n') + '\n\n';
     }
-    
+
     return {
       content: csvContent,
       filename: excelData.filename.replace('.xlsx', '_multi_sheet.csv'),
@@ -167,7 +167,7 @@ const generatePDFClientSide = (pdfData: PDFExportData) =>
     content += `Total Guests: ${pdfData.summary.totalGuests}\n`;
     content += `Total DJs: ${pdfData.summary.totalDJs}\n`;
     content += `Submitted DJs: ${pdfData.summary.submittedDJs}\n\n`;
-    
+
     pdfData.guestsByDJ.forEach((dj: PDFDJData, index: number) => {
       content += `${index + 1}. ${dj.djName} (${dj.timeslot})\n`;
       content += `Instagram: ${dj.djInstagram}\n`;
@@ -177,7 +177,7 @@ const generatePDFClientSide = (pdfData: PDFExportData) =>
       });
       content += '\n';
     });
-    
+
     return {
       content,
       filename: pdfData.filename.replace('.pdf', '_formatted.txt'),
@@ -186,19 +186,19 @@ const generatePDFClientSide = (pdfData: PDFExportData) =>
   });
 
 const copyToClipboardAndOpenSheets = (sheetsData: GoogleSheetsData) =>
-  Effect.gen(function* (_) {
+  Effect.gen(function* () {
     const data = sheetsData.data;
     const tsvContent = data.map((row: (string | number)[]) => row.join('\t')).join('\n');
-    
+
     try {
-      yield* _(Effect.tryPromise({
+      yield* (Effect.tryPromise({
         try: async () => {
           await navigator.clipboard.writeText(tsvContent);
-          
+
           // Open Google Sheets in new tab
           const sheetsUrl = 'https://docs.google.com/spreadsheets/create';
           window.open(sheetsUrl, '_blank');
-          
+
           return { success: true, copied: true };
         },
         catch: (error) => new ExportProcessingError(
@@ -207,10 +207,10 @@ const copyToClipboardAndOpenSheets = (sheetsData: GoogleSheetsData) =>
           error
         )
       }));
-      
+
       return { success: true, copied: true };
     } catch (error) {
-      return yield* _(Effect.fail(new ExportProcessingError(
+      return yield* (Effect.fail(new ExportProcessingError(
         'Failed to process Google Sheets export',
         'google_sheets',
         error
@@ -237,48 +237,48 @@ const isGoogleSheetsData = (data: ExportData): data is GoogleSheetsData => {
 
 // Main Effect pipeline for client-side export processing
 const processExportEffect = (exportData: ExportData, format: string) =>
-  Effect.gen(function* (_) {
+  Effect.gen(function* () {
     switch (format) {
       case 'csv':
         if (isCSVData(exportData)) {
-          return yield* _(downloadFile(
+          return yield* (downloadFile(
             exportData.content,
             exportData.filename,
             exportData.mimeType
           ));
         }
         break;
-        
+
       case 'excel':
         if (isExcelData(exportData)) {
-          const excelResult = yield* _(generateExcelClientSide(exportData));
-          return yield* _(downloadFile(
+          const excelResult = yield* (generateExcelClientSide(exportData));
+          return yield* (downloadFile(
             excelResult.content,
             excelResult.filename,
             excelResult.mimeType
           ));
         }
         break;
-        
+
       case 'pdf':
         if (isPDFData(exportData)) {
-          const pdfResult = yield* _(generatePDFClientSide(exportData));
-          return yield* _(downloadFile(
+          const pdfResult = yield* (generatePDFClientSide(exportData));
+          return yield* (downloadFile(
             pdfResult.content,
             pdfResult.filename,
             pdfResult.mimeType
           ));
         }
         break;
-        
+
       case 'google_sheets':
         if (isGoogleSheetsData(exportData)) {
-          return yield* _(copyToClipboardAndOpenSheets(exportData));
+          return yield* (copyToClipboardAndOpenSheets(exportData));
         }
         break;
     }
-    
-    return yield* _(Effect.fail(new ExportProcessingError(
+
+    return yield* (Effect.fail(new ExportProcessingError(
       `Invalid data format for ${format} export`,
       format
     )));
@@ -291,21 +291,21 @@ const processExportEffect = (exportData: ExportData, format: string) =>
   );
 
 interface ExportGuestListProps {
-  eventId: string;
-  userId: string;
+  eventId: Id<"events">;
+  userId: Id<"users">;
 }
 
 export function ExportGuestList({ eventId, userId }: ExportGuestListProps) {
   const t = useTranslations('events.submissions.exports');
   const convex = useConvex();
   const [loadingFormat, setLoadingFormat] = React.useState<string | null>(null);
-  
+
   // Get guest list data preview for statistics
   const csvData = useQuery(
     api.exports.exportGuestListCSV,
-    { 
-      eventId: eventId as Id<"events">,
-      userId: userId as Id<"users">
+    {
+      eventId,
+      userId
     }
   );
 
@@ -326,7 +326,7 @@ export function ExportGuestList({ eventId, userId }: ExportGuestListProps) {
 
   const handleExport = React.useCallback(async (format: 'csv' | 'excel' | 'pdf' | 'google_sheets') => {
     setLoadingFormat(format);
-    
+
     try {
       // Get data from appropriate export query
       let exportData;
@@ -338,8 +338,8 @@ export function ExportGuestList({ eventId, userId }: ExportGuestListProps) {
           // Fetch Excel data if not already loaded
           if (!excelData) {
             const data = await convex.query(api.exports.exportGuestListExcel, {
-              eventId: eventId as Id<"events">,
-              userId: userId as Id<"users">
+              eventId,
+              userId
             });
             setExcelData(data as ExcelExportData);
             exportData = data;
@@ -351,8 +351,8 @@ export function ExportGuestList({ eventId, userId }: ExportGuestListProps) {
           // Fetch PDF data if not already loaded
           if (!pdfData) {
             const data = await convex.query(api.exports.exportGuestListPDF, {
-              eventId: eventId as Id<"events">,
-              userId: userId as Id<"users">
+              eventId,
+              userId
             });
             setPdfData(data as PDFExportData);
             exportData = data;
@@ -364,8 +364,8 @@ export function ExportGuestList({ eventId, userId }: ExportGuestListProps) {
           // Fetch Google Sheets data if not already loaded
           if (!googleSheetsData) {
             const data = await convex.query(api.exports.exportGuestListGoogleSheets, {
-              eventId: eventId as Id<"events">,
-              userId: userId as Id<"users">
+              eventId,
+              userId
             });
             setGoogleSheetsData(data as GoogleSheetsData);
             exportData = data;
@@ -374,15 +374,15 @@ export function ExportGuestList({ eventId, userId }: ExportGuestListProps) {
           }
           break;
       }
-      
+
       if (!exportData) {
         toast.error(t('errors.noData') || 'No data available for export');
         return;
       }
-      
+
       // Process export using Effect
       const result = await Effect.runPromise(processExportEffect(exportData, format));
-      
+
       if (result.success) {
         if (format === 'google_sheets') {
           toast.success(t('success.googleSheets') || 'Data copied to clipboard. Google Sheets opened in new tab.');
@@ -453,7 +453,7 @@ export function ExportGuestList({ eventId, userId }: ExportGuestListProps) {
               {t('guestCount', { count: guestCount }) || `${guestCount} guests available for export`}
             </span>
           </div>
-          
+
           {guestCount === 0 ? (
             <div className="text-center py-6">
               <p className="text-muted-foreground">

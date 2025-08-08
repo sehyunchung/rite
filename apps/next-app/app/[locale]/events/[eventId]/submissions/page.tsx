@@ -1,13 +1,14 @@
 import { auth } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 import { SubmissionsClient } from './SubmissionsClient';
+import { Id } from '@rite/backend/convex/_generated/dataModel';
 
 export const dynamic = 'force-dynamic';
 
 export default async function SubmissionsPage({
   params,
 }: {
-  params: Promise<{ eventId: string; locale: string }>;
+  params: Promise<{ eventId: Id<"events">; locale: string }>;
 }) {
   const resolvedParams = await params;
   const session = await auth();
@@ -19,7 +20,7 @@ export default async function SubmissionsPage({
   return (
     <SubmissionsClient
       eventId={resolvedParams.eventId}
-      userId={session.user.id}
+      userId={session.user.id as Id<'users'>}
       locale={resolvedParams.locale}
     />
   );
