@@ -2,41 +2,10 @@ import React from 'react';
 import { View, Text } from 'react-native';
 import { cn } from '../../utils';
 
-interface CardProps {
-  className?: string;
-  children?: React.ReactNode;
-}
-
-interface CardHeaderProps {
-  className?: string;
-  children?: React.ReactNode;
-}
-
-interface CardContentProps {
-  className?: string;
-  children?: React.ReactNode;
-}
-
-interface CardFooterProps {
-  className?: string;
-  children?: React.ReactNode;
-}
-
-interface CardTitleProps {
-  className?: string;
-  children?: React.ReactNode;
-}
-
-interface CardDescriptionProps {
-  className?: string;
-  children?: React.ReactNode;
-}
-
-export const Card = React.forwardRef<View, CardProps>(
+export const Card = React.forwardRef<View, React.ComponentProps<typeof View>>(
   ({ className, ...props }, ref) => (
     <View
       ref={ref}
-      // @ts-ignore - NativeWind className support
       className={cn(
         "rounded-lg border border-border bg-card shadow-sm",
         className
@@ -47,11 +16,10 @@ export const Card = React.forwardRef<View, CardProps>(
 );
 Card.displayName = "Card";
 
-export const CardHeader = React.forwardRef<View, CardHeaderProps>(
+export const CardHeader = React.forwardRef<View, React.ComponentProps<typeof View>>(
   ({ className, ...props }, ref) => (
     <View
       ref={ref}
-      // @ts-ignore - NativeWind className support
       className={cn("flex flex-col gap-1.5 p-6", className)}
       {...props}
     />
@@ -59,11 +27,10 @@ export const CardHeader = React.forwardRef<View, CardHeaderProps>(
 );
 CardHeader.displayName = "CardHeader";
 
-export const CardTitle = React.forwardRef<Text, CardTitleProps>(
+export const CardTitle = React.forwardRef<Text, React.ComponentProps<typeof Text>>(
   ({ className, ...props }, ref) => (
     <Text
       ref={ref}
-      // @ts-ignore - NativeWind className support
       className={cn("text-2xl font-semibold leading-none tracking-tight text-card-foreground", className)}
       {...props}
     />
@@ -71,11 +38,10 @@ export const CardTitle = React.forwardRef<Text, CardTitleProps>(
 );
 CardTitle.displayName = "CardTitle";
 
-export const CardDescription = React.forwardRef<Text, CardDescriptionProps>(
+export const CardDescription = React.forwardRef<Text, React.ComponentProps<typeof Text>>(
   ({ className, ...props }, ref) => (
     <Text
       ref={ref}
-      // @ts-ignore - NativeWind className support
       className={cn("text-sm text-muted-foreground", className)}
       {...props}
     />
@@ -83,11 +49,10 @@ export const CardDescription = React.forwardRef<Text, CardDescriptionProps>(
 );
 CardDescription.displayName = "CardDescription";
 
-export const CardContent = React.forwardRef<View, CardContentProps>(
+export const CardContent = React.forwardRef<View, React.ComponentProps<typeof View>>(
   ({ className, ...props }, ref) => (
     <View
       ref={ref}
-      // @ts-ignore - NativeWind className support
       className={cn("p-6 pt-0", className)}
       {...props}
     />
@@ -95,11 +60,10 @@ export const CardContent = React.forwardRef<View, CardContentProps>(
 );
 CardContent.displayName = "CardContent";
 
-export const CardFooter = React.forwardRef<View, CardFooterProps>(
+export const CardFooter = React.forwardRef<View, React.ComponentProps<typeof View>>(
   ({ className, ...props }, ref) => (
     <View
       ref={ref}
-      // @ts-ignore - NativeWind className support
       className={cn("flex items-center p-6 pt-0", className)}
       {...props}
     />

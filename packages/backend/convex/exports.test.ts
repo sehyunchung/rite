@@ -79,7 +79,8 @@ describe('Export Functions', () => {
 '=EVIL(),555-0002,DJ Test,@djtest,20:00 - 21:00`;
       
       expect(csvContent).toContain("'=EVIL()");
-      expect(csvContent).not.toContain("=EVIL()");
+      // Ensure there is no cell that starts with =EVIL() unquoted
+      expect(/(?:^|,)\=EVIL\(\)/m.test(csvContent)).toBe(false);
     });
 
     it('should properly escape commas and quotes in CSV', () => {
