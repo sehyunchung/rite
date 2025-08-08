@@ -79,6 +79,7 @@ export default function HomeScreen() {
                 accessible={true}
                 accessibilityLabel="Loading your events"
                 accessibilityRole="progressbar"
+                accessibilityLiveRegion="polite"
               >
                 <ActivityIndicator size="large" color={themeColors.brand.primary} />
               </View>

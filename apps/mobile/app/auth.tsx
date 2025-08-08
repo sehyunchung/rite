@@ -9,6 +9,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../contexts/AuthContext';
 import { shadows } from '../utils/shadow';
+import { themeColors } from '../lib/theme-colors';
 
 export default function AuthScreen() {
   const { signIn, isLoading } = useAuth();
@@ -73,7 +74,7 @@ export default function AuthScreen() {
             <Ionicons 
               name="logo-google" 
               size={20} 
-              color="var(--neutral-800)" 
+              color={themeColors.neutral[800]} 
               accessibilityElementsHidden={true}
             />
             <Text style={styles.googleButtonText}>
@@ -109,7 +110,7 @@ export default function AuthScreen() {
             <Ionicons 
               name="logo-instagram" 
               size={20} 
-              color="var(--neutral-500)" 
+              color={themeColors.neutral[500]} 
               accessibilityElementsHidden={true}
             />
             <Text style={styles.instagramButtonText}>
@@ -136,7 +137,7 @@ export default function AuthScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'var(--neutral-800)',
+    backgroundColor: themeColors.neutral[800],
   },
   content: {
     flex: 1,
@@ -148,7 +149,7 @@ const styles = StyleSheet.create({
     marginBottom: 64,
   },
   title: {
-    color: 'var(--brand-primary)',
+    color: themeColors.brand.primary,
     marginBottom: 8,
     fontSize: 48,
     fontWeight: '700',
@@ -157,12 +158,12 @@ const styles = StyleSheet.create({
   subtitle: {
     fontSize: 20,
     fontWeight: '600',
-    color: 'var(--neutral-0)',
+    color: themeColors.neutral[0],
     marginBottom: 16,
   },
   description: {
     fontSize: 16,
-    color: 'var(--neutral-400)',
+    color: themeColors.neutral[400],
     textAlign: 'center',
     lineHeight: 24,
     maxWidth: 280,
@@ -172,7 +173,7 @@ const styles = StyleSheet.create({
     marginBottom: 48,
   },
   googleButton: {
-    backgroundColor: 'var(--neutral-0)',
+    backgroundColor: themeColors.neutral[0],
     borderRadius: 12,
     height: 56,
     flexDirection: 'row',
@@ -183,11 +184,11 @@ const styles = StyleSheet.create({
   },
   googleButtonText: {
     fontWeight: '600',
-    color: 'var(--neutral-800)',
+    color: themeColors.neutral[800],
     fontSize: 16,
   },
   instagramButton: {
-    backgroundColor: 'var(--neutral-700)',
+    backgroundColor: themeColors.neutral[700],
     borderRadius: 12,
     height: 56,
     flexDirection: 'row',
@@ -195,14 +196,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: 12,
     borderWidth: 1,
-    borderColor: 'var(--neutral-600)',
+    borderColor: themeColors.neutral[600],
   },
   comingSoon: {
     opacity: 0.5,
   },
   instagramButtonText: {
     fontWeight: '600',
-    color: 'var(--neutral-500)',
+    color: themeColors.neutral[500],
     fontSize: 16,
   },
   termsSection: {
@@ -210,7 +211,7 @@ const styles = StyleSheet.create({
   },
   termsText: {
     fontSize: 14,
-    color: 'var(--neutral-500)',
+    color: themeColors.neutral[500],
     textAlign: 'center',
     lineHeight: 20,
     maxWidth: 280,
@@ -220,7 +221,7 @@ const styles = StyleSheet.create({
   },
   configText: {
     fontSize: 14,
-    color: 'var(--neutral-500)',
+    color: themeColors.neutral[500],
     textAlign: 'center',
     fontStyle: 'italic',
     marginTop: -8,
