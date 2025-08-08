@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle, Button } from '@rite/ui';
 import { LoadingIndicator } from '@rite/ui';
 import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
-import { Effect, pipe } from 'effect';
+import { Effect } from 'effect';
 import { 
   Download, 
   FileSpreadsheet, 

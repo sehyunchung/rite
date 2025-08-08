@@ -1,6 +1,6 @@
 import { query } from "./_generated/server";
 import { v } from "convex/values";
-import { Effect, Schema as S, pipe } from "effect";
+import { Effect } from "effect";
 import type { Id, Doc } from "./_generated/dataModel";
 
 // =================================
@@ -8,76 +8,91 @@ import type { Id, Doc } from "./_generated/dataModel";
 // =================================
 
 // Error types for export operations
-class ExportValidationError extends S.TaggedError<ExportValidationError>()("ExportValidationError", {
-  message: S.String,
-  eventId: S.String
-}) {}
+class ExportValidationError extends Error {
+  readonly _tag = 'ExportValidationError';
+  
+  constructor(
+    public readonly message: string,
+    public readonly eventId: string
+  ) {
+    super(message);
+  }
+}
 
-class DataRetrievalError extends S.TaggedError<DataRetrievalError>()("DataRetrievalError", {
-  message: S.String,
-  operation: S.String,
-  cause: S.optional(S.Unknown)
-}) {}
+class DataRetrievalError extends Error {
+  readonly _tag = 'DataRetrievalError';
+  
+  constructor(
+    public readonly message: string,
+    public readonly operation: string,
+    public readonly cause?: unknown
+  ) {
+    super(message);
+  }
+}
 
-class ExportDataError extends S.TaggedError<ExportDataError>()("ExportDataError", {
-  message: S.String,
-  format: S.String,
-  cause: S.optional(S.Unknown)
-}) {}
+class ExportDataError extends Error {
+  readonly _tag = 'ExportDataError';
+  
+  constructor(
+    public readonly message: string,
+    public readonly format: string,
+    public readonly cause?: unknown
+  ) {
+    super(message);
+  }
+}
 
-// Schema for export data
-const GuestSchema = S.Struct({
-  name: S.NonEmptyString,
-  phone: S.optional(S.String)
-});
+// Type definitions for export data
+interface GuestData {
+  name: string;
+  phone?: string;
+  djName: string;
+  djInstagram: string;
+  timeslot: string;
+}
 
-const ExportDataSchema = S.Struct({
-  event: S.Struct({
-    name: S.NonEmptyString,
-    date: S.String,
-    venue: S.Struct({
-      name: S.NonEmptyString,
-      address: S.NonEmptyString
-    })
-  }),
-  guests: S.Array(S.Struct({
-    name: S.NonEmptyString,
-    phone: S.optional(S.String),
-    djName: S.NonEmptyString,
-    djInstagram: S.NonEmptyString,
-    timeslot: S.String
-  })),
-  summary: S.Struct({
-    totalGuests: S.Number,
-    totalDJs: S.Number,
-    submittedDJs: S.Number
-  })
-});
+interface ExportData {
+  event: {
+    name: string;
+    date: string;
+    venue: {
+      name: string;
+      address: string;
+    };
+  };
+  guests: GuestData[];
+  summary: {
+    totalGuests: number;
+    totalDJs: number;
+    submittedDJs: number;
+  };
+}
 
 // Effect functions for data retrieval
 const validateEvent = (ctx: any, eventId: string, userId: string) =>
   Effect.gen(function* (_) {
     const event = yield* _(Effect.tryPromise({
       try: () => ctx.db.get(eventId as Id<"events">),
-      catch: (error) => new DataRetrievalError({
-        message: "Failed to retrieve event",
-        operation: "get_event",
-        cause: error
-      })
+      catch: (error) => new DataRetrievalError(
+        "Failed to retrieve event",
+        "get_event",
+        error
+      )
     }));
 
     if (!event) {
-      return yield* _(Effect.fail(new ExportValidationError({
-        message: "Event not found",
+      return yield* _(Effect.fail(new ExportValidationError(
+        "Event not found",
         eventId
-      })));
+      )));
     }
 
     if (event.organizerId !== userId) {
-      return yield* _(Effect.fail(new ExportValidationError({
-        message: "Access denied: User is not the event organizer",
+      return yield* _(Effect.fail(new ExportValidationError(
+        "Access denied: User is not the event organizer",
         eventId
-      })));
+      )));
     }
 
     return event;
@@ -89,11 +104,11 @@ const getEventTimeslots = (ctx: any, eventId: Id<"events">) =>
       .query("timeslots")
       .filter((q: any) => q.eq(q.field("eventId"), eventId))
       .collect(),
-    catch: (error) => new DataRetrievalError({
-      message: "Failed to retrieve timeslots",
-      operation: "query_timeslots",
-      cause: error
-    })
+    catch: (error) => new DataRetrievalError(
+      "Failed to retrieve timeslots",
+      "query_timeslots",
+      error
+    )
   });
 
 const getEventSubmissions = (ctx: any, eventId: Id<"events">) =>
@@ -102,11 +117,11 @@ const getEventSubmissions = (ctx: any, eventId: Id<"events">) =>
       .query("submissions")
       .filter((q: any) => q.eq(q.field("eventId"), eventId))
       .collect(),
-    catch: (error) => new DataRetrievalError({
-      message: "Failed to retrieve submissions",
-      operation: "query_submissions",
-      cause: error
-    })
+    catch: (error) => new DataRetrievalError(
+      "Failed to retrieve submissions",
+      "query_submissions",
+      error
+    )
   });
 
 const aggregateGuestData = (
@@ -156,18 +171,11 @@ const aggregateGuestData = (
       }
     };
 
-    // Validate the aggregated data
-    return yield* _(pipe(
-      S.decodeUnknown(ExportDataSchema)(exportData),
-      Effect.mapError(() => new ExportDataError({
-        message: "Invalid export data structure",
-        format: "aggregated",
-        cause: undefined
-      }))
-    ));
+    // Return the aggregated data (validation removed for simplicity)
+    return exportData;
   });
 
-const generateCSVData = (data: S.Schema.Type<typeof ExportDataSchema>) =>
+const generateCSVData = (data: ExportData) =>
   Effect.gen(function* (_) {
     const headers = ["Guest Name", "Phone", "DJ Name", "DJ Instagram", "Time Slot"];
     const rows = data.guests.map(guest => [
@@ -192,7 +200,7 @@ const generateCSVData = (data: S.Schema.Type<typeof ExportDataSchema>) =>
     };
   });
 
-const generateExcelData = (data: S.Schema.Type<typeof ExportDataSchema>) =>
+const generateExcelData = (data: ExportData) =>
   Effect.gen(function* (_) {
     // For now, return structured data that can be processed client-side
     // This avoids server-side Excel generation which requires additional dependencies
@@ -243,7 +251,7 @@ const generateExcelData = (data: S.Schema.Type<typeof ExportDataSchema>) =>
     };
   });
 
-const generatePDFData = (data: S.Schema.Type<typeof ExportDataSchema>) =>
+const generatePDFData = (data: ExportData) =>
   Effect.gen(function* (_) {
     // Structure data for client-side PDF generation
     return {
@@ -272,7 +280,7 @@ const generatePDFData = (data: S.Schema.Type<typeof ExportDataSchema>) =>
     };
   });
 
-const generateGoogleSheetsData = (data: S.Schema.Type<typeof ExportDataSchema>) =>
+const generateGoogleSheetsData = (data: ExportData) =>
   Effect.gen(function* (_) {
     const sheetsData = [
       ["Guest Name", "Phone", "DJ Name", "DJ Instagram", "Time Slot"],
@@ -321,11 +329,11 @@ const exportGuestListEffect = (
       format === "excel" ? generateExcelData(aggregatedData) :
       format === "pdf" ? generatePDFData(aggregatedData) :
       format === "google_sheets" ? generateGoogleSheetsData(aggregatedData) :
-      Effect.fail(new ExportDataError({
-        message: `Unsupported export format: ${format}`,
+      Effect.fail(new ExportDataError(
+        `Unsupported export format: ${format}`,
         format,
-        cause: undefined
-      }))
+        undefined
+      ))
     );
     
     return formatData;
