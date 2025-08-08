@@ -208,7 +208,12 @@ export default function CreateTab() {
           
           {/* Event Name */}
           <View className="mb-6">
-            <Typography variant="label" color="default" className="mb-2">
+            <Typography 
+              variant="label" 
+              color="default" 
+              className="mb-2"
+              accessibilityRole="text"
+            >
               Event Name
             </Typography>
             <Input
@@ -217,22 +222,40 @@ export default function CreateTab() {
               onChangeText={setEventName}
               autoCapitalize="words"
               className="bg-neutral-700 border-neutral-600"
+              accessible={true}
+              accessibilityLabel="Event name input field"
+              accessibilityHint="Enter the name for your event"
+              accessibilityRequired={true}
             />
           </View>
 
           {/* Date */}
           <View className="mb-6">
-            <Typography variant="label" color="default" className="mb-2">
+            <Typography 
+              variant="label" 
+              color="default" 
+              className="mb-2"
+              accessibilityRole="text"
+            >
               Date
             </Typography>
             <TouchableOpacity 
               className="bg-neutral-700 border border-neutral-600 rounded-xl h-12 flex-row items-center px-4"
               onPress={() => setShowDatePicker(true)}
+              accessible={true}
+              accessibilityRole="button"
+              accessibilityLabel={`Event date selector. Currently selected: ${formatDate(selectedDate)}`}
+              accessibilityHint="Tap to change the event date"
             >
               <Typography variant="body" color="default" className="flex-1">
                 {formatDate(selectedDate)}
               </Typography>
-              <Ionicons name="calendar-outline" size={20} color="#8C8CA3" />
+              <Ionicons 
+                name="calendar-outline" 
+                size={20} 
+                color="#8C8CA3" 
+                accessibilityElementsHidden={true}
+              />
             </TouchableOpacity>
           </View>
 
@@ -247,6 +270,8 @@ export default function CreateTab() {
               onChangeText={setVenueName}
               autoCapitalize="words"
               className="bg-neutral-700 border-neutral-600"
+              accessibilityLabel="Venue name input field"
+              accessibilityHint="Enter the name of the venue where the event will be held"
             />
           </View>
 
@@ -260,6 +285,8 @@ export default function CreateTab() {
               onChangeText={setVenueAddress}
               autoCapitalize="words"
               className="bg-neutral-700 border-neutral-600"
+              accessibilityLabel="Venue address input field"
+              accessibilityHint="Enter the address of the venue"
             />
           </View>
 
@@ -305,15 +332,35 @@ export default function CreateTab() {
               </TouchableOpacity>
             </View>
             
+            <View 
+              accessibilityRole="list"
+              accessibilityLabel="DJ lineup slots"
+            >
             {djSlots.map((slot, index) => (
-              <Card key={slot.id} className="bg-neutral-700 border-neutral-600 p-4 mb-3">
+              <Card 
+                key={slot.id} 
+                className="bg-neutral-700 border-neutral-600 p-4 mb-3"
+                accessibilityRole="group"
+                accessibilityLabel={`DJ slot ${index + 1} form`}
+                accessibilityHint="Configure DJ performance details for this time slot"
+              >
                 <View className="flex-row justify-between items-center mb-3">
                   <Typography variant="body" color="default">
                     Slot {index + 1}
                   </Typography>
                   {djSlots.length > 1 && (
-                    <TouchableOpacity onPress={() => removeDjSlot(slot.id)}>
-                      <Ionicons name="trash-outline" size={20} color="#FF3366" />
+                    <TouchableOpacity 
+                      onPress={() => removeDjSlot(slot.id)}
+                      accessibilityRole="button"
+                      accessibilityLabel={`Remove DJ slot ${index + 1}`}
+                      accessibilityHint="Double tap to delete this DJ slot"
+                    >
+                      <Ionicons 
+                        name="trash-outline" 
+                        size={20} 
+                        color="#FF3366" 
+                        accessibilityElementsHidden={true}
+                      />
                     </TouchableOpacity>
                   )}
                 </View>
@@ -330,6 +377,8 @@ export default function CreateTab() {
                         onChangeText={(value: string) => updateDjSlot(slot.id, 'startTime', value)}
                         placeholder="22:00"
                         className="bg-neutral-800 border-neutral-600 text-xs"
+                        accessibilityLabel={`Start time for slot ${index + 1}`}
+                        accessibilityHint="Enter the start time in HH:MM format"
                       />
                     </View>
                     <View className="flex-1">
@@ -341,6 +390,8 @@ export default function CreateTab() {
                         onChangeText={(value: string) => updateDjSlot(slot.id, 'endTime', value)}
                         placeholder="23:00"
                         className="bg-neutral-800 border-neutral-600 text-xs"
+                        accessibilityLabel={`End time for slot ${index + 1}`}
+                        accessibilityHint="Enter the end time in HH:MM format"
                       />
                     </View>
                   </View>
@@ -355,6 +406,8 @@ export default function CreateTab() {
                       onChangeText={(value: string) => updateDjSlot(slot.id, 'djName', value)}
                       placeholder="DJ Name"
                       className="bg-neutral-800 border-neutral-600"
+                      accessibilityLabel={`DJ name for slot ${index + 1} (optional)`}
+                      accessibilityHint="Enter the DJ's name or stage name"
                     />
                   </View>
                   
@@ -368,21 +421,36 @@ export default function CreateTab() {
                       onChangeText={(value: string) => updateDjSlot(slot.id, 'djInstagram', value)}
                       placeholder="@username"
                       className="bg-neutral-800 border-neutral-600"
+                      accessibilityLabel={`Instagram handle for slot ${index + 1} (required)`}
+                      accessibilityHint="Enter the DJ's Instagram handle including the @ symbol"
                     />
                   </View>
                 </View>
               </Card>
             ))}
+            </View>
           </View>
 
           {/* Create Button */}
+          <View
+            accessibilityLiveRegion="polite"
+            accessibilityLabel={isSubmitting ? 'Creating event in progress' : 'Ready to create event'}
+          >
           <Button 
             onPress={handleCreateEvent}
             className="mt-4"
             disabled={isSubmitting}
+            accessibilityLabel={isSubmitting ? 'Creating event, please wait' : 'Create Event'}
+            accessibilityHint="Tap to submit the event form and create your event"
+            accessibilityState={{ 
+              disabled: isSubmitting,
+              busy: isSubmitting 
+            }}
+            testID="submit-create-event-button"
           >
             {isSubmitting ? 'Creating...' : 'Create Event'}
           </Button>
+          </View>
         </View>
       </ScrollView>
       

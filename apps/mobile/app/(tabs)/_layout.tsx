@@ -52,9 +52,13 @@ export default function TabLayout() {
             <Ionicons 
               name={focused ? "home" : "home-outline"} 
               size={24} 
-              color={color} 
+              color={color}
+              accessibilityLabel="Dashboard tab"
+              accessibilityHint="Navigate to the main dashboard screen"
             />
           ),
+          tabBarAccessibilityLabel: 'Dashboard',
+          tabBarTestID: 'dashboard-tab',
         }}
       />
       <Tabs.Screen
@@ -65,9 +69,13 @@ export default function TabLayout() {
             <Ionicons 
               name={focused ? "calendar" : "calendar-outline"} 
               size={24} 
-              color={color} 
+              color={color}
+              accessibilityLabel="Events tab"
+              accessibilityHint="View and manage your events"
             />
           ),
+          tabBarAccessibilityLabel: 'Events',
+          tabBarTestID: 'events-tab',
         }}
       />
       <Tabs.Screen
@@ -75,14 +83,20 @@ export default function TabLayout() {
         options={{
           title: 'Create',
           tabBarIcon: ({ color, focused }) => (
-            <View style={{
-              width: 24,
-              height: 24,
-              backgroundColor: color,
-              borderRadius: 6,
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}>
+            <View 
+              style={{
+                width: 24,
+                height: 24,
+                backgroundColor: color,
+                borderRadius: 6,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+              accessible={true}
+              accessibilityLabel="Create event tab"
+              accessibilityHint="Navigate to create a new event"
+              accessibilityRole="button"
+            >
               <Ionicons 
                 name="add" 
                 size={20} 
@@ -90,6 +104,8 @@ export default function TabLayout() {
               />
             </View>
           ),
+          tabBarAccessibilityLabel: 'Create Event',
+          tabBarTestID: 'create-tab',
         }}
       />
       <Tabs.Screen
@@ -100,9 +116,13 @@ export default function TabLayout() {
             <Ionicons 
               name={focused ? "person" : "person-outline"} 
               size={24} 
-              color={color} 
+              color={color}
+              accessibilityLabel="Profile tab"
+              accessibilityHint="View and manage your profile"
             />
           ),
+          tabBarAccessibilityLabel: 'Profile',
+          tabBarTestID: 'profile-tab',
         }}
       />
     </Tabs>

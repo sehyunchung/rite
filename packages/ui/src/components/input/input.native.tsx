@@ -29,6 +29,11 @@ export const Input = React.forwardRef<TextInput, InputProps>(
         keyboardType={keyboardType}
         secureTextEntry={secureTextEntry}
         style={[{ fontFamily }, style]}
+        accessible={true}
+        accessibilityRole="text"
+        // Pass through accessibility props, with defaults
+        accessibilityLabel={props.accessibilityLabel}
+        accessibilityHint={props.accessibilityHint}
         {...props}
       />
     );
