@@ -318,7 +318,7 @@ export function ExportGuestList({ eventId, userId }: ExportGuestListProps) {
   const guestCount = React.useMemo(() => {
     if (csvData && 'content' in csvData) {
       // Split by newline and filter out empty lines, then subtract header
-      const lines = csvData.content.split('\n').filter(line => line.trim());
+      const lines = csvData.content.split('\n').filter((line: string) => line.trim());
       return Math.max(0, lines.length - 1); // -1 for header
     }
     return 0;

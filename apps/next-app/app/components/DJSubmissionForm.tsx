@@ -58,7 +58,7 @@ export function DJSubmissionForm({ submissionToken }: DJSubmissionFormProps) {
       setIsEditing(true);
       
       // Populate guest list
-      const existingGuests = submission.guestList.map((guest, index) => ({
+      const existingGuests = submission.guestList.map((guest: { name: string; phone?: string }, index: number) => ({
         id: `guest-${index}`,
         name: guest.name,
         phone: guest.phone || '',
