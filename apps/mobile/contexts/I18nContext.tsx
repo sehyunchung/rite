@@ -34,7 +34,7 @@ interface I18nProviderProps {
 export function I18nProvider({ children }: I18nProviderProps) {
   const [locale, setLocaleState] = React.useState<SupportedLocale>('en');
   const [isLoading, setIsLoading] = React.useState(true);
-  const [translations, setTranslations] = React.useState<TranslationSchema | {}>({});
+  const [translations, setTranslations] = React.useState<TranslationSchema | null>(null);
 
   // Initialize locale on mount
   React.useEffect(() => {
@@ -69,6 +69,17 @@ export function I18nProvider({ children }: I18nProviderProps) {
   // Translation function with interpolation
   const t = React.useCallback(
     (key: TranslationKey, values?: TranslationValues): string => {
+      if (!translations) {
+        // If translations not loaded, use English as fallback
+        const fallbackTranslation = getTranslationValue(getTranslations('en'), key);
+        if (fallbackTranslation) {
+          return interpolate(fallbackTranslation, values);
+        }
+        
+        console.warn(`Missing translation for key: ${key} (translations not loaded)`);
+        return __DEV__ ? `[${key}]` : 'Translation missing';
+      }
+      
       const translation = getTranslationValue(translations, key);
       
       if (!translation) {

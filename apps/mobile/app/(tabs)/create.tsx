@@ -32,6 +32,11 @@ export default function CreateTab() {
   const isLargeScreen = width > 768;
   const isDesktop = width > 1024;
   
+  // Memoize container className for performance
+  const containerClassName = React.useMemo(() => 
+    `${isDesktop ? "px-8 py-8 max-w-4xl mx-auto w-full" : "p-6"} ${Platform.OS === 'web' ? 'min-h-[100dvh]' : ''}`
+  , [isDesktop]);
+  
   const [eventName, setEventName] = React.useState('');
   const [selectedDate, setSelectedDate] = React.useState<Date>(new Date());
   const [venueName, setVenueName] = React.useState('');
@@ -210,7 +215,7 @@ export default function CreateTab() {
         contentContainerStyle={{ flexGrow: 1 }}
         showsVerticalScrollIndicator={false}>
         <View 
-          className={`${isDesktop ? "px-8 py-8 max-w-4xl mx-auto w-full" : "p-6"} ${Platform.OS === 'web' ? 'min-h-[100dvh]' : ''}`}
+          className={containerClassName}
           style={{ 
             paddingBottom: Platform.OS === 'ios' ? 124 : Platform.OS === 'web' ? 84 : 104 
           }}

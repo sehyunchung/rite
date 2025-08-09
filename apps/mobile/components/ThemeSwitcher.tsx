@@ -25,9 +25,13 @@ export function ThemeSwitcher({
 
   const handleThemeChange = async (themeKey: string) => {
     // Type guard to ensure we only accept valid theme keys
-    const validThemeKeys = availableThemes.map(t => t.key);
-    if (themeKey !== currentTheme && validThemeKeys.includes(themeKey as any)) {
-      await setTheme(themeKey as import('@rite/ui/design-tokens').ThemeKey);
+    const validThemeKeys = availableThemes.map(t => t.key) as string[];
+    const isValidThemeKey = (key: string): key is import('@rite/ui/design-tokens').ThemeKey => {
+      return validThemeKeys.includes(key);
+    };
+    
+    if (themeKey !== currentTheme && isValidThemeKey(themeKey)) {
+      await setTheme(themeKey);
     }
   };
 
@@ -126,9 +130,13 @@ export function CompactThemeSwitcher() {
 
   const handleThemeSelect = async (themeKey: string) => {
     // Type guard to ensure we only accept valid theme keys
-    const validThemeKeys = availableThemes.map(t => t.key);
-    if (validThemeKeys.includes(themeKey as any)) {
-      await setTheme(themeKey as import('@rite/ui/design-tokens').ThemeKey);
+    const validThemeKeys = availableThemes.map(t => t.key) as string[];
+    const isValidThemeKey = (key: string): key is import('@rite/ui/design-tokens').ThemeKey => {
+      return validThemeKeys.includes(key);
+    };
+    
+    if (isValidThemeKey(themeKey)) {
+      await setTheme(themeKey);
     }
     setShowOptions(false);
   };

@@ -26,6 +26,10 @@ export default function HomeScreen() {
       : "gap-4"
   , [isLargeScreen, isDesktop]);
   
+  const containerClassName = React.useMemo(() => 
+    `${isDesktop ? "px-8 py-8 max-w-7xl mx-auto w-full" : "p-6"} ${Platform.OS === 'web' ? 'min-h-[100dvh]' : ''}`
+  , [isDesktop]);
+  
   const events = useQuery(api.events.listEvents, 
     user ? { userId: user._id } : "skip"
   );
@@ -39,7 +43,7 @@ export default function HomeScreen() {
         accessibilityLabel="Dashboard content"
       >
         <View 
-          className={`${isDesktop ? "px-8 py-8 max-w-7xl mx-auto w-full" : "p-6"} ${Platform.OS === 'web' ? 'min-h-[100dvh]' : ''}`}
+          className={containerClassName}
           style={{ 
             paddingBottom: Platform.OS === 'ios' ? 124 : Platform.OS === 'web' ? 84 : 104 
           }}
