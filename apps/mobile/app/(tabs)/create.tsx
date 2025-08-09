@@ -205,11 +205,14 @@ export default function CreateTab() {
 
   return (
     <SafeAreaView className="flex-1 bg-neutral-800">
-      <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
+      <ScrollView 
+        className="flex-1"
+        contentContainerStyle={{ flexGrow: 1 }}
+        showsVerticalScrollIndicator={false}>
         <View 
-          className={isDesktop ? "px-8 py-8 max-w-4xl mx-auto w-full" : "p-6"} 
+          className={`${isDesktop ? "px-8 py-8 max-w-4xl mx-auto w-full" : "p-6"} ${Platform.OS === 'web' ? 'min-h-[100dvh]' : ''}`}
           style={{ 
-            paddingBottom: Platform.OS === 'ios' ? 124 : 104 
+            paddingBottom: Platform.OS === 'ios' ? 124 : Platform.OS === 'web' ? 84 : 104 
           }}
         >
           <Typography variant="h3" color="default" className={isLargeScreen ? "text-3xl mb-8" : "mb-8"}>

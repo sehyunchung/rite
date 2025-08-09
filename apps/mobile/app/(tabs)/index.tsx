@@ -34,13 +34,14 @@ export default function HomeScreen() {
     <SafeAreaView className="flex-1 bg-neutral-800">
       <ScrollView 
         className="flex-1"
+        contentContainerStyle={{ flexGrow: 1 }}
         accessible={true}
         accessibilityLabel="Dashboard content"
       >
         <View 
-          className={isDesktop ? "px-8 py-8 max-w-7xl mx-auto w-full" : "p-6"} 
+          className={`${isDesktop ? "px-8 py-8 max-w-7xl mx-auto w-full" : "p-6"} ${Platform.OS === 'web' ? 'min-h-[100dvh]' : ''}`}
           style={{ 
-            paddingBottom: Platform.OS === 'ios' ? 124 : 104 
+            paddingBottom: Platform.OS === 'ios' ? 124 : Platform.OS === 'web' ? 84 : 104 
           }}
           accessibilityRole="none"
         >
