@@ -26,23 +26,23 @@ export interface NotificationContext {
 // Email templates for different DJ status updates
 export const emailTemplates = {
   submissionReceived: (context: NotificationContext): EmailTemplate => ({
-    subject: `✅ Submission received for ${context.eventName}`,
+    subject: `✅ Information received for ${context.eventName}`,
     htmlContent: `
       <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto;">
-        <h2 style="color: #E946FF;">🎵 Submission Received!</h2>
+        <h2 style="color: #E946FF;">✅ Information Received!</h2>
         
         <p>Hi ${context.djName},</p>
         
-        <p>We've received your submission for <strong>${context.eventName}</strong>!</p>
+        <p>Thank you for submitting your information for <strong>${context.eventName}</strong>!</p>
         
         <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;">
-          <h3 style="margin: 0 0 10px 0; color: #333;">Event Details:</h3>
+          <h3 style="margin: 0 0 10px 0; color: #333;">Your Performance Details:</h3>
           <p style="margin: 5px 0;"><strong>Date:</strong> ${context.eventDate}</p>
           <p style="margin: 5px 0;"><strong>Venue:</strong> ${context.venue}</p>
           <p style="margin: 5px 0;"><strong>Your Slot:</strong> ${context.timeslot}</p>
         </div>
         
-        <p>Your submission is now being reviewed by ${context.organizerName}. We'll notify you as soon as there's an update!</p>
+        <p>We've successfully received your guest list and promotional information. <strong>${context.organizerName}</strong> will review your details and may contact you if any additional information is needed.</p>
         
         <p style="color: #666; font-size: 14px;">
           Questions? Reply to this email to contact the organizer directly.
@@ -56,18 +56,18 @@ export const emailTemplates = {
       </div>
     `,
     textContent: `
-🎵 Submission Received!
+✅ Information Received!
 
 Hi ${context.djName},
 
-We've received your submission for ${context.eventName}!
+Thank you for submitting your information for ${context.eventName}!
 
-Event Details:
+Your Performance Details:
 - Date: ${context.eventDate}
 - Venue: ${context.venue}
 - Your Slot: ${context.timeslot}
 
-Your submission is now being reviewed by ${context.organizerName}. We'll notify you as soon as there's an update!
+We've successfully received your guest list and promotional information. ${context.organizerName} will review your details and may contact you if any additional information is needed.
 
 Questions? Reply to this email to contact the organizer directly.
 
@@ -77,14 +77,14 @@ https://rite.party
   }),
 
   submissionAccepted: (context: NotificationContext): EmailTemplate => ({
-    subject: `🎉 Congratulations! You're selected for ${context.eventName}`,
+    subject: `✅ Your information has been approved for ${context.eventName}`,
     htmlContent: `
       <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto;">
-        <h2 style="color: #E946FF;">🎉 Congratulations!</h2>
+        <h2 style="color: #E946FF;">✅ Information Approved!</h2>
         
         <p>Hi ${context.djName},</p>
         
-        <p><strong>Great news!</strong> You've been selected to perform at <strong>${context.eventName}</strong>!</p>
+        <p><strong>Great news!</strong> Your submitted information has been approved for <strong>${context.eventName}</strong>!</p>
         
         <div style="background: linear-gradient(135deg, #E946FF 0%, #9333EA 100%); color: white; padding: 20px; border-radius: 8px; margin: 20px 0;">
           <h3 style="margin: 0 0 10px 0;">Your Performance Details:</h3>
@@ -95,8 +95,8 @@ https://rite.party
         
         <h3 style="color: #333;">Next Steps:</h3>
         <ul style="color: #555;">
-          <li>Confirm your attendance by replying to this email</li>
-          <li>Prepare your set according to the event requirements</li>
+          <li>Your guest list has been confirmed</li>
+          <li>Prepare your set according to your time slot</li>
           <li>Arrive 30 minutes before your slot for sound check</li>
           <li>Promote the event on your social media!</li>
         </ul>
@@ -113,11 +113,11 @@ https://rite.party
       </div>
     `,
     textContent: `
-🎉 Congratulations!
+✅ Information Approved!
 
 Hi ${context.djName},
 
-Great news! You've been selected to perform at ${context.eventName}!
+Great news! Your submitted information has been approved for ${context.eventName}!
 
 Your Performance Details:
 - Date: ${context.eventDate}
@@ -125,8 +125,8 @@ Your Performance Details:
 - Your Time Slot: ${context.timeslot}
 
 Next Steps:
-- Confirm your attendance by replying to this email
-- Prepare your set according to the event requirements
+- Your guest list has been confirmed
+- Prepare your set according to your time slot
 - Arrive 30 minutes before your slot for sound check
 - Promote the event on your social media!
 
@@ -140,31 +140,31 @@ https://rite.party
   }),
 
   submissionRejected: (context: NotificationContext): EmailTemplate => ({
-    subject: `Update on your submission for ${context.eventName}`,
+    subject: `⚠️ Action required for ${context.eventName}`,
     htmlContent: `
       <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto;">
-        <h2 style="color: #E946FF;">Thank you for your submission</h2>
+        <h2 style="color: #E946FF;">⚠️ Information Review</h2>
         
         <p>Hi ${context.djName},</p>
         
-        <p>Thank you for your interest in performing at <strong>${context.eventName}</strong>.</p>
+        <p>Thank you for submitting your information for <strong>${context.eventName}</strong>.</p>
         
-        <p>After careful consideration, we've decided to go with a different lineup for this event. This decision was not easy, as we received many talented submissions.</p>
+        <p>After reviewing your submission, we need you to update or revise some information. This could be related to your guest list, promotional materials, or contact details.</p>
         
-        <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;">
+        <div style="background: #fff3cd; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #ffc107;">
           <p style="margin: 0; color: #555;">
-            <strong>This doesn't reflect on your talent or potential.</strong> Event lineups often depend on factors like timing, musical style fit, and overall event flow.
+            <strong>Your performance slot is still confirmed.</strong> We just need some adjustments to the information you submitted.
           </p>
         </div>
         
-        <p>We encourage you to:</p>
+        <p>Please:</p>
         <ul style="color: #555;">
-          <li>Keep creating and performing - your music matters</li>
-          <li>Follow RITE for future event opportunities</li>
-          <li>Connect with other organizers in your scene</li>
+          <li>Review the organizer's feedback carefully</li>
+          <li>Update your submission with the requested changes</li>
+          <li>Reply to this email if you have any questions</li>
         </ul>
         
-        <p>Thank you again for your submission, and we hope to see you at future events!</p>
+        <p>Please update your information as soon as possible to ensure everything is ready for the event.</p>
         
         <p>Best regards,<br>${context.organizerName}</p>
         
@@ -176,22 +176,22 @@ https://rite.party
       </div>
     `,
     textContent: `
-Thank you for your submission
+⚠️ Action Required
 
 Hi ${context.djName},
 
-Thank you for your interest in performing at ${context.eventName}.
+Thank you for submitting your information for ${context.eventName}.
 
-After careful consideration, we've decided to go with a different lineup for this event. This decision was not easy, as we received many talented submissions.
+After reviewing your submission, we need you to update or revise some information. This could be related to your guest list, promotional materials, or contact details.
 
-This doesn't reflect on your talent or potential. Event lineups often depend on factors like timing, musical style fit, and overall event flow.
+Your performance slot is still confirmed. We just need some adjustments to the information you submitted.
 
-We encourage you to:
-- Keep creating and performing - your music matters
-- Follow RITE for future event opportunities
-- Connect with other organizers in your scene
+Please:
+- Review the organizer's feedback carefully
+- Update your submission with the requested changes
+- Reply to this email if you have any questions
 
-Thank you again for your submission, and we hope to see you at future events!
+Please update your information as soon as possible to ensure everything is ready for the event.
 
 Best regards,
 ${context.organizerName}

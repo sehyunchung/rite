@@ -170,7 +170,7 @@ export default function DJSubmissionScreen() {
       
       Alert.alert(
         'Success',
-        'Your submission has been received!',
+        'Your information has been submitted successfully!',
         [
           {
             text: 'OK',

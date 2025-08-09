@@ -213,8 +213,8 @@ rite/
 ### Database Schema (Convex)
 - `users` - Authentication and profiles
 - `events` - Event information
-- `timeslots` - DJ slots with submission tokens
-- `submissions` - DJ submissions
+- `timeslots` - DJ slots with submission tokens (pre-confirmed DJs)
+- `submissions` - DJ information collection (guest lists, contact info, promo materials)
 - `instagramConnections` - Instagram profiles
 
 ## RITE Design System
@@ -454,7 +454,8 @@ See `/apps/next-app/e2e/visual/README.md` for detailed documentation.
 ## Development Status
 
 **✅ Complete:**
-- Core platform with event creation, DJ submissions
+- Core platform with event creation and DJ information collection
+- DJ submission system (for confirmed DJs to provide guest lists, contact info, promo materials)
 - Instagram OAuth with mobile support
 - **Google OAuth with production-ready security** (web, iOS, Android, Expo Go)
 - **Modular mobile authentication architecture** (AuthContext: 365→88 lines with error handling)
