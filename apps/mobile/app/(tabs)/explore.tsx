@@ -3,14 +3,12 @@ import { View, ScrollView, SafeAreaView, Platform, TouchableOpacity } from 'reac
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../../contexts/AuthContext';
-import { useTranslations } from '../../contexts/I18nContext';
 import { Typography, Card } from '@rite/ui';
 import { ThemeSwitcher } from '../../components/ThemeSwitcher';
 
 export default function ProfileScreen() {
   const router = useRouter();
   const { user, signOut } = useAuth();
-  const t = useTranslations('navigation');
 
   return (
     <SafeAreaView className="flex-1 bg-neutral-800">

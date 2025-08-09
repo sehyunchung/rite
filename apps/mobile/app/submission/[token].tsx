@@ -15,7 +15,7 @@ export default function DJSubmissionScreen() {
   const [djName, setDjName] = React.useState('');
   const [djEmail, setDjEmail] = React.useState('');
   const [djPhone, setDjPhone] = React.useState('');
-  const [preferredContact, setPreferredContact] = React.useState<'email' | 'phone' | 'both'>('email');
+  const [preferredContact] = React.useState<'email' | 'phone' | 'both'>('email'); // setPreferredContact reserved for future contact preference UI
   const [guestNames, setGuestNames] = React.useState('');
   const [guestNamesLineup, setGuestNamesLineup] = React.useState('');
   const [promoVideoUrl, setPromoVideoUrl] = React.useState('');

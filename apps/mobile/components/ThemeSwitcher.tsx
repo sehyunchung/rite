@@ -3,9 +3,9 @@
  * Similar to Next.js ThemeSwitcher but adapted for React Native
  */
 import * as React from 'react';
-import { View, TouchableOpacity, ScrollView } from 'react-native';
+import { View, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { Typography, Card, Button } from '../lib/ui-native';
+import { Typography, Card } from '../lib/ui-native';
 import { useTheme } from '../contexts/ThemeContext';
 import { useI18n } from '../contexts/I18nContext';
 
@@ -21,7 +21,7 @@ export function ThemeSwitcher({
   size = 'medium'
 }: ThemeSwitcherProps) {
   const { currentTheme, setTheme, availableThemes, isLoading } = useTheme();
-  const { locale } = useI18n();
+  useI18n(); // Hook called for future i18n support
 
   const handleThemeChange = async (themeKey: string) => {
     // Type guard to ensure we only accept valid theme keys
