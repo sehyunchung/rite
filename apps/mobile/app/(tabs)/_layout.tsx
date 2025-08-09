@@ -23,8 +23,8 @@ export default function TabLayout() {
           backgroundColor: themeColors.neutral[700],
           borderTopColor: themeColors.neutral[700],
           borderTopWidth: 1,
-          height: Platform.OS === 'web' && isLargeScreen ? 72 : Platform.OS === 'ios' ? 84 : 64,
-          paddingBottom: Platform.OS === 'web' && isLargeScreen ? 16 : Platform.OS === 'ios' ? 24 : 8,
+          height: Platform.OS === 'web' ? (isLargeScreen ? 72 : 68) : Platform.OS === 'ios' ? 84 : 64,
+          paddingBottom: Platform.OS === 'web' ? (isLargeScreen ? 16 : 12) : Platform.OS === 'ios' ? 24 : 8,
           paddingTop: 12,
           paddingHorizontal: isLargeScreen ? 32 : 24,
           ...(Platform.OS === 'ios' ? { position: 'absolute' as const } : {}),
@@ -38,14 +38,14 @@ export default function TabLayout() {
         tabBarLabelStyle: {
           fontSize: isLargeScreen ? 12 : 11,
           fontFamily: 'SUIT-Medium',
-          marginTop: 4,
+          marginTop: Platform.OS === 'web' ? 2 : 4,
           letterSpacing: -0.2,
         },
         tabBarIconStyle: {
-          marginBottom: 0,
+          marginBottom: Platform.OS === 'web' ? -2 : 0,
         },
         tabBarItemStyle: {
-          paddingTop: 8,
+          paddingTop: Platform.OS === 'web' ? 6 : 8,
         },
       }}>
       <Tabs.Screen
