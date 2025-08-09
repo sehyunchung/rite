@@ -68,6 +68,11 @@ export const saveSubmission = mutation({
       residentNumber: v.string(),
       preferDirectContact: v.boolean(),
     }),
+    djContact: v.object({
+      email: v.string(),
+      phone: v.optional(v.string()),
+      preferredContactMethod: v.optional(v.union(v.literal("email"), v.literal("phone"), v.literal("both"))),
+    }),
   },
   handler: async (ctx, args) => {
     // Verify the submission token matches the timeslot
@@ -107,6 +112,11 @@ export const saveSubmission = mutation({
       },
       submittedAt: new Date().toISOString(),
       lastUpdatedAt: new Date().toISOString(),
+      djContact: {
+        email: args.djContact.email,
+        phone: args.djContact.phone,
+        preferredContactMethod: args.djContact.preferredContactMethod,
+      },
     };
 
     let submissionId;
@@ -390,6 +400,21 @@ export const getSubmissionByToken = query({
   },
 });
 
+// Internal function for actions that don't require auth
+export const getSubmissionsByEventId = query({
+  args: {
+    eventId: v.id("events"),
+  },
+  handler: async (ctx, args) => {
+    const submissions = await ctx.db
+      .query("submissions")
+      .filter((q) => q.eq(q.field("eventId"), args.eventId))
+      .collect();
+
+    return submissions;
+  },
+});
+
 // Query to get all submissions for an event (for event organizer)
 export const getSubmissionsByEvent = query({
   args: {
@@ -414,5 +439,14 @@ export const getSubmissionsByEvent = query({
       .collect();
 
     return submissions;
+  },
+});
+
+export const getSubmissionById = query({
+  args: {
+    submissionId: v.id("submissions"),
+  },
+  handler: async (ctx, args) => {
+    return await ctx.db.get(args.submissionId);
   },
 });

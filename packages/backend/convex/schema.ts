@@ -74,11 +74,11 @@ export default defineSchema({
     timeslotId: v.id("timeslots"),
     uniqueLink: v.string(),
     // DJ contact information for notifications
-    djContact: v.object({
+    djContact: v.optional(v.object({
       email: v.string(),
       phone: v.optional(v.string()),
       preferredContactMethod: v.optional(v.union(v.literal("email"), v.literal("phone"), v.literal("both"))),
-    }),
+    })),
     promoMaterials: v.object({
       files: v.array(
         v.object({

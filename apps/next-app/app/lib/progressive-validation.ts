@@ -247,7 +247,7 @@ export const venueAddressValidator = (address: string): ValidationResult => {
   
   // Enhanced scoring system for address completeness
   let completenessScore = 0;
-  let suggestions = [];
+  const suggestions = [];
   
   if (hasStreetNumber) completenessScore += 2;
   else suggestions.push('street number');
