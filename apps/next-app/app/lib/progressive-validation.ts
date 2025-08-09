@@ -365,7 +365,7 @@ export const promoDeadlineValidator = (deadline: string, context?: { eventDate?:
 export const timeslotTimeValidator = (
   startTime: string, 
   endTime: string, 
-  context?: { timezone?: string; eventDate?: string }
+  _context?: { timezone?: string; eventDate?: string }
 ): ValidationResult => {
   if (!startTime || !endTime) {
     return { isValid: false, error: 'Both start and end times are required' };
@@ -380,10 +380,7 @@ export const timeslotTimeValidator = (
     return { isValid: false, error: 'End time must be in HH:MM format' };
   }
   
-  // Use event date if provided for better timezone context
-  const baseDate = context?.eventDate || '2000-01-01';
-  const start = new Date(`${baseDate}T${startTime}:00`);
-  let end = new Date(`${baseDate}T${endTime}:00`);
+  // Time validation is done using minutes only, no date objects needed
   
   // Enhanced cross-midnight handling
   const startMinutes = parseInt(startTime.split(':')[0]) * 60 + parseInt(startTime.split(':')[1]);
@@ -396,11 +393,6 @@ export const timeslotTimeValidator = (
     // Cross-midnight scenario
     crossesMidnight = true;
     durationMinutes = (24 * 60) - startMinutes + endMinutes;
-    
-    // Adjust end date for calculation
-    const nextDay = new Date(start);
-    nextDay.setDate(nextDay.getDate() + 1);
-    end = new Date(`${nextDay.toISOString().split('T')[0]}T${endTime}:00`);
   } else {
     durationMinutes = endMinutes - startMinutes;
   }
