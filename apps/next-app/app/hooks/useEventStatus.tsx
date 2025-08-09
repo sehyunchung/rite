@@ -2,7 +2,7 @@ import { useQuery, useMutation } from 'convex/react';
 import { api } from '@rite/backend/convex/_generated/api';
 import { Id } from '@rite/backend/convex/_generated/dataModel';
 import { useCallback, useState } from 'react';
-import { EventPhaseInfo, getAvailableActions, type EventAction } from '@rite/backend/convex/eventStatus';
+import { EventPhaseInfo, getAvailableActions, type EventAction, type EventPhaseType } from '@rite/backend/convex/eventStatus';
 import { isValidConvexId } from '@/lib/utils';
 
 interface UseEventStatusOptions {
@@ -27,7 +27,7 @@ export function useEventStatus({ eventId, userId }: UseEventStatusOptions) {
   const transitionPhase = useMutation(api.events.transitionEventPhase);
   
   // Get phase info
-  const phaseInfo = event?.phase ? EventPhaseInfo[event.phase] : null;
+  const phaseInfo = event?.phase ? EventPhaseInfo[event.phase as EventPhaseType] : null;
   
   // Get available actions
   const availableActions = event ? getAvailableActions(event.phase, event.capabilities) : [];

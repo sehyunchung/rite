@@ -4,6 +4,16 @@ import { useQuery } from 'convex/react';
 import { api } from '@rite/backend/convex/_generated/api';
 import { Id, Doc } from '@rite/backend/convex/_generated/dataModel';
 
+// Type for event with timeslots from API
+type EventWithTimeslots = Doc<"events"> & {
+  timeslots?: Doc<"timeslots">[];
+  guestLimitPerDJ?: number;
+  hashtags?: string;
+  payment: Doc<"events">["payment"] & {
+    perDJ?: number;
+  };
+};
+
 // Type that ensures timeslots is always an array (never undefined)
 export type ValidatedEvent = Doc<"events"> & {
   timeslots: Doc<"timeslots">[];
@@ -28,7 +38,7 @@ export function useEffectEvents(userId: string) {
   );
 
   // Validate and normalize events to eliminate undefined pollution
-  const validatedEvents = rawEvents?.map(event => {
+  const validatedEvents = rawEvents?.map((event: EventWithTimeslots) => {
     // Ensure timeslots is always an array (Effect principle: make invalid states impossible)
     if (!event.timeslots || !Array.isArray(event.timeslots)) {
       console.warn(`Event ${event._id} has invalid timeslots:`, event.timeslots);
