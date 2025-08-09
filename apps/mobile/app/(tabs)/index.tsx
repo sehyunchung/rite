@@ -28,15 +28,13 @@ export default function HomeScreen() {
           style={{ 
             paddingBottom: Platform.OS === 'ios' ? 124 : 104 
           }}
-          accessibilityRole="main"
+          accessibilityRole="none"
         >
           <View accessibilityRole="header">
             <Typography 
               variant="h3" 
               color="primary" 
               className="mb-2"
-              accessibilityRole="text"
-              accessibilityLabel="RITE - DJ Event Management Platform"
             >
               RITE
             </Typography>
@@ -44,7 +42,6 @@ export default function HomeScreen() {
               variant="body" 
               color="secondary" 
               className="mb-6"
-              accessibilityRole="text"
             >
               DJ Event Management
             </Typography>
@@ -64,12 +61,11 @@ export default function HomeScreen() {
           </Button>
           
           {/* Your Events Section */}
-          <View className="mb-6" accessibilityRole="region" accessibilityLabel="Your events section">
+          <View className="mb-6" accessibilityRole="none" accessibilityLabel="Your events section">
             <Typography 
               variant="h5" 
               color="default" 
               className="mb-4"
-              accessibilityRole="text"
             >
               Your Events
             </Typography>
@@ -87,9 +83,6 @@ export default function HomeScreen() {
             ) : events.length === 0 ? (
               <Card 
                 className="bg-neutral-700 border-neutral-600 rounded-2xl"
-                accessible={true}
-                accessibilityRole="text"
-                accessibilityLabel="No events yet. Create your first event to get started."
               >
                 <CardContent className="p-6">
                   <Typography variant="body" color="default" className="text-center mb-1">
@@ -122,11 +115,6 @@ export default function HomeScreen() {
                     onShare={() => {
                       // TODO: Implement share functionality
                     }}
-                    // Add accessibility for EventCard as list item
-                    accessible={true}
-                    accessibilityRole="listitem"
-                    accessibilityLabel={`Event ${index + 1} of ${events.length}: ${event.name} at ${event.venue.name}`}
-                    accessibilityHint="Double tap to view event details"
                   />
                 ))}
               </View>

@@ -49,7 +49,7 @@ export default function AuthScreen() {
         </View>
 
         {/* Auth Buttons */}
-        <View style={styles.authSection} accessibilityRole="group" accessibilityLabel="Authentication options">
+        <View style={styles.authSection} accessibilityRole="none" accessibilityLabel="Authentication options">
           <TouchableOpacity 
             style={[styles.googleButton, !hasGoogleConfig && styles.disabledButton]}
             onPress={signIn}

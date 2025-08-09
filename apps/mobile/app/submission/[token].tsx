@@ -13,6 +13,9 @@ export default function DJSubmissionScreen() {
   
   // Form state
   const [djName, setDjName] = React.useState('');
+  const [djEmail, setDjEmail] = React.useState('');
+  const [djPhone, setDjPhone] = React.useState('');
+  const [preferredContact, setPreferredContact] = React.useState<'email' | 'phone' | 'both'>('email');
   const [guestNames, setGuestNames] = React.useState('');
   const [guestNamesLineup, setGuestNamesLineup] = React.useState('');
   const [promoVideoUrl, setPromoVideoUrl] = React.useState('');
@@ -113,6 +116,18 @@ export default function DJSubmissionScreen() {
       return false;
     }
     
+    if (!djEmail.trim()) {
+      Alert.alert('Error', 'Please enter your email address');
+      return false;
+    }
+    
+    // Basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(djEmail.trim())) {
+      Alert.alert('Error', 'Please enter a valid email address');
+      return false;
+    }
+    
     const guestList = guestNames.split('\n').filter(name => name.trim());
     if (guestList.length > (event?.guestLimitPerDJ || 10)) {
       Alert.alert('Error', `Maximum ${event?.guestLimitPerDJ || 10} guests allowed`);
@@ -139,6 +154,11 @@ export default function DJSubmissionScreen() {
         promoFiles: [], // Empty for now, files will be implemented later
         promoDescription: promoVideoUrl.trim() || '',
         guestList,
+        djContact: {
+          email: djEmail.trim(),
+          phone: djPhone.trim() || undefined,
+          preferredContactMethod: preferredContact,
+        },
         paymentInfo: {
           accountHolder: djName.trim(),
           bankName: '',
@@ -221,6 +241,34 @@ export default function DJSubmissionScreen() {
                 placeholder="Enter your DJ name"
                 value={djName}
                 onChangeText={setDjName}
+                className="bg-neutral-700 border-neutral-600"
+              />
+            </View>
+
+            {/* Contact Information */}
+            <View>
+              <Typography variant="label" className="mb-2 text-white">
+                Email Address *
+              </Typography>
+              <Input
+                placeholder="your@email.com"
+                value={djEmail}
+                onChangeText={setDjEmail}
+                keyboardType="email-address"
+                autoCapitalize="none"
+                className="bg-neutral-700 border-neutral-600"
+              />
+            </View>
+
+            <View>
+              <Typography variant="label" className="mb-2 text-white">
+                Phone Number (Optional)
+              </Typography>
+              <Input
+                placeholder="010-1234-5678"
+                value={djPhone}
+                onChangeText={setDjPhone}
+                keyboardType="phone-pad"
                 className="bg-neutral-700 border-neutral-600"
               />
             </View>

@@ -212,7 +212,6 @@ export default function CreateTab() {
               variant="label" 
               color="default" 
               className="mb-2"
-              accessibilityRole="text"
             >
               Event Name
             </Typography>
@@ -225,7 +224,7 @@ export default function CreateTab() {
               accessible={true}
               accessibilityLabel="Event name input field"
               accessibilityHint="Enter the name for your event"
-              accessibilityRequired={true}
+              accessibilityRole="none"
             />
           </View>
 
@@ -235,7 +234,6 @@ export default function CreateTab() {
               variant="label" 
               color="default" 
               className="mb-2"
-              accessibilityRole="text"
             >
               Date
             </Typography>
@@ -340,9 +338,6 @@ export default function CreateTab() {
               <Card 
                 key={slot.id} 
                 className="bg-neutral-700 border-neutral-600 p-4 mb-3"
-                accessibilityRole="group"
-                accessibilityLabel={`DJ slot ${index + 1} form`}
-                accessibilityHint="Configure DJ performance details for this time slot"
               >
                 <View className="flex-row justify-between items-center mb-3">
                   <Typography variant="body" color="default">
@@ -442,10 +437,6 @@ export default function CreateTab() {
             disabled={isSubmitting}
             accessibilityLabel={isSubmitting ? 'Creating event, please wait' : 'Create Event'}
             accessibilityHint="Tap to submit the event form and create your event"
-            accessibilityState={{ 
-              disabled: isSubmitting,
-              busy: isSubmitting 
-            }}
             testID="submit-create-event-button"
           >
             {isSubmitting ? 'Creating...' : 'Create Event'}
