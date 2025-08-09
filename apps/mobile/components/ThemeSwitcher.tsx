@@ -80,7 +80,7 @@ export function ThemeSwitcher({
                   
                   <Typography 
                     variant="button" 
-                    color={isSelected ? 'inverse' : 'default'}
+                    color={isSelected ? 'primary' : 'default'}
                     className="text-center mb-1"
                   >
                     {theme.name}
@@ -88,7 +88,7 @@ export function ThemeSwitcher({
                   
                   <Typography 
                     variant="caption" 
-                    color={isSelected ? 'inverse' : 'secondary'}
+                    color={isSelected ? 'primary' : 'secondary'}
                     className="text-center"
                   >
                     {theme.type}
@@ -97,9 +97,8 @@ export function ThemeSwitcher({
                   {showLabels && (
                     <Typography 
                       variant="caption" 
-                      color={isSelected ? 'inverse' : 'secondary'}
+                      color={isSelected ? 'primary' : 'secondary'}
                       className="text-center mt-1 text-xs"
-                      numberOfLines={2}
                     >
                       {theme.description}
                     </Typography>

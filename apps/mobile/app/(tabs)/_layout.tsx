@@ -27,18 +27,13 @@ export default function TabLayout() {
           paddingBottom: Platform.OS === 'web' && isLargeScreen ? 16 : Platform.OS === 'ios' ? 24 : 8,
           paddingTop: 12,
           paddingHorizontal: isLargeScreen ? 32 : 24,
-          ...Platform.select({
-            ios: {
-              position: 'absolute',
-            },
-            web: isLargeScreen ? {
-              // For web desktop, make tab bar more like a sidebar or top nav
-              borderTopWidth: 0,
-              borderBottomWidth: 1,
-              borderBottomColor: themeColors.neutral[600],
-            } : {},
-            default: {},
-          }),
+          ...(Platform.OS === 'ios' ? { position: 'absolute' as const } : {}),
+          ...(Platform.OS === 'web' && isLargeScreen ? {
+            // For web desktop, make tab bar more like a sidebar or top nav
+            borderTopWidth: 0,
+            borderBottomWidth: 1,
+            borderBottomColor: themeColors.neutral[600],
+          } : {}),
         },
         tabBarLabelStyle: {
           fontSize: isLargeScreen ? 12 : 11,
