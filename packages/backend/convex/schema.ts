@@ -194,6 +194,7 @@ export default defineSchema({
 
   // Email notification system
   notifications: defineTable({
+    recipientId: v.id("users"),
     submissionId: v.id("submissions"),
     type: v.union(
       v.literal("submission_received"), 
@@ -201,20 +202,11 @@ export default defineSchema({
       v.literal("submission_rejected"),
       v.literal("event_reminder")
     ),
-    recipientEmail: v.string(),
-    recipientName: v.string(),
-    status: v.union(v.literal("pending"), v.literal("sent"), v.literal("failed")),
-    emailContent: v.object({
-      subject: v.string(),
-      htmlContent: v.string(),
-      textContent: v.string(),
-    }),
-    scheduledFor: v.optional(v.string()),
-    sentAt: v.optional(v.string()),
-    error: v.optional(v.string()),
+    emailSent: v.boolean(),
+    metadata: v.optional(v.any()),
     createdAt: v.string(),
+    read: v.boolean(),
   })
     .index("by_submission_id", ["submissionId"])
-    .index("by_status", ["status"])
-    .index("by_scheduled", ["scheduledFor"]),
+    .index("by_recipient", ["recipientId"]),
 });

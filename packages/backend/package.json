@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "@convex-dev/auth": "^0.0.87",
+    "@convex-dev/resend": "^0.1.9",
     "convex": "^1.23.0",
     "effect": "3.17.6"
   },

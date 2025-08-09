@@ -250,3 +250,34 @@ export const updateProfile = mutation({
     return await ctx.db.get(userId);
   },
 });
+
+export const createPlaceholderUser = mutation({
+  args: {
+    email: v.string(),
+    name: v.string(),
+  },
+  handler: async (ctx, args) => {
+    // Check if user already exists
+    const existing = await ctx.db
+      .query("users")
+      .filter((q) => q.eq(q.field("email"), args.email))
+      .first();
+    
+    if (existing) {
+      return existing._id;
+    }
+    
+    // Create placeholder user for notification tracking
+    const userId = await ctx.db.insert("users", {
+      email: args.email,
+      name: args.name,
+      organizerProfile: {
+        companyName: undefined,
+        phone: undefined,
+      },
+      createdAt: new Date().toISOString(),
+    });
+    
+    return userId;
+  },
+});
