@@ -64,6 +64,20 @@ export const listEvents = query({
 });
 
 // Query to get a single event by ID (must be owned by authenticated user)
+// Internal function for actions that don't require auth
+export const getEventById = query({
+  args: {
+    eventId: v.id("events"),
+  },
+  handler: async (ctx, args) => {
+    const event = await ctx.db.get(args.eventId);
+    if (!event) {
+      throw new Error("Event not found");
+    }
+    return event;
+  },
+});
+
 export const getEvent = query({
   args: {
     eventId: v.id("events"),
@@ -152,7 +166,7 @@ export const createEvent = mutation({
     
     const now = new Date().toISOString();
     let eventId: Id<"events"> | undefined;
-    let timeslotResults: Array<{ timeslotId: any; submissionToken: string }> = [];
+    const timeslotResults: Array<{ timeslotId: Id<"timeslots">; submissionToken: string }> = [];
     
     try {
       // Create the event with authenticated user as organizer

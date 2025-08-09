@@ -41,6 +41,11 @@ export function DJSubmissionForm({ submissionToken }: DJSubmissionFormProps) {
     residentNumber: '',
     preferDirectContact: false,
   });
+  const [djContact, setDjContact] = useState({
+    email: '',
+    phone: '',
+    preferredContactMethod: 'email' as 'email' | 'phone' | 'both',
+  });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submissionComplete, setSubmissionComplete] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -53,7 +58,7 @@ export function DJSubmissionForm({ submissionToken }: DJSubmissionFormProps) {
       setIsEditing(true);
       
       // Populate guest list
-      const existingGuests = submission.guestList.map((guest, index) => ({
+      const existingGuests = submission.guestList.map((guest: { name: string; phone?: string }, index: number) => ({
         id: `guest-${index}`,
         name: guest.name,
         phone: guest.phone || '',
@@ -65,6 +70,15 @@ export function DJSubmissionForm({ submissionToken }: DJSubmissionFormProps) {
       
       // Populate payment info
       setPaymentInfo(submission.paymentInfo);
+      
+      // Populate DJ contact info
+      if (submission.djContact) {
+        setDjContact({
+          email: submission.djContact.email,
+          phone: submission.djContact.phone || '',
+          preferredContactMethod: submission.djContact.preferredContactMethod || 'email',
+        });
+      }
     }
   }, [timeslotData]);
 
@@ -160,6 +174,7 @@ export function DJSubmissionForm({ submissionToken }: DJSubmissionFormProps) {
           promoDescription: promoDescription.trim(),
           guestList: validGuestList,
           paymentInfo,
+          djContact,
         });
       }
       
@@ -475,6 +490,55 @@ export function DJSubmissionForm({ submissionToken }: DJSubmissionFormProps) {
                 <Typography variant="body-sm" color="secondary">
                   {t('privacyNotice')}
                 </Typography>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* DJ Contact Information */}
+          <Card>
+            <CardHeader>
+              <CardTitle>{t('djContactInformation')}</CardTitle>
+              <CardDescription>
+                {t('djContactDescription')}
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="djEmail">{t('djEmail')}</Label>
+                  <Input
+                    id="djEmail"
+                    type="email"
+                    placeholder={t('djEmailPlaceholder')}
+                    value={djContact.email}
+                    onChange={(e) => setDjContact(prev => ({ ...prev, email: e.target.value }))}
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="djPhone">{t('djPhone')}</Label>
+                  <Input
+                    id="djPhone"
+                    type="tel"
+                    placeholder={t('djPhonePlaceholder')}
+                    value={djContact.phone}
+                    onChange={(e) => setDjContact(prev => ({ ...prev, phone: e.target.value }))}
+                  />
+                </div>
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="preferredContactMethod">{t('preferredContactMethod')}</Label>
+                <select
+                  id="preferredContactMethod"
+                  value={djContact.preferredContactMethod}
+                  onChange={(e) => setDjContact(prev => ({ ...prev, preferredContactMethod: e.target.value as 'email' | 'phone' | 'both' }))}
+                  className="w-full px-3 py-2 border border-neutral-600 bg-neutral-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-brand-primary"
+                >
+                  <option value="email">{t('contactMethodEmail')}</option>
+                  <option value="phone">{t('contactMethodPhone')}</option>
+                  <option value="both">{t('contactMethodBoth')}</option>
+                </select>
               </div>
             </CardContent>
           </Card>

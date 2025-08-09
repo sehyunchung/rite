@@ -1,15 +1,18 @@
-import React from 'react';
-import { TextInput, View, Platform } from 'react-native';
+import * as React from 'react';
+import { TextInput, Platform } from 'react-native';
 import type { TextInputProps } from 'react-native';
 import '@rite/ui/types/nativewind';
 
 export interface InputProps extends Omit<TextInputProps, 'className'> {
   className?: string;
   type?: 'text' | 'email' | 'password' | 'number';
+  accessibilityLabel?: string;
+  accessibilityHint?: string;
+  required?: boolean;
 }
 
 export const Input = React.forwardRef<TextInput, InputProps>(
-  ({ className = '', type, style, ...props }, ref) => {
+  ({ className = '', type, style, accessibilityLabel, accessibilityHint, ...props }, ref) => {
     // Map HTML input types to React Native TextInput props
     const keyboardType = type === 'email' ? 'email-address' : type === 'number' ? 'numeric' : 'default';
     const secureTextEntry = type === 'password';
@@ -31,9 +34,8 @@ export const Input = React.forwardRef<TextInput, InputProps>(
         style={[{ fontFamily }, style]}
         accessible={true}
         accessibilityRole="text"
-        // Pass through accessibility props, with defaults
-        accessibilityLabel={props.accessibilityLabel}
-        accessibilityHint={props.accessibilityHint}
+        accessibilityLabel={accessibilityLabel}
+        accessibilityHint={accessibilityHint}
         {...props}
       />
     );

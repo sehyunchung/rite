@@ -131,7 +131,7 @@ export function useTrueEffectEvents(userId: string) {
   );
 
   // Effect-based validation pipeline
-  const validatedEvents = rawEvents?.map(rawEvent => {
+  const validatedEvents = rawEvents?.map((rawEvent: Doc<"events"> & { timeslots?: unknown }) => {
     // Create Effect pipeline for validation
     const validationPipeline = pipe(
       normalizeEventEffect(rawEvent),

@@ -154,7 +154,7 @@ export function SubmissionsClient({ eventId, userId, locale }: SubmissionsClient
           <div className="space-y-6">
             {event.timeslots && event.timeslots.length > 0 ? (
               event.timeslots.map((slot: Doc<"timeslots">) => {
-                const submission = submissions?.find(sub => sub.timeslotId === slot._id);
+                const submission = submissions?.find((sub: Doc<"submissions">) => sub.timeslotId === slot._id);
 
                 return (
                   <Card key={slot._id} className="w-full">
@@ -188,7 +188,7 @@ export function SubmissionsClient({ eventId, userId, locale }: SubmissionsClient
                                 <div>
                                   <p className="font-medium text-sm mb-2">{t('guestList')} ({submission.guestList.length})</p>
                                   <div className="space-y-1">
-                                    {submission.guestList.map((guest, index) => (
+                                    {submission.guestList.map((guest: { name: string; phone?: string }, index: number) => (
                                       <div key={index} className="text-sm text-muted-foreground">
                                         {guest.name} {guest.phone && `• ${guest.phone}`}
                                       </div>
@@ -214,7 +214,7 @@ export function SubmissionsClient({ eventId, userId, locale }: SubmissionsClient
                             <div>
                               <p className="font-medium text-sm mb-2">{t('promoFiles')} ({submission.promoMaterials.files.length})</p>
                               <div className="space-y-1">
-                                {submission.promoMaterials.files.map((file, index) => (
+                                {submission.promoMaterials.files.map((file: { fileName: string; fileType: string; fileSize: number }, index: number) => (
                                   <div key={index} className="flex items-center space-x-2 text-sm">
                                     <FileText className="w-4 h-4" />
                                     <span className="text-muted-foreground truncate">{file.fileName}</span>

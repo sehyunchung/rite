@@ -9,7 +9,7 @@ import { Link } from '../../../i18n/routing';
 import { useSession } from 'next-auth/react';
 import { useTranslations } from 'next-intl';
 import { LoadingIndicator } from '@rite/ui';
-import { useEffectEvents } from '@/hooks/useEffectEvents';
+import { useEffectEvents, type ValidatedEvent } from '@/hooks/useEffectEvents';
 
 interface DashboardContentProps {
   userId: string;
@@ -101,7 +101,7 @@ export function DashboardContent({ userId }: DashboardContentProps) {
             </CardContent>
           </Card>
         ) : (
-          events.map((event) => (
+          events.map((event: ValidatedEvent) => (
             <EventCard
               key={event._id}
               eventName={event.name}

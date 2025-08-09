@@ -58,7 +58,6 @@ export default function TabLayout() {
             />
           ),
           tabBarAccessibilityLabel: 'Dashboard',
-          tabBarTestID: 'dashboard-tab',
         }}
       />
       <Tabs.Screen
@@ -75,7 +74,6 @@ export default function TabLayout() {
             />
           ),
           tabBarAccessibilityLabel: 'Events',
-          tabBarTestID: 'events-tab',
         }}
       />
       <Tabs.Screen
@@ -105,7 +103,6 @@ export default function TabLayout() {
             </View>
           ),
           tabBarAccessibilityLabel: 'Create Event',
-          tabBarTestID: 'create-tab',
         }}
       />
       <Tabs.Screen
@@ -122,7 +119,6 @@ export default function TabLayout() {
             />
           ),
           tabBarAccessibilityLabel: 'Profile',
-          tabBarTestID: 'profile-tab',
         }}
       />
     </Tabs>

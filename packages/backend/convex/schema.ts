@@ -73,6 +73,12 @@ export default defineSchema({
     eventId: v.id("events"),
     timeslotId: v.id("timeslots"),
     uniqueLink: v.string(),
+    // DJ contact information for notifications
+    djContact: v.optional(v.object({
+      email: v.string(),
+      phone: v.optional(v.string()),
+      preferredContactMethod: v.optional(v.union(v.literal("email"), v.literal("phone"), v.literal("both"))),
+    })),
     promoMaterials: v.object({
       files: v.array(
         v.object({
@@ -98,6 +104,7 @@ export default defineSchema({
       residentNumber: v.string(), // encrypted
       preferDirectContact: v.boolean(),
     }),
+    status: v.optional(v.union(v.literal("pending"), v.literal("accepted"), v.literal("rejected"))),
     submittedAt: v.optional(v.string()),
     lastUpdatedAt: v.optional(v.string()),
   }),
@@ -184,4 +191,22 @@ export default defineSchema({
     error: v.optional(v.string()),
     publishedAt: v.optional(v.string()),
   }).index("by_user_id", ["userId"]).index("by_status", ["status"]),
+
+  // Email notification system
+  notifications: defineTable({
+    recipientId: v.id("users"),
+    submissionId: v.id("submissions"),
+    type: v.union(
+      v.literal("submission_received"), 
+      v.literal("submission_accepted"), 
+      v.literal("submission_rejected"),
+      v.literal("event_reminder")
+    ),
+    emailSent: v.boolean(),
+    metadata: v.optional(v.any()),
+    createdAt: v.string(),
+    read: v.boolean(),
+  })
+    .index("by_submission_id", ["submissionId"])
+    .index("by_recipient", ["recipientId"]),
 });

@@ -26,6 +26,20 @@ export const getTimeslots = query({
   },
 });
 
+// Query to get a single timeslot by ID
+export const getTimeslot = query({
+  args: {
+    id: v.id("timeslots"),
+  },
+  handler: async (ctx, args) => {
+    const timeslot = await ctx.db.get(args.id);
+    if (!timeslot) {
+      throw new Error("Timeslot not found");
+    }
+    return timeslot;
+  },
+});
+
 // Query to get a timeslot by its submission token
 export const getTimeslotByToken = query({
   args: {
