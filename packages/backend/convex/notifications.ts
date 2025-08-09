@@ -1,5 +1,5 @@
 import { v } from "convex/values";
-import { mutation, query, action } from "./_generated/server";
+import { mutation, query, action, internalAction } from "./_generated/server";
 import { Id } from "./_generated/dataModel";
 import { api, internal } from "./_generated/api";
 
@@ -120,7 +120,7 @@ export const triggerDJStatusNotification = action({
       
       // Get timeslot details
       const timeslot = await ctx.runQuery(api.timeslots.getTimeslot, {
-        timeslotId: submission.timeslotId,
+        id: submission.timeslotId,
       });
       
       if (!timeslot) {
@@ -231,7 +231,7 @@ export const scheduleEventReminders = action({
   args: {
     eventId: v.id("events"),
   },
-  handler: async (ctx, args) => {
+  handler: async (ctx, args): Promise<{ success: boolean; scheduledReminders: Array<{ days: number; scheduledFor: string }> }> => {
     const event = await ctx.runQuery(api.events.getEventById, {
       eventId: args.eventId,
     });
@@ -275,12 +275,12 @@ export const scheduleEventReminders = action({
 });
 
 // Internal function to send event reminders
-export const sendEventReminder = action({
+export const sendEventReminder = internalAction({
   args: {
     eventId: v.id("events"),
     daysUntilEvent: v.number(),
   },
-  handler: async (ctx, args) => {
+  handler: async (ctx, args): Promise<{ success: boolean; emailsSent: Array<{ djName: string; email: string; emailId: any }> }> => {
     const event = await ctx.runQuery(api.events.getEventById, {
       eventId: args.eventId,
     });
@@ -308,7 +308,7 @@ export const sendEventReminder = action({
       }
       
       const timeslot = await ctx.runQuery(api.timeslots.getTimeslot, {
-        timeslotId: submission.timeslotId,
+        id: submission.timeslotId,
       });
       
       if (!timeslot) continue;
@@ -348,8 +348,7 @@ export const sendEventReminder = action({
     
     return {
       success: true,
-      remindersSent: emailsSent.length,
-      emails: emailsSent,
+      emailsSent,
     };
   },
 });
