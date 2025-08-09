@@ -1,7 +1,7 @@
 import { v } from "convex/values";
 import { mutation, query, action } from "./_generated/server";
-import { api } from "./_generated/api";
 import { Id } from "./_generated/dataModel";
+import { api } from "./_generated/api";
 
 // Email notification system for DJ status updates
 
@@ -381,10 +381,10 @@ export const triggerDJStatusNotification = action({
       v.literal("rejected")
     ),
   },
-  handler: async (ctx, args) => {
+  handler: async (ctx, args): Promise<{ success: boolean; notificationId: any }> => {
     // Get submission details
-    const submission = await ctx.runQuery(api.submissions.getSubmission, {
-      id: args.submissionId,
+    const submission = await ctx.runQuery(api.submissions.getSubmissionById, {
+      submissionId: args.submissionId,
     });
     
     if (!submission) {
@@ -392,16 +392,16 @@ export const triggerDJStatusNotification = action({
     }
     
     // Get event and organizer details
-    const event = await ctx.runQuery(api.events.getEvent, {
-      id: submission.eventId,
+    const event = await ctx.runQuery(api.events.getEventById, {
+      eventId: submission.eventId,
     });
     
     if (!event) {
       throw new Error("Event not found");
     }
     
-    const organizer = await ctx.runQuery(api.users.getUser, {
-      id: event.organizerId,
+    const organizer = await ctx.runQuery(api.auth.getUserById, {
+      userId: event.organizerId as Id<"users">,
     });
     
     // Get timeslot details
@@ -479,32 +479,32 @@ export const scheduleEventReminders = action({
   args: {
     eventId: v.id("events"),
   },
-  handler: async (ctx, args) => {
+  handler: async (ctx, args): Promise<{ success: boolean; scheduledNotifications: any[] }> => {
     // Get event and all accepted submissions
-    const event = await ctx.runQuery(api.events.getEvent, {
-      id: args.eventId,
+    const event = await ctx.runQuery(api.events.getEventById, {
+      eventId: args.eventId,
     });
     
     if (!event) {
       throw new Error("Event not found");
     }
     
-    const organizer = await ctx.runQuery(api.users.getUser, {
-      id: event.organizerId,
+    const organizer = await ctx.runQuery(api.auth.getUserById, {
+      userId: event.organizerId as Id<"users">, // Convert string to Id<"users">
     });
     
-    const submissions = await ctx.runQuery(api.submissions.getSubmissionsForEvent, {
+    const submissions = await ctx.runQuery(api.submissions.getSubmissionsByEventId, {
       eventId: args.eventId,
     });
     
     // Filter for accepted submissions
-    const acceptedSubmissions = submissions.filter(s => s.status === "accepted");
+    const acceptedSubmissions = submissions.filter((s: any) => s.status === "accepted");
     
     const eventDate = new Date(event.date);
     const reminderTime = new Date(eventDate);
     reminderTime.setHours(12, 0, 0, 0); // Send reminder at noon on event day
     
-    const results = [];
+    const results: any[] = [];
     
     for (const submission of acceptedSubmissions) {
       const timeslot = await ctx.runQuery(api.timeslots.getTimeslot, {

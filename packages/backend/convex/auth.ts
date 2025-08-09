@@ -42,6 +42,14 @@ export const createUser = mutation({
   },
 });
 
+// Internal function for actions that don't require auth
+export const getUserById = query({
+  args: { userId: v.id("users") },
+  handler: async (ctx, args) => {
+    return await ctx.db.get(args.userId);
+  },
+});
+
 export const getUser = query({
   args: { userId: v.id("users") },
   handler: async (ctx, args) => {
