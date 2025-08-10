@@ -78,4 +78,5 @@ const Typography = React.forwardRef<HTMLElement, TypographyProps>(
 
 Typography.displayName = "Typography"
 
+// eslint-disable-next-line react-refresh/only-export-components
 export { Typography, typographyComponentVariants }
