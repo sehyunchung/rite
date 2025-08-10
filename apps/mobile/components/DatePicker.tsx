@@ -8,17 +8,25 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { Typography, Input } from '../lib/ui-native';
+import { Typography } from '../lib/ui-native';
 import { Ionicons } from '@expo/vector-icons';
 
 // Conditionally import DateTimePicker only for native platforms
-let DateTimePicker: any = null;
-let DateTimePickerEvent: any = null;
+let DateTimePicker: React.ComponentType<{
+  value: Date;
+  mode: 'date' | 'time' | 'datetime';
+  display?: 'default' | 'spinner' | 'compact';
+  onChange: (event: unknown, date?: Date) => void;
+  minimumDate?: Date;
+  maximumDate?: Date;
+  textColor?: string;
+  themeVariant?: 'light' | 'dark';
+}> | null = null;
 
 if (Platform.OS !== 'web') {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
   const dateTimePickerModule = require('@react-native-community/datetimepicker');
   DateTimePicker = dateTimePickerModule.default;
-  DateTimePickerEvent = dateTimePickerModule.DateTimePickerEvent;
 }
 
 interface DatePickerProps {
@@ -55,15 +63,15 @@ export function DatePicker({
     });
   };
 
-  const handleNativeChange = (event: any, selectedDate?: Date) => {
+  const handleNativeChange = (_event: unknown, selectedDate?: Date) => {
     setShowPicker(false);
     if (selectedDate) {
       onChange(selectedDate);
     }
   };
 
-  const handleWebChange = (e: any) => {
-    const newDate = new Date(e.target.value);
+  const handleWebChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const newDate = new Date(event.target.value);
     if (!isNaN(newDate.getTime())) {
       // Adjust for timezone - ensure we get the date in local time
       const localDate = new Date(newDate.getTime() + newDate.getTimezoneOffset() * 60000);
