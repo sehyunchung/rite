@@ -14,10 +14,10 @@ import { useMutation, useQuery } from 'convex/react';
 import { api } from '@rite/backend/convex/_generated/api';
 import { Id } from '@rite/backend/convex/_generated/dataModel';
 import { Ionicons } from '@expo/vector-icons';
-import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { Typography, Card , Button, Input } from '../../../lib/ui-native';
 import { useAuth } from '../../../contexts/AuthContext';
 import { validateEventId } from '../../../lib/validation';
+import { DatePicker } from '../../../components/DatePicker';
 
 export default function EditEventScreen() {
   const router = useRouter();
@@ -38,7 +38,6 @@ export default function EditEventScreen() {
   const [venueAddress, setVenueAddress] = React.useState('');
   const [description, setDescription] = React.useState('');
   const [hashtags, setHashtags] = React.useState('');
-  const [showDatePicker, setShowDatePicker] = React.useState(false);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [djSlots, setDjSlots] = React.useState<{
     id: number;
@@ -65,8 +64,8 @@ export default function EditEventScreen() {
         _id: slot._id,
         djName: slot.djName || '',
         djInstagram: slot.djInstagram,
-        startTime: new Date(slot.startTime).toTimeString().slice(0, 5),
-        endTime: new Date(slot.endTime).toTimeString().slice(0, 5),
+        startTime: typeof slot.startTime === 'string' ? slot.startTime : new Date(slot.startTime).toTimeString().slice(0, 5),
+        endTime: typeof slot.endTime === 'string' ? slot.endTime : new Date(slot.endTime).toTimeString().slice(0, 5),
       }));
       setDjSlots(slots);
     }
@@ -241,11 +240,8 @@ export default function EditEventScreen() {
     });
   };
 
-  const onDateChange = (event: DateTimePickerEvent, date?: Date) => {
-    setShowDatePicker(false);
-    if (date) {
-      setSelectedDate(date);
-    }
+  const handleDateChange = (date: Date) => {
+    setSelectedDate(date);
   };
 
   return (
@@ -285,20 +281,15 @@ export default function EditEventScreen() {
           </View>
 
           {/* Date */}
-          <View className="mb-6">
-            <Typography variant="label" className="mb-2 text-white">
-              Date
-            </Typography>
-            <TouchableOpacity 
-              className="bg-neutral-700 border border-neutral-600 rounded-xl h-12 flex-row items-center px-4"
-              onPress={() => setShowDatePicker(true)}
-            >
-              <Typography variant="body" className="flex-1 text-white">
-                {formatDate(selectedDate)}
-              </Typography>
-              <Ionicons name="calendar-outline" size={20} color="var(--neutral-400)" />
-            </TouchableOpacity>
-          </View>
+          <DatePicker
+            value={selectedDate}
+            onChange={handleDateChange}
+            label="Date"
+            className="mb-6"
+            minDate={new Date()}
+            accessibilityLabel={`Event date selector. Currently selected: ${formatDate(selectedDate)}`}
+            accessibilityHint="Select the event date"
+          />
 
           {/* Venue */}
           <View className="mb-6">
@@ -449,18 +440,6 @@ export default function EditEventScreen() {
           </Button>
         </View>
       </ScrollView>
-      
-      {/* Date Picker Modal */}
-      {showDatePicker && (
-        <DateTimePicker
-          value={selectedDate}
-          mode="date"
-          display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-          onChange={onDateChange}
-          textColor="var(--text-primary)"
-          themeVariant="dark"
-        />
-      )}
       
     </SafeAreaView>
   );
