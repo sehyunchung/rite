@@ -13,8 +13,8 @@ import { useMutation } from 'convex/react';
 import { api } from '@rite/backend/convex/_generated/api';
 import { Id } from '@rite/backend/convex/_generated/dataModel';
 import { Ionicons } from '@expo/vector-icons';
-import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { Typography, Card , Input, Button } from '../../lib/ui-native';
+import { DatePicker } from '../../components/DatePicker';
 import { useAuth } from '../../contexts/AuthContext';
 import { useTranslations } from '../../contexts/I18nContext';
 import { themeColors } from '../../lib/theme-colors';
@@ -43,7 +43,6 @@ export default function CreateTab() {
   const [venueAddress, setVenueAddress] = React.useState('');
   const [description, setDescription] = React.useState('');
   const [hashtags, setHashtags] = React.useState('');
-  const [showDatePicker, setShowDatePicker] = React.useState(false);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   
   const [djSlots, setDjSlots] = React.useState([
@@ -201,11 +200,8 @@ export default function CreateTab() {
     });
   };
 
-  const onDateChange = (event: DateTimePickerEvent, date?: Date) => {
-    setShowDatePicker(false);
-    if (date) {
-      setSelectedDate(date);
-    }
+  const handleDateChange = (date: Date) => {
+    setSelectedDate(date);
   };
 
   return (
@@ -247,29 +243,15 @@ export default function CreateTab() {
               </View>
 
               {/* Date */}
-              <View className={isLargeScreen ? "flex-1 mb-0" : "mb-6"}>
-                <Typography variant="label" color="default" className="mb-2">
-                  {t('date')}
-                </Typography>
-                <TouchableOpacity 
-                  className="bg-neutral-700 border border-neutral-600 rounded-xl h-12 flex-row items-center px-4"
-                  onPress={() => setShowDatePicker(true)}
-                  accessible={true}
-                  accessibilityRole="button"
-                  accessibilityLabel={`Event date selector. Currently selected: ${formatDate(selectedDate)}`}
-                  accessibilityHint="Tap to change the event date"
-                >
-                  <Typography variant="body" color="default" className="flex-1">
-                    {formatDate(selectedDate)}
-                  </Typography>
-                  <Ionicons 
-                    name="calendar-outline" 
-                    size={20} 
-                    color="#8C8CA3" 
-                    accessibilityElementsHidden={true}
-                  />
-                </TouchableOpacity>
-              </View>
+              <DatePicker
+                value={selectedDate}
+                onChange={handleDateChange}
+                label={t('date')}
+                className={isLargeScreen ? "flex-1 mb-0" : "mb-6"}
+                minDate={new Date()}
+                accessibilityLabel={`Event date selector. Currently selected: ${formatDate(selectedDate)}`}
+                accessibilityHint="Select the event date"
+              />
             </View>
 
             {/* Venue info row for desktop */}
@@ -476,18 +458,6 @@ export default function CreateTab() {
           </View>
         </View>
       </ScrollView>
-      
-      {/* Date Picker Modal */}
-      {showDatePicker && (
-        <DateTimePicker
-          value={selectedDate}
-          mode="date"
-          display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-          onChange={onDateChange}
-          textColor="white"
-          themeVariant="dark"
-        />
-      )}
       
     </SafeAreaView>
   );
