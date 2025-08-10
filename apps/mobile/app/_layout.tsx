@@ -1,5 +1,5 @@
-import { DarkTheme, ThemeProvider } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
+import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { View, Text } from 'react-native';
 import { useEffect } from 'react';
@@ -9,9 +9,12 @@ import './index.css';
 import { ConvexProvider } from '../providers/ConvexProvider';
 import { PostHogProviderWrapper } from '../providers/PostHogProvider';
 import { AuthProvider } from '../contexts/AuthContext';
+import { I18nProvider } from '../contexts/I18nContext';
+import { ThemeProvider } from '../contexts/ThemeContext';
+import { NavigationThemeWrapper } from '../components/NavigationThemeProvider';
 import { ErrorBoundary } from '../components/ErrorBoundary';
-import AppNavigator from '../components/AppNavigator';
 import { registerServiceWorker } from './registerServiceWorker';
+import { themeColors } from '../lib/theme-colors';
 
 export default function RootLayout() {
   // Register service worker for PWA support on web
@@ -40,32 +43,73 @@ export default function RootLayout() {
     );
   }
 
-  // Custom RITE dark theme using Josh Comeau colors
-  const RiteDarkTheme = {
-    ...DarkTheme,
-    colors: {
-      ...DarkTheme.colors,
-      primary: 'hsl(225deg 100% 75%)',     // Josh Comeau primary
-      background: 'hsl(210deg 15% 12%)',   // Josh Comeau neutral-800
-      card: 'hsl(210deg 15% 18%)',         // Josh Comeau neutral-700
-      text: 'hsl(210deg 10% 90%)',         // Josh Comeau textPrimary
-      border: 'hsl(210deg 15% 18%)',       // Josh Comeau border
-      notification: 'hsl(225deg 100% 75%)', // Josh Comeau primary
-    },
-  };
 
   return (
     <ErrorBoundary>
-      <PostHogProviderWrapper>
-        <ConvexProvider>
-          <AuthProvider>
-            <ThemeProvider value={RiteDarkTheme}>
-              <AppNavigator />
-              <StatusBar style="light" />
-            </ThemeProvider>
-          </AuthProvider>
-        </ConvexProvider>
-      </PostHogProviderWrapper>
+      <ThemeProvider>
+        <I18nProvider>
+          <PostHogProviderWrapper>
+            <ConvexProvider>
+              <AuthProvider>
+                <NavigationThemeWrapper>
+                  <View className="flex-1 h-full min-h-[100dvh]">
+                    <Stack>
+                    <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                    <Stack.Screen 
+                      name="auth" 
+                      options={{ 
+                        headerShown: false,
+                        presentation: 'modal',
+                      }} 
+                    />
+                    <Stack.Screen 
+                      name="events/[eventId]" 
+                      options={{ 
+                        headerShown: false 
+                      }} 
+                    />
+                    <Stack.Screen 
+                      name="events/[eventId]/edit" 
+                      options={{ 
+                        headerShown: false 
+                      }} 
+                    />
+                    <Stack.Screen 
+                      name="events/[eventId]/submissions" 
+                      options={{ 
+                        headerShown: false 
+                      }} 
+                    />
+                    <Stack.Screen 
+                      name="submission/[token]" 
+                      options={{ 
+                        headerShown: false 
+                      }} 
+                    />
+                    <Stack.Screen 
+                      name="settings" 
+                      options={{ 
+                        headerShown: true,
+                        title: 'Settings',
+                        headerStyle: {
+                          backgroundColor: themeColors.neutral[800],
+                        },
+                        headerTintColor: '#FFFFFF',
+                        headerTitleStyle: {
+                          fontFamily: 'SUIT-SemiBold',
+                        },
+                      }} 
+                    />
+                    <Stack.Screen name="+not-found" />
+                    </Stack>
+                    <StatusBar style="light" />
+                  </View>
+                </NavigationThemeWrapper>
+              </AuthProvider>
+            </ConvexProvider>
+          </PostHogProviderWrapper>
+        </I18nProvider>
+      </ThemeProvider>
     </ErrorBoundary>
   );
 }

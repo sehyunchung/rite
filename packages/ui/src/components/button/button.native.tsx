@@ -76,7 +76,7 @@ export const Button = React.forwardRef<View, ButtonProps>(({
   accessibilityHint,
   testID,
   ...props
-}: ButtonProps, ref) => {
+}: ButtonProps, _ref) => {
   const buttonClass = cn(buttonVariants({ variant, size }), className);
   const textClass = textVariants({ variant, size });
   

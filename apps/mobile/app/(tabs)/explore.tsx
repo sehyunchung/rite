@@ -4,6 +4,7 @@ import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../../contexts/AuthContext';
 import { Typography, Card } from '@rite/ui';
+import { ThemeSwitcher } from '../../components/ThemeSwitcher';
 
 export default function ProfileScreen() {
   const router = useRouter();
@@ -70,6 +71,17 @@ export default function ProfileScreen() {
                 <Ionicons name="chevron-forward" size={20} color="var(--neutral-400)" />
               </Card>
             </TouchableOpacity>
+          </View>
+
+          {/* Theme Switcher Section */}
+          <View className="mb-6">
+            <Typography variant="h6" color="default" className="mb-4">
+              Appearance
+            </Typography>
+            <ThemeSwitcher 
+              showLabels={true}
+              orientation="vertical"
+            />
           </View>
 
           {/* Stats */}

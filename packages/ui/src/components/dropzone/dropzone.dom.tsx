@@ -258,6 +258,7 @@ const useDropzoneContext = () => {
 };
 
 // Default export with all components and types
+// eslint-disable-next-line react-refresh/only-export-components  
 export default {
   Dropzone,
   DropzoneProvider,

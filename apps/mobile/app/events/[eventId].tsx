@@ -10,6 +10,7 @@ import { validateEventId } from '../../lib/validation';
 import { themeColors } from '../../lib/theme-colors';
 import { ScreenContainer } from '../../components/layout/ScreenContainer';
 import { routes } from '../../lib/navigation';
+import { formatTime } from '../../lib/time-utils';
 
 export default function EventDetailScreen() {
   const { eventId } = useLocalSearchParams<{ eventId: string }>();
@@ -67,20 +68,6 @@ export default function EventDetailScreen() {
     });
   };
 
-  const formatTime = (timeString: string | number) => {
-    if (!timeString) return 'No time set';
-    
-    const date = new Date(timeString);
-    if (isNaN(date.getTime())) {
-      return 'Invalid time';
-    }
-    
-    return date.toLocaleTimeString('en-US', { 
-      hour: 'numeric', 
-      minute: '2-digit',
-      hour12: true 
-    });
-  };
 
   return (
     <ScreenContainer className="p-6">

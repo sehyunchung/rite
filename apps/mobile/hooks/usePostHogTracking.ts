@@ -102,7 +102,7 @@ export function usePostHogTracking() {
   }
   
   // Navigation tracking (screen views are auto-captured by PostHog)
-  const trackScreenView = (screenName: string, params?: Record<string, any>) => {
+  const trackScreenView = (screenName: string, params?: Record<string, string | number | boolean | null>) => {
     posthog?.screen(screenName, {
       ...params,
       platform: 'mobile'

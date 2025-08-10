@@ -1,6 +1,5 @@
 import * as React from "react"
 import { cn } from "../../utils"
-import { tokens } from "../../design-tokens"
 import { cva, type VariantProps } from "class-variance-authority"
 
 const typographyComponentVariants = cva("", {
@@ -79,4 +78,5 @@ const Typography = React.forwardRef<HTMLElement, TypographyProps>(
 
 Typography.displayName = "Typography"
 
+// eslint-disable-next-line react-refresh/only-export-components
 export { Typography, typographyComponentVariants }

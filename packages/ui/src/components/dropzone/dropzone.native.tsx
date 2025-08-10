@@ -33,7 +33,7 @@ export interface DropzoneProps {
 export function Dropzone({
   src,
   className,
-  onDrop,
+  onDrop: _onDrop,
   children,
   accept,
   maxFiles = 1,

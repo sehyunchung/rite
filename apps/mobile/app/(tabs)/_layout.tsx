@@ -1,6 +1,6 @@
 import { Tabs } from 'expo-router';
 import React from 'react';
-import { Platform, View } from 'react-native';
+import { Platform, View, useWindowDimensions } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 import { HapticTab } from '@/components/HapticTab';
@@ -8,6 +8,9 @@ import TabBarBackground from '@/components/ui/TabBarBackground';
 import { themeColors } from '@/lib/theme-colors';
 
 export default function TabLayout() {
+  const { width } = useWindowDimensions();
+  const isLargeScreen = width > 768;
+  
   return (
     <Tabs
       screenOptions={{
@@ -20,28 +23,29 @@ export default function TabLayout() {
           backgroundColor: themeColors.neutral[700],
           borderTopColor: themeColors.neutral[700],
           borderTopWidth: 1,
-          height: Platform.OS === 'ios' ? 84 : 64,
-          paddingBottom: Platform.OS === 'ios' ? 24 : 8,
+          height: Platform.OS === 'web' ? (isLargeScreen ? 72 : 68) : Platform.OS === 'ios' ? 84 : 64,
+          paddingBottom: Platform.OS === 'web' ? (isLargeScreen ? 16 : 12) : Platform.OS === 'ios' ? 24 : 8,
           paddingTop: 12,
-          paddingHorizontal: 24,
-          ...Platform.select({
-            ios: {
-              position: 'absolute',
-            },
-            default: {},
-          }),
+          paddingHorizontal: isLargeScreen ? 32 : 24,
+          ...(Platform.OS === 'ios' ? { position: 'absolute' as const } : {}),
+          ...(Platform.OS === 'web' && isLargeScreen ? {
+            // For web desktop, make tab bar more like a sidebar or top nav
+            borderTopWidth: 0,
+            borderBottomWidth: 1,
+            borderBottomColor: themeColors.neutral[600],
+          } : {}),
         },
         tabBarLabelStyle: {
-          fontSize: 11,
+          fontSize: isLargeScreen ? 12 : 11,
           fontFamily: 'SUIT-Medium',
-          marginTop: 4,
+          marginTop: Platform.OS === 'web' ? 2 : 4,
           letterSpacing: -0.2,
         },
         tabBarIconStyle: {
-          marginBottom: 0,
+          marginBottom: Platform.OS === 'web' ? -2 : 0,
         },
         tabBarItemStyle: {
-          paddingTop: 8,
+          paddingTop: Platform.OS === 'web' ? 6 : 8,
         },
       }}>
       <Tabs.Screen
