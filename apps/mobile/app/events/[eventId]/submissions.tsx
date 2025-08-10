@@ -8,6 +8,7 @@ import { useAuth } from '../../../contexts/AuthContext';
 import { Ionicons } from '@expo/vector-icons';
 import { validateEventId } from '../../../lib/validation';
 import { themeColors } from '../../../lib/theme-colors';
+import { formatTime } from '../../../lib/time-utils';
 
 export default function SubmissionsScreen() {
   const { eventId } = useLocalSearchParams<{ eventId: string }>();
@@ -74,20 +75,6 @@ export default function SubmissionsScreen() {
     });
   };
 
-  const formatTime = (timeString: string | number) => {
-    if (!timeString) return 'No time set';
-    
-    const date = new Date(timeString);
-    if (isNaN(date.getTime())) {
-      return 'Invalid time';
-    }
-    
-    return date.toLocaleTimeString('en-US', { 
-      hour: 'numeric', 
-      minute: '2-digit',
-      hour12: true 
-    });
-  };
 
   // Group submissions by timeslot
   const submissionsByTimeslot = submissions.reduce((acc, submission) => {

@@ -5,6 +5,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useQuery, useMutation } from 'convex/react';
 import { api } from '@rite/backend/convex/_generated/api';
 import { Ionicons } from '@expo/vector-icons';
+import { formatTime } from '../../lib/time-utils';
 
 export default function DJSubmissionScreen() {
   const { token } = useLocalSearchParams<{ token: string }>();
@@ -101,14 +102,6 @@ export default function DJSubmissionScreen() {
     });
   };
 
-  const formatTime = (timeString: string) => {
-    const date = new Date(timeString);
-    return date.toLocaleTimeString('en-US', { 
-      hour: 'numeric', 
-      minute: '2-digit',
-      hour12: true 
-    });
-  };
 
   const validateForm = () => {
     if (!djName.trim()) {
