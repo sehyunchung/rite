@@ -4,8 +4,8 @@
  */
 import type { SupportedLocale } from './index';
 
-// Translation schema type definition
-export interface TranslationSchema {
+// Translation schema type definition  
+export interface TranslationSchema extends Record<string, unknown> {
   common: {
     loading: string;
     error: string;

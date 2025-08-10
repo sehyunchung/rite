@@ -87,13 +87,13 @@ export function interpolate(template: string, values?: TranslationValues): strin
 /**
  * Get nested translation value from object
  */
-export function getTranslationValue(translations: any, key: TranslationKey): string | undefined {
+export function getTranslationValue(translations: Record<string, unknown> | null | undefined, key: TranslationKey): string | undefined {
   const keys = key.split('.');
-  let value = translations;
+  let value: unknown = translations;
   
   for (const k of keys) {
-    if (value && typeof value === 'object' && k in value) {
-      value = value[k];
+    if (value && typeof value === 'object' && value !== null && k in value) {
+      value = (value as Record<string, unknown>)[k];
     } else {
       return undefined;
     }
