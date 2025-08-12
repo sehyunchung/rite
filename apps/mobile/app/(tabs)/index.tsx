@@ -29,7 +29,11 @@ export default function HomeScreen() {
 	// Memoize className strings for performance
 	const gridClassName = React.useMemo(
 		() =>
-			isLargeScreen ? (isDesktop ? 'grid grid-cols-3 gap-6' : 'grid grid-cols-2 gap-4') : 'gap-4',
+			isLargeScreen
+				? isDesktop
+					? 'grid grid-cols-3 gap-6'
+					: 'grid grid-cols-2 gap-4'
+				: 'gap-4',
 		[isLargeScreen, isDesktop]
 	);
 
@@ -52,13 +56,16 @@ export default function HomeScreen() {
 				<View
 					className={containerClassName}
 					style={{
-						paddingBottom: Platform.OS === 'ios' ? 124 : Platform.OS === 'web' ? 84 : 104,
+						paddingBottom:
+							Platform.OS === 'ios' ? 124 : Platform.OS === 'web' ? 84 : 104,
 					}}
 					accessibilityRole="none"
 				>
 					{/* Header with responsive layout */}
 					<View
-						className={isLargeScreen ? 'flex-row justify-between items-center mb-8' : 'mb-6'}
+						className={
+							isLargeScreen ? 'flex-row justify-between items-center mb-8' : 'mb-6'
+						}
 						accessibilityRole="header"
 					>
 						<View className={isLargeScreen ? '' : 'mb-6'}>
@@ -136,7 +143,11 @@ export default function HomeScreen() {
 					)}
 
 					{/* Your Events Section */}
-					<View className="mb-6" accessibilityRole="none" accessibilityLabel="Your events section">
+					<View
+						className="mb-6"
+						accessibilityRole="none"
+						accessibilityLabel="Your events section"
+					>
 						<Typography variant="h5" color="default" className="mb-4">
 							{t('yourEvents')}
 						</Typography>
@@ -154,10 +165,18 @@ export default function HomeScreen() {
 						) : events.length === 0 ? (
 							<Card className="bg-neutral-700 border-neutral-600 rounded-2xl">
 								<CardContent className="p-6">
-									<Typography variant="body" color="default" className="text-center mb-1">
+									<Typography
+										variant="body"
+										color="default"
+										className="text-center mb-1"
+									>
 										{t('noEvents')}
 									</Typography>
-									<Typography variant="caption" color="secondary" className="text-center">
+									<Typography
+										variant="caption"
+										color="secondary"
+										className="text-center"
+									>
 										{t('noEventsDescription')}
 									</Typography>
 								</CardContent>

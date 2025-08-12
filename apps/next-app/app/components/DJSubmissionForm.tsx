@@ -93,7 +93,11 @@ export function DJSubmissionForm({ submissionToken }: DJSubmissionFormProps) {
 		setGuestList([...guestList, newEntry]);
 	};
 
-	const updateGuestEntry = (id: string, field: keyof Omit<GuestListEntry, 'id'>, value: string) => {
+	const updateGuestEntry = (
+		id: string,
+		field: keyof Omit<GuestListEntry, 'id'>,
+		value: string
+	) => {
 		setGuestList(
 			guestList.map((entry) => (entry.id === id ? { ...entry, [field]: value } : entry))
 		);
@@ -183,7 +187,9 @@ export function DJSubmissionForm({ submissionToken }: DJSubmissionFormProps) {
 			setSubmissionComplete(true);
 		} catch (error) {
 			console.error('Submission failed:', error);
-			toast.error(`Submission failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+			toast.error(
+				`Submission failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+			);
 		} finally {
 			setIsSubmitting(false);
 		}
@@ -214,7 +220,9 @@ export function DJSubmissionForm({ submissionToken }: DJSubmissionFormProps) {
 			setShowDeleteConfirm(false);
 		} catch (error) {
 			console.error('Delete failed:', error);
-			toast.error(`Delete failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+			toast.error(
+				`Delete failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+			);
 		} finally {
 			setIsSubmitting(false);
 		}
@@ -230,7 +238,9 @@ export function DJSubmissionForm({ submissionToken }: DJSubmissionFormProps) {
 				<Card className="w-full max-w-md">
 					<CardHeader>
 						<CardTitle className="text-error">Invalid Link</CardTitle>
-						<CardDescription>This submission link is invalid or has expired.</CardDescription>
+						<CardDescription>
+							This submission link is invalid or has expired.
+						</CardDescription>
 					</CardHeader>
 				</Card>
 			</div>
@@ -396,17 +406,23 @@ export function DJSubmissionForm({ submissionToken }: DJSubmissionFormProps) {
 											id={`guest-name-${guest.id}`}
 											placeholder={t('guestNamePlaceholder')}
 											value={guest.name}
-											onChange={(e) => updateGuestEntry(guest.id, 'name', e.target.value)}
+											onChange={(e) =>
+												updateGuestEntry(guest.id, 'name', e.target.value)
+											}
 											required
 										/>
 									</div>
 									<div className="flex-1 space-y-2">
-										<Label htmlFor={`guest-phone-${guest.id}`}>{t('guestPhone')}</Label>
+										<Label htmlFor={`guest-phone-${guest.id}`}>
+											{t('guestPhone')}
+										</Label>
 										<Input
 											id={`guest-phone-${guest.id}`}
 											placeholder={t('guestPhonePlaceholder')}
 											value={guest.phone}
-											onChange={(e) => updateGuestEntry(guest.id, 'phone', e.target.value)}
+											onChange={(e) =>
+												updateGuestEntry(guest.id, 'phone', e.target.value)
+											}
 										/>
 									</div>
 									<Button
@@ -420,7 +436,12 @@ export function DJSubmissionForm({ submissionToken }: DJSubmissionFormProps) {
 								</div>
 							))}
 
-							<Button type="button" variant="outline" onClick={addGuestEntry} className="w-full">
+							<Button
+								type="button"
+								variant="outline"
+								onClick={addGuestEntry}
+								className="w-full"
+							>
 								{t('addGuest')}
 							</Button>
 						</CardContent>
@@ -446,7 +467,10 @@ export function DJSubmissionForm({ submissionToken }: DJSubmissionFormProps) {
 										placeholder={t('accountHolderPlaceholder')}
 										value={paymentInfo.accountHolder}
 										onChange={(e) =>
-											setPaymentInfo({ ...paymentInfo, accountHolder: e.target.value })
+											setPaymentInfo({
+												...paymentInfo,
+												accountHolder: e.target.value,
+											})
 										}
 										required
 									/>
@@ -457,7 +481,12 @@ export function DJSubmissionForm({ submissionToken }: DJSubmissionFormProps) {
 										id="bankName"
 										placeholder={t('bankNamePlaceholder')}
 										value={paymentInfo.bankName}
-										onChange={(e) => setPaymentInfo({ ...paymentInfo, bankName: e.target.value })}
+										onChange={(e) =>
+											setPaymentInfo({
+												...paymentInfo,
+												bankName: e.target.value,
+											})
+										}
 										required
 									/>
 								</div>
@@ -470,7 +499,10 @@ export function DJSubmissionForm({ submissionToken }: DJSubmissionFormProps) {
 									placeholder={t('accountNumberPlaceholder')}
 									value={paymentInfo.accountNumber}
 									onChange={(e) =>
-										setPaymentInfo({ ...paymentInfo, accountNumber: e.target.value })
+										setPaymentInfo({
+											...paymentInfo,
+											accountNumber: e.target.value,
+										})
 									}
 									required
 								/>
@@ -483,7 +515,10 @@ export function DJSubmissionForm({ submissionToken }: DJSubmissionFormProps) {
 									placeholder={t('residentNumberPlaceholder')}
 									value={paymentInfo.residentNumber}
 									onChange={(e) =>
-										setPaymentInfo({ ...paymentInfo, residentNumber: e.target.value })
+										setPaymentInfo({
+											...paymentInfo,
+											residentNumber: e.target.value,
+										})
 									}
 									required
 								/>
@@ -495,7 +530,10 @@ export function DJSubmissionForm({ submissionToken }: DJSubmissionFormProps) {
 									id="preferDirectContact"
 									checked={paymentInfo.preferDirectContact}
 									onChange={(e) =>
-										setPaymentInfo({ ...paymentInfo, preferDirectContact: e.target.checked })
+										setPaymentInfo({
+											...paymentInfo,
+											preferDirectContact: e.target.checked,
+										})
 									}
 									className="h-4 w-4 rounded border-neutral-600 bg-neutral-700/50 text-brand-primary focus:ring-[3px] focus:ring-brand-primary/20 focus:ring-offset-0"
 								/>
@@ -527,7 +565,12 @@ export function DJSubmissionForm({ submissionToken }: DJSubmissionFormProps) {
 										type="email"
 										placeholder={t('djEmailPlaceholder')}
 										value={djContact.email}
-										onChange={(e) => setDjContact((prev) => ({ ...prev, email: e.target.value }))}
+										onChange={(e) =>
+											setDjContact((prev) => ({
+												...prev,
+												email: e.target.value,
+											}))
+										}
 										required
 									/>
 								</div>
@@ -538,20 +581,30 @@ export function DJSubmissionForm({ submissionToken }: DJSubmissionFormProps) {
 										type="tel"
 										placeholder={t('djPhonePlaceholder')}
 										value={djContact.phone}
-										onChange={(e) => setDjContact((prev) => ({ ...prev, phone: e.target.value }))}
+										onChange={(e) =>
+											setDjContact((prev) => ({
+												...prev,
+												phone: e.target.value,
+											}))
+										}
 									/>
 								</div>
 							</div>
 
 							<div className="space-y-2">
-								<Label htmlFor="preferredContactMethod">{t('preferredContactMethod')}</Label>
+								<Label htmlFor="preferredContactMethod">
+									{t('preferredContactMethod')}
+								</Label>
 								<select
 									id="preferredContactMethod"
 									value={djContact.preferredContactMethod}
 									onChange={(e) =>
 										setDjContact((prev) => ({
 											...prev,
-											preferredContactMethod: e.target.value as 'email' | 'phone' | 'both',
+											preferredContactMethod: e.target.value as
+												| 'email'
+												| 'phone'
+												| 'both',
 										}))
 									}
 									className="w-full px-3 py-2 border border-neutral-600 bg-neutral-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-brand-primary"
@@ -587,8 +640,9 @@ export function DJSubmissionForm({ submissionToken }: DJSubmissionFormProps) {
 							</CardHeader>
 							<CardContent>
 								<Typography variant="body" color="secondary" className="mb-4">
-									Are you sure you want to delete your submission? This action cannot be undone.
-									You'll be able to submit new materials using the same link.
+									Are you sure you want to delete your submission? This action
+									cannot be undone. You'll be able to submit new materials using
+									the same link.
 								</Typography>
 								<div className="flex justify-end space-x-2">
 									<Button

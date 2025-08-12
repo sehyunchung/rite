@@ -63,7 +63,9 @@ export function EventCard({
 						onPress={onViewDetails}
 						className="flex-1 rounded-lg border border-neutral-600 bg-transparent px-4 py-2.5 active:bg-neutral-700"
 					>
-						<Text className="text-center text-sm font-medium text-white">View Details</Text>
+						<Text className="text-center text-sm font-medium text-white">
+							View Details
+						</Text>
 					</Pressable>
 					{onShare && (
 						<Pressable

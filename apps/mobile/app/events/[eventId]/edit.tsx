@@ -367,14 +367,21 @@ export default function EditEventScreen() {
 						</View>
 
 						{djSlots.map((slot, index) => (
-							<Card key={slot.id} className="bg-neutral-700 border-neutral-600 p-4 mb-3">
+							<Card
+								key={slot.id}
+								className="bg-neutral-700 border-neutral-600 p-4 mb-3"
+							>
 								<View className="flex-row justify-between items-center mb-3">
 									<Typography variant="body" className="text-white">
 										Slot {index + 1}
 									</Typography>
 									{djSlots.length > 1 && (
 										<TouchableOpacity onPress={() => removeDjSlot(slot.id)}>
-											<Ionicons name="trash-outline" size={20} color="var(--color-error)" />
+											<Ionicons
+												name="trash-outline"
+												size={20}
+												color="var(--color-error)"
+											/>
 										</TouchableOpacity>
 									)}
 								</View>
@@ -383,23 +390,33 @@ export default function EditEventScreen() {
 									{/* Time Range */}
 									<View className="flex-row gap-3">
 										<View className="flex-1">
-											<Typography variant="caption" className="mb-1 text-neutral-400">
+											<Typography
+												variant="caption"
+												className="mb-1 text-neutral-400"
+											>
 												Start Time
 											</Typography>
 											<Input
 												value={slot.startTime}
-												onChangeText={(value: string) => updateDjSlot(slot.id, 'startTime', value)}
+												onChangeText={(value: string) =>
+													updateDjSlot(slot.id, 'startTime', value)
+												}
 												placeholder="22:00"
 												className="bg-neutral-800 border-neutral-600 text-xs"
 											/>
 										</View>
 										<View className="flex-1">
-											<Typography variant="caption" className="mb-1 text-neutral-400">
+											<Typography
+												variant="caption"
+												className="mb-1 text-neutral-400"
+											>
 												End Time
 											</Typography>
 											<Input
 												value={slot.endTime}
-												onChangeText={(value: string) => updateDjSlot(slot.id, 'endTime', value)}
+												onChangeText={(value: string) =>
+													updateDjSlot(slot.id, 'endTime', value)
+												}
 												placeholder="23:00"
 												className="bg-neutral-800 border-neutral-600 text-xs"
 											/>
@@ -408,12 +425,17 @@ export default function EditEventScreen() {
 
 									{/* DJ Name */}
 									<View>
-										<Typography variant="caption" className="mb-1 text-neutral-400">
+										<Typography
+											variant="caption"
+											className="mb-1 text-neutral-400"
+										>
 											DJ Name (optional)
 										</Typography>
 										<Input
 											value={slot.djName}
-											onChangeText={(value: string) => updateDjSlot(slot.id, 'djName', value)}
+											onChangeText={(value: string) =>
+												updateDjSlot(slot.id, 'djName', value)
+											}
 											placeholder="DJ Name"
 											className="bg-neutral-800 border-neutral-600"
 										/>
@@ -421,12 +443,17 @@ export default function EditEventScreen() {
 
 									{/* Instagram Handle */}
 									<View>
-										<Typography variant="caption" className="mb-1 text-neutral-400">
+										<Typography
+											variant="caption"
+											className="mb-1 text-neutral-400"
+										>
 											Instagram Handle *
 										</Typography>
 										<Input
 											value={slot.djInstagram}
-											onChangeText={(value: string) => updateDjSlot(slot.id, 'djInstagram', value)}
+											onChangeText={(value: string) =>
+												updateDjSlot(slot.id, 'djInstagram', value)
+											}
 											placeholder="@username"
 											className="bg-neutral-800 border-neutral-600"
 										/>

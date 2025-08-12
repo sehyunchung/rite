@@ -63,7 +63,11 @@ const Typography = React.forwardRef<HTMLElement, TypographyProps>(
 		return (
 			<Component
 				ref={ref}
-				className={cn('font-suit', typographyComponentVariants({ variant, color }), className)}
+				className={cn(
+					'font-suit',
+					typographyComponentVariants({ variant, color }),
+					className
+				)}
 				{...props}
 			>
 				{children}

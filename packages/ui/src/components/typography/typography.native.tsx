@@ -56,7 +56,9 @@ export function Typography({
 }: TypographyProps) {
 	// Extract font weight from variant styles
 	const variantClass = variantStyles[variant];
-	const fontWeightMatch = variantClass.match(/font-(thin|light|normal|medium|semibold|bold|black)/);
+	const fontWeightMatch = variantClass.match(
+		/font-(thin|light|normal|medium|semibold|bold|black)/
+	);
 	const fontWeightClass = fontWeightMatch ? `font-${fontWeightMatch[1]}` : 'font-normal';
 	const fontFamily = getFontFamily(fontWeightClass);
 

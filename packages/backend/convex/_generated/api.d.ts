@@ -61,7 +61,12 @@ export declare const components: {
 				{ olderThan?: number },
 				null
 			>;
-			cleanupOldEmails: FunctionReference<'mutation', 'internal', { olderThan?: number }, null>;
+			cleanupOldEmails: FunctionReference<
+				'mutation',
+				'internal',
+				{ olderThan?: number },
+				null
+			>;
 			get: FunctionReference<
 				'query',
 				'internal',

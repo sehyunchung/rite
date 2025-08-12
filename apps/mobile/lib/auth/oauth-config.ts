@@ -100,7 +100,9 @@ export const getRedirectUri = () => {
  */
 export const hasGoogleConfig = (): boolean => {
 	return Boolean(
-		baseGoogleConfig.iosClientId || baseGoogleConfig.androidClientId || baseGoogleConfig.webClientId
+		baseGoogleConfig.iosClientId ||
+			baseGoogleConfig.androidClientId ||
+			baseGoogleConfig.webClientId
 	);
 };
 

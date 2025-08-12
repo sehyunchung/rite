@@ -218,7 +218,9 @@ const Dropzone = ({
 						</p>
 					)}
 					{maxSize && (
-						<p className="text-xs text-gray-400">Maximum file size: {formatBytes(maxSize)}</p>
+						<p className="text-xs text-gray-400">
+							Maximum file size: {formatBytes(maxSize)}
+						</p>
 					)}
 				</div>
 			)}

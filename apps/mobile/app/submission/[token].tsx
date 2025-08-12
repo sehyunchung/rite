@@ -218,7 +218,8 @@ export default function DJSubmissionScreen() {
 							<View className="flex-row items-center">
 								<Ionicons name="time" size={20} color="var(--neutral-400)" />
 								<Typography variant="body" className="ml-2 text-neutral-400">
-									{formatTime(timeslot.startTime)} - {formatTime(timeslot.endTime)}
+									{formatTime(timeslot.startTime)} -{' '}
+									{formatTime(timeslot.endTime)}
 								</Typography>
 							</View>
 						</View>
@@ -321,7 +322,9 @@ export default function DJSubmissionScreen() {
 										Guest List Deadline
 									</Typography>
 									<Typography variant="body" className="text-white">
-										{event?.deadlines?.guestList ? formatDate(event.deadlines.guestList) : 'TBD'}
+										{event?.deadlines?.guestList
+											? formatDate(event.deadlines.guestList)
+											: 'TBD'}
 									</Typography>
 								</View>
 								<View>

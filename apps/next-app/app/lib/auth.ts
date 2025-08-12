@@ -61,7 +61,10 @@ if (
 		},
 		profile(profile: InstagramProfile) {
 			const username =
-				profile.username || profile.preferred_username || profile.instagram_user_id || 'unknown';
+				profile.username ||
+				profile.preferred_username ||
+				profile.instagram_user_id ||
+				'unknown';
 			return {
 				id: profile.sub,
 				name: profile.name || username,

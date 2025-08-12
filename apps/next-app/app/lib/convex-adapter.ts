@@ -96,7 +96,9 @@ export function ConvexAdapter(convex: ConvexHttpClient): Adapter {
 				email: updatedUser.email,
 				name: updatedUser.name,
 				image: updatedUser.image,
-				emailVerified: updatedUser.emailVerified ? new Date(updatedUser.emailVerified) : null,
+				emailVerified: updatedUser.emailVerified
+					? new Date(updatedUser.emailVerified)
+					: null,
 			};
 		},
 

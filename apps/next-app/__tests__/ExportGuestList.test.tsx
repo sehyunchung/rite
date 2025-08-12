@@ -11,7 +11,12 @@ describe('CSV Export Security', () => {
 				return `'${cell}`;
 			}
 			// Handle quotes and commas
-			if (cell.includes(',') || cell.includes('"') || cell.includes('\n') || cell.includes('\r')) {
+			if (
+				cell.includes(',') ||
+				cell.includes('"') ||
+				cell.includes('\n') ||
+				cell.includes('\r')
+			) {
 				return `"${cell.replace(/"/g, '""')}"`;
 			}
 			return cell;
@@ -173,7 +178,11 @@ Bob Wilson,555-0003,DJ Test,@djtest,20:00 - 21:00`;
 
 		it('should validate PDF export data structure', () => {
 			const pdfData = {
-				event: { name: 'Test', date: '2024-12-31', venue: { name: 'Venue', address: 'Address' } },
+				event: {
+					name: 'Test',
+					date: '2024-12-31',
+					venue: { name: 'Venue', address: 'Address' },
+				},
 				summary: { totalGuests: 0, totalDJs: 0, submittedDJs: 0 },
 				guestsByDJ: [],
 				filename: 'test_event_guest_list.pdf',

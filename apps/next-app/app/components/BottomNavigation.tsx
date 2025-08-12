@@ -41,7 +41,9 @@ export function BottomNavigation() {
 							key={item.href}
 							href={item.href}
 							className={`flex flex-col items-center justify-center py-2 px-3 rounded-lg transition-colors ${
-								item.isActive ? 'text-brand-primary' : 'text-neutral-400 hover:text-white'
+								item.isActive
+									? 'text-brand-primary'
+									: 'text-neutral-400 hover:text-white'
 							}`}
 						>
 							<Icon size={20} className="mb-1" />

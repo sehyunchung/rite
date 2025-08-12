@@ -10,7 +10,12 @@ export default defineConfig({
 		coverage: {
 			provider: 'v8',
 			reporter: ['text', 'html', 'lcov'],
-			exclude: ['node_modules/**/*', '**/*.config.{ts,js}', '**/*.d.ts', 'convex/_generated/**/*'],
+			exclude: [
+				'node_modules/**/*',
+				'**/*.config.{ts,js}',
+				'**/*.d.ts',
+				'convex/_generated/**/*',
+			],
 			thresholds: {
 				global: { branches: 75, functions: 75, lines: 75, statements: 75 },
 			},

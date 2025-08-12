@@ -114,7 +114,9 @@ export default defineSchema({
 			residentNumber: v.string(), // encrypted
 			preferDirectContact: v.boolean(),
 		}),
-		status: v.optional(v.union(v.literal('pending'), v.literal('accepted'), v.literal('rejected'))),
+		status: v.optional(
+			v.union(v.literal('pending'), v.literal('accepted'), v.literal('rejected'))
+		),
 		submittedAt: v.optional(v.string()),
 		lastUpdatedAt: v.optional(v.string()),
 	}),
@@ -182,7 +184,11 @@ export default defineSchema({
 	generatedPosts: defineTable({
 		eventId: v.id('events'),
 		userId: v.id('users'),
-		templateType: v.union(v.literal('announcement'), v.literal('lineup'), v.literal('countdown')),
+		templateType: v.union(
+			v.literal('announcement'),
+			v.literal('lineup'),
+			v.literal('countdown')
+		),
 		imageId: v.id('_storage'),
 		caption: v.string(),
 		hashtags: v.array(v.string()),

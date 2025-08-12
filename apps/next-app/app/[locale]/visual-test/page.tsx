@@ -104,7 +104,11 @@ export default function VisualTestPage() {
 								strokeWidth={1.5}
 								stroke="currentColor"
 							>
-								<path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+								<path
+									strokeLinecap="round"
+									strokeLinejoin="round"
+									d="M12 4.5v15m7.5-7.5h-15"
+								/>
 							</svg>
 						}
 						title="Action Card"
@@ -137,7 +141,11 @@ export default function VisualTestPage() {
 					</div>
 					<div>
 						<Label htmlFor="textarea-test">Textarea</Label>
-						<Textarea id="textarea-test" placeholder="Enter longer text here..." rows={4} />
+						<Textarea
+							id="textarea-test"
+							placeholder="Enter longer text here..."
+							rows={4}
+						/>
 					</div>
 					<div>
 						<Label htmlFor="select-test">Select</Label>

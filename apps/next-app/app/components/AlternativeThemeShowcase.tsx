@@ -47,7 +47,9 @@ export function AlternativeThemeShowcase() {
               `}
 							style={{
 								backgroundColor:
-									themeOption.type === 'dark' ? themeOption.neutral[700] : themeOption.neutral[50],
+									themeOption.type === 'dark'
+										? themeOption.neutral[700]
+										: themeOption.neutral[50],
 								borderColor:
 									selectedTheme === key
 										? themeOption.brand.primary
@@ -55,7 +57,9 @@ export function AlternativeThemeShowcase() {
 											? themeOption.neutral[600]
 											: themeOption.neutral[200],
 								boxShadow:
-									selectedTheme === key ? `0 0 0 4px ${themeOption.brand.primary}40` : 'none',
+									selectedTheme === key
+										? `0 0 0 4px ${themeOption.brand.primary}40`
+										: 'none',
 							}}
 						>
 							{/* Theme preview */}
@@ -177,7 +181,10 @@ export function AlternativeThemeShowcase() {
 				>
 					<div className="mb-8">
 						<div className="flex items-center gap-4 mb-4">
-							<h2 className="text-4xl font-bold" style={{ color: theme.brand.primary }}>
+							<h2
+								className="text-4xl font-bold"
+								style={{ color: theme.brand.primary }}
+							>
 								{theme.name}
 							</h2>
 							<span
@@ -199,7 +206,10 @@ export function AlternativeThemeShowcase() {
 					<div className="grid md:grid-cols-4 gap-8 mb-12">
 						{/* Brand Colors */}
 						<div className="space-y-4">
-							<h3 className="text-lg font-semibold" style={{ color: theme.functional.textPrimary }}>
+							<h3
+								className="text-lg font-semibold"
+								style={{ color: theme.functional.textPrimary }}
+							>
 								Brand Colors
 							</h3>
 							<div className="space-y-3">
@@ -243,7 +253,10 @@ export function AlternativeThemeShowcase() {
 										>
 											accent
 										</p>
-										<p className="text-xs font-mono" style={{ color: theme.functional.textMuted }}>
+										<p
+											className="text-xs font-mono"
+											style={{ color: theme.functional.textMuted }}
+										>
 											{theme.accent}
 										</p>
 									</div>
@@ -253,7 +266,10 @@ export function AlternativeThemeShowcase() {
 
 						{/* Semantic Colors */}
 						<div className="space-y-4">
-							<h3 className="text-lg font-semibold" style={{ color: theme.functional.textPrimary }}>
+							<h3
+								className="text-lg font-semibold"
+								style={{ color: theme.functional.textPrimary }}
+							>
 								Semantic Colors
 							</h3>
 							<div className="space-y-3">
@@ -287,7 +303,10 @@ export function AlternativeThemeShowcase() {
 
 						{/* Functional Colors */}
 						<div className="space-y-4">
-							<h3 className="text-lg font-semibold" style={{ color: theme.functional.textPrimary }}>
+							<h3
+								className="text-lg font-semibold"
+								style={{ color: theme.functional.textPrimary }}
+							>
 								Text & UI Colors
 							</h3>
 							<div className="space-y-3">
@@ -306,7 +325,10 @@ export function AlternativeThemeShowcase() {
 											}}
 										/>
 										<div>
-											<p className="text-xs" style={{ color: theme.functional.textPrimary }}>
+											<p
+												className="text-xs"
+												style={{ color: theme.functional.textPrimary }}
+											>
 												{key}
 											</p>
 											<p
@@ -323,7 +345,10 @@ export function AlternativeThemeShowcase() {
 
 						{/* Neutral Scale */}
 						<div className="space-y-4">
-							<h3 className="text-lg font-semibold" style={{ color: theme.functional.textPrimary }}>
+							<h3
+								className="text-lg font-semibold"
+								style={{ color: theme.functional.textPrimary }}
+							>
 								Neutral Scale
 							</h3>
 							<div className="grid grid-cols-5 gap-1">
@@ -336,7 +361,10 @@ export function AlternativeThemeShowcase() {
 												borderColor: getBorderColor(),
 											}}
 										/>
-										<p className="text-xs" style={{ color: theme.functional.textMuted }}>
+										<p
+											className="text-xs"
+											style={{ color: theme.functional.textMuted }}
+										>
 											{key}
 										</p>
 									</div>
@@ -347,7 +375,10 @@ export function AlternativeThemeShowcase() {
 
 					{/* Component Examples */}
 					<div className="space-y-8">
-						<h3 className="text-2xl font-semibold" style={{ color: theme.functional.textPrimary }}>
+						<h3
+							className="text-2xl font-semibold"
+							style={{ color: theme.functional.textPrimary }}
+						>
 							Component Preview
 						</h3>
 
@@ -355,13 +386,17 @@ export function AlternativeThemeShowcase() {
 						<div
 							className="p-4 rounded-2xl shadow-lg border"
 							style={{
-								backgroundColor: theme.type === 'dark' ? theme.neutral[900] : theme.neutral[0],
+								backgroundColor:
+									theme.type === 'dark' ? theme.neutral[900] : theme.neutral[0],
 								borderColor: getBorderColor(),
 							}}
 						>
 							<div className="flex items-center justify-between">
 								<div className="flex items-center gap-6">
-									<h4 className="text-xl font-bold" style={{ color: theme.brand.primary }}>
+									<h4
+										className="text-xl font-bold"
+										style={{ color: theme.brand.primary }}
+									>
 										RITE
 									</h4>
 									<nav className="flex gap-4">
@@ -371,12 +406,16 @@ export function AlternativeThemeShowcase() {
 												className="px-3 py-1 rounded-lg transition-colors cursor-pointer"
 												style={{ color: theme.functional.textSecondary }}
 												onMouseEnter={(e) => {
-													e.currentTarget.style.backgroundColor = theme.interactive.hover;
-													e.currentTarget.style.color = theme.brand.primary;
+													e.currentTarget.style.backgroundColor =
+														theme.interactive.hover;
+													e.currentTarget.style.color =
+														theme.brand.primary;
 												}}
 												onMouseLeave={(e) => {
-													e.currentTarget.style.backgroundColor = 'transparent';
-													e.currentTarget.style.color = theme.functional.textSecondary;
+													e.currentTarget.style.backgroundColor =
+														'transparent';
+													e.currentTarget.style.color =
+														theme.functional.textSecondary;
 												}}
 											>
 												{item}
@@ -402,7 +441,10 @@ export function AlternativeThemeShowcase() {
 							<div
 								className="p-6 rounded-2xl shadow-lg border transition-all hover:scale-105"
 								style={{
-									backgroundColor: theme.type === 'dark' ? theme.neutral[700] : theme.neutral[0],
+									backgroundColor:
+										theme.type === 'dark'
+											? theme.neutral[700]
+											: theme.neutral[0],
 									borderColor: getBorderColor(),
 								}}
 							>
@@ -418,11 +460,17 @@ export function AlternativeThemeShowcase() {
 								>
 									Event Card
 								</h4>
-								<p className="mb-4" style={{ color: theme.functional.textSecondary }}>
+								<p
+									className="mb-4"
+									style={{ color: theme.functional.textSecondary }}
+								>
 									Experience the energy of live music
 								</p>
 								<div className="flex items-center justify-between">
-									<span className="text-sm" style={{ color: theme.functional.textMuted }}>
+									<span
+										className="text-sm"
+										style={{ color: theme.functional.textMuted }}
+									>
 										March 25, 2025
 									</span>
 									<span
@@ -446,13 +494,20 @@ export function AlternativeThemeShowcase() {
 								}}
 							>
 								<h4 className="text-lg font-semibold mb-2">Featured Event</h4>
-								<p className="mb-4 opacity-90">Don't miss this exclusive performance</p>
+								<p className="mb-4 opacity-90">
+									Don't miss this exclusive performance
+								</p>
 								<button
 									className="w-full px-4 py-2 rounded-lg font-medium transition-all shadow-sm"
 									style={{
 										backgroundColor:
-											theme.type === 'light' ? theme.neutral[900] : 'rgba(255,255,255,0.2)',
-										color: theme.type === 'light' ? theme.neutral[0] : theme.neutral[0],
+											theme.type === 'light'
+												? theme.neutral[900]
+												: 'rgba(255,255,255,0.2)',
+										color:
+											theme.type === 'light'
+												? theme.neutral[0]
+												: theme.neutral[0],
 									}}
 								>
 									Get Tickets
@@ -467,10 +522,15 @@ export function AlternativeThemeShowcase() {
 									borderColor: theme.accent,
 								}}
 							>
-								<div className="text-3xl font-bold mb-2" style={{ color: theme.accent }}>
+								<div
+									className="text-3xl font-bold mb-2"
+									style={{ color: theme.accent }}
+								>
 									3,247
 								</div>
-								<p style={{ color: theme.functional.textPrimary }}>Total Attendees</p>
+								<p style={{ color: theme.functional.textPrimary }}>
+									Total Attendees
+								</p>
 								<div className="mt-4 flex gap-2">
 									<span
 										className="px-2 py-1 rounded text-xs font-medium"
@@ -481,7 +541,10 @@ export function AlternativeThemeShowcase() {
 									>
 										+18%
 									</span>
-									<span className="text-sm" style={{ color: theme.functional.textMuted }}>
+									<span
+										className="text-sm"
+										style={{ color: theme.functional.textMuted }}
+									>
 										this month
 									</span>
 								</div>
@@ -490,7 +553,10 @@ export function AlternativeThemeShowcase() {
 
 						{/* Button Examples */}
 						<div className="space-y-6">
-							<h4 className="text-lg font-medium" style={{ color: theme.functional.textPrimary }}>
+							<h4
+								className="text-lg font-medium"
+								style={{ color: theme.functional.textPrimary }}
+							>
 								Button Collection
 							</h4>
 							<div className="flex flex-wrap gap-4">
@@ -517,7 +583,10 @@ export function AlternativeThemeShowcase() {
 									className="px-6 py-3 rounded-xl font-medium transition-all hover:opacity-90 shadow-sm"
 									style={{
 										backgroundColor: theme.accent,
-										color: theme.type === 'light' ? theme.neutral[900] : theme.neutral[0],
+										color:
+											theme.type === 'light'
+												? theme.neutral[900]
+												: theme.neutral[0],
 									}}
 								>
 									Accent
@@ -539,7 +608,10 @@ export function AlternativeThemeShowcase() {
 
 				{/* Form Components Testing */}
 				<div className="space-y-6">
-					<h3 className="text-xl font-semibold" style={{ color: theme.functional.textPrimary }}>
+					<h3
+						className="text-xl font-semibold"
+						style={{ color: theme.functional.textPrimary }}
+					>
 						Form Components
 					</h3>
 					<div className="grid md:grid-cols-2 gap-6">
@@ -579,13 +651,17 @@ export function AlternativeThemeShowcase() {
 				<div
 					className="p-6 rounded-2xl font-mono text-sm overflow-x-auto border shadow-lg"
 					style={{
-						backgroundColor: theme.type === 'dark' ? theme.neutral[900] : theme.neutral[50],
+						backgroundColor:
+							theme.type === 'dark' ? theme.neutral[900] : theme.neutral[50],
 						color: theme.functional.textSecondary,
 						borderColor: getBorderColor(),
 					}}
 				>
 					<div className="flex items-center justify-between mb-4">
-						<h4 className="font-sans font-medium" style={{ color: theme.functional.textPrimary }}>
+						<h4
+							className="font-sans font-medium"
+							style={{ color: theme.functional.textPrimary }}
+						>
 							CSS Variables
 						</h4>
 						<button

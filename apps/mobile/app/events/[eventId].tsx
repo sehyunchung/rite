@@ -85,7 +85,9 @@ export default function EventDetailScreen() {
 			<Card className="mb-6 bg-card border-border rounded-lg">
 				<CardHeader className="p-6">
 					<View className="flex-row items-center justify-between">
-						<CardTitle className="text-foreground text-2xl font-bold">{event.name}</CardTitle>
+						<CardTitle className="text-foreground text-2xl font-bold">
+							{event.name}
+						</CardTitle>
 						<View
 							className={`rounded-full px-3 py-1 ${
 								event.status === 'active' ? 'bg-green-500/20' : 'bg-neutral-600'
@@ -104,14 +106,22 @@ export default function EventDetailScreen() {
 				<CardContent className="p-6 pt-0">
 					<View className="gap-3">
 						<View className="flex-row items-center">
-							<Ionicons name="location" size={20} color={themeColors.text.secondary} />
+							<Ionicons
+								name="location"
+								size={20}
+								color={themeColors.text.secondary}
+							/>
 							<Typography variant="body" color="secondary" className="ml-2">
 								{event.venue.name}
 							</Typography>
 						</View>
 
 						<View className="flex-row items-center">
-							<Ionicons name="calendar" size={20} color={themeColors.text.secondary} />
+							<Ionicons
+								name="calendar"
+								size={20}
+								color={themeColors.text.secondary}
+							/>
 							<Typography variant="body" color="secondary" className="ml-2">
 								{formatDate(event.date)}
 							</Typography>
@@ -137,7 +147,11 @@ export default function EventDetailScreen() {
 						<CardContent className="p-6">
 							<View className="flex-row items-center justify-between">
 								<View className="flex-1">
-									<Typography variant="body" color="default" className="font-medium">
+									<Typography
+										variant="body"
+										color="default"
+										className="font-medium"
+									>
 										{slot.djName}
 									</Typography>
 									<Typography variant="caption" color="primary">

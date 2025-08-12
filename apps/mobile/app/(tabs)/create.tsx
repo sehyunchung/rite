@@ -216,7 +216,8 @@ export default function CreateTab() {
 				<View
 					className={containerClassName}
 					style={{
-						paddingBottom: Platform.OS === 'ios' ? 124 : Platform.OS === 'web' ? 84 : 104,
+						paddingBottom:
+							Platform.OS === 'ios' ? 124 : Platform.OS === 'web' ? 84 : 104,
 					}}
 				>
 					<Typography
@@ -333,8 +334,15 @@ export default function CreateTab() {
 								<Typography variant="label" color="default">
 									DJ Lineup
 								</Typography>
-								<TouchableOpacity className="flex-row items-center" onPress={addDjSlot}>
-									<Ionicons name="add" size={20} color={themeColors.brand.primary} />
+								<TouchableOpacity
+									className="flex-row items-center"
+									onPress={addDjSlot}
+								>
+									<Ionicons
+										name="add"
+										size={20}
+										color={themeColors.brand.primary}
+									/>
 									<Typography variant="button" color="primary" className="ml-1">
 										Add Slot
 									</Typography>
@@ -348,7 +356,10 @@ export default function CreateTab() {
 								accessibilityLabel="DJ lineup slots"
 							>
 								{djSlots.map((slot, index) => (
-									<Card key={slot.id} className="bg-neutral-700 border-neutral-600 p-4">
+									<Card
+										key={slot.id}
+										className="bg-neutral-700 border-neutral-600 p-4"
+									>
 										<View className="flex-row justify-between items-center mb-3">
 											<Typography variant="body" color="default">
 												Slot {index + 1}
@@ -377,17 +388,27 @@ export default function CreateTab() {
 												{/* Time Range */}
 												<View
 													className={
-														isLargeScreen ? 'flex-row gap-3 flex-1' : 'flex-row gap-3 mb-3'
+														isLargeScreen
+															? 'flex-row gap-3 flex-1'
+															: 'flex-row gap-3 mb-3'
 													}
 												>
 													<View className="flex-1">
-														<Typography variant="caption" color="secondary" className="mb-1">
+														<Typography
+															variant="caption"
+															color="secondary"
+															className="mb-1"
+														>
 															Start Time
 														</Typography>
 														<Input
 															value={slot.startTime}
 															onChangeText={(value: string) =>
-																updateDjSlot(slot.id, 'startTime', value)
+																updateDjSlot(
+																	slot.id,
+																	'startTime',
+																	value
+																)
 															}
 															placeholder="22:00"
 															className="bg-neutral-800 border-neutral-600 text-xs"
@@ -396,13 +417,21 @@ export default function CreateTab() {
 														/>
 													</View>
 													<View className="flex-1">
-														<Typography variant="caption" color="secondary" className="mb-1">
+														<Typography
+															variant="caption"
+															color="secondary"
+															className="mb-1"
+														>
 															End Time
 														</Typography>
 														<Input
 															value={slot.endTime}
 															onChangeText={(value: string) =>
-																updateDjSlot(slot.id, 'endTime', value)
+																updateDjSlot(
+																	slot.id,
+																	'endTime',
+																	value
+																)
 															}
 															placeholder="23:00"
 															className="bg-neutral-800 border-neutral-600 text-xs"
@@ -413,16 +442,32 @@ export default function CreateTab() {
 												</View>
 
 												{/* DJ info row */}
-												<View className={isLargeScreen ? 'flex-row gap-3 flex-1' : ''}>
+												<View
+													className={
+														isLargeScreen ? 'flex-row gap-3 flex-1' : ''
+													}
+												>
 													{/* DJ Name */}
-													<View className={isLargeScreen ? 'flex-1' : 'mb-3'}>
-														<Typography variant="caption" color="secondary" className="mb-1">
+													<View
+														className={
+															isLargeScreen ? 'flex-1' : 'mb-3'
+														}
+													>
+														<Typography
+															variant="caption"
+															color="secondary"
+															className="mb-1"
+														>
 															DJ Name (optional)
 														</Typography>
 														<Input
 															value={slot.djName}
 															onChangeText={(value: string) =>
-																updateDjSlot(slot.id, 'djName', value)
+																updateDjSlot(
+																	slot.id,
+																	'djName',
+																	value
+																)
 															}
 															placeholder="DJ Name"
 															className="bg-neutral-800 border-neutral-600"
@@ -433,13 +478,21 @@ export default function CreateTab() {
 
 													{/* Instagram Handle */}
 													<View className={isLargeScreen ? 'flex-1' : ''}>
-														<Typography variant="caption" color="secondary" className="mb-1">
+														<Typography
+															variant="caption"
+															color="secondary"
+															className="mb-1"
+														>
 															Instagram Handle *
 														</Typography>
 														<Input
 															value={slot.djInstagram}
 															onChangeText={(value: string) =>
-																updateDjSlot(slot.id, 'djInstagram', value)
+																updateDjSlot(
+																	slot.id,
+																	'djInstagram',
+																	value
+																)
 															}
 															placeholder="@username"
 															className="bg-neutral-800 border-neutral-600"
@@ -459,14 +512,18 @@ export default function CreateTab() {
 						<View
 							accessibilityLiveRegion="polite"
 							accessibilityLabel={
-								isSubmitting ? 'Creating event in progress' : 'Ready to create event'
+								isSubmitting
+									? 'Creating event in progress'
+									: 'Ready to create event'
 							}
 						>
 							<Button
 								onPress={handleCreateEvent}
 								className={isLargeScreen ? 'mt-8 self-start px-8' : 'mt-4'}
 								disabled={isSubmitting}
-								accessibilityLabel={isSubmitting ? 'Creating event, please wait' : 'Create Event'}
+								accessibilityLabel={
+									isSubmitting ? 'Creating event, please wait' : 'Create Event'
+								}
 								accessibilityHint="Tap to submit the event form and create your event"
 								testID="submit-create-event-button"
 							>

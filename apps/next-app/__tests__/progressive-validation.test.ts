@@ -273,7 +273,10 @@ describe('ProgressiveValidator', () => {
 
 		validator.addValidator((value, context) => {
 			if (context?.minLength && value.length < context.minLength) {
-				return { isValid: false, error: `Must be at least ${context.minLength} characters` };
+				return {
+					isValid: false,
+					error: `Must be at least ${context.minLength} characters`,
+				};
 			}
 			return { isValid: true };
 		});

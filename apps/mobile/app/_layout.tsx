@@ -45,7 +45,9 @@ export default function RootLayout() {
 					backgroundColor: 'hsl(210deg 15% 12%)',
 				}}
 			>
-				<Text style={{ color: 'hsl(225deg 100% 75%)', fontSize: 24 }}>Loading fonts...</Text>
+				<Text style={{ color: 'hsl(225deg 100% 75%)', fontSize: 24 }}>
+					Loading fonts...
+				</Text>
 			</View>
 		);
 	}
@@ -60,7 +62,10 @@ export default function RootLayout() {
 								<NavigationThemeWrapper>
 									<View className="flex-1 h-full min-h-[100dvh]">
 										<Stack>
-											<Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+											<Stack.Screen
+												name="(tabs)"
+												options={{ headerShown: false }}
+											/>
 											<Stack.Screen
 												name="auth"
 												options={{

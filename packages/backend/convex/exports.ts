@@ -78,7 +78,8 @@ const validateEvent = (
 	Effect.gen(function* () {
 		const event = yield* Effect.tryPromise({
 			try: () => ctx.db.get(eventId),
-			catch: (error) => new DataRetrievalError('Failed to retrieve event', 'get_event', error),
+			catch: (error) =>
+				new DataRetrievalError('Failed to retrieve event', 'get_event', error),
 		});
 
 		if (!event) {
@@ -247,7 +248,14 @@ const generateExcelData = (data: ExportData) =>
 					).map((dj: any) => [dj.djName, dj.djInstagram, dj.timeslot, dj.count]),
 				},
 				'Event Summary': {
-					headers: ['Event Name', 'Date', 'Venue', 'Total Guests', 'Total DJs', 'Submitted DJs'],
+					headers: [
+						'Event Name',
+						'Date',
+						'Venue',
+						'Total Guests',
+						'Total DJs',
+						'Submitted DJs',
+					],
 					data: [
 						[
 							data.event.name,
@@ -348,7 +356,11 @@ const exportGuestListEffect = (
 					: format === 'google_sheets'
 						? generateGoogleSheetsData(aggregatedData)
 						: Effect.fail(
-								new ExportDataError(`Unsupported export format: ${format}`, format, undefined)
+								new ExportDataError(
+									`Unsupported export format: ${format}`,
+									format,
+									undefined
+								)
 							);
 
 		return formatData;
@@ -375,7 +387,9 @@ export const exportGuestListCSV = query({
 		userId: v.id('users'),
 	},
 	handler: async (ctx, args) => {
-		return await Effect.runPromise(exportGuestListEffect(ctx, args.eventId, args.userId, 'csv'));
+		return await Effect.runPromise(
+			exportGuestListEffect(ctx, args.eventId, args.userId, 'csv')
+		);
 	},
 });
 
@@ -385,7 +399,9 @@ export const exportGuestListExcel = query({
 		userId: v.id('users'),
 	},
 	handler: async (ctx, args) => {
-		return await Effect.runPromise(exportGuestListEffect(ctx, args.eventId, args.userId, 'excel'));
+		return await Effect.runPromise(
+			exportGuestListEffect(ctx, args.eventId, args.userId, 'excel')
+		);
 	},
 });
 
@@ -395,7 +411,9 @@ export const exportGuestListPDF = query({
 		userId: v.id('users'),
 	},
 	handler: async (ctx, args) => {
-		return await Effect.runPromise(exportGuestListEffect(ctx, args.eventId, args.userId, 'pdf'));
+		return await Effect.runPromise(
+			exportGuestListEffect(ctx, args.eventId, args.userId, 'pdf')
+		);
 	},
 });
 

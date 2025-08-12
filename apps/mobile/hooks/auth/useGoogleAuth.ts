@@ -29,10 +29,14 @@ export const useGoogleAuth = (convex: ConvexReactClient) => {
 				);
 
 				if (!userInfoResponse.ok) {
-					throw new AuthError('Failed to fetch user info from Google', 'GOOGLE_API_ERROR', {
-						status: userInfoResponse.status,
-						statusText: userInfoResponse.statusText,
-					});
+					throw new AuthError(
+						'Failed to fetch user info from Google',
+						'GOOGLE_API_ERROR',
+						{
+							status: userInfoResponse.status,
+							statusText: userInfoResponse.statusText,
+						}
+					);
 				}
 
 				const googleUser: GoogleUser = await userInfoResponse.json();

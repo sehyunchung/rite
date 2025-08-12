@@ -160,7 +160,10 @@ export function EventDetailClient({ eventId, userId, locale }: EventDetailClient
 				<div className="max-w-7xl mx-auto">
 					{/* Back Button - Desktop only (mobile uses MobileLayout navigation) */}
 					<div className="hidden md:block mb-4">
-						<Button variant="outline" onClick={() => router.push(`/${locale}/dashboard`)}>
+						<Button
+							variant="outline"
+							onClick={() => router.push(`/${locale}/dashboard`)}
+						>
 							{t('backToDashboard')}
 						</Button>
 					</div>
@@ -173,11 +176,17 @@ export function EventDetailClient({ eventId, userId, locale }: EventDetailClient
 									<Typography variant="h1" className="text-xl md:text-3xl">
 										{event.name}
 									</Typography>
-									<Badge variant={event.status === 'active' ? 'primary' : 'default'}>
+									<Badge
+										variant={event.status === 'active' ? 'primary' : 'default'}
+									>
 										{tStatus(event.status)}
 									</Badge>
 								</div>
-								<Typography variant="body" color="secondary" className="text-sm md:text-base">
+								<Typography
+									variant="body"
+									color="secondary"
+									className="text-sm md:text-base"
+								>
 									{event.venue.name} • {event.date}
 								</Typography>
 							</div>
@@ -192,14 +201,24 @@ export function EventDetailClient({ eventId, userId, locale }: EventDetailClient
 								<Button
 									variant="outline"
 									size="sm"
-									onClick={() => router.push(`/${locale}/events/${event._id}/submissions`)}
+									onClick={() =>
+										router.push(`/${locale}/events/${event._id}/submissions`)
+									}
 								>
 									<ClipboardListIcon className="w-4 h-4" />
-									<span className="ml-1 hidden sm:inline">{t('submissions')}</span>
+									<span className="ml-1 hidden sm:inline">
+										{t('submissions')}
+									</span>
 								</Button>
-								<Button variant="outline" size="sm" onClick={() => setShowQRCode(!showQRCode)}>
+								<Button
+									variant="outline"
+									size="sm"
+									onClick={() => setShowQRCode(!showQRCode)}
+								>
 									<QrCodeIcon className="w-4 h-4" />
-									<span className="ml-1 hidden sm:inline">{t('qrCodeButton')}</span>
+									<span className="ml-1 hidden sm:inline">
+										{t('qrCodeButton')}
+									</span>
 								</Button>
 
 								{/* Delete/Cancel buttons */}
@@ -213,7 +232,9 @@ export function EventDetailClient({ eventId, userId, locale }: EventDetailClient
 												className="text-orange-600 hover:text-orange-700 border-orange-300"
 											>
 												<AlertTriangleIcon className="w-4 h-4" />
-												<span className="ml-1 hidden sm:inline">{t('cancel')}</span>
+												<span className="ml-1 hidden sm:inline">
+													{t('cancel')}
+												</span>
 											</Button>
 										) : (
 											<Button
@@ -223,7 +244,9 @@ export function EventDetailClient({ eventId, userId, locale }: EventDetailClient
 												className="text-red-600 hover:text-red-700 border-red-300"
 											>
 												<Trash2Icon className="w-4 h-4" />
-												<span className="ml-1 hidden sm:inline">{t('delete')}</span>
+												<span className="ml-1 hidden sm:inline">
+													{t('delete')}
+												</span>
 											</Button>
 										)}
 									</>
@@ -231,7 +254,11 @@ export function EventDetailClient({ eventId, userId, locale }: EventDetailClient
 							</div>
 						</div>
 						{event.description && (
-							<Typography variant="body-lg" color="secondary" className="mb-4 text-sm md:text-base">
+							<Typography
+								variant="body-lg"
+								color="secondary"
+								className="mb-4 text-sm md:text-base"
+							>
 								{event.description}
 							</Typography>
 						)}
@@ -260,7 +287,9 @@ export function EventDetailClient({ eventId, userId, locale }: EventDetailClient
 							{/* DJ Timeslots */}
 							<Card>
 								<CardHeader>
-									<CardTitle>{t('djLineup', { count: event.timeslots.length })}</CardTitle>
+									<CardTitle>
+										{t('djLineup', { count: event.timeslots.length })}
+									</CardTitle>
 								</CardHeader>
 								<CardContent>
 									{event.timeslots.length > 0 ? (
@@ -272,8 +301,12 @@ export function EventDetailClient({ eventId, userId, locale }: EventDetailClient
 												>
 													<div className="flex-1">
 														<div className="flex items-center space-x-3">
-															<span className="font-medium">{slot.djName}</span>
-															<span className="text-brand-primary">{slot.djInstagram}</span>
+															<span className="font-medium">
+																{slot.djName}
+															</span>
+															<span className="text-brand-primary">
+																{slot.djInstagram}
+															</span>
 														</div>
 														<p className="text-sm text-muted-foreground mt-1">
 															{slot.startTime} - {slot.endTime}
@@ -281,14 +314,18 @@ export function EventDetailClient({ eventId, userId, locale }: EventDetailClient
 													</div>
 													<div className="text-right">
 														<Badge variant="outline">
-															{slot.submissionId ? t('status.submitted') : t('status.pending')}
+															{slot.submissionId
+																? t('status.submitted')
+																: t('status.pending')}
 														</Badge>
 													</div>
 												</div>
 											))}
 										</div>
 									) : (
-										<p className="text-muted-foreground">{t('noDJsScheduled')}</p>
+										<p className="text-muted-foreground">
+											{t('noDJsScheduled')}
+										</p>
 									)}
 								</CardContent>
 							</Card>
@@ -312,16 +349,26 @@ export function EventDetailClient({ eventId, userId, locale }: EventDetailClient
 										<p className="text-muted-foreground">{event.date}</p>
 									</div>
 									<div>
-										<p className="font-medium text-sm">{t('guestListDeadline')}</p>
-										<p className="text-muted-foreground">{event.deadlines.guestList}</p>
+										<p className="font-medium text-sm">
+											{t('guestListDeadline')}
+										</p>
+										<p className="text-muted-foreground">
+											{event.deadlines.guestList}
+										</p>
 									</div>
 									<div>
-										<p className="font-medium text-sm">{t('promoMaterialsDeadline')}</p>
-										<p className="text-muted-foreground">{event.deadlines.promoMaterials}</p>
+										<p className="font-medium text-sm">
+											{t('promoMaterialsDeadline')}
+										</p>
+										<p className="text-muted-foreground">
+											{event.deadlines.promoMaterials}
+										</p>
 									</div>
 									<div>
 										<p className="font-medium text-sm">{t('paymentDue')}</p>
-										<p className="text-muted-foreground">{event.payment.dueDate}</p>
+										<p className="text-muted-foreground">
+											{event.payment.dueDate}
+										</p>
 									</div>
 								</CardContent>
 							</Card>
@@ -335,17 +382,21 @@ export function EventDetailClient({ eventId, userId, locale }: EventDetailClient
 									<div>
 										<p className="font-medium text-sm">{t('totalAmount')}</p>
 										<p className="text-muted-foreground">
-											{event.payment.amount.toLocaleString()} {event.payment.currency}
+											{event.payment.amount.toLocaleString()}{' '}
+											{event.payment.currency}
 										</p>
 									</div>
 									<div>
 										<p className="font-medium text-sm">{t('perDJ')}</p>
 										<p className="text-muted-foreground">
-											{event.payment.perDJ.toLocaleString()} {event.payment.currency}
+											{event.payment.perDJ.toLocaleString()}{' '}
+											{event.payment.currency}
 										</p>
 									</div>
 									<div>
-										<p className="font-medium text-sm">{t('guestLimitPerDJ')}</p>
+										<p className="font-medium text-sm">
+											{t('guestLimitPerDJ')}
+										</p>
 										<p className="text-muted-foreground">
 											{event.guestLimitPerDJ} {t('guests')}
 										</p>
@@ -374,7 +425,9 @@ export function EventDetailClient({ eventId, userId, locale }: EventDetailClient
 						<div className="mt-8">
 							<Card className="max-w-md mx-auto">
 								<CardHeader>
-									<CardTitle className="text-center">{t('qrCode.title')}</CardTitle>
+									<CardTitle className="text-center">
+										{t('qrCode.title')}
+									</CardTitle>
 								</CardHeader>
 								<CardContent className="text-center">
 									<div className="flex justify-center mb-4">
@@ -383,7 +436,9 @@ export function EventDetailClient({ eventId, userId, locale }: EventDetailClient
 											className="w-48 h-48 border rounded-lg p-4 bg-neutral-0"
 										/>
 									</div>
-									<p className="text-sm text-muted-foreground">{t('qrCode.description')}</p>
+									<p className="text-sm text-muted-foreground">
+										{t('qrCode.description')}
+									</p>
 								</CardContent>
 							</Card>
 						</div>
@@ -400,7 +455,9 @@ export function EventDetailClient({ eventId, userId, locale }: EventDetailClient
 									</CardTitle>
 								</CardHeader>
 								<CardContent>
-									<p className="text-sm text-muted-foreground mb-4">{t('deleteConfirmMessage')}</p>
+									<p className="text-sm text-muted-foreground mb-4">
+										{t('deleteConfirmMessage')}
+									</p>
 									<div className="flex justify-end space-x-2">
 										<Button
 											variant="outline"
@@ -409,7 +466,11 @@ export function EventDetailClient({ eventId, userId, locale }: EventDetailClient
 										>
 											{t('cancelAction')}
 										</Button>
-										<Button variant="destructive" onClick={handleDeleteEvent} disabled={isDeleting}>
+										<Button
+											variant="destructive"
+											onClick={handleDeleteEvent}
+											disabled={isDeleting}
+										>
 											{isDeleting ? t('deleting') : t('deleteEvent')}
 										</Button>
 									</div>
@@ -429,16 +490,20 @@ export function EventDetailClient({ eventId, userId, locale }: EventDetailClient
 									</CardTitle>
 								</CardHeader>
 								<CardContent>
-									<p className="text-sm text-muted-foreground mb-4">{t('cancelConfirmMessage')}</p>
+									<p className="text-sm text-muted-foreground mb-4">
+										{t('cancelConfirmMessage')}
+									</p>
 									<div className="space-y-4">
 										<div>
-											<Label htmlFor="cancelReason">{t('cancellationReason')}</Label>
+											<Label htmlFor="cancelReason">
+												{t('cancellationReason')}
+											</Label>
 											<Textarea
 												id="cancelReason"
 												value={cancelReason}
-												onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-													setCancelReason(e.target.value)
-												}
+												onChange={(
+													e: React.ChangeEvent<HTMLTextAreaElement>
+												) => setCancelReason(e.target.value)}
 												placeholder={t('cancellationReasonPlaceholder')}
 												rows={3}
 											/>

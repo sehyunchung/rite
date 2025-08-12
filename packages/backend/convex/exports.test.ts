@@ -192,7 +192,14 @@ describe('Export Functions', () => {
 						data: [['DJ Test', '@djtest', '20:00 - 21:00', 1]],
 					},
 					'Event Summary': {
-						headers: ['Event Name', 'Date', 'Venue', 'Total Guests', 'Total DJs', 'Submitted DJs'],
+						headers: [
+							'Event Name',
+							'Date',
+							'Venue',
+							'Total Guests',
+							'Total DJs',
+							'Submitted DJs',
+						],
 						data: [['Test Event', '2024-12-31', 'Test Venue', 1, 1, 1]],
 					},
 				},

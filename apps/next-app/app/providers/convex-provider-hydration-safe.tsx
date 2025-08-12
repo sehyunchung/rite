@@ -72,7 +72,8 @@ export function ConvexProviderHydrationSafe({
 						Configuration Error
 					</Typography>
 					<Typography variant="body" color="secondary" className="mb-4">
-						NEXT_PUBLIC_CONVEX_URL is not configured. Please check your environment variables.
+						NEXT_PUBLIC_CONVEX_URL is not configured. Please check your environment
+						variables.
 					</Typography>
 					<Typography variant="caption" color="secondary">
 						See CLAUDE.md for setup instructions.

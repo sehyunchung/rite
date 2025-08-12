@@ -109,7 +109,9 @@ export function EventEditForm({ event, onEventUpdated }: EventEditFormProps) {
 	};
 
 	const updateTimeslot = (id: string, field: keyof Timeslot, value: string) => {
-		setTimeslots(timeslots.map((slot) => (slot.id === id ? { ...slot, [field]: value } : slot)));
+		setTimeslots(
+			timeslots.map((slot) => (slot.id === id ? { ...slot, [field]: value } : slot))
+		);
 
 		const errorKey = `timeslot-${id}-${field}`;
 		if (errors[errorKey]) {
@@ -180,7 +182,8 @@ export function EventEditForm({ event, onEventUpdated }: EventEditFormProps) {
 			timeslots.forEach((slot) => {
 				const slotErrors = validateTimeslot(slot);
 				Object.keys(slotErrors).forEach((key) => {
-					newErrors[`timeslot-${slot.id}-${key}`] = slotErrors[key as keyof typeof slotErrors];
+					newErrors[`timeslot-${slot.id}-${key}`] =
+						slotErrors[key as keyof typeof slotErrors];
 				});
 			});
 
@@ -392,7 +395,9 @@ export function EventEditForm({ event, onEventUpdated }: EventEditFormProps) {
 					{timeslots.map((slot, index) => (
 						<div key={slot.id} className="p-4 border rounded-lg space-y-4">
 							<div className="flex items-center justify-between">
-								<h4 className="font-medium">{t('djSlot', { number: index + 1 })}</h4>
+								<h4 className="font-medium">
+									{t('djSlot', { number: index + 1 })}
+								</h4>
 								<Button
 									type="button"
 									variant={deleteConfirm === slot.id ? 'destructive' : 'outline'}
@@ -400,7 +405,9 @@ export function EventEditForm({ event, onEventUpdated }: EventEditFormProps) {
 									onClick={() => removeTimeslot(slot.id)}
 								>
 									<Trash2 className="w-4 h-4" />
-									{deleteConfirm === slot.id ? t('confirmDelete') : t('removeTimeslot')}
+									{deleteConfirm === slot.id
+										? t('confirmDelete')
+										: t('removeTimeslot')}
 								</Button>
 							</div>
 
@@ -410,23 +417,39 @@ export function EventEditForm({ event, onEventUpdated }: EventEditFormProps) {
 									<Input
 										id={`djName-${slot.id}`}
 										value={slot.djName}
-										onChange={(e) => updateTimeslot(slot.id, 'djName', e.target.value)}
+										onChange={(e) =>
+											updateTimeslot(slot.id, 'djName', e.target.value)
+										}
 										placeholder={t('djName')}
-										className={errors[`timeslot-${slot.id}-djName`] ? 'border-red-500' : ''}
+										className={
+											errors[`timeslot-${slot.id}-djName`]
+												? 'border-red-500'
+												: ''
+										}
 									/>
 									{errors[`timeslot-${slot.id}-djName`] && (
-										<p className="text-sm text-red-500">{errors[`timeslot-${slot.id}-djName`]}</p>
+										<p className="text-sm text-red-500">
+											{errors[`timeslot-${slot.id}-djName`]}
+										</p>
 									)}
 								</div>
 
 								<div className="space-y-2">
-									<Label htmlFor={`djInstagram-${slot.id}`}>{t('djInstagram')} *</Label>
+									<Label htmlFor={`djInstagram-${slot.id}`}>
+										{t('djInstagram')} *
+									</Label>
 									<Input
 										id={`djInstagram-${slot.id}`}
 										value={slot.djInstagram}
-										onChange={(e) => updateTimeslot(slot.id, 'djInstagram', e.target.value)}
+										onChange={(e) =>
+											updateTimeslot(slot.id, 'djInstagram', e.target.value)
+										}
 										placeholder="@djhandle"
-										className={errors[`timeslot-${slot.id}-djInstagram`] ? 'border-red-500' : ''}
+										className={
+											errors[`timeslot-${slot.id}-djInstagram`]
+												? 'border-red-500'
+												: ''
+										}
 									/>
 									{errors[`timeslot-${slot.id}-djInstagram`] && (
 										<p className="text-sm text-red-500">
@@ -436,13 +459,21 @@ export function EventEditForm({ event, onEventUpdated }: EventEditFormProps) {
 								</div>
 
 								<div className="space-y-2">
-									<Label htmlFor={`startTime-${slot.id}`}>{t('startTime')} *</Label>
+									<Label htmlFor={`startTime-${slot.id}`}>
+										{t('startTime')} *
+									</Label>
 									<Input
 										id={`startTime-${slot.id}`}
 										type="time"
 										value={slot.startTime}
-										onChange={(e) => updateTimeslot(slot.id, 'startTime', e.target.value)}
-										className={errors[`timeslot-${slot.id}-startTime`] ? 'border-red-500' : ''}
+										onChange={(e) =>
+											updateTimeslot(slot.id, 'startTime', e.target.value)
+										}
+										className={
+											errors[`timeslot-${slot.id}-startTime`]
+												? 'border-red-500'
+												: ''
+										}
 									/>
 									{errors[`timeslot-${slot.id}-startTime`] && (
 										<p className="text-sm text-red-500">
@@ -457,11 +488,19 @@ export function EventEditForm({ event, onEventUpdated }: EventEditFormProps) {
 										id={`endTime-${slot.id}`}
 										type="time"
 										value={slot.endTime}
-										onChange={(e) => updateTimeslot(slot.id, 'endTime', e.target.value)}
-										className={errors[`timeslot-${slot.id}-endTime`] ? 'border-red-500' : ''}
+										onChange={(e) =>
+											updateTimeslot(slot.id, 'endTime', e.target.value)
+										}
+										className={
+											errors[`timeslot-${slot.id}-endTime`]
+												? 'border-red-500'
+												: ''
+										}
 									/>
 									{errors[`timeslot-${slot.id}-endTime`] && (
-										<p className="text-sm text-red-500">{errors[`timeslot-${slot.id}-endTime`]}</p>
+										<p className="text-sm text-red-500">
+											{errors[`timeslot-${slot.id}-endTime`]}
+										</p>
 									)}
 								</div>
 							</div>
@@ -484,11 +523,15 @@ export function EventEditForm({ event, onEventUpdated }: EventEditFormProps) {
 								id="guestListDeadline"
 								type="date"
 								value={formData.deadlines.guestList}
-								onChange={(e) => updateFormData('deadlines.guestList', e.target.value)}
+								onChange={(e) =>
+									updateFormData('deadlines.guestList', e.target.value)
+								}
 								className={errors['deadlines.guestList'] ? 'border-red-500' : ''}
 							/>
 							{errors['deadlines.guestList'] && (
-								<p className="text-sm text-red-500">{errors['deadlines.guestList']}</p>
+								<p className="text-sm text-red-500">
+									{errors['deadlines.guestList']}
+								</p>
 							)}
 						</div>
 
@@ -498,11 +541,17 @@ export function EventEditForm({ event, onEventUpdated }: EventEditFormProps) {
 								id="promoDeadline"
 								type="date"
 								value={formData.deadlines.promoMaterials}
-								onChange={(e) => updateFormData('deadlines.promoMaterials', e.target.value)}
-								className={errors['deadlines.promoMaterials'] ? 'border-red-500' : ''}
+								onChange={(e) =>
+									updateFormData('deadlines.promoMaterials', e.target.value)
+								}
+								className={
+									errors['deadlines.promoMaterials'] ? 'border-red-500' : ''
+								}
 							/>
 							{errors['deadlines.promoMaterials'] && (
-								<p className="text-sm text-red-500">{errors['deadlines.promoMaterials']}</p>
+								<p className="text-sm text-red-500">
+									{errors['deadlines.promoMaterials']}
+								</p>
 							)}
 						</div>
 					</div>

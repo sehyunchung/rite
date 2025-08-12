@@ -101,7 +101,10 @@ export function SubmissionsClient({ eventId, userId, locale }: SubmissionsClient
 				<div className="max-w-7xl mx-auto">
 					{/* Back Button - Desktop only */}
 					<div className="hidden md:block mb-4">
-						<Button variant="outline" onClick={() => router.push(`/${locale}/events/${eventId}`)}>
+						<Button
+							variant="outline"
+							onClick={() => router.push(`/${locale}/events/${eventId}`)}
+						>
 							<ArrowLeft className="w-4 h-4 mr-2" />
 							{t('backToEvent')}
 						</Button>
@@ -144,7 +147,8 @@ export function SubmissionsClient({ eventId, userId, locale }: SubmissionsClient
 									</CardHeader>
 									<CardContent className="space-y-4">
 										<p className="text-sm text-muted-foreground">
-											Unable to load export functionality. Please try refreshing the page.
+											Unable to load export functionality. Please try
+											refreshing the page.
 										</p>
 										<Button onClick={reset} variant="outline" size="sm">
 											Try Again
@@ -175,8 +179,12 @@ export function SubmissionsClient({ eventId, userId, locale }: SubmissionsClient
 												<CardTitle className="flex items-center space-x-3">
 													<User className="w-5 h-5" />
 													<span>{slot.djName}</span>
-													<Badge variant={submission ? 'default' : 'outline'}>
-														{submission ? t('status.submitted') : t('status.pending')}
+													<Badge
+														variant={submission ? 'default' : 'outline'}
+													>
+														{submission
+															? t('status.submitted')
+															: t('status.pending')}
 													</Badge>
 												</CardTitle>
 												<div className="text-sm text-muted-foreground">
@@ -190,35 +198,61 @@ export function SubmissionsClient({ eventId, userId, locale }: SubmissionsClient
 												<div className="space-y-3">
 													<div className="flex items-center space-x-2">
 														<Instagram className="w-4 h-4" />
-														<span className="text-brand-primary">{slot.djInstagram}</span>
+														<span className="text-brand-primary">
+															{slot.djInstagram}
+														</span>
 													</div>
 
 													{submission && (
 														<>
 															{/* Guest List */}
-															{submission.guestList && submission.guestList.length > 0 && (
-																<div>
-																	<p className="font-medium text-sm mb-2">
-																		{t('guestList')} ({submission.guestList.length})
-																	</p>
-																	<div className="space-y-1">
-																		{submission.guestList.map(
-																			(guest: { name: string; phone?: string }, index: number) => (
-																				<div key={index} className="text-sm text-muted-foreground">
-																					{guest.name} {guest.phone && `• ${guest.phone}`}
-																				</div>
+															{submission.guestList &&
+																submission.guestList.length > 0 && (
+																	<div>
+																		<p className="font-medium text-sm mb-2">
+																			{t('guestList')} (
+																			{
+																				submission.guestList
+																					.length
+																			}
 																			)
-																		)}
+																		</p>
+																		<div className="space-y-1">
+																			{submission.guestList.map(
+																				(
+																					guest: {
+																						name: string;
+																						phone?: string;
+																					},
+																					index: number
+																				) => (
+																					<div
+																						key={index}
+																						className="text-sm text-muted-foreground"
+																					>
+																						{guest.name}{' '}
+																						{guest.phone &&
+																							`• ${guest.phone}`}
+																					</div>
+																				)
+																			)}
+																		</div>
 																	</div>
-																</div>
-															)}
+																)}
 
 															{/* Submission Description */}
-															{submission.promoMaterials.description && (
+															{submission.promoMaterials
+																.description && (
 																<div>
-																	<p className="font-medium text-sm mb-1">{t('description')}</p>
+																	<p className="font-medium text-sm mb-1">
+																		{t('description')}
+																	</p>
 																	<p className="text-sm text-muted-foreground">
-																		{submission.promoMaterials.description}
+																		{
+																			submission
+																				.promoMaterials
+																				.description
+																		}
 																	</p>
 																</div>
 															)}
@@ -230,10 +264,16 @@ export function SubmissionsClient({ eventId, userId, locale }: SubmissionsClient
 												<div className="space-y-3">
 													{submission &&
 														submission.promoMaterials.files &&
-														submission.promoMaterials.files.length > 0 && (
+														submission.promoMaterials.files.length >
+															0 && (
 															<div>
 																<p className="font-medium text-sm mb-2">
-																	{t('promoFiles')} ({submission.promoMaterials.files.length})
+																	{t('promoFiles')} (
+																	{
+																		submission.promoMaterials
+																			.files.length
+																	}
+																	)
 																</p>
 																<div className="space-y-1">
 																	{submission.promoMaterials.files.map(
@@ -263,7 +303,9 @@ export function SubmissionsClient({ eventId, userId, locale }: SubmissionsClient
 													{submission && (
 														<div className="text-xs text-muted-foreground">
 															{t('submittedOn')}:{' '}
-															{new Date(submission._creationTime).toLocaleDateString()}
+															{new Date(
+																submission._creationTime
+															).toLocaleDateString()}
 														</div>
 													)}
 
