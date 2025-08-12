@@ -2,16 +2,47 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Test-Driven Development (TDD) - MANDATORY
+
+**This repository follows strict TDD practices. You MUST write tests before implementation.**
+
+### TDD Workflow
+
+1. **RED**: Write failing tests first
+2. **GREEN**: Write minimal code to pass tests
+3. **REFACTOR**: Improve code while keeping tests green
+
+### Testing Commands
+
+- Run all tests: `pnpm test`
+- Watch mode (use during development): `pnpm test:watch`
+- Coverage report: `pnpm test:coverage`
+- Interactive UI: `pnpm test:ui`
+- Test specific workspace: `pnpm --filter=next-app test:watch`
+
+### TDD Requirements
+
+- **NEVER write implementation code without tests**
+- **Minimum coverage: 80% overall, 90% for new code**
+- **Test utilities available**: `@rite/test-utils` package
+- **Pre-commit hooks enforce**: Tests must pass before commits
+
+For detailed TDD guidance, see [TDD-GUIDE.md](./TDD-GUIDE.md) and [example implementation](./docs/examples/tdd-example.md).
+
 ## Build/Run Commands
 
 ### Monorepo Commands (Root)
+
 - Install: `pnpm install`
 - Build: `pnpm run build`
 - Lint: `pnpm run lint`
 - Type check: `pnpm run type-check`
+- Test: `pnpm run test`
+- Test watch: `pnpm run test:watch`
 - Dev backend: `pnpm run dev:backend`
 
 ### Individual Apps
+
 - Next.js: `pnpm run dev:next` or `pnpm --filter=next-app run dev`
 - Mobile: `pnpm run dev:mobile` or `pnpm --filter=mobile run start`
 - Shared Types: `pnpm --filter=@rite/shared-types run build`
@@ -23,6 +54,7 @@ Dual authentication system supporting both Next.js (NextAuth v5) and mobile plat
 ### Environment Configuration
 
 **Next.js (.env.local):**
+
 ```
 NEXTAUTH_URL=http://localhost:8000
 NEXTAUTH_SECRET=your_nextauth_secret_here
@@ -43,6 +75,7 @@ APPLE_SECRET=your_apple_secret
 ```
 
 **Mobile (.env or Expo environment):**
+
 ```
 EXPO_PUBLIC_CONVEX_URL=your_convex_url
 
@@ -76,6 +109,7 @@ apps/mobile/
 ```
 
 **Key Features:**
+
 - **Cross-platform OAuth**: Works on web, iOS, Android, and Expo Go
 - **Modular hooks**: Specialized hooks for different auth operations
 - **Enhanced type safety**: Comprehensive TypeScript interfaces
@@ -86,12 +120,14 @@ apps/mobile/
 ### Google OAuth Configuration
 
 **Google Cloud Console Setup:**
+
 1. Create OAuth 2.0 Client IDs for each platform:
    - **Web application**: For Expo web and development
    - **iOS**: For iOS app and Expo Go
    - **Android**: For Android app
 
 **Platform-specific Redirect URIs:**
+
 - **Web**: `http://localhost:8081` (Expo web development)
 - **iOS/Expo Go**: `com.googleusercontent.apps.[CLIENT-ID]://` (Google URL scheme)
 - **Android**: `com.rite.mobile://` (custom scheme)
@@ -101,16 +137,19 @@ apps/mobile/
 ### OAuth Flow Types
 
 **Web Platform (Implicit Flow):**
+
 - Uses `response_type=token` for direct access token
 - Handles token from URL hash parameters
 - Immediate authentication without server exchange
 
 **Mobile Platform (Authorization Code Flow):**
+
 - Uses `response_type=code` with `shouldAutoExchangeCode=true`
 - Server-side token exchange for enhanced security
 - Supports both Expo Go and standalone apps
 
 ### OAuth Providers
+
 - **Google**: ✅ **Complete** - Cross-platform OAuth with web/iOS/Android support
 - **Apple**: 📋 Planned but not implemented
 - **Instagram**: ✅ Custom OAuth proxy (Cloudflare Worker) transforms to OIDC format
@@ -121,6 +160,7 @@ apps/mobile/
 ### App Configuration (app.config.js)
 
 **Dynamic URL Schemes for OAuth Security:**
+
 ```javascript
 {
   ios: {
@@ -159,6 +199,7 @@ apps/mobile/
 ```
 
 **Security Benefits:**
+
 - No hardcoded OAuth client IDs in repository
 - URL schemes generated dynamically from environment variables
 - Fails gracefully when environment variables are missing
@@ -180,6 +221,7 @@ rite/
 ```
 
 ### Tech Stack
+
 - **Monorepo**: pnpm workspaces + Turborepo
 - **Frontend**: Next.js 15, React 18, TypeScript, Turbopack
 - **Mobile**: Expo SDK 53, React Native 0.79.5
@@ -191,11 +233,14 @@ rite/
 - **Validation**: ArkType
 
 ### Key Files
+
 **Next.js Authentication:**
+
 - Auth config: `/apps/next-app/app/lib/auth.ts`
 - Providers: `/apps/next-app/app/providers/`
 
 **Mobile Authentication:**
+
 - AuthContext: `/apps/mobile/contexts/AuthContext.tsx`
 - Auth utilities: `/apps/mobile/lib/auth/`
 - Auth hooks: `/apps/mobile/hooks/auth/`
@@ -204,6 +249,7 @@ rite/
 - Error handling: `/apps/mobile/components/AuthErrorAlert.tsx`
 
 **Shared:**
+
 - Convex functions: `/packages/backend/convex/`
 - UI components: `/packages/ui/src/components/`
 - Design tokens: `/packages/ui/src/design-tokens/`
@@ -211,6 +257,7 @@ rite/
 - Theme switcher: `/apps/next-app/app/components/ThemeSwitcher.tsx`
 
 ### Database Schema (Convex)
+
 - `users` - Authentication and profiles
 - `events` - Event information
 - `timeslots` - DJ slots with submission tokens (pre-confirmed DJs)
@@ -222,13 +269,16 @@ rite/
 Dynamic theme system with comprehensive token architecture and 2 curated themes:
 
 ### Dynamic Theme System
+
 Built with CSS variables for real-time theme switching:
 
 **Available Themes:**
+
 - **Josh Comeau** (Dark): Sophisticated dark theme with atmospheric gradients and vibrant accents
 - **Josh Comeau Light** (Light): Sophisticated light theme with atmospheric gradients and vibrant accents
 
 **Theme Structure:**
+
 ```typescript
 {
   name: string;
@@ -244,7 +294,9 @@ Built with CSS variables for real-time theme switching:
 ```
 
 ### CSS Variables Integration
+
 All themes generate CSS variables for seamless switching:
+
 ```css
 :root {
   --brand-primary: hsl(293deg 100% 66%);
@@ -256,15 +308,18 @@ All themes generate CSS variables for seamless switching:
 ```
 
 ### Theme Switching
+
 **ThemeSwitcher Component**: `/apps/next-app/app/components/ThemeSwitcher.tsx`
+
 - Positioned next to language selector in header
 - Persists selection in localStorage
 - Real-time CSS variable updates
 - Cross-platform compatible
 
 **Usage:**
+
 ```typescript
-import { ThemeSwitcher } from '@/components/ThemeSwitcher';
+import { ThemeSwitcher } from "@/components/ThemeSwitcher";
 
 // Theme switcher automatically handles:
 // - Loading saved theme from localStorage
@@ -273,7 +328,9 @@ import { ThemeSwitcher } from '@/components/ThemeSwitcher';
 ```
 
 ### Tailwind Configuration
+
 **Next.js**: Uses CSS variables with fallbacks for dynamic theming
+
 ```javascript
 colors: {
   'brand-primary': 'var(--brand-primary, #E946FF)',
@@ -285,6 +342,7 @@ colors: {
 ```
 
 **Mobile**: Static design tokens (dynamic theming planned)
+
 ```javascript
 colors: {
   'brand-primary': tokens.colors.brand.primary,
@@ -293,16 +351,19 @@ colors: {
 ```
 
 ### Typography
+
 - Font: SUIT Variable (100-900 weights)
 - Variants: h1-h6, body, button, label, caption
 - Consistent across all themes
 
 ### Components (@rite/ui)
+
 **Base**: Button, Input, Textarea, Select, Card, Label, Badge
 **Advanced**: ActionCard, EventCard, Typography, Dropzone, QRCode, ThemeSwitcher
 **Loading**: LoadingIndicator, FullScreenLoading
 
 **Platform-specific implementations:**
+
 ```
 button/
 ├── button.web.tsx    # Radix UI with CSS variable support
@@ -311,11 +372,13 @@ button/
 ```
 
 **Theme-Aware Components:**
+
 - Button text adapts automatically (white/black based on theme)
 - All components use CSS variables for dynamic theming
 - Cross-platform compatibility maintained
 
 ### "use dom" Components
+
 Select components support Expo's "use dom" directive for maximum web compatibility:
 
 ```
@@ -335,12 +398,14 @@ dropzone/
 ```
 
 **Benefits:**
+
 - Direct access to Web APIs (Canvas, File API, DOM manipulation)
 - Better performance than WebView approach
 - Reduced platform-specific code duplication
 - Access to mature web libraries (qrcode, file validation, etc.)
 
 **Security Features:**
+
 - Safe SVG rendering using DOMParser (prevents XSS)
 - Dual-layer file validation (MIME type + extension)
 - Input sanitization and validation
@@ -350,6 +415,7 @@ dropzone/
 next-intl with Korean/English support:
 
 ### Structure
+
 ```
 /app/[locale]/
 ├── layout.tsx
@@ -360,19 +426,22 @@ next-intl with Korean/English support:
 ```
 
 ### Usage
-```typescript
-import { useTranslations } from 'next-intl';
-import { Link, useRouter } from '@/i18n/routing';
 
-const t = useTranslations('dashboard');
+```typescript
+import { useTranslations } from "next-intl";
+import { Link, useRouter } from "@/i18n/routing";
+
+const t = useTranslations("dashboard");
 ```
 
 ## Theme Development
 
 ### Adding New Themes
+
 To add a new theme to the system:
 
 1. **Define Theme Object** in `/packages/ui/src/design-tokens/themes.ts`:
+
 ```typescript
 newTheme: {
   name: 'Theme Name',
@@ -388,22 +457,31 @@ newTheme: {
 ```
 
 2. **Add to ThemeSwitcher** in `/apps/next-app/app/components/ThemeSwitcher.tsx`:
+
 ```typescript
 const themes = [
   // ... existing themes
-  { key: 'newTheme', name: 'Theme Name', description: 'Description', icon: '🎨' },
+  {
+    key: "newTheme",
+    name: "Theme Name",
+    description: "Description",
+    icon: "🎨",
+  },
 ] as const;
 ```
 
 3. **Export Theme** for external use:
+
 ```typescript
 // From @rite/ui/design-tokens
-import { themes, generateThemeCSS } from '@rite/ui/design-tokens';
+import { themes, generateThemeCSS } from "@rite/ui/design-tokens";
 // Note: alternativeThemes is still available for backward compatibility
 ```
 
 ### CSS Variable Generation
+
 The `generateThemeCSS()` function automatically creates all necessary CSS variables:
+
 - Brand colors (`--brand-primary`, `--brand-primary-dark`, etc.)
 - Background scales (`--bg-primary`, `--bg-secondary`, etc.)
 - Text colors (`--text-primary`, `--text-secondary`, etc.)
@@ -412,12 +490,15 @@ The `generateThemeCSS()` function automatically creates all necessary CSS variab
 - Button text adaptation (`--button-primary-text`)
 
 ### Platform Considerations
+
 - **Next.js**: Full dynamic theming with CSS variables
 - **Mobile**: Static tokens (mobile dynamic theming is planned)
 - **Cross-platform components**: Use design tokens for compatibility
 
 ### Theme Testing
+
 Test themes across:
+
 - Light/dark variants
 - Color contrast ratios (WCAG compliance)
 - Button text readability
@@ -429,6 +510,7 @@ Test themes across:
 Visual regression testing is implemented using Playwright to ensure UI consistency across themes and viewports.
 
 ### Running Visual Tests
+
 ```bash
 # Run tests against baselines
 pnpm run test:visual
@@ -441,12 +523,14 @@ pnpm run test:visual:ui
 ```
 
 ### Test Coverage
+
 - **All 5 themes**: Each component tested across all theme variants
 - **Responsive viewports**: Desktop, tablet, and mobile
 - **Component states**: Hover, focus, active, disabled
 - **Critical components**: Button, Card, Typography, EventCard, Forms, etc.
 
 ### Visual Test Page
+
 Access the component showcase at `/[locale]/visual-test` for manual inspection.
 
 See `/apps/next-app/e2e/visual/README.md` for detailed documentation.
@@ -454,6 +538,7 @@ See `/apps/next-app/e2e/visual/README.md` for detailed documentation.
 ## Development Status
 
 **✅ Complete:**
+
 - Core platform with event creation and DJ information collection
 - DJ submission system (for confirmed DJs to provide guest lists, contact info, promo materials)
 - Instagram OAuth with mobile support
@@ -471,10 +556,12 @@ See `/apps/next-app/e2e/visual/README.md` for detailed documentation.
 - "use dom" example implementations (QR Code, Dropzone)
 
 **🚧 In Progress:**
+
 - File uploads with Convex
 - Submission data encryption
 
 **📋 Planned:**
+
 - Submission dashboard
 - Instagram content publishing
 - Email notifications
@@ -482,6 +569,7 @@ See `/apps/next-app/e2e/visual/README.md` for detailed documentation.
 ## Troubleshooting
 
 ### Common Issues
+
 1. **Hydration errors**: Use ConvexProviderHydrationSafe
 2. **NextAuth prerender**: Add `export const dynamic = 'force-dynamic'`
 3. **Missing env vars**: Check NEXT_PUBLIC_CONVEX_URL
@@ -492,20 +580,24 @@ See `/apps/next-app/e2e/visual/README.md` for detailed documentation.
 **Google OAuth Setup Issues:**
 
 1. **Missing Client IDs**
+
    - Ensure all platform-specific client IDs are configured in environment
    - Check `EXPO_PUBLIC_GOOGLE_OAUTH_CLIENT_ID_IOS`, `EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID`, `EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID`
 
 2. **Redirect URI Mismatch**
+
    - **iOS/Expo Go**: Use Google URL scheme format: `com.googleusercontent.apps.[CLIENT-ID]://`
    - **Android**: Use custom scheme: `com.rite.mobile://`
    - **Web**: Use localhost: `http://localhost:8081`
 
 3. **URL Scheme Configuration**
+
    - Verify `app.json` contains correct URL schemes for both platforms
    - iOS bundle identifier must match Google Cloud Console configuration
    - Android package name must match Google Cloud Console and `app.json`
 
 4. **Platform Detection Issues**
+
    - Check `getPlatformInfo()` function returns correct platform/environment
    - Expo Go vs standalone app detection affects OAuth flow selection
 
@@ -515,6 +607,7 @@ See `/apps/next-app/e2e/visual/README.md` for detailed documentation.
    - Validate client ID matches between authorization request and token exchange
 
 **Common Error Codes:**
+
 - `MISSING_ACCESS_TOKEN`: No access token in OAuth response
 - `GOOGLE_API_ERROR`: Failed to fetch user info from Google
 - `TOKEN_EXCHANGE_ERROR`: Authorization code to token exchange failed
@@ -522,6 +615,7 @@ See `/apps/next-app/e2e/visual/README.md` for detailed documentation.
 - `WEB_REDIRECT_ERROR`: Failed to handle web platform redirect
 
 **Debug Steps:**
+
 1. Enable verbose logging in OAuth config functions
 2. Check browser network tab for failed requests (web platform)
 3. Verify Google Cloud Console OAuth client configuration
@@ -529,6 +623,7 @@ See `/apps/next-app/e2e/visual/README.md` for detailed documentation.
 5. Check Convex dashboard for user creation logs
 
 ### Instagram OAuth Proxy
+
 - Service: `rite-instagram-oauth-proxy.sehyunchung.workers.dev`
 - Deploy: `cd instagram-oauth-proxy && npx wrangler deploy`
 - Logs: `npx wrangler tail` or Cloudflare Dashboard
@@ -536,6 +631,7 @@ See `/apps/next-app/e2e/visual/README.md` for detailed documentation.
 ## Mobile App (Expo)
 
 ### Development
+
 ```bash
 # From root
 pnpm run dev:mobile
@@ -547,6 +643,7 @@ pnpm android
 ```
 
 ### Configuration
+
 - Metro configured for monorepo + NativeWind
 - Shared Convex backend via `@rite/backend`
 - Platform-specific UI components
@@ -557,9 +654,10 @@ pnpm android
 **Using the Modular Auth System:**
 
 1. **Adding New OAuth Providers**
+
    ```typescript
    // Add provider config to oauth-config.ts
-   export const getProviderConfig = (provider: 'google' | 'apple') => {
+   export const getProviderConfig = (provider: "google" | "apple") => {
      // Platform-specific configuration logic
    };
 
@@ -573,6 +671,7 @@ pnpm android
    ```
 
 2. **Extending Authentication Types**
+
    ```typescript
    // Add to lib/auth/types.ts
    export interface NewAuthConfig {
@@ -595,6 +694,7 @@ pnpm android
    ```
 
 **Architecture Benefits:**
+
 - **Clean separation**: Context only orchestrates, hooks handle logic
 - **Testable modules**: Each utility can be tested independently
 - **Type safety**: Comprehensive interfaces prevent runtime errors
@@ -603,6 +703,7 @@ pnpm android
 - **Secure storage**: Platform-appropriate storage abstraction
 
 ### Status
+
 - ✅ Monorepo integration
 - ✅ Convex backend access
 - ✅ Basic event listing
@@ -622,12 +723,14 @@ pnpm android
 ## Code Style
 
 ### Mandatory Rules
+
 1. **Use namespace import for React**: `import * as React from 'react'` (never default import)
 2. **Never use `any` or `!` (non-null assertion)** in TypeScript
 3. **Use design system exclusively**: All components must use @rite/ui design tokens and components
 4. **After commit**: Always check if relevant documentation needs updating
 
 ### Additional Guidelines
+
 - TypeScript strict mode, no `any` or non-null assertions
 - @rite/ui components exclusively
 - **Use CSS variables for colors** (`var(--brand-primary)` not hardcoded hex)
