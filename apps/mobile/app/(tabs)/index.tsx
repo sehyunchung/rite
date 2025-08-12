@@ -83,7 +83,6 @@ export default function HomeScreen() {
 								onPress={() => router.push('/(tabs)/create')}
 								variant="default"
 								size="default"
-								className="flex-row items-center justify-center rounded-lg"
 								accessibilityLabel="Create New Event"
 								accessibilityHint="Navigate to create event form"
 								testID="create-event-button"
@@ -101,7 +100,7 @@ export default function HomeScreen() {
 									onPress={() => router.push('/(tabs)/create')}
 									variant="default"
 									size="default"
-									className="flex-row items-center justify-center rounded-lg mb-4"
+									className="mb-4"
 								>
 									{t('actions.createEvent')}
 								</Button>
@@ -109,7 +108,7 @@ export default function HomeScreen() {
 									onPress={() => router.push('/(tabs)/events')}
 									variant="outline"
 									size="default"
-									className="flex-row items-center justify-center rounded-lg mb-4"
+									className="mb-4"
 								>
 									{t('actions.viewEvents')}
 								</Button>
@@ -118,7 +117,6 @@ export default function HomeScreen() {
 										onPress={() => router.push('/(tabs)/explore')}
 										variant="secondary"
 										size="default"
-										className="flex-row items-center justify-center rounded-lg"
 									>
 										{t('actions.profile')}
 									</Button>
@@ -133,7 +131,7 @@ export default function HomeScreen() {
 							onPress={() => router.push('/(tabs)/create')}
 							variant="default"
 							size="default"
-							className="flex-row items-center justify-center mt-4 mb-8 rounded-lg"
+							className="mt-4 mb-8"
 							accessibilityLabel="Create New Event"
 							accessibilityHint="Navigate to create event form"
 							testID="create-event-button"
@@ -163,12 +161,12 @@ export default function HomeScreen() {
 								<ActivityIndicator size="large" color={themeColors.brand.primary} />
 							</View>
 						) : events.length === 0 ? (
-							<Card className="bg-neutral-700 border-neutral-600 rounded-2xl">
-								<CardContent className="p-6">
+							<Card>
+								<CardContent>
 									<Typography
 										variant="body"
 										color="default"
-										className="text-center mb-1"
+										className="text-center mb-2"
 									>
 										{t('noEvents')}
 									</Typography>

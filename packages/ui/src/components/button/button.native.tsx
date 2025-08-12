@@ -6,20 +6,20 @@ import { cn } from '../../lib/utils';
 import { getFontFamily } from '../../lib/font-mapping.native';
 
 const buttonVariants = cva(
-	'flex items-center justify-center rounded-lg font-medium disabled:opacity-50',
+	'flex items-center justify-center rounded-xl font-medium disabled:opacity-50',
 	{
 		variants: {
 			variant: {
 				default: 'bg-brand-primary active:bg-brand-primary-dark',
 				destructive: 'bg-error active:bg-error/90',
-				outline: 'border-2 border-neutral-600 bg-transparent active:bg-neutral-700',
+				outline: 'border border-neutral-600 bg-transparent active:bg-neutral-600',
 				secondary: 'bg-neutral-700 active:bg-neutral-600',
-				ghost: 'active:bg-neutral-700/50',
+				ghost: 'active:bg-neutral-600/50',
 			},
 			size: {
 				default: 'h-12 px-6',
-				sm: 'h-10 px-4 rounded-md',
-				lg: 'h-14 px-8 rounded-xl',
+				sm: 'h-10 px-4',
+				lg: 'h-14 px-8',
 				icon: 'w-12 h-12',
 			},
 		},
