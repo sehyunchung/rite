@@ -1,1 +1,1 @@
-export * from './typography.native'
+export * from './typography.native';

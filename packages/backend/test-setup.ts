@@ -3,5 +3,5 @@ import { afterEach } from 'vitest';
 
 // Reset mocks between tests
 afterEach(() => {
-  // nothing for now; placeholder to satisfy config reference
+	// nothing for now; placeholder to satisfy config reference
 });

@@ -4,36 +4,36 @@
 
 /* CSS Variables for Josh Comeau Dark theme (matching mobile defaults) */
 :root {
-  /* Brand colors */
-  --brand-primary: hsl(225 100% 75%);
-  --brand-primary-dark: hsl(225 100% 60%);
-  --brand-primary-light: hsl(225 100% 85%);
-  
-  /* Neutral colors */
-  --neutral-0: hsl(210 25% 96%);
-  --neutral-50: hsl(210 25% 88%);
-  --neutral-100: hsl(210 20% 77%);
-  --neutral-200: hsl(210 14% 66%);
-  --neutral-300: hsl(210 12% 55%);
-  --neutral-400: hsl(210 8% 50%);
-  --neutral-500: hsl(210 9% 40%);
-  --neutral-600: hsl(210 10% 30%);
-  --neutral-700: hsl(210 15% 18%);
-  --neutral-800: hsl(210 15% 12%);
-  --neutral-900: hsl(210 15% 6%);
-  
-  /* Text colors */
-  --text-primary: hsl(210 10% 90%);
-  --text-secondary: hsl(210 12% 55%);
-  --text-muted: hsl(210 8% 50%);
-  
-  /* Background colors */
-  --bg-primary: hsl(210 15% 12%);
-  --bg-secondary: hsl(210 15% 18%);
-  
-  /* Component colors */
-  --border: hsl(210 15% 18%);
-  --button-primary-text: white;
+	/* Brand colors */
+	--brand-primary: hsl(225 100% 75%);
+	--brand-primary-dark: hsl(225 100% 60%);
+	--brand-primary-light: hsl(225 100% 85%);
+
+	/* Neutral colors */
+	--neutral-0: hsl(210 25% 96%);
+	--neutral-50: hsl(210 25% 88%);
+	--neutral-100: hsl(210 20% 77%);
+	--neutral-200: hsl(210 14% 66%);
+	--neutral-300: hsl(210 12% 55%);
+	--neutral-400: hsl(210 8% 50%);
+	--neutral-500: hsl(210 9% 40%);
+	--neutral-600: hsl(210 10% 30%);
+	--neutral-700: hsl(210 15% 18%);
+	--neutral-800: hsl(210 15% 12%);
+	--neutral-900: hsl(210 15% 6%);
+
+	/* Text colors */
+	--text-primary: hsl(210 10% 90%);
+	--text-secondary: hsl(210 12% 55%);
+	--text-muted: hsl(210 8% 50%);
+
+	/* Background colors */
+	--bg-primary: hsl(210 15% 12%);
+	--bg-secondary: hsl(210 15% 18%);
+
+	/* Component colors */
+	--border: hsl(210 15% 18%);
+	--button-primary-text: white;
 }
 
 /* Import SUIT font from CDN for web platform */
@@ -41,7 +41,13 @@
 
 /* Apply SUIT font to web */
 @media (min-width: 768px) {
-  body {
-    font-family: 'SUIT', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  }
+	body {
+		font-family:
+			'SUIT',
+			-apple-system,
+			BlinkMacSystemFont,
+			'Segoe UI',
+			Roboto,
+			sans-serif;
+	}
 }

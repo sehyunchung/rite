@@ -1,1 +1,1 @@
-export * from './event-card.web'
+export * from './event-card.web';

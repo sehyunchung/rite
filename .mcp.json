@@ -1,14 +1,10 @@
 {
-  "mcpServers": {
-    "kibo-ui": {
-      "type": "stdio",
-      "command": "npx",
-      "args": [
-        "-y",
-        "mcp-remote",
-        "https://www.kibo-ui.com/api/mcp/mcp"
-      ],
-      "env": {}
-    }
-  }
+	"mcpServers": {
+		"kibo-ui": {
+			"type": "stdio",
+			"command": "npx",
+			"args": ["-y", "mcp-remote", "https://www.kibo-ui.com/api/mcp/mcp"],
+			"env": {}
+		}
+	}
 }

@@ -1,53 +1,53 @@
-import * as React from "react"
-import { cn } from "../../utils"
+import * as React from 'react';
+import { cn } from '../../utils';
 
-export interface ActionCardProps extends React.ComponentProps<"button"> {
-  icon: React.ReactNode
-  title: string
-  subtitle: string
-  variant?: 'default' | 'primary' | 'secondary'
+export interface ActionCardProps extends React.ComponentProps<'button'> {
+	icon: React.ReactNode;
+	title: string;
+	subtitle: string;
+	variant?: 'default' | 'primary' | 'secondary';
 }
 
 const ActionCard = React.forwardRef<HTMLButtonElement, ActionCardProps>(
-  ({ className, icon, title, subtitle, variant = 'default', ...props }, ref) => {
-    const iconColors = {
-      default: 'bg-info/20 text-info',
-      primary: 'bg-brand-primary/20 text-brand-primary',
-      secondary: 'bg-success/20 text-success'
-    }
+	({ className, icon, title, subtitle, variant = 'default', ...props }, ref) => {
+		const iconColors = {
+			default: 'bg-info/20 text-info',
+			primary: 'bg-brand-primary/20 text-brand-primary',
+			secondary: 'bg-success/20 text-success',
+		};
 
-    return (
-      <button
-        ref={ref}
-        className={cn(
-          "relative w-full rounded-2xl border-2 border-dashed border-border bg-bg-secondary/50 p-8 text-center transition-all",
-          "hover:border-brand-primary hover:bg-bg-secondary hover:shadow-glow-sm",
-          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background",
-          "active:scale-[0.98]",
-          className
-        )}
-        {...props}
-      >
-        <div className="flex flex-col items-center gap-4">
-          <div className={cn(
-            "flex h-16 w-16 items-center justify-center rounded-full",
-            iconColors[variant]
-          )}>
-            <div className="h-8 w-8">
-              {icon}
-            </div>
-          </div>
-          
-          <div>
-            <h3 className="text-lg font-semibold text-text-primary">{title}</h3>
-            <p className="mt-1 text-sm text-text-secondary">{subtitle}</p>
-          </div>
-        </div>
-      </button>
-    )
-  }
-)
+		return (
+			<button
+				ref={ref}
+				className={cn(
+					'relative w-full rounded-2xl border-2 border-dashed border-border bg-bg-secondary/50 p-8 text-center transition-all',
+					'hover:border-brand-primary hover:bg-bg-secondary hover:shadow-glow-sm',
+					'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background',
+					'active:scale-[0.98]',
+					className
+				)}
+				{...props}
+			>
+				<div className="flex flex-col items-center gap-4">
+					<div
+						className={cn(
+							'flex h-16 w-16 items-center justify-center rounded-full',
+							iconColors[variant]
+						)}
+					>
+						<div className="h-8 w-8">{icon}</div>
+					</div>
 
-ActionCard.displayName = "ActionCard"
+					<div>
+						<h3 className="text-lg font-semibold text-text-primary">{title}</h3>
+						<p className="mt-1 text-sm text-text-secondary">{subtitle}</p>
+					</div>
+				</div>
+			</button>
+		);
+	}
+);
 
-export { ActionCard }
+ActionCard.displayName = 'ActionCard';
+
+export { ActionCard };

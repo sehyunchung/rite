@@ -8,49 +8,47 @@ import { FullScreenLoading, Typography } from '@rite/ui';
 export const dynamic = 'force-dynamic';
 
 interface PageProps {
-  params: Promise<{ locale: string }>;
-  searchParams: Promise<{ token?: string }>;
+	params: Promise<{ locale: string }>;
+	searchParams: Promise<{ token?: string }>;
 }
 
 interface DJSubmissionContentProps {
-  token?: string;
-  locale: string;
+	token?: string;
+	locale: string;
 }
 
 async function DJSubmissionContent({ token, locale }: DJSubmissionContentProps) {
-  const t = await getTranslations('djSubmission');
-  
-  if (!token) {
-    return (
-      <div className="min-h-screen bg-neutral-800 flex items-center justify-center">
-        <div className="max-w-md mx-auto text-center p-6">
-          <Typography variant="h2" className="text-error mb-4">{t('invalidLink')}</Typography>
-          <Typography variant="body" color="secondary">
-            {t('invalidLinkMessage')}
-          </Typography>
-        </div>
-      </div>
-    );
-  }
+	const t = await getTranslations('djSubmission');
 
-  return (
-    <ErrorBoundary>
-      <DJSubmissionClient submissionToken={token} locale={locale} />
-    </ErrorBoundary>
-  );
+	if (!token) {
+		return (
+			<div className="min-h-screen bg-neutral-800 flex items-center justify-center">
+				<div className="max-w-md mx-auto text-center p-6">
+					<Typography variant="h2" className="text-error mb-4">
+						{t('invalidLink')}
+					</Typography>
+					<Typography variant="body" color="secondary">
+						{t('invalidLinkMessage')}
+					</Typography>
+				</div>
+			</div>
+		);
+	}
+
+	return (
+		<ErrorBoundary>
+			<DJSubmissionClient submissionToken={token} locale={locale} />
+		</ErrorBoundary>
+	);
 }
 
 export default async function DJSubmissionPage({ params, searchParams }: PageProps) {
-  const { locale } = await params;
-  const searchParamsData = await searchParams;
-  
-  return (
-    <Suspense
-      fallback={
-        <FullScreenLoading />
-      }
-    >
-      <DJSubmissionContent token={searchParamsData.token} locale={locale} />
-    </Suspense>
-  );
+	const { locale } = await params;
+	const searchParamsData = await searchParams;
+
+	return (
+		<Suspense fallback={<FullScreenLoading />}>
+			<DJSubmissionContent token={searchParamsData.token} locale={locale} />
+		</Suspense>
+	);
 }

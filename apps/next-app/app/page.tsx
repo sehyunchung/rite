@@ -1,21 +1,21 @@
-import { auth } from '@/lib/auth'
-import { redirect } from 'next/navigation'
+import { auth } from '@/lib/auth';
+import { redirect } from 'next/navigation';
 
-export const dynamic = 'force-dynamic'
+export const dynamic = 'force-dynamic';
 
 export default async function HomePage() {
-  let session = null
-  try {
-    session = await auth()
-  } catch (error) {
-    console.error('Auth error in HomePage:', error)
-  }
+	let session = null;
+	try {
+		session = await auth();
+	} catch (error) {
+		console.error('Auth error in HomePage:', error);
+	}
 
-  // Redirect authenticated users to dashboard
-  if (session) {
-    redirect('/en/dashboard')
-  }
+	// Redirect authenticated users to dashboard
+	if (session) {
+		redirect('/en/dashboard');
+	}
 
-  // Redirect unauthenticated users to login  
-  redirect('/en/auth/signin')
+	// Redirect unauthenticated users to login
+	redirect('/en/auth/signin');
 }

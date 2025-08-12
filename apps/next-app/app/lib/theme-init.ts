@@ -7,8 +7,8 @@ type ThemeMode = 'dark' | 'light' | 'system';
  * This can be used for server-side rendering to avoid FOUC (Flash of Unstyled Content)
  */
 export function getDefaultThemeCSS(): string {
-  const defaultTheme = alternativeThemes.joshComeau;
-  return generateThemeCSS(defaultTheme);
+	const defaultTheme = alternativeThemes.joshComeau;
+	return generateThemeCSS(defaultTheme);
 }
 
 /**
@@ -16,9 +16,9 @@ export function getDefaultThemeCSS(): string {
  * This should be inlined in the HTML head to run immediately
  */
 export function getThemeInitScript(): string {
-  const validModes: ThemeMode[] = ['dark', 'light', 'system'];
-  
-  return `
+	const validModes: ThemeMode[] = ['dark', 'light', 'system'];
+
+	return `
     (function() {
       try {
         const savedMode = localStorage.getItem('rite-theme-mode');

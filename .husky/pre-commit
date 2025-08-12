@@ -1,0 +1,16 @@
+#!/usr/bin/env sh
+
+# Run lint-staged for formatting and linting
+pnpm exec lint-staged
+
+# Run tests for changed files (TDD enforcement)
+echo "🧪 Running tests to ensure TDD compliance..."
+pnpm test
+
+if [ $? -ne 0 ]; then
+  echo "❌ Tests failed. Please fix failing tests before committing."
+  echo "💡 Remember: Red → Green → Refactor"
+  exit 1
+fi
+
+echo "✅ All tests passed! Proceeding with commit..."

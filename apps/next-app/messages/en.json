@@ -1,347 +1,347 @@
 {
-  "common": {
-    "loading": "Loading...",
-    "loadingSubmissionForm": "Loading submission form...",
-    "loadingEventDetails": "Loading event details...",
-    "error": "Error",
-    "save": "Save",
-    "cancel": "Cancel",
-    "delete": "Delete",
-    "edit": "Edit",
-    "create": "Create",
-    "copy": "Copy",
-    "copied": "Copied!",
-    "back": "Back",
-    "next": "Next",
-    "previous": "Previous",
-    "submit": "Submit",
-    "close": "Close"
-  },
-  "navigation": {
-    "dashboard": "Dashboard",
-    "events": "Events", 
-    "createEvent": "Create Event",
-    "signOut": "Sign Out",
-    "welcomeUser": "Welcome, {name}"
-  },
-  "dashboard": {
-    "title": "Dashboard",
-    "welcome": "Welcome back!",
-    "createNewEvent": "Create New Event",
-    "noEvents": "No events yet. Create your first event to get started!",
-    "loadingEvents": "Loading events...",
-    "yourEvents": "Your Events",
-    "actions": {
-      "createEvent": "Create Event",
-      "createEventDescription": "Set up a new DJ event",
-      "viewSubmissions": "View Submissions", 
-      "viewSubmissionsDescription": "Check DJ submissions",
-      "eventCalendar": "Event Calendar",
-      "eventCalendarDescription": "View upcoming events"
-    },
-    "eventCard": {
-      "viewDetails": "View Details",
-      "djs": "{count} DJ",
-      "djs_plural": "{count} DJs",
-      "guestListDue": "Guest list due: {date}"
-    }
-  },
-  "events": {
-    "create": {
-      "title": "Create New Event",
-      "subtitle": "Set up your DJ event with all the details",
-      "basicInfo": "Basic Information",
-      "eventName": "Event Name",
-      "eventNamePlaceholder": "Summer Music Festival",
-      "description": "Description",
-      "descriptionPlaceholder": "Describe your event...",
-      "hashtags": "Instagram Hashtags",
-      "hashtagsPlaceholder": "#music #dj #festival #seoul",
-      "hashtagsDescription": "Separate with spaces (# will be added automatically)",
-      "venue": "Venue Information",
-      "venueDescription": "Where will the event take place?",
-      "venueName": "Venue Name",
-      "venueNamePlaceholder": "Club Octagon",
-      "venueAddress": "Address",
-      "venueAddressPlaceholder": "123 Gangnam-gu, Seoul",
-      "eventDate": "Event Date",
-      "deadlines": "Deadlines",
-      "guestListDeadline": "Guest List Deadline",
-      "promoMaterialsDeadline": "Promo Materials Deadline",
-      "payment": "Payment Information",
-      "paymentDescription": "DJ payment information and guest limits",
-      "totalAmount": "Total Amount",
-      "paymentPerDJ": "Payment per DJ",
-      "currency": "Currency",
-      "paymentDueDate": "Payment Due Date",
-      "guestLimitPerDJ": "Guest Limit per DJ",
-      "guestLimitDescription": "Maximum number of guests each DJ can add",
-      "deadlinesDescription": "When do DJs need to submit their materials?",
-      "timeslots": "DJ Timeslots",
-      "timeslotsDescription": "Add time slots for each DJ performing at your event",
-      "addTimeslot": "Add DJ Timeslot",
-      "djName": "DJ Name",
-      "djInstagram": "Instagram Handle",
-      "startTime": "Start Time",
-      "endTime": "End Time",
-      "removeTimeslot": "Remove",
-      "createEvent": "Create Event",
-      "creating": "Creating...",
-      "djSlot": "DJ Slot {number}",
-      "updateEvent": "Update Event",
-      "confirmDelete": "Confirm Delete"
-    },
-    "detail": {
-      "notFound": "Event Not Found",
-      "notFoundMessage": "The event you're looking for doesn't exist or you don't have access to it.",
-      "backToDashboard": "Back to Dashboard",
-      "venueInformation": "Venue Information",
-      "djLineup": "DJ Lineup ({count})",
-      "noDJsScheduled": "No DJs scheduled yet.",
-      "importantDates": "Important Dates",
-      "eventDate": "Event Date",
-      "guestListDeadline": "Guest List Deadline",
-      "promoMaterialsDeadline": "Promo Materials Deadline",
-      "paymentDue": "Payment Due",
-      "paymentDetails": "Payment Details",
-      "totalAmount": "Total Amount",
-      "perDJ": "Per DJ",
-      "guestLimitPerDJ": "Guest Limit per DJ",
-      "guests": "guests",
-      "instagramHashtags": "Instagram Hashtags",
-      "qrCode": {
-        "title": "Event QR Code",
-        "description": "Scan to view event details"
-      },
-      "submissionLinks": {
-        "title": "DJ Submission Links",
-        "description": "Share these links with your DJs for them to submit their materials:"
-      },
-      "status": {
-        "submitted": "Submitted",
-        "pending": "Pending"
-      },
-      "edit": "Edit",
-      "submissions": "Submissions",
-      "qrCodeButton": "QR Code",
-      "cancel": "Cancel",
-      "delete": "Delete",
-      "deleteEvent": "Delete Event",
-      "deleteConfirmMessage": "Are you sure you want to permanently delete this event? This action cannot be undone. All timeslots and submission links will be removed.",
-      "cancelAction": "Cancel",
-      "deleting": "Deleting...",
-      "cancelEvent": "Cancel Event",
-      "cancelConfirmMessage": "This will cancel the event and notify all DJs. The event data will be preserved for records.",
-      "cancellationReason": "Cancellation Reason (Optional)",
-      "cancellationReasonPlaceholder": "Explain why the event is being cancelled...",
-      "keepEvent": "Keep Event",
-      "cancelling": "Cancelling...",
-      "invalidRequest": "Invalid Request",
-      "invalidRequestMessage": "The request contains invalid parameters"
-    },
-    "edit": {
-      "title": "Edit Event",
-      "subtitle": "Update your event details and DJ lineup",
-      "backToEvent": "Back to Event",
-      "updating": "Updating...",
-      "updateEvent": "Update Event",
-      "eventDetails": "Event Details",
-      "venueInformation": "Venue Information",
-      "djLineup": "DJ Lineup",
-      "addDJSlot": "Add DJ Slot",
-      "removeDJ": "Remove DJ",
-      "confirmDelete": "Confirm Delete",
-      "importantDeadlines": "Important Deadlines",
-      "paymentDetails": "Payment Details",
-      "saveChanges": "Save Changes",
-      "discardChanges": "Discard Changes",
-      "maxTimeslotsError": "Maximum {max} timeslots allowed per event",
-      "timeslotsRequired": "At least one DJ timeslot is required",
-      "startTimeAfterPrevious": "Start time must be after previous slot ends",
-      "updateFailed": "Failed to update event. Please try again.",
-      "djSlot": "DJ Slot {number}",
-      "guestCount": "{count, plural, one {# guest} other {# guests}}",
-      "eventNotFound": "Event not found",
-      "eventNotFoundMessage": "The event you're trying to edit doesn't exist or you don't have permission to edit it.",
-      "backToDashboard": "Back to Dashboard",
-      "invalidRequest": "Invalid Request",
-      "invalidRequestMessage": "The request contains invalid parameters"
-    },
-    "submissions": {
-      "title": "Event Submissions",
-      "subtitle": "Review and manage DJ submissions for this event",
-      "backToEvent": "Back to Event",
-      "notFound": "Event Not Found",
-      "notFoundMessage": "The event you're looking for doesn't exist or you don't have access to it.",
-      "backToDashboard": "Back to Dashboard",
-      "invalidRequest": "Invalid Request",
-      "invalidRequestMessage": "The request contains invalid parameters",
-      "submitted": "submissions",
-      "status": {
-        "submitted": "Submitted",
-        "pending": "Pending"
-      },
-      "guestList": "Guest List",
-      "description": "Description",
-      "promoFiles": "Promo Files",
-      "submittedOn": "Submitted on",
-      "awaitingSubmission": "Awaiting submission from DJ",
-      "noTimeslots": "No DJ timeslots have been created for this event yet.",
-      "exports": {
-        "title": "Export Guest List",
-        "guestCount": "{count} guests available for export",
-        "guestCount_plural": "{count} guests available for export",
-        "noGuests": "No guest submissions available yet.",
-        "description": "Export guest list data in various formats for venue management and reporting.",
-        "success": {
-          "downloaded": "File downloaded successfully",
-          "googleSheets": "Data copied to clipboard. Google Sheets opened in new tab."
-        },
-        "errors": {
-          "noData": "No data available for export",
-          "exportFailed": "Failed to export file",
-          "accessDenied": "Unable to access export data. Please check your permissions."
-        }
-      }
-    }
-  },
-  "status": {
-    "active": "Active",
-    "inactive": "Inactive",
-    "draft": "Draft", 
-    "completed": "Completed"
-  },
-  "djSubmission": {
-    "title": "DJ Submission Form",
-    "subtitle": "Submit your materials for the upcoming event",
-    "invalidLink": "Invalid Link",
-    "invalidLinkMessage": "This submission link is invalid or has expired.",
-    "eventDetails": "Event Details",
-    "yourTimeSlot": "Your Time Slot",
-    "importantDeadlines": "Important Deadlines",
-    "promoMaterials": "Promo Materials",
-    "promoMaterialsDescription": "Upload your promotional materials (images, videos, flyers)",
-    "dropFilesHere": "Drop your promo materials here or click to browse",
-    "selectedFiles": "Selected Files:",
-    "description": "Description (Optional)",
-    "descriptionPlaceholder": "Brief description of your promo materials...",
-    "guestList": "Guest List",
-    "guestListDescription": "Add your guests for the event",
-    "guestName": "Guest {number} Name",
-    "guestNamePlaceholder": "Full name",
-    "guestPhone": "Phone (Optional)",
-    "guestPhonePlaceholder": "010-1234-5678",
-    "addGuest": "+ Add Guest",
-    "removeGuest": "Remove",
-    "paymentInformation": "Bank Transfer Information",
-    "paymentDescription": "Bank account information for transfer",
-    "accountHolder": "Account Holder Name",
-    "accountHolderPlaceholder": "김디제이",
-    "bankName": "Bank Name",
-    "bankNamePlaceholder": "국민은행",
-    "accountNumber": "Account Number",
-    "accountNumberPlaceholder": "123456-78-901234",
-    "residentNumber": "Resident Registration Number",
-    "residentNumberPlaceholder": "901234-1******",
-    "preferDirectContact": "I prefer direct contact for transfer arrangements",
-    "privacyNotice": "Privacy Notice: Your payment information will be encrypted and stored securely. It will only be used for event payment processing and will not be shared with third parties.",
-    "submitMaterials": "Submit Materials",
-    "submitting": "Submitting...",
-    "success": {
-      "title": "Submission Complete!",
-      "message": "Your materials have been successfully submitted for {eventName}.",
-      "whatNext": "What happens next?",
-      "steps": [
-        "The organizer will review your submission",
-        "You'll receive confirmation via Instagram DM",
-        "Payment will be processed after the event"
-      ],
-      "eventLabel": "Event",
-      "timeSlotLabel": "Your Slot",
-      "djLabel": "DJ"
-    }
-  },
-  "auth": {
-    "tagline": "Streamline your event workflow",
-    "signIn": "Sign In",
-    "continueWithGoogle": "Continue with Google",
-    "continueWithApple": "Continue with Apple",
-    "continueWithInstagram": "Continue with Instagram",
-    "or": "or",
-    "accountRequirement": "Business or Creator account required",
-    "mobileGuidance": {
-      "title": "📱 Mobile Users:",
-      "message": "If redirected to Instagram app, tap \"Open in Browser\" or use a desktop browser for best results."
-    },
-    "error": {
-      "title": "Authentication Error",
-      "heading": "Something went wrong",
-      "tryAgain": "Try Again",
-      "goHome": "Go Home"
-    },
-    "errors": {
-      "configuration": "There is a problem with the server configuration.",
-      "accessDenied": "Access denied. You do not have permission to sign in.",
-      "verification": "The verification link is invalid or has expired.",
-      "default": "An unexpected error occurred during authentication."
-    }
-  },
-  "validation": {
-    "required": "This field is required",
-    "invalidEmail": "Invalid email address",
-    "invalidInstagram": "Instagram handle must start with @ and contain only letters, numbers, dots, and underscores",
-    "timeRange": "End time must be after start time",
-    "dateInPast": "Date cannot be in the past",
-    "deadlineAfterEvent": "Deadline must be before the event date",
-    "promoBeforeGuest": "Promo materials deadline must be before guest list deadline",
-    "fileTooLarge": "File {filename} is too large. Maximum size is {maxSize}.",
-    "uploadFailed": "Failed to upload {filename}"
-  },
-  "eventStatus": {
-    "phases": {
-      "draft": {
-        "label": "Draft",
-        "description": "Event is being planned"
-      },
-      "planning": {
-        "label": "Planning",
-        "description": "Accepting DJ submissions"
-      },
-      "finalized": {
-        "label": "Finalized",
-        "description": "Lineup locked, preparing for event"
-      },
-      "day_of": {
-        "label": "Event Day",
-        "description": "The event is happening today!"
-      },
-      "completed": {
-        "label": "Completed",
-        "description": "Event has ended"
-      },
-      "cancelled": {
-        "label": "Cancelled",
-        "description": "Event was cancelled"
-      }
-    },
-    "capabilities": {
-      "canEdit": "Can Edit",
-      "canPublish": "Can Publish",
-      "canAcceptSubmissions": "Accepting Submissions",
-      "canGenerateContent": "Can Generate Content",
-      "canFinalize": "Can Finalize",
-      "dayOfFeaturesActive": "Day-of Features Active"
-    },
-    "urgentBanner": "This event is happening today! Make sure all preparations are complete.",
-    "submissionStatus": "{count} of {total} DJs have submitted",
-    "confirmAction": "Confirm Action",
-    "confirmActionMessage": "Are you sure you want to perform this action?",
-    "confirm": "Confirm",
-    "cancel": "Cancel"
-  },
-  "consentBanner": {
-    "message": "We use analytics to improve your experience and understand how you use RITE. By continuing, you agree to our use of cookies and data collection.",
-    "decline": "Decline",
-    "accept": "Accept Analytics"
-  }
+	"common": {
+		"loading": "Loading...",
+		"loadingSubmissionForm": "Loading submission form...",
+		"loadingEventDetails": "Loading event details...",
+		"error": "Error",
+		"save": "Save",
+		"cancel": "Cancel",
+		"delete": "Delete",
+		"edit": "Edit",
+		"create": "Create",
+		"copy": "Copy",
+		"copied": "Copied!",
+		"back": "Back",
+		"next": "Next",
+		"previous": "Previous",
+		"submit": "Submit",
+		"close": "Close"
+	},
+	"navigation": {
+		"dashboard": "Dashboard",
+		"events": "Events",
+		"createEvent": "Create Event",
+		"signOut": "Sign Out",
+		"welcomeUser": "Welcome, {name}"
+	},
+	"dashboard": {
+		"title": "Dashboard",
+		"welcome": "Welcome back!",
+		"createNewEvent": "Create New Event",
+		"noEvents": "No events yet. Create your first event to get started!",
+		"loadingEvents": "Loading events...",
+		"yourEvents": "Your Events",
+		"actions": {
+			"createEvent": "Create Event",
+			"createEventDescription": "Set up a new DJ event",
+			"viewSubmissions": "View Submissions",
+			"viewSubmissionsDescription": "Check DJ submissions",
+			"eventCalendar": "Event Calendar",
+			"eventCalendarDescription": "View upcoming events"
+		},
+		"eventCard": {
+			"viewDetails": "View Details",
+			"djs": "{count} DJ",
+			"djs_plural": "{count} DJs",
+			"guestListDue": "Guest list due: {date}"
+		}
+	},
+	"events": {
+		"create": {
+			"title": "Create New Event",
+			"subtitle": "Set up your DJ event with all the details",
+			"basicInfo": "Basic Information",
+			"eventName": "Event Name",
+			"eventNamePlaceholder": "Summer Music Festival",
+			"description": "Description",
+			"descriptionPlaceholder": "Describe your event...",
+			"hashtags": "Instagram Hashtags",
+			"hashtagsPlaceholder": "#music #dj #festival #seoul",
+			"hashtagsDescription": "Separate with spaces (# will be added automatically)",
+			"venue": "Venue Information",
+			"venueDescription": "Where will the event take place?",
+			"venueName": "Venue Name",
+			"venueNamePlaceholder": "Club Octagon",
+			"venueAddress": "Address",
+			"venueAddressPlaceholder": "123 Gangnam-gu, Seoul",
+			"eventDate": "Event Date",
+			"deadlines": "Deadlines",
+			"guestListDeadline": "Guest List Deadline",
+			"promoMaterialsDeadline": "Promo Materials Deadline",
+			"payment": "Payment Information",
+			"paymentDescription": "DJ payment information and guest limits",
+			"totalAmount": "Total Amount",
+			"paymentPerDJ": "Payment per DJ",
+			"currency": "Currency",
+			"paymentDueDate": "Payment Due Date",
+			"guestLimitPerDJ": "Guest Limit per DJ",
+			"guestLimitDescription": "Maximum number of guests each DJ can add",
+			"deadlinesDescription": "When do DJs need to submit their materials?",
+			"timeslots": "DJ Timeslots",
+			"timeslotsDescription": "Add time slots for each DJ performing at your event",
+			"addTimeslot": "Add DJ Timeslot",
+			"djName": "DJ Name",
+			"djInstagram": "Instagram Handle",
+			"startTime": "Start Time",
+			"endTime": "End Time",
+			"removeTimeslot": "Remove",
+			"createEvent": "Create Event",
+			"creating": "Creating...",
+			"djSlot": "DJ Slot {number}",
+			"updateEvent": "Update Event",
+			"confirmDelete": "Confirm Delete"
+		},
+		"detail": {
+			"notFound": "Event Not Found",
+			"notFoundMessage": "The event you're looking for doesn't exist or you don't have access to it.",
+			"backToDashboard": "Back to Dashboard",
+			"venueInformation": "Venue Information",
+			"djLineup": "DJ Lineup ({count})",
+			"noDJsScheduled": "No DJs scheduled yet.",
+			"importantDates": "Important Dates",
+			"eventDate": "Event Date",
+			"guestListDeadline": "Guest List Deadline",
+			"promoMaterialsDeadline": "Promo Materials Deadline",
+			"paymentDue": "Payment Due",
+			"paymentDetails": "Payment Details",
+			"totalAmount": "Total Amount",
+			"perDJ": "Per DJ",
+			"guestLimitPerDJ": "Guest Limit per DJ",
+			"guests": "guests",
+			"instagramHashtags": "Instagram Hashtags",
+			"qrCode": {
+				"title": "Event QR Code",
+				"description": "Scan to view event details"
+			},
+			"submissionLinks": {
+				"title": "DJ Submission Links",
+				"description": "Share these links with your DJs for them to submit their materials:"
+			},
+			"status": {
+				"submitted": "Submitted",
+				"pending": "Pending"
+			},
+			"edit": "Edit",
+			"submissions": "Submissions",
+			"qrCodeButton": "QR Code",
+			"cancel": "Cancel",
+			"delete": "Delete",
+			"deleteEvent": "Delete Event",
+			"deleteConfirmMessage": "Are you sure you want to permanently delete this event? This action cannot be undone. All timeslots and submission links will be removed.",
+			"cancelAction": "Cancel",
+			"deleting": "Deleting...",
+			"cancelEvent": "Cancel Event",
+			"cancelConfirmMessage": "This will cancel the event and notify all DJs. The event data will be preserved for records.",
+			"cancellationReason": "Cancellation Reason (Optional)",
+			"cancellationReasonPlaceholder": "Explain why the event is being cancelled...",
+			"keepEvent": "Keep Event",
+			"cancelling": "Cancelling...",
+			"invalidRequest": "Invalid Request",
+			"invalidRequestMessage": "The request contains invalid parameters"
+		},
+		"edit": {
+			"title": "Edit Event",
+			"subtitle": "Update your event details and DJ lineup",
+			"backToEvent": "Back to Event",
+			"updating": "Updating...",
+			"updateEvent": "Update Event",
+			"eventDetails": "Event Details",
+			"venueInformation": "Venue Information",
+			"djLineup": "DJ Lineup",
+			"addDJSlot": "Add DJ Slot",
+			"removeDJ": "Remove DJ",
+			"confirmDelete": "Confirm Delete",
+			"importantDeadlines": "Important Deadlines",
+			"paymentDetails": "Payment Details",
+			"saveChanges": "Save Changes",
+			"discardChanges": "Discard Changes",
+			"maxTimeslotsError": "Maximum {max} timeslots allowed per event",
+			"timeslotsRequired": "At least one DJ timeslot is required",
+			"startTimeAfterPrevious": "Start time must be after previous slot ends",
+			"updateFailed": "Failed to update event. Please try again.",
+			"djSlot": "DJ Slot {number}",
+			"guestCount": "{count, plural, one {# guest} other {# guests}}",
+			"eventNotFound": "Event not found",
+			"eventNotFoundMessage": "The event you're trying to edit doesn't exist or you don't have permission to edit it.",
+			"backToDashboard": "Back to Dashboard",
+			"invalidRequest": "Invalid Request",
+			"invalidRequestMessage": "The request contains invalid parameters"
+		},
+		"submissions": {
+			"title": "Event Submissions",
+			"subtitle": "Review and manage DJ submissions for this event",
+			"backToEvent": "Back to Event",
+			"notFound": "Event Not Found",
+			"notFoundMessage": "The event you're looking for doesn't exist or you don't have access to it.",
+			"backToDashboard": "Back to Dashboard",
+			"invalidRequest": "Invalid Request",
+			"invalidRequestMessage": "The request contains invalid parameters",
+			"submitted": "submissions",
+			"status": {
+				"submitted": "Submitted",
+				"pending": "Pending"
+			},
+			"guestList": "Guest List",
+			"description": "Description",
+			"promoFiles": "Promo Files",
+			"submittedOn": "Submitted on",
+			"awaitingSubmission": "Awaiting submission from DJ",
+			"noTimeslots": "No DJ timeslots have been created for this event yet.",
+			"exports": {
+				"title": "Export Guest List",
+				"guestCount": "{count} guests available for export",
+				"guestCount_plural": "{count} guests available for export",
+				"noGuests": "No guest submissions available yet.",
+				"description": "Export guest list data in various formats for venue management and reporting.",
+				"success": {
+					"downloaded": "File downloaded successfully",
+					"googleSheets": "Data copied to clipboard. Google Sheets opened in new tab."
+				},
+				"errors": {
+					"noData": "No data available for export",
+					"exportFailed": "Failed to export file",
+					"accessDenied": "Unable to access export data. Please check your permissions."
+				}
+			}
+		}
+	},
+	"status": {
+		"active": "Active",
+		"inactive": "Inactive",
+		"draft": "Draft",
+		"completed": "Completed"
+	},
+	"djSubmission": {
+		"title": "DJ Submission Form",
+		"subtitle": "Submit your materials for the upcoming event",
+		"invalidLink": "Invalid Link",
+		"invalidLinkMessage": "This submission link is invalid or has expired.",
+		"eventDetails": "Event Details",
+		"yourTimeSlot": "Your Time Slot",
+		"importantDeadlines": "Important Deadlines",
+		"promoMaterials": "Promo Materials",
+		"promoMaterialsDescription": "Upload your promotional materials (images, videos, flyers)",
+		"dropFilesHere": "Drop your promo materials here or click to browse",
+		"selectedFiles": "Selected Files:",
+		"description": "Description (Optional)",
+		"descriptionPlaceholder": "Brief description of your promo materials...",
+		"guestList": "Guest List",
+		"guestListDescription": "Add your guests for the event",
+		"guestName": "Guest {number} Name",
+		"guestNamePlaceholder": "Full name",
+		"guestPhone": "Phone (Optional)",
+		"guestPhonePlaceholder": "010-1234-5678",
+		"addGuest": "+ Add Guest",
+		"removeGuest": "Remove",
+		"paymentInformation": "Bank Transfer Information",
+		"paymentDescription": "Bank account information for transfer",
+		"accountHolder": "Account Holder Name",
+		"accountHolderPlaceholder": "김디제이",
+		"bankName": "Bank Name",
+		"bankNamePlaceholder": "국민은행",
+		"accountNumber": "Account Number",
+		"accountNumberPlaceholder": "123456-78-901234",
+		"residentNumber": "Resident Registration Number",
+		"residentNumberPlaceholder": "901234-1******",
+		"preferDirectContact": "I prefer direct contact for transfer arrangements",
+		"privacyNotice": "Privacy Notice: Your payment information will be encrypted and stored securely. It will only be used for event payment processing and will not be shared with third parties.",
+		"submitMaterials": "Submit Materials",
+		"submitting": "Submitting...",
+		"success": {
+			"title": "Submission Complete!",
+			"message": "Your materials have been successfully submitted for {eventName}.",
+			"whatNext": "What happens next?",
+			"steps": [
+				"The organizer will review your submission",
+				"You'll receive confirmation via Instagram DM",
+				"Payment will be processed after the event"
+			],
+			"eventLabel": "Event",
+			"timeSlotLabel": "Your Slot",
+			"djLabel": "DJ"
+		}
+	},
+	"auth": {
+		"tagline": "Streamline your event workflow",
+		"signIn": "Sign In",
+		"continueWithGoogle": "Continue with Google",
+		"continueWithApple": "Continue with Apple",
+		"continueWithInstagram": "Continue with Instagram",
+		"or": "or",
+		"accountRequirement": "Business or Creator account required",
+		"mobileGuidance": {
+			"title": "📱 Mobile Users:",
+			"message": "If redirected to Instagram app, tap \"Open in Browser\" or use a desktop browser for best results."
+		},
+		"error": {
+			"title": "Authentication Error",
+			"heading": "Something went wrong",
+			"tryAgain": "Try Again",
+			"goHome": "Go Home"
+		},
+		"errors": {
+			"configuration": "There is a problem with the server configuration.",
+			"accessDenied": "Access denied. You do not have permission to sign in.",
+			"verification": "The verification link is invalid or has expired.",
+			"default": "An unexpected error occurred during authentication."
+		}
+	},
+	"validation": {
+		"required": "This field is required",
+		"invalidEmail": "Invalid email address",
+		"invalidInstagram": "Instagram handle must start with @ and contain only letters, numbers, dots, and underscores",
+		"timeRange": "End time must be after start time",
+		"dateInPast": "Date cannot be in the past",
+		"deadlineAfterEvent": "Deadline must be before the event date",
+		"promoBeforeGuest": "Promo materials deadline must be before guest list deadline",
+		"fileTooLarge": "File {filename} is too large. Maximum size is {maxSize}.",
+		"uploadFailed": "Failed to upload {filename}"
+	},
+	"eventStatus": {
+		"phases": {
+			"draft": {
+				"label": "Draft",
+				"description": "Event is being planned"
+			},
+			"planning": {
+				"label": "Planning",
+				"description": "Accepting DJ submissions"
+			},
+			"finalized": {
+				"label": "Finalized",
+				"description": "Lineup locked, preparing for event"
+			},
+			"day_of": {
+				"label": "Event Day",
+				"description": "The event is happening today!"
+			},
+			"completed": {
+				"label": "Completed",
+				"description": "Event has ended"
+			},
+			"cancelled": {
+				"label": "Cancelled",
+				"description": "Event was cancelled"
+			}
+		},
+		"capabilities": {
+			"canEdit": "Can Edit",
+			"canPublish": "Can Publish",
+			"canAcceptSubmissions": "Accepting Submissions",
+			"canGenerateContent": "Can Generate Content",
+			"canFinalize": "Can Finalize",
+			"dayOfFeaturesActive": "Day-of Features Active"
+		},
+		"urgentBanner": "This event is happening today! Make sure all preparations are complete.",
+		"submissionStatus": "{count} of {total} DJs have submitted",
+		"confirmAction": "Confirm Action",
+		"confirmActionMessage": "Are you sure you want to perform this action?",
+		"confirm": "Confirm",
+		"cancel": "Cancel"
+	},
+	"consentBanner": {
+		"message": "We use analytics to improve your experience and understand how you use RITE. By continuing, you agree to our use of cookies and data collection.",
+		"decline": "Decline",
+		"accept": "Accept Analytics"
+	}
 }

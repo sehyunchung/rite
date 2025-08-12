@@ -6,524 +6,573 @@ import { useSession } from 'next-auth/react';
 import { Button } from '@rite/ui';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@rite/ui';
 import { Input, Label, Textarea } from '@rite/ui';
-import { 
-  type EventFormData, 
-  type Timeslot, 
-  validateEvent, 
-  validateTimeslot,
-  getDefaultStartTime,
-  getDefaultEndTime
+import {
+	type EventFormData,
+	type Timeslot,
+	validateEvent,
+	validateTimeslot,
+	getDefaultStartTime,
+	getDefaultEndTime,
 } from '@/lib/validation';
 import { useTranslations } from 'next-intl';
 import { AlertCircle, Trash2, Calendar, MapPin, Clock, PlusCircle } from 'lucide-react';
 
 // Type for event with timeslots
-type EventWithTimeslots = Doc<"events"> & {
-  timeslots: Doc<"timeslots">[];
+type EventWithTimeslots = Doc<'events'> & {
+	timeslots: Doc<'timeslots'>[];
 };
 
 interface EventEditFormProps {
-  event: EventWithTimeslots;
-  onEventUpdated?: () => void;
+	event: EventWithTimeslots;
+	onEventUpdated?: () => void;
 }
 
 const MAX_TIMESLOTS_PER_EVENT = 12;
 
 export function EventEditForm({ event, onEventUpdated }: EventEditFormProps) {
-  const t = useTranslations('events.create');
-  const updateEvent = useMutation(api.events.updateEvent);
-  const { data: session } = useSession();
-  
-  const [formData, setFormData] = useState<EventFormData>({
-    name: event.name,
-    date: event.date,
-    venue: {
-      name: event.venue.name,
-      address: event.venue.address,
-    },
-    description: event.description || '',
-    hashtags: event.hashtags || '',
-    deadlines: {
-      guestList: event.deadlines.guestList,
-      promoMaterials: event.deadlines.promoMaterials,
-    },
-    payment: {
-      amount: event.payment.amount || 0,
-      perDJ: event.payment.perDJ || 0,
-      currency: event.payment.currency as 'KRW' | 'USD' | 'EUR',
-      dueDate: event.payment.dueDate,
-    },
-    guestLimitPerDJ: event.guestLimitPerDJ || 2,
-  });
+	const t = useTranslations('events.create');
+	const updateEvent = useMutation(api.events.updateEvent);
+	const { data: session } = useSession();
 
-  // Convert existing timeslots to form format
-  const [timeslots, setTimeslots] = useState<Timeslot[]>(
-    event.timeslots.map(slot => ({
-      id: slot._id,
-      startTime: slot.startTime,
-      endTime: slot.endTime,
-      djName: slot.djName,
-      djInstagram: slot.djInstagram,
-    }))
-  );
+	const [formData, setFormData] = useState<EventFormData>({
+		name: event.name,
+		date: event.date,
+		venue: {
+			name: event.venue.name,
+			address: event.venue.address,
+		},
+		description: event.description || '',
+		hashtags: event.hashtags || '',
+		deadlines: {
+			guestList: event.deadlines.guestList,
+			promoMaterials: event.deadlines.promoMaterials,
+		},
+		payment: {
+			amount: event.payment.amount || 0,
+			perDJ: event.payment.perDJ || 0,
+			currency: event.payment.currency as 'KRW' | 'USD' | 'EUR',
+			dueDate: event.payment.dueDate,
+		},
+		guestLimitPerDJ: event.guestLimitPerDJ || 2,
+	});
 
-  const [errors, setErrors] = useState<Record<string, string>>({});
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
+	// Convert existing timeslots to form format
+	const [timeslots, setTimeslots] = useState<Timeslot[]>(
+		event.timeslots.map((slot) => ({
+			id: slot._id,
+			startTime: slot.startTime,
+			endTime: slot.endTime,
+			djName: slot.djName,
+			djInstagram: slot.djInstagram,
+		}))
+	);
 
-  const addTimeslot = () => {
-    if (timeslots.length >= MAX_TIMESLOTS_PER_EVENT) {
-      setErrors({ ...errors, maxTimeslots: t('maxTimeslotsError', { max: MAX_TIMESLOTS_PER_EVENT }) });
-      return;
-    }
-    
-    let defaultStartTime = '';
-    let defaultEndTime = '';
-    
-    if (timeslots.length === 0) {
-      defaultStartTime = getDefaultStartTime();
-      defaultEndTime = getDefaultEndTime(defaultStartTime);
-    } else {
-      const lastSlot = timeslots[timeslots.length - 1];
-      if (lastSlot.endTime) {
-        defaultStartTime = lastSlot.endTime;
-        defaultEndTime = getDefaultEndTime(defaultStartTime);
-      }
-    }
+	const [errors, setErrors] = useState<Record<string, string>>({});
+	const [isSubmitting, setIsSubmitting] = useState(false);
+	const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
 
-    const newTimeslot: Timeslot = {
-      id: `new-timeslot-${Date.now()}`,
-      startTime: defaultStartTime,
-      endTime: defaultEndTime,
-      djName: '',
-      djInstagram: '',
-    };
-    setTimeslots([...timeslots, newTimeslot]);
-    
-    if (errors.maxTimeslots) {
-      clearFieldError('maxTimeslots');
-    }
-  };
+	const addTimeslot = () => {
+		if (timeslots.length >= MAX_TIMESLOTS_PER_EVENT) {
+			setErrors({
+				...errors,
+				maxTimeslots: t('maxTimeslotsError', { max: MAX_TIMESLOTS_PER_EVENT }),
+			});
+			return;
+		}
 
-  const updateTimeslot = (id: string, field: keyof Timeslot, value: string) => {
-    setTimeslots(timeslots.map(slot => 
-      slot.id === id ? { ...slot, [field]: value } : slot
-    ));
-    
-    const errorKey = `timeslot-${id}-${field}`;
-    if (errors[errorKey]) {
-      setErrors(prev => {
-        const newErrors = { ...prev };
-        delete newErrors[errorKey];
-        return newErrors;
-      });
-    }
-  };
+		let defaultStartTime = '';
+		let defaultEndTime = '';
 
-  const removeTimeslot = (id: string) => {
-    if (deleteConfirm === id) {
-      setTimeslots(timeslots.filter(slot => slot.id !== id));
-      setDeleteConfirm(null);
-      
-      // Clear related errors
-      const errorKeys = Object.keys(errors).filter(key => key.includes(`timeslot-${id}`));
-      if (errorKeys.length > 0) {
-        setErrors(prev => {
-          const newErrors = { ...prev };
-          errorKeys.forEach(key => delete newErrors[key]);
-          return newErrors;
-        });
-      }
-    } else {
-      setDeleteConfirm(id);
-    }
-  };
+		if (timeslots.length === 0) {
+			defaultStartTime = getDefaultStartTime();
+			defaultEndTime = getDefaultEndTime(defaultStartTime);
+		} else {
+			const lastSlot = timeslots[timeslots.length - 1];
+			if (lastSlot.endTime) {
+				defaultStartTime = lastSlot.endTime;
+				defaultEndTime = getDefaultEndTime(defaultStartTime);
+			}
+		}
 
-  const clearFieldError = (field: string) => {
-    setErrors(prev => {
-      const newErrors = { ...prev };
-      delete newErrors[field];
-      return newErrors;
-    });
-  };
+		const newTimeslot: Timeslot = {
+			id: `new-timeslot-${Date.now()}`,
+			startTime: defaultStartTime,
+			endTime: defaultEndTime,
+			djName: '',
+			djInstagram: '',
+		};
+		setTimeslots([...timeslots, newTimeslot]);
 
-  const updateFormData = (field: string, value: any) => {
-    setFormData(prev => {
-      if (field.includes('.')) {
-        const [parent, child] = field.split('.');
-        return {
-          ...prev,
-          [parent]: {
-            ...(prev[parent as keyof EventFormData] as any),
-            [child]: value
-          }
-        };
-      }
-      return { ...prev, [field]: value };
-    });
-    
-    clearFieldError(field);
-  };
+		if (errors.maxTimeslots) {
+			clearFieldError('maxTimeslots');
+		}
+	};
 
-  const validateForm = () => {
-    const newErrors: Record<string, string> = {};
-    
-    // Validate basic event data
-    const eventValidation = validateEvent(formData);
-    Object.assign(newErrors, eventValidation);
-    
-    // Validate timeslots
-    if (timeslots.length === 0) {
-      newErrors.timeslots = t('timeslotsRequired');
-    } else {
-      timeslots.forEach((slot) => {
-        const slotErrors = validateTimeslot(slot);
-        Object.keys(slotErrors).forEach(key => {
-          newErrors[`timeslot-${slot.id}-${key}`] = slotErrors[key as keyof typeof slotErrors];
-        });
-      });
-      
-      // Validate time ranges between timeslots
-      for (let i = 0; i < timeslots.length - 1; i++) {
-        const current = timeslots[i];
-        const next = timeslots[i + 1];
-        // Check if current end time comes before next start time
-        if (current.endTime && next.startTime && current.endTime > next.startTime) {
-          newErrors[`timeslot-${next.id}-startTime`] = t('startTimeAfterPrevious');
-        }
-      }
-    }
-    
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
+	const updateTimeslot = (id: string, field: keyof Timeslot, value: string) => {
+		setTimeslots(
+			timeslots.map((slot) => (slot.id === id ? { ...slot, [field]: value } : slot))
+		);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!validateForm() || !session?.user) {
-      return;
-    }
-    
-    setIsSubmitting(true);
-    
-    try {
-      // Convert timeslots to the format expected by the backend
-      const formattedTimeslots = timeslots.map(slot => ({
-        id: slot.id?.startsWith('new-') ? undefined : slot.id as Id<"timeslots">,
-        startTime: slot.startTime,
-        endTime: slot.endTime,
-        djName: slot.djName,
-        djInstagram: slot.djInstagram,
-      }));
+		const errorKey = `timeslot-${id}-${field}`;
+		if (errors[errorKey]) {
+			setErrors((prev) => {
+				const newErrors = { ...prev };
+				delete newErrors[errorKey];
+				return newErrors;
+			});
+		}
+	};
 
-      await updateEvent({
-        eventId: event._id,
-        userId: session.user.id as Id<"users">,
-        ...formData,
-        timeslots: formattedTimeslots,
-      });
-      
-      onEventUpdated?.();
-    } catch (error) {
-      console.error('Failed to update event:', error);
-      setErrors({ submit: t('updateFailed') });
-    }
-    
-    setIsSubmitting(false);
-  };
+	const removeTimeslot = (id: string) => {
+		if (deleteConfirm === id) {
+			setTimeslots(timeslots.filter((slot) => slot.id !== id));
+			setDeleteConfirm(null);
 
-  return (
-    <form onSubmit={handleSubmit} className="space-y-8">
-      {/* Basic Event Information */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
-            <Calendar className="w-5 h-5" />
-            <span>{t('basicInfo')}</span>
-          </CardTitle>
-          <CardDescription>{t('subtitle')}</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="grid gap-4 md:grid-cols-2">
-            <div className="space-y-2">
-              <Label htmlFor="eventName">{t('eventName')} *</Label>
-              <Input
-                id="eventName"
-                value={formData.name}
-                onChange={(e) => updateFormData('name', e.target.value)}
-                placeholder={t('eventNamePlaceholder')}
-                className={errors.name ? 'border-red-500' : ''}
-              />
-              {errors.name && (
-                <p className="text-sm text-red-500 flex items-center space-x-1">
-                  <AlertCircle className="w-4 h-4" />
-                  <span>{errors.name}</span>
-                </p>
-              )}
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="eventDate">{t('eventDate')} *</Label>
-              <Input
-                id="eventDate"
-                type="date"
-                value={formData.date}
-                onChange={(e) => updateFormData('date', e.target.value)}
-                className={errors.date ? 'border-red-500' : ''}
-              />
-              {errors.date && (
-                <p className="text-sm text-red-500 flex items-center space-x-1">
-                  <AlertCircle className="w-4 h-4" />
-                  <span>{errors.date}</span>
-                </p>
-              )}
-            </div>
-          </div>
+			// Clear related errors
+			const errorKeys = Object.keys(errors).filter((key) => key.includes(`timeslot-${id}`));
+			if (errorKeys.length > 0) {
+				setErrors((prev) => {
+					const newErrors = { ...prev };
+					errorKeys.forEach((key) => delete newErrors[key]);
+					return newErrors;
+				});
+			}
+		} else {
+			setDeleteConfirm(id);
+		}
+	};
 
-          <div className="space-y-2">
-            <Label htmlFor="description">{t('description')}</Label>
-            <Textarea
-              id="description"
-              value={formData.description}
-              onChange={(e) => updateFormData('description', e.target.value)}
-              placeholder={t('descriptionPlaceholder')}
-              rows={3}
-            />
-          </div>
+	const clearFieldError = (field: string) => {
+		setErrors((prev) => {
+			const newErrors = { ...prev };
+			delete newErrors[field];
+			return newErrors;
+		});
+	};
 
-          <div className="space-y-2">
-            <Label htmlFor="hashtags">{t('hashtags')}</Label>
-            <Input
-              id="hashtags"
-              value={formData.hashtags}
-              onChange={(e) => updateFormData('hashtags', e.target.value)}
-              placeholder={t('hashtagsPlaceholder')}
-            />
-          </div>
-        </CardContent>
-      </Card>
+	const updateFormData = (field: string, value: any) => {
+		setFormData((prev) => {
+			if (field.includes('.')) {
+				const [parent, child] = field.split('.');
+				return {
+					...prev,
+					[parent]: {
+						...(prev[parent as keyof EventFormData] as any),
+						[child]: value,
+					},
+				};
+			}
+			return { ...prev, [field]: value };
+		});
 
-      {/* Venue Information */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
-            <MapPin className="w-5 h-5" />
-            <span>{t('venue')}</span>
-          </CardTitle>
-          <CardDescription>{t('venueDescription')}</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="venueName">{t('venueName')} *</Label>
-            <Input
-              id="venueName"
-              value={formData.venue.name}
-              onChange={(e) => updateFormData('venue.name', e.target.value)}
-              placeholder={t('venueNamePlaceholder')}
-              className={errors['venue.name'] ? 'border-red-500' : ''}
-            />
-            {errors['venue.name'] && (
-              <p className="text-sm text-red-500 flex items-center space-x-1">
-                <AlertCircle className="w-4 h-4" />
-                <span>{errors['venue.name']}</span>
-              </p>
-            )}
-          </div>
-          
-          <div className="space-y-2">
-            <Label htmlFor="venueAddress">{t('venueAddress')} *</Label>
-            <Input
-              id="venueAddress"
-              value={formData.venue.address}
-              onChange={(e) => updateFormData('venue.address', e.target.value)}
-              placeholder={t('venueAddressPlaceholder')}
-              className={errors['venue.address'] ? 'border-red-500' : ''}
-            />
-            {errors['venue.address'] && (
-              <p className="text-sm text-red-500 flex items-center space-x-1">
-                <AlertCircle className="w-4 h-4" />
-                <span>{errors['venue.address']}</span>
-              </p>
-            )}
-          </div>
-        </CardContent>
-      </Card>
+		clearFieldError(field);
+	};
 
-      {/* DJ Timeslots */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <Clock className="w-5 h-5" />
-              <span>{t('timeslots')} ({timeslots.length})</span>
-            </div>
-            <Button
-              type="button"
-              onClick={addTimeslot}
-              variant="outline"
-              size="sm"
-              disabled={timeslots.length >= MAX_TIMESLOTS_PER_EVENT}
-            >
-              <PlusCircle className="w-4 h-4 mr-2" />
-              {t('addTimeslot')}
-            </Button>
-          </CardTitle>
-          <CardDescription>
-            {t('timeslotsDescription')}
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {errors.timeslots && (
-            <p className="text-sm text-red-500 flex items-center space-x-1">
-              <AlertCircle className="w-4 h-4" />
-              <span>{errors.timeslots}</span>
-            </p>
-          )}
-          
-          {errors.maxTimeslots && (
-            <p className="text-sm text-red-500 flex items-center space-x-1">
-              <AlertCircle className="w-4 h-4" />
-              <span>{errors.maxTimeslots}</span>
-            </p>
-          )}
+	const validateForm = () => {
+		const newErrors: Record<string, string> = {};
 
-          {timeslots.map((slot, index) => (
-            <div key={slot.id} className="p-4 border rounded-lg space-y-4">
-              <div className="flex items-center justify-between">
-                <h4 className="font-medium">{t('djSlot', { number: index + 1 })}</h4>
-                <Button
-                  type="button"
-                  variant={deleteConfirm === slot.id ? "destructive" : "outline"}
-                  size="sm"
-                  onClick={() => removeTimeslot(slot.id)}
-                >
-                  <Trash2 className="w-4 h-4" />
-                  {deleteConfirm === slot.id ? t('confirmDelete') : t('removeTimeslot')}
-                </Button>
-              </div>
-              
-              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-                <div className="space-y-2">
-                  <Label htmlFor={`djName-${slot.id}`}>{t('djName')} *</Label>
-                  <Input
-                    id={`djName-${slot.id}`}
-                    value={slot.djName}
-                    onChange={(e) => updateTimeslot(slot.id, 'djName', e.target.value)}
-                    placeholder={t('djName')}
-                    className={errors[`timeslot-${slot.id}-djName`] ? 'border-red-500' : ''}
-                  />
-                  {errors[`timeslot-${slot.id}-djName`] && (
-                    <p className="text-sm text-red-500">{errors[`timeslot-${slot.id}-djName`]}</p>
-                  )}
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor={`djInstagram-${slot.id}`}>{t('djInstagram')} *</Label>
-                  <Input
-                    id={`djInstagram-${slot.id}`}
-                    value={slot.djInstagram}
-                    onChange={(e) => updateTimeslot(slot.id, 'djInstagram', e.target.value)}
-                    placeholder="@djhandle"
-                    className={errors[`timeslot-${slot.id}-djInstagram`] ? 'border-red-500' : ''}
-                  />
-                  {errors[`timeslot-${slot.id}-djInstagram`] && (
-                    <p className="text-sm text-red-500">{errors[`timeslot-${slot.id}-djInstagram`]}</p>
-                  )}
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor={`startTime-${slot.id}`}>{t('startTime')} *</Label>
-                  <Input
-                    id={`startTime-${slot.id}`}
-                    type="time"
-                    value={slot.startTime}
-                    onChange={(e) => updateTimeslot(slot.id, 'startTime', e.target.value)}
-                    className={errors[`timeslot-${slot.id}-startTime`] ? 'border-red-500' : ''}
-                  />
-                  {errors[`timeslot-${slot.id}-startTime`] && (
-                    <p className="text-sm text-red-500">{errors[`timeslot-${slot.id}-startTime`]}</p>
-                  )}
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor={`endTime-${slot.id}`}>{t('endTime')} *</Label>
-                  <Input
-                    id={`endTime-${slot.id}`}
-                    type="time"
-                    value={slot.endTime}
-                    onChange={(e) => updateTimeslot(slot.id, 'endTime', e.target.value)}
-                    className={errors[`timeslot-${slot.id}-endTime`] ? 'border-red-500' : ''}
-                  />
-                  {errors[`timeslot-${slot.id}-endTime`] && (
-                    <p className="text-sm text-red-500">{errors[`timeslot-${slot.id}-endTime`]}</p>
-                  )}
-                </div>
-              </div>
-            </div>
-          ))}
-        </CardContent>
-      </Card>
+		// Validate basic event data
+		const eventValidation = validateEvent(formData);
+		Object.assign(newErrors, eventValidation);
 
-      {/* Deadlines */}
-      <Card>
-        <CardHeader>
-          <CardTitle>{t('deadlines')}</CardTitle>
-          <CardDescription>{t('deadlinesDescription')}</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid gap-4 md:grid-cols-2">
-            <div className="space-y-2">
-              <Label htmlFor="guestListDeadline">{t('guestListDeadline')} *</Label>
-              <Input
-                id="guestListDeadline"
-                type="date"
-                value={formData.deadlines.guestList}
-                onChange={(e) => updateFormData('deadlines.guestList', e.target.value)}
-                className={errors['deadlines.guestList'] ? 'border-red-500' : ''}
-              />
-              {errors['deadlines.guestList'] && (
-                <p className="text-sm text-red-500">{errors['deadlines.guestList']}</p>
-              )}
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="promoDeadline">{t('promoMaterialsDeadline')} *</Label>
-              <Input
-                id="promoDeadline"
-                type="date"
-                value={formData.deadlines.promoMaterials}
-                onChange={(e) => updateFormData('deadlines.promoMaterials', e.target.value)}
-                className={errors['deadlines.promoMaterials'] ? 'border-red-500' : ''}
-              />
-              {errors['deadlines.promoMaterials'] && (
-                <p className="text-sm text-red-500">{errors['deadlines.promoMaterials']}</p>
-              )}
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+		// Validate timeslots
+		if (timeslots.length === 0) {
+			newErrors.timeslots = t('timeslotsRequired');
+		} else {
+			timeslots.forEach((slot) => {
+				const slotErrors = validateTimeslot(slot);
+				Object.keys(slotErrors).forEach((key) => {
+					newErrors[`timeslot-${slot.id}-${key}`] =
+						slotErrors[key as keyof typeof slotErrors];
+				});
+			});
 
+			// Validate time ranges between timeslots
+			for (let i = 0; i < timeslots.length - 1; i++) {
+				const current = timeslots[i];
+				const next = timeslots[i + 1];
+				// Check if current end time comes before next start time
+				if (current.endTime && next.startTime && current.endTime > next.startTime) {
+					newErrors[`timeslot-${next.id}-startTime`] = t('startTimeAfterPrevious');
+				}
+			}
+		}
 
-      {/* Submit Button */}
-      {errors.submit && (
-        <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
-          <p className="text-sm text-red-700 flex items-center space-x-1">
-            <AlertCircle className="w-4 h-4" />
-            <span>{errors.submit}</span>
-          </p>
-        </div>
-      )}
+		setErrors(newErrors);
+		return Object.keys(newErrors).length === 0;
+	};
 
-      <div className="flex justify-end space-x-4">
-        <Button
-          type="submit"
-          disabled={isSubmitting}
-          className="min-w-[120px]"
-        >
-          {isSubmitting ? t('updating') : t('updateEvent')}
-        </Button>
-      </div>
-    </form>
-  );
+	const handleSubmit = async (e: React.FormEvent) => {
+		e.preventDefault();
+
+		if (!validateForm() || !session?.user) {
+			return;
+		}
+
+		setIsSubmitting(true);
+
+		try {
+			// Convert timeslots to the format expected by the backend
+			const formattedTimeslots = timeslots.map((slot) => ({
+				id: slot.id?.startsWith('new-') ? undefined : (slot.id as Id<'timeslots'>),
+				startTime: slot.startTime,
+				endTime: slot.endTime,
+				djName: slot.djName,
+				djInstagram: slot.djInstagram,
+			}));
+
+			await updateEvent({
+				eventId: event._id,
+				userId: session.user.id as Id<'users'>,
+				...formData,
+				timeslots: formattedTimeslots,
+			});
+
+			onEventUpdated?.();
+		} catch (error) {
+			console.error('Failed to update event:', error);
+			setErrors({ submit: t('updateFailed') });
+		}
+
+		setIsSubmitting(false);
+	};
+
+	return (
+		<form onSubmit={handleSubmit} className="space-y-8">
+			{/* Basic Event Information */}
+			<Card>
+				<CardHeader>
+					<CardTitle className="flex items-center space-x-2">
+						<Calendar className="w-5 h-5" />
+						<span>{t('basicInfo')}</span>
+					</CardTitle>
+					<CardDescription>{t('subtitle')}</CardDescription>
+				</CardHeader>
+				<CardContent className="space-y-6">
+					<div className="grid gap-4 md:grid-cols-2">
+						<div className="space-y-2">
+							<Label htmlFor="eventName">{t('eventName')} *</Label>
+							<Input
+								id="eventName"
+								value={formData.name}
+								onChange={(e) => updateFormData('name', e.target.value)}
+								placeholder={t('eventNamePlaceholder')}
+								className={errors.name ? 'border-red-500' : ''}
+							/>
+							{errors.name && (
+								<p className="text-sm text-red-500 flex items-center space-x-1">
+									<AlertCircle className="w-4 h-4" />
+									<span>{errors.name}</span>
+								</p>
+							)}
+						</div>
+
+						<div className="space-y-2">
+							<Label htmlFor="eventDate">{t('eventDate')} *</Label>
+							<Input
+								id="eventDate"
+								type="date"
+								value={formData.date}
+								onChange={(e) => updateFormData('date', e.target.value)}
+								className={errors.date ? 'border-red-500' : ''}
+							/>
+							{errors.date && (
+								<p className="text-sm text-red-500 flex items-center space-x-1">
+									<AlertCircle className="w-4 h-4" />
+									<span>{errors.date}</span>
+								</p>
+							)}
+						</div>
+					</div>
+
+					<div className="space-y-2">
+						<Label htmlFor="description">{t('description')}</Label>
+						<Textarea
+							id="description"
+							value={formData.description}
+							onChange={(e) => updateFormData('description', e.target.value)}
+							placeholder={t('descriptionPlaceholder')}
+							rows={3}
+						/>
+					</div>
+
+					<div className="space-y-2">
+						<Label htmlFor="hashtags">{t('hashtags')}</Label>
+						<Input
+							id="hashtags"
+							value={formData.hashtags}
+							onChange={(e) => updateFormData('hashtags', e.target.value)}
+							placeholder={t('hashtagsPlaceholder')}
+						/>
+					</div>
+				</CardContent>
+			</Card>
+
+			{/* Venue Information */}
+			<Card>
+				<CardHeader>
+					<CardTitle className="flex items-center space-x-2">
+						<MapPin className="w-5 h-5" />
+						<span>{t('venue')}</span>
+					</CardTitle>
+					<CardDescription>{t('venueDescription')}</CardDescription>
+				</CardHeader>
+				<CardContent className="space-y-4">
+					<div className="space-y-2">
+						<Label htmlFor="venueName">{t('venueName')} *</Label>
+						<Input
+							id="venueName"
+							value={formData.venue.name}
+							onChange={(e) => updateFormData('venue.name', e.target.value)}
+							placeholder={t('venueNamePlaceholder')}
+							className={errors['venue.name'] ? 'border-red-500' : ''}
+						/>
+						{errors['venue.name'] && (
+							<p className="text-sm text-red-500 flex items-center space-x-1">
+								<AlertCircle className="w-4 h-4" />
+								<span>{errors['venue.name']}</span>
+							</p>
+						)}
+					</div>
+
+					<div className="space-y-2">
+						<Label htmlFor="venueAddress">{t('venueAddress')} *</Label>
+						<Input
+							id="venueAddress"
+							value={formData.venue.address}
+							onChange={(e) => updateFormData('venue.address', e.target.value)}
+							placeholder={t('venueAddressPlaceholder')}
+							className={errors['venue.address'] ? 'border-red-500' : ''}
+						/>
+						{errors['venue.address'] && (
+							<p className="text-sm text-red-500 flex items-center space-x-1">
+								<AlertCircle className="w-4 h-4" />
+								<span>{errors['venue.address']}</span>
+							</p>
+						)}
+					</div>
+				</CardContent>
+			</Card>
+
+			{/* DJ Timeslots */}
+			<Card>
+				<CardHeader>
+					<CardTitle className="flex items-center justify-between">
+						<div className="flex items-center space-x-2">
+							<Clock className="w-5 h-5" />
+							<span>
+								{t('timeslots')} ({timeslots.length})
+							</span>
+						</div>
+						<Button
+							type="button"
+							onClick={addTimeslot}
+							variant="outline"
+							size="sm"
+							disabled={timeslots.length >= MAX_TIMESLOTS_PER_EVENT}
+						>
+							<PlusCircle className="w-4 h-4 mr-2" />
+							{t('addTimeslot')}
+						</Button>
+					</CardTitle>
+					<CardDescription>{t('timeslotsDescription')}</CardDescription>
+				</CardHeader>
+				<CardContent className="space-y-4">
+					{errors.timeslots && (
+						<p className="text-sm text-red-500 flex items-center space-x-1">
+							<AlertCircle className="w-4 h-4" />
+							<span>{errors.timeslots}</span>
+						</p>
+					)}
+
+					{errors.maxTimeslots && (
+						<p className="text-sm text-red-500 flex items-center space-x-1">
+							<AlertCircle className="w-4 h-4" />
+							<span>{errors.maxTimeslots}</span>
+						</p>
+					)}
+
+					{timeslots.map((slot, index) => (
+						<div key={slot.id} className="p-4 border rounded-lg space-y-4">
+							<div className="flex items-center justify-between">
+								<h4 className="font-medium">
+									{t('djSlot', { number: index + 1 })}
+								</h4>
+								<Button
+									type="button"
+									variant={deleteConfirm === slot.id ? 'destructive' : 'outline'}
+									size="sm"
+									onClick={() => removeTimeslot(slot.id)}
+								>
+									<Trash2 className="w-4 h-4" />
+									{deleteConfirm === slot.id
+										? t('confirmDelete')
+										: t('removeTimeslot')}
+								</Button>
+							</div>
+
+							<div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+								<div className="space-y-2">
+									<Label htmlFor={`djName-${slot.id}`}>{t('djName')} *</Label>
+									<Input
+										id={`djName-${slot.id}`}
+										value={slot.djName}
+										onChange={(e) =>
+											updateTimeslot(slot.id, 'djName', e.target.value)
+										}
+										placeholder={t('djName')}
+										className={
+											errors[`timeslot-${slot.id}-djName`]
+												? 'border-red-500'
+												: ''
+										}
+									/>
+									{errors[`timeslot-${slot.id}-djName`] && (
+										<p className="text-sm text-red-500">
+											{errors[`timeslot-${slot.id}-djName`]}
+										</p>
+									)}
+								</div>
+
+								<div className="space-y-2">
+									<Label htmlFor={`djInstagram-${slot.id}`}>
+										{t('djInstagram')} *
+									</Label>
+									<Input
+										id={`djInstagram-${slot.id}`}
+										value={slot.djInstagram}
+										onChange={(e) =>
+											updateTimeslot(slot.id, 'djInstagram', e.target.value)
+										}
+										placeholder="@djhandle"
+										className={
+											errors[`timeslot-${slot.id}-djInstagram`]
+												? 'border-red-500'
+												: ''
+										}
+									/>
+									{errors[`timeslot-${slot.id}-djInstagram`] && (
+										<p className="text-sm text-red-500">
+											{errors[`timeslot-${slot.id}-djInstagram`]}
+										</p>
+									)}
+								</div>
+
+								<div className="space-y-2">
+									<Label htmlFor={`startTime-${slot.id}`}>
+										{t('startTime')} *
+									</Label>
+									<Input
+										id={`startTime-${slot.id}`}
+										type="time"
+										value={slot.startTime}
+										onChange={(e) =>
+											updateTimeslot(slot.id, 'startTime', e.target.value)
+										}
+										className={
+											errors[`timeslot-${slot.id}-startTime`]
+												? 'border-red-500'
+												: ''
+										}
+									/>
+									{errors[`timeslot-${slot.id}-startTime`] && (
+										<p className="text-sm text-red-500">
+											{errors[`timeslot-${slot.id}-startTime`]}
+										</p>
+									)}
+								</div>
+
+								<div className="space-y-2">
+									<Label htmlFor={`endTime-${slot.id}`}>{t('endTime')} *</Label>
+									<Input
+										id={`endTime-${slot.id}`}
+										type="time"
+										value={slot.endTime}
+										onChange={(e) =>
+											updateTimeslot(slot.id, 'endTime', e.target.value)
+										}
+										className={
+											errors[`timeslot-${slot.id}-endTime`]
+												? 'border-red-500'
+												: ''
+										}
+									/>
+									{errors[`timeslot-${slot.id}-endTime`] && (
+										<p className="text-sm text-red-500">
+											{errors[`timeslot-${slot.id}-endTime`]}
+										</p>
+									)}
+								</div>
+							</div>
+						</div>
+					))}
+				</CardContent>
+			</Card>
+
+			{/* Deadlines */}
+			<Card>
+				<CardHeader>
+					<CardTitle>{t('deadlines')}</CardTitle>
+					<CardDescription>{t('deadlinesDescription')}</CardDescription>
+				</CardHeader>
+				<CardContent className="space-y-4">
+					<div className="grid gap-4 md:grid-cols-2">
+						<div className="space-y-2">
+							<Label htmlFor="guestListDeadline">{t('guestListDeadline')} *</Label>
+							<Input
+								id="guestListDeadline"
+								type="date"
+								value={formData.deadlines.guestList}
+								onChange={(e) =>
+									updateFormData('deadlines.guestList', e.target.value)
+								}
+								className={errors['deadlines.guestList'] ? 'border-red-500' : ''}
+							/>
+							{errors['deadlines.guestList'] && (
+								<p className="text-sm text-red-500">
+									{errors['deadlines.guestList']}
+								</p>
+							)}
+						</div>
+
+						<div className="space-y-2">
+							<Label htmlFor="promoDeadline">{t('promoMaterialsDeadline')} *</Label>
+							<Input
+								id="promoDeadline"
+								type="date"
+								value={formData.deadlines.promoMaterials}
+								onChange={(e) =>
+									updateFormData('deadlines.promoMaterials', e.target.value)
+								}
+								className={
+									errors['deadlines.promoMaterials'] ? 'border-red-500' : ''
+								}
+							/>
+							{errors['deadlines.promoMaterials'] && (
+								<p className="text-sm text-red-500">
+									{errors['deadlines.promoMaterials']}
+								</p>
+							)}
+						</div>
+					</div>
+				</CardContent>
+			</Card>
+
+			{/* Submit Button */}
+			{errors.submit && (
+				<div className="p-4 bg-red-50 border border-red-200 rounded-lg">
+					<p className="text-sm text-red-700 flex items-center space-x-1">
+						<AlertCircle className="w-4 h-4" />
+						<span>{errors.submit}</span>
+					</p>
+				</div>
+			)}
+
+			<div className="flex justify-end space-x-4">
+				<Button type="submit" disabled={isSubmitting} className="min-w-[120px]">
+					{isSubmitting ? t('updating') : t('updateEvent')}
+				</Button>
+			</div>
+		</form>
+	);
 }

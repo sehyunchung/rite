@@ -1,94 +1,100 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
-  /* RITE Design System - Global Styles */
-  * {
-    @apply border-border;
-  }
-  
-  html {
-    @apply bg-neutral-800;
-  }
-  
-  body {
-    @apply bg-neutral-800 text-white font-suit antialiased;
-    font-feature-settings: "liga" 1, "calt" 1; /* Enable ligatures and contextual alternates */
-  }
-  
-  /* Typography defaults */
-  h1, h2, h3, h4, h5, h6 {
-    @apply font-suit text-white;
-  }
-  
-  h1 {
-    @apply text-5xl font-bold leading-tight tracking-tight;
-  }
-  
-  h2 {
-    @apply text-4xl font-bold leading-tight tracking-tight;
-  }
-  
-  h3 {
-    @apply text-3xl font-semibold leading-snug;
-  }
-  
-  h4 {
-    @apply text-2xl font-semibold leading-normal;
-  }
-  
-  h5 {
-    @apply text-xl font-medium leading-normal;
-  }
-  
-  h6 {
-    @apply text-lg font-medium leading-normal;
-  }
-  
-  p {
-    @apply text-base leading-normal;
-  }
-  
-  /* Selection */
-  ::selection {
-    background-color: var(--brand-primary, #E946FF);
-    opacity: 0.3;
-    color: var(--text-primary, #FFFFFF);
-  }
+	/* RITE Design System - Global Styles */
+	* {
+		@apply border-border;
+	}
+
+	html {
+		@apply bg-neutral-800;
+	}
+
+	body {
+		@apply bg-neutral-800 text-white font-suit antialiased;
+		font-feature-settings:
+			'liga' 1,
+			'calt' 1; /* Enable ligatures and contextual alternates */
+	}
+
+	/* Typography defaults */
+	h1,
+	h2,
+	h3,
+	h4,
+	h5,
+	h6 {
+		@apply font-suit text-white;
+	}
+
+	h1 {
+		@apply text-5xl font-bold leading-tight tracking-tight;
+	}
+
+	h2 {
+		@apply text-4xl font-bold leading-tight tracking-tight;
+	}
+
+	h3 {
+		@apply text-3xl font-semibold leading-snug;
+	}
+
+	h4 {
+		@apply text-2xl font-semibold leading-normal;
+	}
+
+	h5 {
+		@apply text-xl font-medium leading-normal;
+	}
+
+	h6 {
+		@apply text-lg font-medium leading-normal;
+	}
+
+	p {
+		@apply text-base leading-normal;
+	}
+
+	/* Selection */
+	::selection {
+		background-color: var(--brand-primary, #e946ff);
+		opacity: 0.3;
+		color: var(--text-primary, #ffffff);
+	}
 }
 
 @layer utilities {
-  /* Custom shadows */
-  .shadow-xs {
-    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-  }
-  
-  /* Focus visible utilities */
-  .focus-ring {
-    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 focus-visible:ring-offset-neutral-800;
-  }
-  
-  /* Text rendering */
-  .text-balance {
-    text-wrap: balance;
-  }
-  
-  /* Safe area utilities for mobile devices */
-  .safe-area-pb {
-    padding-bottom: env(safe-area-inset-bottom);
-  }
-  
-  .safe-area-pt {
-    padding-top: env(safe-area-inset-top);
-  }
-  
-  .safe-area-pl {
-    padding-left: env(safe-area-inset-left);
-  }
-  
-  .safe-area-pr {
-    padding-right: env(safe-area-inset-right);
-  }
+	/* Custom shadows */
+	.shadow-xs {
+		box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+	}
+
+	/* Focus visible utilities */
+	.focus-ring {
+		@apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 focus-visible:ring-offset-neutral-800;
+	}
+
+	/* Text rendering */
+	.text-balance {
+		text-wrap: balance;
+	}
+
+	/* Safe area utilities for mobile devices */
+	.safe-area-pb {
+		padding-bottom: env(safe-area-inset-bottom);
+	}
+
+	.safe-area-pt {
+		padding-top: env(safe-area-inset-top);
+	}
+
+	.safe-area-pl {
+		padding-left: env(safe-area-inset-left);
+	}
+
+	.safe-area-pr {
+		padding-right: env(safe-area-inset-right);
+	}
 }

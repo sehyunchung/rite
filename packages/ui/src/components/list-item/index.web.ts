@@ -1,1 +1,1 @@
-export * from './list-item.web'
+export * from './list-item.web';

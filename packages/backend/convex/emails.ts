@@ -1,44 +1,44 @@
-import { components } from "./_generated/api";
-import { Resend } from "@convex-dev/resend";
-import { internalMutation, internalAction } from "./_generated/server";
-import { v } from "convex/values";
-import { Id } from "./_generated/dataModel";
+import { components } from './_generated/api';
+import { Resend } from '@convex-dev/resend';
+import { internalMutation, internalAction } from './_generated/server';
+import { v } from 'convex/values';
+import { Id } from './_generated/dataModel';
 
 // Initialize Resend with test mode for development
 // Set testMode: false in production
 export const resend: Resend = new Resend(components.resend, {
-  testMode: process.env.NODE_ENV !== "production",
+	testMode: process.env.NODE_ENV !== 'production',
 });
 
 // Type for email context
 interface EmailContext {
-  djName: string;
-  eventName: string;
-  eventDate: string;
-  venue: string;
-  timeslot: string;
-  organizerName: string;
-  organizerEmail?: string;
+	djName: string;
+	eventName: string;
+	eventDate: string;
+	venue: string;
+	timeslot: string;
+	organizerName: string;
+	organizerEmail?: string;
 }
 
 // Send submission received email
 export const sendSubmissionReceivedEmail = internalAction({
-  args: {
-    to: v.string(),
-    context: v.object({
-      djName: v.string(),
-      eventName: v.string(),
-      eventDate: v.string(),
-      venue: v.string(),
-      timeslot: v.string(),
-      organizerName: v.string(),
-      organizerEmail: v.optional(v.string()),
-    }),
-  },
-  handler: async (ctx, args) => {
-    const { to, context } = args;
-    
-    const html = `
+	args: {
+		to: v.string(),
+		context: v.object({
+			djName: v.string(),
+			eventName: v.string(),
+			eventDate: v.string(),
+			venue: v.string(),
+			timeslot: v.string(),
+			organizerName: v.string(),
+			organizerEmail: v.optional(v.string()),
+		}),
+	},
+	handler: async (ctx, args) => {
+		const { to, context } = args;
+
+		const html = `
       <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto;">
         <h2 style="color: #E946FF;">✅ Information Received!</h2>
         
@@ -67,7 +67,7 @@ export const sendSubmissionReceivedEmail = internalAction({
       </div>
     `;
 
-    const plainText = `
+		const plainText = `
 ✅ Information Received!
 
 Hi ${context.djName},
@@ -87,37 +87,37 @@ This email was sent from RITE Event Management Platform
 https://rite.party
     `;
 
-    const emailId = await resend.sendEmail(ctx, {
-      from: "RITE Events <notifications@rite.party>",
-      to,
-      subject: `✅ Information received for ${context.eventName}`,
-      html,
-      text: plainText,
-      replyTo: context.organizerEmail ? [context.organizerEmail] : undefined,
-    });
+		const emailId = await resend.sendEmail(ctx, {
+			from: 'RITE Events <notifications@rite.party>',
+			to,
+			subject: `✅ Information received for ${context.eventName}`,
+			html,
+			text: plainText,
+			replyTo: context.organizerEmail ? [context.organizerEmail] : undefined,
+		});
 
-    return { success: true, emailId };
-  },
+		return { success: true, emailId };
+	},
 });
 
 // Send information approved email
 export const sendInformationApprovedEmail = internalAction({
-  args: {
-    to: v.string(),
-    context: v.object({
-      djName: v.string(),
-      eventName: v.string(),
-      eventDate: v.string(),
-      venue: v.string(),
-      timeslot: v.string(),
-      organizerName: v.string(),
-      organizerEmail: v.optional(v.string()),
-    }),
-  },
-  handler: async (ctx, args) => {
-    const { to, context } = args;
-    
-    const html = `
+	args: {
+		to: v.string(),
+		context: v.object({
+			djName: v.string(),
+			eventName: v.string(),
+			eventDate: v.string(),
+			venue: v.string(),
+			timeslot: v.string(),
+			organizerName: v.string(),
+			organizerEmail: v.optional(v.string()),
+		}),
+	},
+	handler: async (ctx, args) => {
+		const { to, context } = args;
+
+		const html = `
       <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto;">
         <h2 style="color: #E946FF;">✅ Information Approved!</h2>
         
@@ -152,7 +152,7 @@ export const sendInformationApprovedEmail = internalAction({
       </div>
     `;
 
-    const plainText = `
+		const plainText = `
 ✅ Information Approved!
 
 Hi ${context.djName},
@@ -178,38 +178,38 @@ This email was sent from RITE Event Management Platform
 https://rite.party
     `;
 
-    const emailId = await resend.sendEmail(ctx, {
-      from: "RITE Events <notifications@rite.party>",
-      to,
-      subject: `✅ Your information has been approved for ${context.eventName}`,
-      html,
-      text: plainText,
-      replyTo: context.organizerEmail ? [context.organizerEmail] : undefined,
-    });
+		const emailId = await resend.sendEmail(ctx, {
+			from: 'RITE Events <notifications@rite.party>',
+			to,
+			subject: `✅ Your information has been approved for ${context.eventName}`,
+			html,
+			text: plainText,
+			replyTo: context.organizerEmail ? [context.organizerEmail] : undefined,
+		});
 
-    return { success: true, emailId };
-  },
+		return { success: true, emailId };
+	},
 });
 
 // Send action required email (for revisions)
 export const sendActionRequiredEmail = internalAction({
-  args: {
-    to: v.string(),
-    context: v.object({
-      djName: v.string(),
-      eventName: v.string(),
-      eventDate: v.string(),
-      venue: v.string(),
-      timeslot: v.string(),
-      organizerName: v.string(),
-      organizerEmail: v.optional(v.string()),
-      feedback: v.optional(v.string()),
-    }),
-  },
-  handler: async (ctx, args) => {
-    const { to, context } = args;
-    
-    const html = `
+	args: {
+		to: v.string(),
+		context: v.object({
+			djName: v.string(),
+			eventName: v.string(),
+			eventDate: v.string(),
+			venue: v.string(),
+			timeslot: v.string(),
+			organizerName: v.string(),
+			organizerEmail: v.optional(v.string()),
+			feedback: v.optional(v.string()),
+		}),
+	},
+	handler: async (ctx, args) => {
+		const { to, context } = args;
+
+		const html = `
       <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto;">
         <h2 style="color: #E946FF;">⚠️ Information Review</h2>
         
@@ -225,12 +225,16 @@ export const sendActionRequiredEmail = internalAction({
           </p>
         </div>
         
-        ${context.feedback ? `
+        ${
+			context.feedback
+				? `
         <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin: 20px 0;">
           <h4 style="margin: 0 0 10px 0; color: #333;">Organizer Feedback:</h4>
           <p style="margin: 0; color: #555;">${context.feedback}</p>
         </div>
-        ` : ''}
+        `
+				: ''
+		}
         
         <p>Please:</p>
         <ul style="color: #555;">
@@ -251,7 +255,7 @@ export const sendActionRequiredEmail = internalAction({
       </div>
     `;
 
-    const plainText = `
+		const plainText = `
 ⚠️ Action Required
 
 Hi ${context.djName},
@@ -262,10 +266,14 @@ After reviewing your submission, we need you to update or revise some informatio
 
 Your performance slot is still confirmed. We just need some adjustments to the information you submitted.
 
-${context.feedback ? `Organizer Feedback:
+${
+	context.feedback
+		? `Organizer Feedback:
 ${context.feedback}
 
-` : ''}Please:
+`
+		: ''
+}Please:
 - Review the organizer's feedback carefully
 - Update your submission with the requested changes
 - Reply to this email if you have any questions
@@ -279,51 +287,53 @@ This email was sent from RITE Event Management Platform
 https://rite.party
     `;
 
-    const emailId = await resend.sendEmail(ctx, {
-      from: "RITE Events <notifications@rite.party>",
-      to,
-      subject: `⚠️ Action required for ${context.eventName}`,
-      html,
-      text: plainText,
-      replyTo: context.organizerEmail ? [context.organizerEmail] : undefined,
-    });
+		const emailId = await resend.sendEmail(ctx, {
+			from: 'RITE Events <notifications@rite.party>',
+			to,
+			subject: `⚠️ Action required for ${context.eventName}`,
+			html,
+			text: plainText,
+			replyTo: context.organizerEmail ? [context.organizerEmail] : undefined,
+		});
 
-    return { success: true, emailId };
-  },
+		return { success: true, emailId };
+	},
 });
 
 // Send event reminder email
 export const sendEventReminderEmail = internalAction({
-  args: {
-    to: v.string(),
-    context: v.object({
-      djName: v.string(),
-      eventName: v.string(),
-      eventDate: v.string(),
-      venue: v.string(),
-      timeslot: v.string(),
-      daysUntilEvent: v.number(),
-      organizerName: v.string(),
-      organizerEmail: v.optional(v.string()),
-    }),
-  },
-  handler: async (ctx, args) => {
-    const { to, context } = args;
-    
-    const subject = context.daysUntilEvent === 1 
-      ? `🎵 Tomorrow: ${context.eventName}!`
-      : `🎵 Reminder: ${context.eventName} in ${context.daysUntilEvent} days`;
-    
-    const html = `
+	args: {
+		to: v.string(),
+		context: v.object({
+			djName: v.string(),
+			eventName: v.string(),
+			eventDate: v.string(),
+			venue: v.string(),
+			timeslot: v.string(),
+			daysUntilEvent: v.number(),
+			organizerName: v.string(),
+			organizerEmail: v.optional(v.string()),
+		}),
+	},
+	handler: async (ctx, args) => {
+		const { to, context } = args;
+
+		const subject =
+			context.daysUntilEvent === 1
+				? `🎵 Tomorrow: ${context.eventName}!`
+				: `🎵 Reminder: ${context.eventName} in ${context.daysUntilEvent} days`;
+
+		const html = `
       <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto;">
         <h2 style="color: #E946FF;">🎵 Event Reminder</h2>
         
         <p>Hi ${context.djName},</p>
         
-        <p>${context.daysUntilEvent === 1 
-          ? `<strong>Your performance is tomorrow!</strong>` 
-          : `This is a reminder that you're performing at <strong>${context.eventName}</strong> in ${context.daysUntilEvent} days!`
-        }</p>
+        <p>${
+			context.daysUntilEvent === 1
+				? `<strong>Your performance is tomorrow!</strong>`
+				: `This is a reminder that you're performing at <strong>${context.eventName}</strong> in ${context.daysUntilEvent} days!`
+		}</p>
         
         <div style="background: linear-gradient(135deg, #E946FF 0%, #9333EA 100%); color: white; padding: 20px; border-radius: 8px; margin: 20px 0;">
           <h3 style="margin: 0 0 10px 0;">Performance Details:</h3>
@@ -352,14 +362,15 @@ export const sendEventReminderEmail = internalAction({
       </div>
     `;
 
-    const plainText = `
+		const plainText = `
 🎵 Event Reminder
 
 Hi ${context.djName},
 
-${context.daysUntilEvent === 1 
-  ? `Your performance is tomorrow!` 
-  : `This is a reminder that you're performing at ${context.eventName} in ${context.daysUntilEvent} days!`
+${
+	context.daysUntilEvent === 1
+		? `Your performance is tomorrow!`
+		: `This is a reminder that you're performing at ${context.eventName} in ${context.daysUntilEvent} days!`
 }
 
 Performance Details:
@@ -381,15 +392,15 @@ This email was sent from RITE Event Management Platform
 https://rite.party
     `;
 
-    const emailId = await resend.sendEmail(ctx, {
-      from: "RITE Events <notifications@rite.party>",
-      to,
-      subject,
-      html,
-      text: plainText,
-      replyTo: context.organizerEmail ? [context.organizerEmail] : undefined,
-    });
+		const emailId = await resend.sendEmail(ctx, {
+			from: 'RITE Events <notifications@rite.party>',
+			to,
+			subject,
+			html,
+			text: plainText,
+			replyTo: context.organizerEmail ? [context.organizerEmail] : undefined,
+		});
 
-    return { success: true, emailId };
-  },
+		return { success: true, emailId };
+	},
 });

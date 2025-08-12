@@ -1,1 +1,1 @@
-export * from './text.rn'
+export * from './text.rn';
