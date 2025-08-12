@@ -7,33 +7,33 @@ import { setRequestLocale } from 'next-intl/server';
 import ConsentBanner from '../components/ConsentBanner';
 
 interface Props {
-  children: ReactNode;
-  params: Promise<{ locale: string }>;
+	children: ReactNode;
+	params: Promise<{ locale: string }>;
 }
 
 export function generateStaticParams() {
-  return routing.locales.map((locale: string) => ({ locale }));
+	return routing.locales.map((locale: string) => ({ locale }));
 }
 
 export default async function LocaleLayout({ children, params }: Props) {
-  const { locale } = await params;
+	const { locale } = await params;
 
-  // Ensure that the incoming `locale` is valid
-  if (!routing.locales.includes(locale as any)) {
-    notFound();
-  }
+	// Ensure that the incoming `locale` is valid
+	if (!routing.locales.includes(locale as any)) {
+		notFound();
+	}
 
-  // Enable static rendering
-  setRequestLocale(locale);
+	// Enable static rendering
+	setRequestLocale(locale);
 
-  // Providing all messages to the client
-  // side is the easiest way to get started
-  const messages = await getMessages();
+	// Providing all messages to the client
+	// side is the easiest way to get started
+	const messages = await getMessages();
 
-  return (
-    <NextIntlClientProvider messages={messages}>
-      {children}
-      <ConsentBanner />
-    </NextIntlClientProvider>
-  );
+	return (
+		<NextIntlClientProvider messages={messages}>
+			{children}
+			<ConsentBanner />
+		</NextIntlClientProvider>
+	);
 }

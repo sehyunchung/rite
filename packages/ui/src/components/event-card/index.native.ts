@@ -1,1 +1,1 @@
-export * from './event-card.native'
+export * from './event-card.native';

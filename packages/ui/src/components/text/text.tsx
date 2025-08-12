@@ -4,4 +4,4 @@
 // For web, it will use text.web.tsx
 // For native, it will use text.native.tsx
 
-export * from './text.web'
+export * from './text.web';

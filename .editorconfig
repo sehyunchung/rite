@@ -1,0 +1,57 @@
+# EditorConfig is awesome: https://EditorConfig.org
+
+# top-most EditorConfig file
+root = true
+
+# Unix-style newlines with a newline ending every file
+[*]
+end_of_line = lf
+insert_final_newline = true
+charset = utf-8
+trim_trailing_whitespace = true
+
+# Use tabs for indentation
+indent_style = tab
+indent_size = 2
+tab_width = 2
+
+# Markdown files
+[*.md]
+trim_trailing_whitespace = false
+
+# YAML files must use spaces
+[*.{yml,yaml}]
+indent_style = space
+indent_size = 2
+
+# Package.json and other JSON config files
+[*.json]
+indent_style = tab
+indent_size = 2
+tab_width = 2
+
+# TypeScript and JavaScript files
+[*.{ts,tsx,js,jsx,mjs,cjs}]
+indent_style = tab
+indent_size = 2
+tab_width = 2
+
+# CSS and related files
+[*.{css,scss,sass,less}]
+indent_style = tab
+indent_size = 2
+tab_width = 2
+
+# HTML and related files
+[*.{html,htm,xml,svg}]
+indent_style = tab
+indent_size = 2
+tab_width = 2
+
+# Makefiles require tabs
+[Makefile]
+indent_style = tab
+
+# Batch files
+[*.{cmd,bat}]
+end_of_line = crlf

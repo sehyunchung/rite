@@ -7,167 +7,155 @@ import { createUserSession } from '../../lib/auth/session-utils';
 import { getGoogleOAuthConfig } from '../../lib/auth/oauth-config';
 
 interface GoogleUser {
-  email: string;
-  name: string;
-  picture: string;
+	email: string;
+	name: string;
+	picture: string;
 }
 
 /**
  * Custom hook for handling Google OAuth authentication
  */
 export const useGoogleAuth = (convex: ConvexReactClient) => {
-  const handleGoogleAuth = useCallback(async (accessToken: string): Promise<User | null> => {
-    if (!accessToken) {
-      throw new AuthError('No access token provided', 'MISSING_ACCESS_TOKEN');
-    }
+	const handleGoogleAuth = useCallback(
+		async (accessToken: string): Promise<User | null> => {
+			if (!accessToken) {
+				throw new AuthError('No access token provided', 'MISSING_ACCESS_TOKEN');
+			}
 
-    try {
-      // Get user info from Google
-      const userInfoResponse = await fetch(
-        `https://www.googleapis.com/oauth2/v2/userinfo?access_token=${accessToken}`
-      );
-      
-      if (!userInfoResponse.ok) {
-        throw new AuthError(
-          'Failed to fetch user info from Google',
-          'GOOGLE_API_ERROR',
-          { status: userInfoResponse.status, statusText: userInfoResponse.statusText }
-        );
-      }
-      
-      const googleUser: GoogleUser = await userInfoResponse.json();
+			try {
+				// Get user info from Google
+				const userInfoResponse = await fetch(
+					`https://www.googleapis.com/oauth2/v2/userinfo?access_token=${accessToken}`
+				);
 
-      // Check if user exists in Convex
-      let userData = await convex.query(api.auth.getUserByEmail, { 
-        email: googleUser.email 
-      });
+				if (!userInfoResponse.ok) {
+					throw new AuthError('Failed to fetch user info from Google', 'GOOGLE_API_ERROR', {
+						status: userInfoResponse.status,
+						statusText: userInfoResponse.statusText,
+					});
+				}
 
-      // Create user if doesn't exist
-      if (!userData) {
-        const userId = await convex.mutation(api.auth.createUser, {
-          email: googleUser.email,
-          name: googleUser.name,
-          image: googleUser.picture,
-          emailVerified: Date.now(),
-        });
-        userData = await convex.query(api.auth.getUser, { userId });
-      }
+				const googleUser: GoogleUser = await userInfoResponse.json();
 
-      if (!userData) {
-        throw new AuthError('Failed to create or retrieve user', 'USER_CREATION_ERROR');
-      }
+				// Check if user exists in Convex
+				let userData = await convex.query(api.auth.getUserByEmail, {
+					email: googleUser.email,
+				});
 
-      // Create session
-      await createUserSession(convex, userData._id);
-      return userData;
-    } catch (error) {
-      if (error instanceof AuthError) {
-        throw error;
-      }
-      throw new AuthError(
-        'Google authentication failed',
-        'GOOGLE_AUTH_ERROR',
-        error
-      );
-    }
-  }, [convex]);
+				// Create user if doesn't exist
+				if (!userData) {
+					const userId = await convex.mutation(api.auth.createUser, {
+						email: googleUser.email,
+						name: googleUser.name,
+						image: googleUser.picture,
+						emailVerified: Date.now(),
+					});
+					userData = await convex.query(api.auth.getUser, { userId });
+				}
 
-  const exchangeCodeForToken = useCallback(async (code: string): Promise<User | null> => {
-    const config = getGoogleOAuthConfig();
-    
-    try {
-      const tokenResponse = await fetch('https://oauth2.googleapis.com/token', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: new URLSearchParams({
-          client_id: config.webClientId || '',
-          // Client secret removed for security - using PKCE flow instead
-          code: code,
-          grant_type: 'authorization_code',
-          redirect_uri: config.redirectUri,
-        }),
-      });
+				if (!userData) {
+					throw new AuthError('Failed to create or retrieve user', 'USER_CREATION_ERROR');
+				}
 
-      if (!tokenResponse.ok) {
-        const errorText = await tokenResponse.text();
-        throw new AuthError(
-          'Token exchange failed',
-          'TOKEN_EXCHANGE_ERROR',
-          { status: tokenResponse.status, response: errorText }
-        );
-      }
+				// Create session
+				await createUserSession(convex, userData._id);
+				return userData;
+			} catch (error) {
+				if (error instanceof AuthError) {
+					throw error;
+				}
+				throw new AuthError('Google authentication failed', 'GOOGLE_AUTH_ERROR', error);
+			}
+		},
+		[convex]
+	);
 
-      const tokenData = await tokenResponse.json();
-      
-      if (!tokenData.access_token) {
-        throw new AuthError('No access token in response', 'MISSING_ACCESS_TOKEN');
-      }
+	const exchangeCodeForToken = useCallback(
+		async (code: string): Promise<User | null> => {
+			const config = getGoogleOAuthConfig();
 
-      return await handleGoogleAuth(tokenData.access_token);
-    } catch (error) {
-      if (error instanceof AuthError) {
-        throw error;
-      }
-      throw new AuthError(
-        'Token exchange failed',
-        'TOKEN_EXCHANGE_ERROR',
-        error
-      );
-    }
-  }, [handleGoogleAuth]);
+			try {
+				const tokenResponse = await fetch('https://oauth2.googleapis.com/token', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded',
+					},
+					body: new URLSearchParams({
+						client_id: config.webClientId || '',
+						// Client secret removed for security - using PKCE flow instead
+						code: code,
+						grant_type: 'authorization_code',
+						redirect_uri: config.redirectUri,
+					}),
+				});
 
-  const handleWebRedirect = useCallback((): Promise<User | null> => {
-    return new Promise((resolve, reject) => {
-      if (Platform.OS !== 'web') {
-        resolve(null);
-        return;
-      }
+				if (!tokenResponse.ok) {
+					const errorText = await tokenResponse.text();
+					throw new AuthError('Token exchange failed', 'TOKEN_EXCHANGE_ERROR', {
+						status: tokenResponse.status,
+						response: errorText,
+					});
+				}
 
-      try {
-        const urlParams = new URLSearchParams(window.location.search);
-        const hashParams = new URLSearchParams(window.location.hash.substring(1));
-        
-        // Check for access token (implicit flow)
-        const accessToken = hashParams.get('access_token');
-        const state = hashParams.get('state') || urlParams.get('state');
-        
-        // Check for authorization code (code flow - fallback)
-        const code = urlParams.get('code');
-        
-        if (accessToken && state) {
-          // Clean up URL immediately to prevent Expo Router from trying to parse it
-          window.history.replaceState({}, document.title, '/');
-          
-          // Process the access token directly (implicit flow)
-          handleGoogleAuth(accessToken)
-            .then(resolve)
-            .catch(reject);
-        } else if (code && state) {
-          // Clean up URL immediately to prevent Expo Router from trying to parse it
-          window.history.replaceState({}, document.title, '/');
-          
-          // Process the code manually (code flow - fallback)
-          exchangeCodeForToken(code)
-            .then(resolve)
-            .catch(reject);
-        } else {
-          resolve(null);
-        }
-      } catch (error) {
-        reject(new AuthError(
-          'Web redirect handling failed',
-          'WEB_REDIRECT_ERROR',
-          error
-        ));
-      }
-    });
-  }, [handleGoogleAuth, exchangeCodeForToken]);
+				const tokenData = await tokenResponse.json();
 
-  return {
-    handleGoogleAuth,
-    exchangeCodeForToken,
-    handleWebRedirect,
-  };
+				if (!tokenData.access_token) {
+					throw new AuthError('No access token in response', 'MISSING_ACCESS_TOKEN');
+				}
+
+				return await handleGoogleAuth(tokenData.access_token);
+			} catch (error) {
+				if (error instanceof AuthError) {
+					throw error;
+				}
+				throw new AuthError('Token exchange failed', 'TOKEN_EXCHANGE_ERROR', error);
+			}
+		},
+		[handleGoogleAuth]
+	);
+
+	const handleWebRedirect = useCallback((): Promise<User | null> => {
+		return new Promise((resolve, reject) => {
+			if (Platform.OS !== 'web') {
+				resolve(null);
+				return;
+			}
+
+			try {
+				const urlParams = new URLSearchParams(window.location.search);
+				const hashParams = new URLSearchParams(window.location.hash.substring(1));
+
+				// Check for access token (implicit flow)
+				const accessToken = hashParams.get('access_token');
+				const state = hashParams.get('state') || urlParams.get('state');
+
+				// Check for authorization code (code flow - fallback)
+				const code = urlParams.get('code');
+
+				if (accessToken && state) {
+					// Clean up URL immediately to prevent Expo Router from trying to parse it
+					window.history.replaceState({}, document.title, '/');
+
+					// Process the access token directly (implicit flow)
+					handleGoogleAuth(accessToken).then(resolve).catch(reject);
+				} else if (code && state) {
+					// Clean up URL immediately to prevent Expo Router from trying to parse it
+					window.history.replaceState({}, document.title, '/');
+
+					// Process the code manually (code flow - fallback)
+					exchangeCodeForToken(code).then(resolve).catch(reject);
+				} else {
+					resolve(null);
+				}
+			} catch (error) {
+				reject(new AuthError('Web redirect handling failed', 'WEB_REDIRECT_ERROR', error));
+			}
+		});
+	}, [handleGoogleAuth, exchangeCodeForToken]);
+
+	return {
+		handleGoogleAuth,
+		exchangeCodeForToken,
+		handleWebRedirect,
+	};
 };

@@ -2,5 +2,5 @@
 // No-op on native
 
 export function registerServiceWorker() {
-  // Service workers are only for web platform
+	// Service workers are only for web platform
 }

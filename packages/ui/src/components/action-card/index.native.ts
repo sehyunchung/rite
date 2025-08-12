@@ -1,1 +1,1 @@
-export * from './action-card.native'
+export * from './action-card.native';

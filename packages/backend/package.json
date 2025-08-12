@@ -1,29 +1,29 @@
 {
-  "name": "@rite/backend",
-  "version": "0.0.1",
-  "private": true,
-  "exports": {
-    "./convex/_generated/api": "./convex/_generated/api.js",
-    "./convex/_generated/api.js": "./convex/_generated/api.js",
-    "./convex/_generated/dataModel": "./convex/_generated/dataModel.d.ts",
-    "./convex/_generated/server": "./convex/_generated/server.js",
-    "./convex/_generated/*": "./convex/_generated/*"
-  },
-  "scripts": {
-    "dev": "convex dev",
-    "deploy": "convex deploy",
-    "deploy:prod": "convex deploy",
-    "build": "echo 'Backend validation completed'",
-    "test": "vitest",
-    "test:watch": "vitest --watch"
-  },
-  "dependencies": {
-    "@convex-dev/auth": "^0.0.87",
-    "@convex-dev/resend": "^0.1.9",
-    "convex": "^1.23.0",
-    "effect": "3.17.6"
-  },
-  "devDependencies": {
-    "typescript": "^5.7.2"
-  }
+	"name": "@rite/backend",
+	"version": "0.0.1",
+	"private": true,
+	"exports": {
+		"./convex/_generated/api": "./convex/_generated/api.js",
+		"./convex/_generated/api.js": "./convex/_generated/api.js",
+		"./convex/_generated/dataModel": "./convex/_generated/dataModel.d.ts",
+		"./convex/_generated/server": "./convex/_generated/server.js",
+		"./convex/_generated/*": "./convex/_generated/*"
+	},
+	"scripts": {
+		"dev": "convex dev",
+		"deploy": "convex deploy",
+		"deploy:prod": "convex deploy",
+		"build": "echo 'Backend validation completed'",
+		"test": "vitest",
+		"test:watch": "vitest --watch"
+	},
+	"dependencies": {
+		"@convex-dev/auth": "^0.0.87",
+		"@convex-dev/resend": "^0.1.9",
+		"convex": "^1.23.0",
+		"effect": "3.17.6"
+	},
+	"devDependencies": {
+		"typescript": "^5.7.2"
+	}
 }

@@ -36,6 +36,8 @@ export default tseslint.config(
     },
     rules: {
       ...reactHooks.configs.recommended.rules,
+      "indent": ["error", "tab", { "SwitchCase": 1 }],
+      "no-tabs": "off",
       "react-refresh/only-export-components": [
         "warn",
         { allowConstantExport: true },

@@ -1,1 +1,1 @@
-export * from './typography.web'
+export * from './typography.web';

@@ -12,8 +12,8 @@ config.watchFolders = [monorepoRoot];
 
 // Let Metro know where to resolve packages
 config.resolver.nodeModulesPaths = [
-  path.resolve(projectRoot, 'node_modules'),
-  path.resolve(monorepoRoot, 'node_modules'),
+	path.resolve(projectRoot, 'node_modules'),
+	path.resolve(monorepoRoot, 'node_modules'),
 ];
 
 module.exports = withNativeWind(config, { input: './global.css' });
