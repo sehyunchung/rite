@@ -142,7 +142,6 @@ describe('File Upload System', () => {
 		it('should accept all allowed file types', async () => {
 			const allowedTypes = [
 				'image/jpeg',
-				'image/jpg',
 				'image/png',
 				'image/gif',
 				'image/webp',

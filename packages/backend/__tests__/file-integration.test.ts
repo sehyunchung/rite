@@ -102,7 +102,6 @@ describe('File Upload Integration Tests', () => {
 	describe('File Type and Size Validation Integration', () => {
 		const validFileTypes = [
 			'image/jpeg',
-			'image/jpg',
 			'image/png',
 			'image/gif',
 			'image/webp',

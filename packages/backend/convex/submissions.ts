@@ -8,7 +8,6 @@ import { encryptSensitiveData, decryptSensitiveData, hashData } from './encrypti
 const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
 const ALLOWED_FILE_TYPES = [
 	'image/jpeg',
-	'image/jpg',
 	'image/png',
 	'image/gif',
 	'image/webp',
