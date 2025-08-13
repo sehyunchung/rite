@@ -24,6 +24,7 @@
 		"effect": "3.17.6"
 	},
 	"devDependencies": {
+		"@rite/test-utils": "workspace:*",
 		"typescript": "^5.7.2"
 	}
 }

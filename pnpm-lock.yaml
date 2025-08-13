@@ -441,6 +441,9 @@ importers:
         specifier: 3.17.6
         version: 3.17.6
     devDependencies:
+      '@rite/test-utils':
+        specifier: workspace:*
+        version: link:../test-utils
       typescript:
         specifier: ^5.7.2
         version: 5.8.3
