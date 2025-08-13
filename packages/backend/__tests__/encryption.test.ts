@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { encryptSensitiveData, decryptSensitiveData, hashData } from '../convex/encryption';
+import { encryptSensitiveData, decryptSensitiveData, hashData, migrateEncryptionV1ToV2 } from '../convex/encryption';
 
 describe('Encryption Functions', () => {
 	beforeEach(() => {
@@ -68,17 +68,47 @@ describe('Encryption Functions', () => {
 		it('should throw error when encryption key is missing', () => {
 			delete process.env.CONVEX_ENCRYPTION_KEY;
 			
-			expect(() => encryptSensitiveData('test')).toThrow('Encryption key not configured');
+			expect(() => encryptSensitiveData('test')).toThrow('CONVEX_ENCRYPTION_KEY not configured');
+		});
+
+		it('should throw error when encryption key is too short', () => {
+			process.env.CONVEX_ENCRYPTION_KEY = 'short-key';
+			
+			expect(() => encryptSensitiveData('test')).toThrow('must be at least 32 characters');
 		});
 
 		it('should throw error when hash salt is missing', () => {
 			delete process.env.CONVEX_HASH_SALT;
 			
-			expect(() => hashData('test')).toThrow('Hash salt not configured');
+			expect(() => hashData('test')).toThrow('CONVEX_HASH_SALT not configured');
 		});
 
 		it('should throw error for invalid encrypted data format', () => {
 			expect(() => decryptSensitiveData('invalid-data')).toThrow('Invalid encrypted data format');
+			expect(() => decryptSensitiveData('invalid-data')).toThrow('Expected ENC_V2_ or ENC_V1_ prefix');
+		});
+	});
+
+	describe('Migration', () => {
+		it('should migrate V1 encrypted data to V2', () => {
+			// Create a V1 encrypted string (simple base64)
+			const originalData = 'test-data-to-migrate';
+			const v1Encrypted = `ENC_V1_${btoa(originalData)}`;
+			
+			// Migrate to V2
+			const v2Encrypted = migrateEncryptionV1ToV2(v1Encrypted);
+			
+			// Should have V2 prefix
+			expect(v2Encrypted).toContain('ENC_V2_');
+			
+			// Should decrypt to original data
+			const decrypted = decryptSensitiveData(v2Encrypted);
+			expect(decrypted).toBe(originalData);
+		});
+
+		it('should throw error when trying to migrate non-V1 data', () => {
+			expect(() => migrateEncryptionV1ToV2('ENC_V2_somedata')).toThrow('Cannot migrate non-V1 data');
+			expect(() => migrateEncryptionV1ToV2('invalid-data')).toThrow('Expected ENC_V1_ prefix');
 		});
 	});
 });

@@ -1,9 +1,25 @@
 /**
- * Simplified encryption utilities for Convex
- * Uses basic encoding that works in Convex's V8 runtime without async operations
+ * ⚠️ WARNING: BASIC OBFUSCATION ONLY - NOT CRYPTOGRAPHICALLY SECURE ⚠️
  * 
- * NOTE: This is a temporary solution. For production, use proper encryption
- * via external services or client-side encryption.
+ * This module provides basic data obfuscation that works in Convex's V8 runtime.
+ * It uses XOR encoding which is NOT suitable for protecting sensitive data.
+ * 
+ * DO NOT USE FOR:
+ * - Credit card numbers, SSNs, or government IDs
+ * - Medical records or HIPAA-protected data
+ * - Passwords or authentication credentials
+ * - Any data requiring regulatory compliance (GDPR, PCI-DSS, etc.)
+ * 
+ * PRODUCTION RECOMMENDATIONS:
+ * 1. Use client-side encryption (Web Crypto API) before sending to Convex
+ * 2. Integrate with KMS services (AWS KMS, Azure Key Vault, HashiCorp Vault)
+ * 3. Consider zero-knowledge architectures where server never sees plaintext
+ * 
+ * CURRENT LIMITATIONS:
+ * - XOR cipher is easily breakable with cryptanalysis
+ * - djb2 hash has known collision vulnerabilities
+ * - No key rotation mechanism
+ * - No authentication tags (vulnerable to tampering)
  */
 
 /**
@@ -12,8 +28,18 @@
 function getEncryptionKey(): string {
   const key = process.env.CONVEX_ENCRYPTION_KEY;
   if (!key) {
-    throw new Error('Encryption key not configured');
+    throw new Error(
+      'CONVEX_ENCRYPTION_KEY not configured. Please set a 32+ character key in environment variables.'
+    );
   }
+  
+  // Validate key length for security
+  if (key.length < 32) {
+    throw new Error(
+      `CONVEX_ENCRYPTION_KEY must be at least 32 characters for security. Current length: ${key.length}`
+    );
+  }
+  
   return key;
 }
 
@@ -23,7 +49,9 @@ function getEncryptionKey(): string {
 function getHashSalt(): string {
   const salt = process.env.CONVEX_HASH_SALT;
   if (!salt) {
-    throw new Error('Hash salt not configured');
+    throw new Error(
+      'CONVEX_HASH_SALT not configured. Please set a salt value in environment variables.'
+    );
   }
   return salt;
 }
@@ -68,7 +96,9 @@ export function decryptSensitiveData(encryptedData: string): string {
       const encoded = encryptedData.slice(7);
       return atob(encoded);
     }
-    throw new Error('Invalid encrypted data format');
+    throw new Error(
+      `Invalid encrypted data format. Expected ENC_V2_ or ENC_V1_ prefix, got: ${encryptedData.substring(0, 7)}`
+    );
   }
   
   const key = getEncryptionKey();
@@ -103,7 +133,8 @@ export function hashData(data: string): string {
   const salt = getHashSalt();
   const input = data + salt;
   
-  // djb2 hash algorithm - simple but effective for our use case
+  // djb2 hash algorithm - simple but has known collision risks
+  // For production, consider using a proper cryptographic hash
   let hash = 5381;
   for (let i = 0; i < input.length; i++) {
     hash = ((hash << 5) + hash) + input.charCodeAt(i);
@@ -112,6 +143,25 @@ export function hashData(data: string): string {
   
   // Convert to hex string with consistent length
   return Math.abs(hash).toString(16).padStart(16, '0');
+}
+
+/**
+ * Migrate data from V1 to V2 encryption format
+ * V1 was simple base64 encoding, V2 uses XOR obfuscation
+ */
+export function migrateEncryptionV1ToV2(encryptedV1Data: string): string {
+  if (!encryptedV1Data.startsWith('ENC_V1_')) {
+    throw new Error(
+      `Cannot migrate non-V1 data. Expected ENC_V1_ prefix, got: ${encryptedV1Data.substring(0, 7)}`
+    );
+  }
+  
+  // Decrypt V1 (simple base64)
+  const encoded = encryptedV1Data.slice(7);
+  const plaintext = atob(encoded);
+  
+  // Re-encrypt with V2
+  return encryptSensitiveData(plaintext);
 }
 
 /**
