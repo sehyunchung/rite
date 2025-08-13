@@ -84,6 +84,7 @@ const validateFile = (
 	return errors.length > 0 ? { file, errors } : null;
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 const Dropzone = ({
 	onDrop,
 	accept,
@@ -239,6 +240,7 @@ type DropzoneContextType = {
 
 const DropzoneContext = createContext<DropzoneContextType | undefined>(undefined);
 
+// eslint-disable-next-line react-refresh/only-export-components
 const DropzoneProvider = ({
 	children,
 	files,

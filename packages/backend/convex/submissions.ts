@@ -2,6 +2,7 @@ import { v } from 'convex/values';
 import { mutation, query } from './_generated/server';
 import { requireAuth } from './auth';
 import { computeEventCapabilities } from './eventStatus';
+import { encryptSensitiveData, decryptSensitiveData, hashData } from './encryption';
 
 // File validation constants
 const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
@@ -18,6 +19,83 @@ const ALLOWED_FILE_TYPES = [
 	'application/pdf',
 ];
 
+// Magic number validation constants
+const MAGIC_NUMBERS = {
+	'image/jpeg': [
+		[0xFF, 0xD8, 0xFF],  // JPEG/JFIF
+	],
+	'image/png': [
+		[0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A],  // PNG
+	],
+	'image/gif': [
+		[0x47, 0x49, 0x46, 0x38, 0x37, 0x61],  // GIF87a
+		[0x47, 0x49, 0x46, 0x38, 0x39, 0x61],  // GIF89a
+	],
+	'image/webp': [
+		[0x52, 0x49, 0x46, 0x46],  // RIFF (need to check WEBP at offset 8-11)
+	],
+	'video/mp4': [
+		// MP4 files have 'ftyp' box at bytes 4-7
+		[0x00, 0x00, 0x00, 0x00, 0x66, 0x74, 0x79, 0x70],  // ....ftyp (simplified check)
+	],
+	'application/pdf': [
+		[0x25, 0x50, 0x44, 0x46],  // %PDF
+	],
+};
+
+/**
+ * Validate file content matches declared MIME type using magic numbers
+ */
+async function validateFileContent(ctx: any, storageId: string, declaredType: string): Promise<void> {
+	if (!MAGIC_NUMBERS[declaredType as keyof typeof MAGIC_NUMBERS]) {
+		// If we don't have magic numbers for this type, skip validation
+		return;
+	}
+
+	const blob = await ctx.storage.get(storageId);
+	if (!blob) {
+		throw new Error('File not found in storage');
+	}
+
+	const arrayBuffer = await blob.arrayBuffer();
+	const bytes = new Uint8Array(arrayBuffer);
+
+	const validMagicNumbers = MAGIC_NUMBERS[declaredType as keyof typeof MAGIC_NUMBERS];
+	
+	// Check if file starts with any of the valid magic numbers for this type
+	for (const magicNumber of validMagicNumbers) {
+		if (bytes.length >= magicNumber.length) {
+			let matches = true;
+			for (let i = 0; i < magicNumber.length; i++) {
+				if (bytes[i] !== magicNumber[i]) {
+					matches = false;
+					break;
+				}
+			}
+			if (matches) {
+				// Special case for WebP: need to check WEBP signature at offset 8
+				if (declaredType === 'image/webp') {
+					if (bytes.length >= 12) {
+						const webpSignature = [0x57, 0x45, 0x42, 0x50]; // "WEBP"
+						let webpMatches = true;
+						for (let i = 0; i < webpSignature.length; i++) {
+							if (bytes[8 + i] !== webpSignature[i]) {
+								webpMatches = false;
+								break;
+							}
+						}
+						if (webpMatches) return; // Valid WebP
+					}
+				} else {
+					return; // Valid magic number found
+				}
+			}
+		}
+	}
+
+	throw new Error('File content does not match declared MIME type');
+}
+
 // Generate upload URL for file storage with validation
 export const generateUploadUrl = mutation({
 	args: {
@@ -25,7 +103,12 @@ export const generateUploadUrl = mutation({
 		fileSize: v.number(),
 	},
 	handler: async (ctx, args) => {
-		// Validate file size
+		// Validate file size - reject negative sizes
+		if (args.fileSize < 0) {
+			throw new Error('File size must be a positive number');
+		}
+		
+		// Validate file size - reject files exceeding maximum
 		if (args.fileSize > MAX_FILE_SIZE) {
 			throw new Error(
 				`File size ${Math.round(args.fileSize / 1024 / 1024)}MB exceeds maximum allowed size of ${MAX_FILE_SIZE / 1024 / 1024}MB`
@@ -93,6 +176,17 @@ export const saveSubmission = mutation({
 			.filter((q) => q.eq(q.field('timeslotId'), args.timeslotId))
 			.first();
 
+		// Validate file content matches declared MIME types
+		for (const file of args.promoFiles) {
+			await validateFileContent(ctx, file.storageId, file.fileType);
+		}
+
+		// Encrypt sensitive payment data
+		const encryptedAccountNumber = encryptSensitiveData(args.paymentInfo.accountNumber);
+		const encryptedResidentNumber = encryptSensitiveData(args.paymentInfo.residentNumber);
+		const accountNumberHash = hashData(args.paymentInfo.accountNumber);
+		const residentNumberHash = hashData(args.paymentInfo.residentNumber);
+
 		const submissionData = {
 			eventId: args.eventId,
 			timeslotId: args.timeslotId,
@@ -111,9 +205,12 @@ export const saveSubmission = mutation({
 			paymentInfo: {
 				accountHolder: args.paymentInfo.accountHolder,
 				bankName: args.paymentInfo.bankName,
-				// In production, these should be encrypted
-				accountNumber: args.paymentInfo.accountNumber,
-				residentNumber: args.paymentInfo.residentNumber,
+				// Encrypted sensitive data
+				accountNumber: encryptedAccountNumber,
+				residentNumber: encryptedResidentNumber,
+				// Hashes for searchable encrypted data
+				accountNumberHash: accountNumberHash,
+				residentNumberHash: residentNumberHash,
 				preferDirectContact: args.paymentInfo.preferDirectContact,
 			},
 			submittedAt: new Date().toISOString(),
@@ -285,6 +382,13 @@ export const updateSubmission = mutation({
 			throw new Error('Submissions can no longer be edited for this event');
 		}
 
+		// Validate file content matches declared MIME types (if files are being updated)
+		if (args.promoFiles !== undefined) {
+			for (const file of args.promoFiles) {
+				await validateFileContent(ctx, file.storageId, file.fileType);
+			}
+		}
+
 		// Build update object with only provided fields
 		const updateData: any = {
 			lastUpdatedAt: new Date().toISOString(),
@@ -313,12 +417,21 @@ export const updateSubmission = mutation({
 		}
 
 		if (args.paymentInfo !== undefined) {
+			// Encrypt sensitive payment data
+			const encryptedAccountNumber = encryptSensitiveData(args.paymentInfo.accountNumber);
+			const encryptedResidentNumber = encryptSensitiveData(args.paymentInfo.residentNumber);
+			const accountNumberHash = hashData(args.paymentInfo.accountNumber);
+			const residentNumberHash = hashData(args.paymentInfo.residentNumber);
+
 			updateData.paymentInfo = {
 				accountHolder: args.paymentInfo.accountHolder,
 				bankName: args.paymentInfo.bankName,
-				// In production, these should be encrypted
-				accountNumber: args.paymentInfo.accountNumber,
-				residentNumber: args.paymentInfo.residentNumber,
+				// Encrypted sensitive data
+				accountNumber: encryptedAccountNumber,
+				residentNumber: encryptedResidentNumber,
+				// Hashes for searchable encrypted data
+				accountNumberHash: accountNumberHash,
+				residentNumberHash: residentNumberHash,
 				preferDirectContact: args.paymentInfo.preferDirectContact,
 			};
 		}
@@ -402,11 +515,22 @@ export const getSubmissionByToken = query({
 		const timeslot = await ctx.db.get(submission.timeslotId);
 		const event = await ctx.db.get(submission.eventId);
 
-		return {
+		// Decrypt sensitive payment data before returning
+		const decryptedSubmission = {
 			...submission,
+			paymentInfo: {
+				...submission.paymentInfo,
+				accountNumber: decryptSensitiveData(submission.paymentInfo.accountNumber),
+				residentNumber: decryptSensitiveData(submission.paymentInfo.residentNumber),
+				// Remove hash fields from response (internal only)
+				accountNumberHash: undefined,
+				residentNumberHash: undefined,
+			},
 			timeslot,
 			event,
 		};
+
+		return decryptedSubmission;
 	},
 });
 

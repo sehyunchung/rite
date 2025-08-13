@@ -4,7 +4,8 @@
  */
 
 import { vi } from 'vitest';
-import type { Id } from 'convex/values';
+// Using generic ID type to avoid dependency on generated types
+type Id<T extends string> = string & { __tableName: T };
 
 // Mock Convex mutation function
 export const mockMutation = vi.fn().mockImplementation(async (name: string, args: any) => {
