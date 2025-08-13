@@ -35,12 +35,12 @@ export default function EventsScreen() {
 							<ActivityIndicator size="large" color={themeColors.brand.primary} />
 						</View>
 					) : events.length === 0 ? (
-						<Card className="bg-neutral-700 border-neutral-600">
+						<Card>
 							<CardContent className="items-center">
 								<Typography
 									variant="body"
 									color="default"
-									className="text-center mb-1"
+									className="text-center mb-2"
 								>
 									No events available
 								</Typography>

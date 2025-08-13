@@ -17,12 +17,15 @@ The RITE Design System provides a unified visual language and component library 
 ## Color System
 
 ### Brand Colors
+
 - **Primary**: `#E946FF` - Vibrant pink/magenta for CTAs and key actions
 - **Primary Dark**: `#D01FFF` - Hover/pressed states
 - **Primary Light**: `#F26FFF` - Highlights and accents
 
 ### Neutral Palette
+
 A purple-tinted grayscale for sophisticated dark themes:
+
 - **Background**: `#1A0F2F` - Deep purple-black
 - **Surface**: `#2A1F3F` - Elevated surfaces (cards, inputs)
 - **Border**: `#3A3A4A` - Subtle borders
@@ -30,6 +33,7 @@ A purple-tinted grayscale for sophisticated dark themes:
 - **Text Secondary**: `#A8A8B3` - Muted text for descriptions
 
 ### Semantic Colors
+
 - **Success**: `#4ADE80` - Positive actions/states
 - **Warning**: `#FBBF24` - Caution/attention needed
 - **Error**: `#EF4444` - Errors/destructive actions
@@ -38,11 +42,13 @@ A purple-tinted grayscale for sophisticated dark themes:
 ## Typography
 
 ### Font Family
+
 - **Primary**: SUIT Variable (Korean/English support)
 - **Weights**: 100-900 (variable font)
 - **Fallback**: System fonts
 
 ### Type Scale
+
 ```
 5xl: 48px - Display Large
 4xl: 36px - Display Medium
@@ -58,6 +64,7 @@ xs:  12px - Captions
 ## Spacing System
 
 Based on 4px unit with consistent scale:
+
 ```
 0:   0px
 1:   4px
@@ -74,6 +81,7 @@ Based on 4px unit with consistent scale:
 ```
 
 ### Common Patterns
+
 - **Screen Padding**: 16-32px
 - **Card Padding**: 24px
 - **Component Padding**: 8-24px
@@ -95,37 +103,43 @@ full: 9999px - Pills, circular elements
 ## Elevation (Shadows)
 
 ### Web Shadows
+
 - **xs**: Subtle elevation for interactive elements
 - **sm-md**: Cards and raised surfaces
 - **lg-xl**: Modals and overlays
 - **glow**: Brand color glow effects for focus states
 
 ### Mobile Shadows
+
 Combined iOS shadow + Android elevation for cross-platform consistency.
 
 ## Component Guidelines
 
 ### Buttons
+
 - **Primary**: Pink background for main CTAs
 - **Secondary**: Dark gray for secondary actions
 - **Ghost**: Transparent with hover states
 - **Sizes**: sm (32px), default (36px), lg (40px)
-- **Border Radius**: 8px (md)
+- **Border Radius**: 16px (xl) - Standardized across all components
 
 ### Inputs
+
 - **Background**: Surface color (#2A1F3F)
 - **Border**: 1px solid border color on focus
-- **Border Radius**: 12px (lg)
+- **Border Radius**: 16px (xl) - Standardized with cards and buttons
 - **Padding**: 16px horizontal
 - **Height**: 48px
 
 ### Cards
+
 - **Background**: Surface color (#2A1F3F)
 - **Border Radius**: 16px (xl)
 - **Padding**: 24px
 - **Shadow**: sm-md elevation
 
 ### Lists
+
 - **Item Height**: 56-72px
 - **Icon Size**: 24px
 - **Padding**: 16px horizontal
@@ -136,28 +150,28 @@ Combined iOS shadow + Android elevation for cross-platform consistency.
 ### Using Design Tokens
 
 ```typescript
-import { tokens } from '@rite/ui'
+import { tokens } from '@rite/ui';
 
 // Colors
-const primaryColor = tokens.colors.brand.primary
-const backgroundColor = tokens.colors.neutral[800]
+const primaryColor = tokens.colors.brand.primary;
+const backgroundColor = tokens.colors.neutral[800];
 
 // Typography
-const headingStyle = tokens.patterns.typography.h1
+const headingStyle = tokens.patterns.typography.h1;
 
 // Spacing
-const padding = tokens.spacing[4] // 16px
+const padding = tokens.spacing[4]; // 16px
 
 // Platform-specific
-const webShadow = tokens.web.shadows.md
-const mobileShadow = tokens.mobile.shadows.md
+const webShadow = tokens.web.shadows.md;
+const mobileShadow = tokens.mobile.shadows.md;
 ```
 
 ### Component Example
 
 ```typescript
 // Web component
-import { tokens } from '@rite/ui'
+import { tokens } from '@rite/ui';
 
 const StyledButton = styled.button`
   background-color: ${tokens.colors.brand.primary};
@@ -166,10 +180,10 @@ const StyledButton = styled.button`
   font-size: ${tokens.typography.fontSize.base}px;
   font-weight: ${tokens.typography.fontWeight.medium};
   box-shadow: ${tokens.web.shadows.sm};
-`
+`;
 
 // React Native component
-import { tokens } from '@rite/ui'
+import { tokens } from '@rite/ui';
 
 const styles = StyleSheet.create({
   button: {
@@ -184,7 +198,7 @@ const styles = StyleSheet.create({
     fontWeight: tokens.typography.fontWeight.medium,
     color: tokens.colors.neutral[0],
   },
-})
+});
 ```
 
 ## Migration Guide

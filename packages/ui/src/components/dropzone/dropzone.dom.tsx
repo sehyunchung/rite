@@ -161,8 +161,8 @@ const Dropzone = ({
 	// Build accept string for input element
 	const acceptString = accept
 		? Object.keys(accept)
-				.flatMap((key) => accept[key])
-				.join(',')
+			.flatMap((key) => accept[key])
+			.join(',')
 		: undefined;
 
 	return (
@@ -268,7 +268,7 @@ const useDropzoneContext = () => {
 };
 
 // Default export with all components and types
-// eslint-disable-next-line react-refresh/only-export-components
+ 
 export default {
 	Dropzone,
 	DropzoneProvider,

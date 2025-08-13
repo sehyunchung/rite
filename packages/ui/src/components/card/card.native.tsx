@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { View, Text } from 'react-native';
 import { cn } from '../../utils';
 
@@ -6,7 +6,7 @@ export const Card = React.forwardRef<View, React.ComponentProps<typeof View>>(
 	({ className, ...props }, ref) => (
 		<View
 			ref={ref}
-			className={cn('rounded-lg border border-border bg-card shadow-sm', className)}
+			className={cn('rounded-xl border border-neutral-600 bg-neutral-700 shadow-sm', className)}
 			{...props}
 		/>
 	)
@@ -43,7 +43,7 @@ CardDescription.displayName = 'CardDescription';
 
 export const CardContent = React.forwardRef<View, React.ComponentProps<typeof View>>(
 	({ className, ...props }, ref) => (
-		<View ref={ref} className={cn('p-6 pt-0', className)} {...props} />
+		<View ref={ref} className={cn('p-6', className)} {...props} />
 	)
 );
 CardContent.displayName = 'CardContent';
