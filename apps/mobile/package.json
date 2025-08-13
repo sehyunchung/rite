@@ -14,6 +14,7 @@
 		"build:preview": "eas build --profile preview",
 		"build:production": "eas build --profile production",
 		"submit:production": "eas submit --profile production",
+		"build": "npx expo export -p web",
 		"build:web": "npx expo export -p web",
 		"preview:web": "npx serve dist",
 		"test:visual": "playwright test",
