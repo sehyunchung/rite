@@ -29,7 +29,8 @@ export default function DJSubmissionScreen() {
 	const [djName, setDjName] = React.useState('');
 	const [djEmail, setDjEmail] = React.useState('');
 	const [djPhone, setDjPhone] = React.useState('');
-	const [preferredContact] = React.useState<'email' | 'phone' | 'both'>('email'); // setPreferredContact reserved for future contact preference UI
+	// TODO: Add UI for selecting preferred contact method (like web version has)
+	const [preferredContact] = React.useState<'email' | 'phone' | 'both'>('email');
 	const [guestNames, setGuestNames] = React.useState('');
 	const [guestNamesLineup, setGuestNamesLineup] = React.useState('');
 	const [promoVideoUrl, setPromoVideoUrl] = React.useState('');
@@ -252,7 +253,6 @@ export default function DJSubmissionScreen() {
 					// Upload file
 					const response = await fetch(uploadUrl, {
 						method: 'POST',
-						headers: { 'Content-Type': file.mimeType },
 						body: formData,
 					});
 
