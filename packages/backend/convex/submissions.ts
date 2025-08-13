@@ -2,7 +2,7 @@ import { v } from 'convex/values';
 import { mutation, query } from './_generated/server';
 import { requireAuth } from './auth';
 import { computeEventCapabilities } from './eventStatus';
-import { internal } from './_generated/api';
+import { encryptSensitiveData, decryptSensitiveData, hashData } from './encryption';
 
 // File validation constants
 const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
@@ -181,20 +181,11 @@ export const saveSubmission = mutation({
 			await validateFileContent(ctx, file.storageId, file.fileType);
 		}
 
-		// Encrypt sensitive payment data using actions
-		const [encryptedAccountNumber, encryptedResidentNumber] = await ctx.runAction(
-			internal.encryptionActions.encryptBatch,
-			{
-				data: [args.paymentInfo.accountNumber, args.paymentInfo.residentNumber],
-			}
-		);
-		
-		const [accountNumberHash, residentNumberHash] = await ctx.runAction(
-			internal.encryptionActions.hashBatch,
-			{
-				data: [args.paymentInfo.accountNumber, args.paymentInfo.residentNumber],
-			}
-		);
+		// Encrypt sensitive payment data
+		const encryptedAccountNumber = encryptSensitiveData(args.paymentInfo.accountNumber);
+		const encryptedResidentNumber = encryptSensitiveData(args.paymentInfo.residentNumber);
+		const accountNumberHash = hashData(args.paymentInfo.accountNumber);
+		const residentNumberHash = hashData(args.paymentInfo.residentNumber);
 
 		const submissionData = {
 			eventId: args.eventId,
@@ -426,20 +417,11 @@ export const updateSubmission = mutation({
 		}
 
 		if (args.paymentInfo !== undefined) {
-			// Encrypt sensitive payment data using actions
-			const [encryptedAccountNumber, encryptedResidentNumber] = await ctx.runAction(
-				internal.encryptionActions.encryptBatch,
-				{
-					data: [args.paymentInfo.accountNumber, args.paymentInfo.residentNumber],
-				}
-			);
-			
-			const [accountNumberHash, residentNumberHash] = await ctx.runAction(
-				internal.encryptionActions.hashBatch,
-				{
-					data: [args.paymentInfo.accountNumber, args.paymentInfo.residentNumber],
-				}
-			);
+			// Encrypt sensitive payment data
+			const encryptedAccountNumber = encryptSensitiveData(args.paymentInfo.accountNumber);
+			const encryptedResidentNumber = encryptSensitiveData(args.paymentInfo.residentNumber);
+			const accountNumberHash = hashData(args.paymentInfo.accountNumber);
+			const residentNumberHash = hashData(args.paymentInfo.residentNumber);
 
 			updateData.paymentInfo = {
 				accountHolder: args.paymentInfo.accountHolder,
@@ -538,12 +520,8 @@ export const getSubmissionByToken = query({
 			...submission,
 			paymentInfo: {
 				...submission.paymentInfo,
-				accountNumber: await ctx.runAction(internal.encryptionActions.decrypt, {
-					encryptedData: submission.paymentInfo.accountNumber,
-				}),
-				residentNumber: await ctx.runAction(internal.encryptionActions.decrypt, {
-					encryptedData: submission.paymentInfo.residentNumber,
-				}),
+				accountNumber: decryptSensitiveData(submission.paymentInfo.accountNumber),
+				residentNumber: decryptSensitiveData(submission.paymentInfo.residentNumber),
 				// Remove hash fields from response (internal only)
 				accountNumberHash: undefined,
 				residentNumberHash: undefined,
