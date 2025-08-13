@@ -1,16 +1,29 @@
 import * as React from 'react';
-import { View, ScrollView, SafeAreaView, Platform, ActivityIndicator, Alert } from 'react-native';
+import { View, ScrollView, SafeAreaView, Platform, ActivityIndicator, Alert, TouchableOpacity } from 'react-native';
 import { Typography, Card, Button, Input, Textarea } from '../../lib/ui-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useQuery, useMutation } from 'convex/react';
 import { api } from '@rite/backend/convex/_generated/api';
 import { Ionicons } from '@expo/vector-icons';
 import { formatTime } from '../../lib/time-utils';
+import * as DocumentPicker from 'expo-document-picker';
+import * as ImagePicker from 'expo-image-picker';
+import { Id } from '@rite/backend/convex/_generated/dataModel';
+import { validateFile, formatFileSize, FileMetadata, MAX_FILE_SIZE } from '@rite/shared-types';
+
+interface SelectedFile {
+	uri: string;
+	name: string;
+	size: number;
+	mimeType: string;
+	type: 'image' | 'video' | 'document';
+}
 
 export default function DJSubmissionScreen() {
 	const { token } = useLocalSearchParams<{ token: string }>();
 	const router = useRouter();
 	const createSubmission = useMutation(api.submissions.saveSubmission);
+	const generateUploadUrl = useMutation(api.submissions.generateUploadUrl);
 
 	// Form state
 	const [djName, setDjName] = React.useState('');
@@ -20,6 +33,7 @@ export default function DJSubmissionScreen() {
 	const [guestNames, setGuestNames] = React.useState('');
 	const [guestNamesLineup, setGuestNamesLineup] = React.useState('');
 	const [promoVideoUrl, setPromoVideoUrl] = React.useState('');
+	const [selectedFiles, setSelectedFiles] = React.useState<SelectedFile[]>([]);
 	const [isSubmitting, setIsSubmitting] = React.useState(false);
 
 	// Get event and timeslot data
@@ -107,6 +121,83 @@ export default function DJSubmissionScreen() {
 		});
 	};
 
+	const validateSelectedFile = (file: SelectedFile): boolean => {
+		const fileMetadata: FileMetadata = {
+			fileName: file.name,
+			fileType: file.mimeType,
+			fileSize: file.size,
+		};
+		
+		const validation = validateFile(fileMetadata);
+		if (!validation.isValid) {
+			Alert.alert('File Validation Error', validation.error);
+			return false;
+		}
+		
+		return true;
+	};
+
+	const selectImages = async () => {
+		try {
+			const result = await ImagePicker.launchImageLibraryAsync({
+				mediaTypes: ImagePicker.MediaTypeOptions.Images,
+				allowsMultipleSelection: true,
+				quality: 0.8,
+			});
+
+			if (!result.canceled && result.assets) {
+				const newFiles: SelectedFile[] = result.assets.map((asset) => ({
+					uri: asset.uri,
+					name: asset.fileName || 'image.jpg',
+					size: asset.fileSize || 0,
+					mimeType: asset.mimeType || 'image/jpeg',
+					type: 'image' as const,
+				}));
+
+				// Validate files
+				const validFiles = newFiles.filter(validateSelectedFile);
+				if (validFiles.length > 0) {
+					setSelectedFiles((prev) => [...prev, ...validFiles]);
+				}
+			}
+		} catch (error) {
+			console.error('Error selecting images:', error);
+			Alert.alert('Error', 'Failed to select images');
+		}
+	};
+
+	const selectVideos = async () => {
+		try {
+			const result = await DocumentPicker.getDocumentAsync({
+				type: ['video/mp4', 'video/mov', 'video/avi'],
+				multiple: true,
+			});
+
+			if (!result.canceled && result.assets) {
+				const newFiles: SelectedFile[] = result.assets.map((asset) => ({
+					uri: asset.uri,
+					name: asset.name,
+					size: asset.size || 0,
+					mimeType: asset.mimeType || 'video/mp4',
+					type: 'video' as const,
+				}));
+
+				// Validate files
+				const validFiles = newFiles.filter(validateSelectedFile);
+				if (validFiles.length > 0) {
+					setSelectedFiles((prev) => [...prev, ...validFiles]);
+				}
+			}
+		} catch (error) {
+			console.error('Error selecting videos:', error);
+			Alert.alert('Error', 'Failed to select videos');
+		}
+	};
+
+	const removeFile = (uri: string) => {
+		setSelectedFiles((prev) => prev.filter((file) => file.uri !== uri));
+	};
+
 	const validateForm = () => {
 		if (!djName.trim()) {
 			Alert.alert('Error', 'Please enter your DJ name');
@@ -140,6 +231,50 @@ export default function DJSubmissionScreen() {
 		setIsSubmitting(true);
 
 		try {
+			// Upload files to Convex storage
+			const uploadedFiles = [];
+			for (const file of selectedFiles) {
+				try {
+					// Generate upload URL
+					const uploadUrl = await generateUploadUrl({
+						fileType: file.mimeType,
+						fileSize: file.size,
+					});
+
+					// Create form data with file
+					const formData = new FormData();
+					formData.append('file', {
+						uri: file.uri,
+						name: file.name,
+						type: file.mimeType,
+					} as any);
+
+					// Upload file
+					const response = await fetch(uploadUrl, {
+						method: 'POST',
+						headers: { 'Content-Type': file.mimeType },
+						body: formData,
+					});
+
+					if (!response.ok) {
+						throw new Error(`Failed to upload ${file.name}`);
+					}
+
+					const { storageId } = await response.json();
+
+					uploadedFiles.push({
+						fileName: file.name,
+						fileType: file.mimeType,
+						fileSize: file.size,
+						storageId: storageId as Id<'_storage'>,
+					});
+				} catch (error) {
+					console.error(`Error uploading file ${file.name}:`, error);
+					Alert.alert('Upload Error', `Failed to upload ${file.name}. Please try again.`);
+					return;
+				}
+			}
+
 			const guestList = guestNames
 				.split('\n')
 				.filter((name) => name.trim())
@@ -149,7 +284,7 @@ export default function DJSubmissionScreen() {
 				eventId: submissionData.eventId,
 				timeslotId: submissionData._id,
 				submissionToken: token,
-				promoFiles: [], // Empty for now, files will be implemented later
+				promoFiles: uploadedFiles,
 				promoDescription: promoVideoUrl.trim() || '',
 				guestList,
 				djContact: {
@@ -309,6 +444,89 @@ export default function DJSubmissionScreen() {
 								onChangeText={setPromoVideoUrl}
 								className="bg-neutral-700 border-neutral-600"
 							/>
+						</View>
+
+						{/* File Upload Section */}
+						<View>
+							<Typography variant="label" className="mb-2 text-white">
+								Upload Promo Materials (Optional)
+							</Typography>
+							
+							<View className="gap-4">
+								{/* File Selection Buttons */}
+								<View className="flex-row gap-2">
+									<TouchableOpacity
+										onPress={selectImages}
+										className="flex-1 bg-neutral-700 border border-neutral-600 rounded-lg p-3 items-center"
+									>
+										<Ionicons name="image" size={24} color="white" />
+										<Typography variant="body" className="mt-1 text-white">
+											Select Images
+										</Typography>
+									</TouchableOpacity>
+									
+									<TouchableOpacity
+										onPress={selectVideos}
+										className="flex-1 bg-neutral-700 border border-neutral-600 rounded-lg p-3 items-center"
+									>
+										<Ionicons name="videocam" size={24} color="white" />
+										<Typography variant="body" className="mt-1 text-white">
+											Select Videos
+										</Typography>
+									</TouchableOpacity>
+								</View>
+
+								{/* Selected Files List */}
+								{selectedFiles.length > 0 && (
+									<View>
+										<Typography variant="h6" className="mb-2 text-white">
+											Selected Files ({selectedFiles.length})
+										</Typography>
+										
+										{selectedFiles.map((file, index) => (
+											<View 
+												key={`${file.uri}-${index}`}
+												className="bg-neutral-700 border border-neutral-600 rounded-lg p-3 mb-2"
+											>
+												<View className="flex-row justify-between items-start">
+													<View className="flex-1 mr-2">
+														<Typography variant="body" className="text-white font-medium">
+															{file.name}
+														</Typography>
+														<Typography variant="caption" color="secondary">
+															{formatFileSize(file.size)}
+														</Typography>
+														<Typography variant="caption" color="secondary">
+															{file.mimeType}
+														</Typography>
+													</View>
+													
+													<TouchableOpacity
+														onPress={() => removeFile(file.uri)}
+														className="bg-red-500/20 border border-red-500 rounded p-1"
+														testID={`remove-file-${file.name}`}
+													>
+														<Ionicons name="close" size={16} color="#ef4444" />
+													</TouchableOpacity>
+												</View>
+											</View>
+										))}
+									</View>
+								)}
+
+								{/* File Upload Info */}
+								<View className="bg-neutral-700/50 border border-neutral-600 p-3 rounded-lg">
+									<Typography variant="caption" color="secondary">
+										• Maximum file size: {Math.round(MAX_FILE_SIZE / (1024 * 1024))}MB per file
+									</Typography>
+									<Typography variant="caption" color="secondary">
+										• Supported formats: JPG, PNG, MP4, MOV, AVI, PDF
+									</Typography>
+									<Typography variant="caption" color="secondary">
+										• You can upload multiple files
+									</Typography>
+								</View>
+							</View>
 						</View>
 
 						{/* Important Dates */}
