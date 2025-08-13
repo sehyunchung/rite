@@ -17,6 +17,18 @@ vi.mock('../convex/eventStatus', () => ({
 	}),
 }));
 
+// Mock the encryption module
+vi.mock('../convex/encryption', () => ({
+	encryptSensitiveData: vi.fn((data) => `ENC_V2_${btoa(data)}`),
+	decryptSensitiveData: vi.fn((data) => {
+		if (data.startsWith('ENC_V2_')) {
+			return atob(data.slice(7));
+		}
+		return data;
+	}),
+	hashData: vi.fn((data) => `hash_${data}`),
+}));
+
 // Import the mocked function for use in tests
 import { computeEventCapabilities } from '../convex/eventStatus';
 
