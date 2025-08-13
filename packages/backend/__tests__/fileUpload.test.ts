@@ -39,6 +39,32 @@ const createMockMutationCtx = () =>
 				})),
 			})),
 		},
+		runAction: vi.fn().mockImplementation(async (action, args) => {
+			// Mock encryption actions - always return encrypted/hashed data
+			// Since we can't reliably check the action name in tests, we'll determine
+			// the operation based on the args structure
+			
+			if (args.data && Array.isArray(args.data)) {
+				// This is a batch operation
+				if (args.data.every(d => typeof d === 'string')) {
+					// Check if this looks like data to encrypt (contains account/resident numbers)
+					const isEncryption = args.data.some(d => !d.startsWith('hash_'));
+					if (isEncryption) {
+						return args.data.map((d: string) => `encrypted_${d}`);
+					} else {
+						return args.data.map((d: string) => `hash_${d}`);
+					}
+				}
+			} else if (args.data && typeof args.data === 'string') {
+				// Single encryption or hash
+				return `encrypted_${args.data}`;
+			} else if (args.encryptedData) {
+				// This is a decrypt operation
+				return args.encryptedData.replace('encrypted_', '');
+			}
+			
+			return null;
+		}),
 	}) as unknown as MutationCtx;
 
 const createMockQueryCtx = () =>
@@ -56,6 +82,13 @@ const createMockQueryCtx = () =>
 				})),
 			})),
 		},
+		runAction: vi.fn().mockImplementation(async (action, args) => {
+			// Mock decryption action for queries
+			if (args.encryptedData) {
+				return args.encryptedData.replace('encrypted_', '');
+			}
+			return null;
+		}),
 	}) as unknown as QueryCtx;
 
 describe('File Upload System', () => {
