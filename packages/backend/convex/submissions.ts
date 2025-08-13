@@ -2,6 +2,7 @@ import { v } from 'convex/values';
 import { mutation, query } from './_generated/server';
 import { requireAuth } from './auth';
 import { computeEventCapabilities } from './eventStatus';
+import { encryptSensitiveData, decryptSensitiveData, hashData } from './encryption';
 
 // File validation constants
 const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
@@ -93,6 +94,12 @@ export const saveSubmission = mutation({
 			.filter((q) => q.eq(q.field('timeslotId'), args.timeslotId))
 			.first();
 
+		// Encrypt sensitive payment data
+		const encryptedAccountNumber = encryptSensitiveData(args.paymentInfo.accountNumber);
+		const encryptedResidentNumber = encryptSensitiveData(args.paymentInfo.residentNumber);
+		const accountNumberHash = hashData(args.paymentInfo.accountNumber);
+		const residentNumberHash = hashData(args.paymentInfo.residentNumber);
+
 		const submissionData = {
 			eventId: args.eventId,
 			timeslotId: args.timeslotId,
@@ -111,9 +118,12 @@ export const saveSubmission = mutation({
 			paymentInfo: {
 				accountHolder: args.paymentInfo.accountHolder,
 				bankName: args.paymentInfo.bankName,
-				// In production, these should be encrypted
-				accountNumber: args.paymentInfo.accountNumber,
-				residentNumber: args.paymentInfo.residentNumber,
+				// Encrypted sensitive data
+				accountNumber: encryptedAccountNumber,
+				residentNumber: encryptedResidentNumber,
+				// Hashes for searchable encrypted data
+				accountNumberHash: accountNumberHash,
+				residentNumberHash: residentNumberHash,
 				preferDirectContact: args.paymentInfo.preferDirectContact,
 			},
 			submittedAt: new Date().toISOString(),
@@ -313,12 +323,21 @@ export const updateSubmission = mutation({
 		}
 
 		if (args.paymentInfo !== undefined) {
+			// Encrypt sensitive payment data
+			const encryptedAccountNumber = encryptSensitiveData(args.paymentInfo.accountNumber);
+			const encryptedResidentNumber = encryptSensitiveData(args.paymentInfo.residentNumber);
+			const accountNumberHash = hashData(args.paymentInfo.accountNumber);
+			const residentNumberHash = hashData(args.paymentInfo.residentNumber);
+
 			updateData.paymentInfo = {
 				accountHolder: args.paymentInfo.accountHolder,
 				bankName: args.paymentInfo.bankName,
-				// In production, these should be encrypted
-				accountNumber: args.paymentInfo.accountNumber,
-				residentNumber: args.paymentInfo.residentNumber,
+				// Encrypted sensitive data
+				accountNumber: encryptedAccountNumber,
+				residentNumber: encryptedResidentNumber,
+				// Hashes for searchable encrypted data
+				accountNumberHash: accountNumberHash,
+				residentNumberHash: residentNumberHash,
 				preferDirectContact: args.paymentInfo.preferDirectContact,
 			};
 		}
@@ -402,11 +421,22 @@ export const getSubmissionByToken = query({
 		const timeslot = await ctx.db.get(submission.timeslotId);
 		const event = await ctx.db.get(submission.eventId);
 
-		return {
+		// Decrypt sensitive payment data before returning
+		const decryptedSubmission = {
 			...submission,
+			paymentInfo: {
+				...submission.paymentInfo,
+				accountNumber: decryptSensitiveData(submission.paymentInfo.accountNumber),
+				residentNumber: decryptSensitiveData(submission.paymentInfo.residentNumber),
+				// Remove hash fields from response (internal only)
+				accountNumberHash: undefined,
+				residentNumberHash: undefined,
+			},
 			timeslot,
 			event,
 		};
+
+		return decryptedSubmission;
 	},
 });
 

@@ -60,6 +60,10 @@ describe('File Upload System', () => {
 		mockMutationCtx = createMockMutationCtx();
 		mockQueryCtx = createMockQueryCtx();
 		vi.clearAllMocks();
+
+		// Setup environment variables for encryption (required by submissions)
+		process.env.CONVEX_ENCRYPTION_KEY = 'test-encryption-key-32-characters';
+		process.env.CONVEX_HASH_SALT = 'test-hash-salt-for-testing';
 	});
 
 	describe('generateUploadUrl', () => {

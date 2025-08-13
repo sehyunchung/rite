@@ -3,7 +3,8 @@
  * Following TDD principle: Use predictable, consistent test data
  */
 
-import { Id } from 'convex/values';
+// Using generic ID type to avoid dependency on generated types
+type Id<T extends string> = string & { __tableName: T };
 
 /**
  * Creates a mock event with optional overrides
