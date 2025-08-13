@@ -30,7 +30,7 @@ describe('Encryption System', () => {
 		vi.clearAllMocks();
 		
 		// Mock environment variables
-		process.env.CONVEX_ENCRYPTION_KEY = 'test-encryption-key-32-characters';
+		process.env.CONVEX_ENCRYPTION_KEY = 'test-encryption-key-32-chars!!!!';  // Exactly 32 bytes
 		process.env.CONVEX_HASH_SALT = 'test-hash-salt-for-testing';
 	});
 
@@ -137,6 +137,18 @@ describe('Encryption System', () => {
 			delete process.env.CONVEX_ENCRYPTION_KEY;
 			
 			expect(() => decryptSensitiveData(encrypted)).toThrow('Encryption key not configured');
+		});
+
+		it('should throw error if encryption key is too short', () => {
+			process.env.CONVEX_ENCRYPTION_KEY = 'short-key';
+			
+			expect(() => encryptSensitiveData('test-data')).toThrow('Encryption key must be exactly 32 bytes');
+		});
+
+		it('should throw error if encryption key is too long', () => {
+			process.env.CONVEX_ENCRYPTION_KEY = 'this-is-a-very-long-key-that-exceeds-32-bytes-and-should-be-rejected';
+			
+			expect(() => encryptSensitiveData('test-data')).toThrow('Encryption key must be exactly 32 bytes');
 		});
 	});
 

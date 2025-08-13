@@ -16,14 +16,8 @@ function getEncryptionKey(): Buffer {
   
   // Ensure key is exactly 32 bytes for AES-256
   const keyBuffer = Buffer.from(key, 'utf8');
-  if (keyBuffer.length < KEY_LENGTH) {
-    // Pad key if too short
-    const paddedKey = Buffer.alloc(KEY_LENGTH);
-    keyBuffer.copy(paddedKey);
-    return paddedKey;
-  } else if (keyBuffer.length > KEY_LENGTH) {
-    // Truncate key if too long
-    return keyBuffer.subarray(0, KEY_LENGTH);
+  if (keyBuffer.length !== KEY_LENGTH) {
+    throw new Error(`Encryption key must be exactly ${KEY_LENGTH} bytes`);
   }
   
   return keyBuffer;

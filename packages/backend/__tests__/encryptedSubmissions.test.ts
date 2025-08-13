@@ -14,6 +14,7 @@ vi.mock('../convex/encryption', () => ({
 const createMockMutationCtx = () => ({
   storage: {
     generateUploadUrl: vi.fn(),
+    get: vi.fn(),
   },
   db: {
     get: vi.fn(),
@@ -55,13 +56,19 @@ describe('Encrypted Submissions', () => {
     vi.clearAllMocks();
 
     // Setup environment variables for encryption
-    process.env.CONVEX_ENCRYPTION_KEY = 'test-encryption-key-32-characters';
+    process.env.CONVEX_ENCRYPTION_KEY = 'test-encryption-key-32-chars!!!!';  // Exactly 32 bytes
     process.env.CONVEX_HASH_SALT = 'test-hash-salt-for-testing';
 
     // Reset mocked functions to their default implementations
     vi.mocked(encryptSensitiveData).mockImplementation((data: string) => `encrypted_${data}`);
     vi.mocked(decryptSensitiveData).mockImplementation((encrypted: string) => encrypted.replace('encrypted_', ''));
     vi.mocked(hashData).mockImplementation((data: string) => `hash_${data}`);
+
+    // Mock storage.get for file content validation
+    vi.mocked(mockMutationCtx.storage.get).mockImplementation(async () => {
+      // Return valid JPEG content for file validation
+      return new Blob([new Uint8Array([0xFF, 0xD8, 0xFF, 0xE0])], { type: 'image/jpeg' });
+    });
   });
 
   describe('saveSubmission with encryption', () => {

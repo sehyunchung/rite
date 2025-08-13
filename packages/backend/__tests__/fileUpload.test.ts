@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { generateUploadUrl, saveSubmission, updateSubmission, getFileUrl } from '../convex/submissions';
+import { generateUploadUrl, saveSubmission, updateSubmission, getFileUrl, deleteSubmission } from '../convex/submissions';
 import type { MutationCtx, QueryCtx } from '../convex/_generated/server';
 import type { Id } from '../convex/_generated/dataModel';
 
@@ -17,16 +17,21 @@ vi.mock('../convex/eventStatus', () => ({
 	}),
 }));
 
+// Import the mocked function for use in tests
+import { computeEventCapabilities } from '../convex/eventStatus';
+
 // Mock Convex contexts
 const createMockMutationCtx = () =>
 	({
 		storage: {
 			generateUploadUrl: vi.fn().mockResolvedValue('https://example.com/upload'),
+			get: vi.fn(),
 		},
 		db: {
 			get: vi.fn(),
 			insert: vi.fn(),
 			patch: vi.fn(),
+			delete: vi.fn(),
 			query: vi.fn(() => ({
 				filter: vi.fn(() => ({
 					first: vi.fn(),
@@ -40,6 +45,7 @@ const createMockQueryCtx = () =>
 	({
 		storage: {
 			getUrl: vi.fn().mockResolvedValue('https://example.com/file-url'),
+			get: vi.fn(),
 		},
 		db: {
 			get: vi.fn(),
@@ -62,8 +68,23 @@ describe('File Upload System', () => {
 		vi.clearAllMocks();
 
 		// Setup environment variables for encryption (required by submissions)
-		process.env.CONVEX_ENCRYPTION_KEY = 'test-encryption-key-32-characters';
+		process.env.CONVEX_ENCRYPTION_KEY = 'test-encryption-key-32-chars!!!!';  // Exactly 32 bytes
 		process.env.CONVEX_HASH_SALT = 'test-hash-salt-for-testing';
+
+		// Mock storage.get for file content validation (default behavior)
+		vi.mocked(mockMutationCtx.storage.get).mockImplementation(async (storageId) => {
+			// Return appropriate magic numbers for known test files
+			if (storageId === 'kg2222222222222222') {
+				// MP4 file - return MP4 magic number matching our validation
+				return new Blob([new Uint8Array([0x00, 0x00, 0x00, 0x00, 0x66, 0x74, 0x79, 0x70])], { type: 'video/mp4' });
+			}
+			if (storageId === 'kg3333333333333333') {
+				// PDF file - return PDF magic number
+				return new Blob([new Uint8Array([0x25, 0x50, 0x44, 0x46])], { type: 'application/pdf' });
+			}
+			// Default: return valid JPEG for any other unmocked storage IDs
+			return new Blob([new Uint8Array([0xFF, 0xD8, 0xFF, 0xE0])], { type: 'image/jpeg' });
+		});
 	});
 
 	describe('generateUploadUrl', () => {
@@ -364,9 +385,8 @@ describe('File Upload System', () => {
 				fileSize: -1,
 			};
 
-			// Negative sizes should be allowed by generateUploadUrl but caught by client validation
-			const result = await generateUploadUrl._handler(mockMutationCtx, negativeArgs);
-			expect(result).toBeDefined();
+			// Negative sizes should be rejected by server-side validation
+			await expect(generateUploadUrl._handler(mockMutationCtx, negativeArgs)).rejects.toThrow('File size must be a positive number');
 
 			const extremelyLargeArgs = {
 				fileType: 'image/jpeg',
@@ -481,6 +501,415 @@ describe('File Upload System', () => {
 				'Invalid submission token'
 			);
 
+			expect(mockMutationCtx.db.patch).not.toHaveBeenCalled();
+		});
+	});
+
+	describe('File Content Validation', () => {
+		beforeEach(() => {
+			// Mock successful timeslot verification (copied from File Storage tests)
+			vi.mocked(mockMutationCtx.db.get).mockResolvedValueOnce({
+				_id: 'timeslot123' as Id<'timeslots'>,
+				submissionToken: 'valid-token',
+				eventId: 'event123' as Id<'events'>,
+			});
+
+			// Mock no existing submission
+			vi.mocked(mockMutationCtx.db.query).mockReturnValue({
+				filter: vi.fn().mockReturnValue({
+					first: vi.fn().mockResolvedValue(null),
+				}),
+			} as any);
+
+			// Mock successful insertion
+			vi.mocked(mockMutationCtx.db.insert).mockResolvedValue('submission123' as Id<'submissions'>);
+			vi.mocked(mockMutationCtx.db.patch).mockResolvedValue();
+
+			// Mock file content retrieval
+			vi.mocked(mockMutationCtx.storage.get).mockImplementation(async (storageId) => {
+				// Mock different file types based on storageId
+				if (storageId === 'valid-jpeg-file' as Id<'_storage'>) {
+					// JPEG magic number: FF D8 FF
+					return new Blob([new Uint8Array([0xFF, 0xD8, 0xFF, 0xE0])], { type: 'image/jpeg' });
+				}
+				if (storageId === 'fake-jpeg-file' as Id<'_storage'>) {
+					// Fake JPEG (exe file with jpeg extension): MZ header
+					return new Blob([new Uint8Array([0x4D, 0x5A, 0x90, 0x00])], { type: 'image/jpeg' });
+				}
+				if (storageId === 'valid-png-file' as Id<'_storage'>) {
+					// PNG magic number: 89 50 4E 47
+					return new Blob([new Uint8Array([0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A])], { type: 'image/png' });
+				}
+				return null;
+			});
+		});
+
+		it('should accept files with valid magic numbers', async () => {
+			const args = {
+				eventId: 'event123' as Id<'events'>,
+				timeslotId: 'timeslot123' as Id<'timeslots'>,
+				submissionToken: 'valid-token',
+				promoFiles: [
+					{
+						fileName: 'valid.jpg',
+						fileType: 'image/jpeg',
+						fileSize: 1024,
+						storageId: 'valid-jpeg-file' as Id<'_storage'>,
+					},
+				],
+				promoDescription: 'Valid file upload',
+				guestList: [],
+				paymentInfo: {
+					accountHolder: 'Test DJ',
+					bankName: 'Test Bank',
+					accountNumber: '1234567890',
+					residentNumber: '1234567890123',
+					preferDirectContact: false,
+				},
+				djContact: {
+					email: 'test@example.com',
+					phone: '010-1234-5678',
+					preferredContactMethod: 'email' as const,
+				},
+			};
+
+			const result = await saveSubmission._handler(mockMutationCtx, args);
+			expect(result).toBeDefined();
+			expect(mockMutationCtx.db.insert).toHaveBeenCalled();
+		});
+
+		it('should reject files with invalid magic numbers (spoofed file types)', async () => {
+			const args = {
+				eventId: 'event123' as Id<'events'>,
+				timeslotId: 'timeslot123' as Id<'timeslots'>,
+				submissionToken: 'valid-token',
+				promoFiles: [
+					{
+						fileName: 'fake.jpg',
+						fileType: 'image/jpeg',
+						fileSize: 1024,
+						storageId: 'fake-jpeg-file' as Id<'_storage'>,
+					},
+				],
+				promoDescription: 'Fake file upload',
+				guestList: [],
+				paymentInfo: {
+					accountHolder: 'Test DJ',
+					bankName: 'Test Bank',
+					accountNumber: '1234567890',
+					residentNumber: '1234567890123',
+					preferDirectContact: false,
+				},
+				djContact: {
+					email: 'test@example.com',
+					phone: '010-1234-5678',
+					preferredContactMethod: 'email' as const,
+				},
+			};
+
+			await expect(saveSubmission._handler(mockMutationCtx, args)).rejects.toThrow(
+				'File content does not match declared MIME type'
+			);
+		});
+
+		it('should handle multiple files with mixed validation results', async () => {
+			const args = {
+				eventId: 'event123' as Id<'events'>,
+				timeslotId: 'timeslot123' as Id<'timeslots'>,
+				submissionToken: 'valid-token',
+				promoFiles: [
+					{
+						fileName: 'valid.jpg',
+						fileType: 'image/jpeg',
+						fileSize: 1024,
+						storageId: 'valid-jpeg-file' as Id<'_storage'>,
+					},
+					{
+						fileName: 'fake.jpg',
+						fileType: 'image/jpeg',
+						fileSize: 1024,
+						storageId: 'fake-jpeg-file' as Id<'_storage'>,
+					},
+				],
+				promoDescription: 'Mixed files',
+				guestList: [],
+				paymentInfo: {
+					accountHolder: 'Test DJ',
+					bankName: 'Test Bank',
+					accountNumber: '1234567890',
+					residentNumber: '1234567890123',
+					preferDirectContact: false,
+				},
+				djContact: {
+					email: 'test@example.com',
+					phone: '010-1234-5678',
+					preferredContactMethod: 'email' as const,
+				},
+			};
+
+			await expect(saveSubmission._handler(mockMutationCtx, args)).rejects.toThrow(
+				'File content does not match declared MIME type'
+			);
+		});
+	});
+
+	describe('Delete Submission', () => {
+		beforeEach(() => {
+			// Mock existing submission
+			vi.mocked(mockMutationCtx.db.get).mockImplementation((id) => {
+				if (id === 'submission123' as Id<'submissions'>) {
+					return Promise.resolve({
+						_id: 'submission123' as Id<'submissions'>,
+						eventId: 'event123' as Id<'events'>,
+						timeslotId: 'timeslot123' as Id<'timeslots'>,
+						uniqueLink: 'valid-token',
+						promoMaterials: {
+							files: [
+								{
+									fileName: 'test.jpg',
+									fileType: 'image/jpeg',
+									fileSize: 1024,
+									convexFileId: 'kg_test_file' as Id<'_storage'>,
+									uploadedAt: '2025-01-01T00:00:00.000Z',
+								},
+							],
+							description: 'Test promo',
+						},
+						guestList: [],
+						paymentInfo: {
+							accountHolder: 'Test DJ',
+							bankName: 'Test Bank',
+							accountNumber: 'encrypted_account',
+							residentNumber: 'encrypted_resident',
+							accountNumberHash: 'hash_account',
+							residentNumberHash: 'hash_resident',
+							preferDirectContact: false,
+						},
+						djContact: {
+							email: 'test@example.com',
+							phone: '010-1234-5678',
+							preferredContactMethod: 'email' as const,
+						},
+						lastUpdatedAt: '2025-01-01T00:00:00.000Z',
+					});
+				}
+				if (id === 'event123' as Id<'events'>) {
+					return Promise.resolve({
+						_id: 'event123' as Id<'events'>,
+						title: 'Test Event',
+						deadlines: {
+							submission: '2025-12-31T23:59:59.000Z',
+							editing: '2025-12-31T23:59:59.000Z',
+						},
+					});
+				}
+				if (id === 'timeslot123' as Id<'timeslots'>) {
+					return Promise.resolve({
+						_id: 'timeslot123' as Id<'timeslots'>,
+						eventId: 'event123' as Id<'events'>,
+						submissionId: 'submission123' as Id<'submissions'>,
+						submissionToken: 'valid-token',
+					});
+				}
+				return Promise.resolve(null);
+			});
+
+			// Mock query for timeslots and submissions (for event capabilities)
+			vi.mocked(mockMutationCtx.db.query).mockReturnValue({
+				filter: vi.fn().mockReturnValue({
+					collect: vi.fn().mockResolvedValue([]),
+					first: vi.fn().mockResolvedValue(null),
+				}),
+			} as any);
+
+			// Mock successful deletion operations
+			vi.mocked(mockMutationCtx.db.delete).mockResolvedValue();
+			vi.mocked(mockMutationCtx.db.patch).mockResolvedValue();
+
+			// Reset computeEventCapabilities to default (allow submissions)
+			vi.mocked(computeEventCapabilities).mockReturnValue({
+				canAcceptSubmissions: true,
+				canEdit: true,
+				canViewEvents: true,
+				canPublish: true,
+			});
+		});
+
+		it('should successfully delete a submission with valid token', async () => {
+			const args = {
+				submissionId: 'submission123' as Id<'submissions'>,
+				submissionToken: 'valid-token',
+			};
+
+			const result = await deleteSubmission._handler(mockMutationCtx, args);
+
+			expect(result.success).toBe(true);
+			expect(mockMutationCtx.db.delete).toHaveBeenCalledWith('submission123');
+			expect(mockMutationCtx.db.patch).toHaveBeenCalledWith('timeslot123', {
+				submissionId: undefined,
+			});
+		});
+
+		it('should throw error if submission does not exist', async () => {
+			vi.mocked(mockMutationCtx.db.get).mockImplementation((id) => {
+				if (id === 'nonexistent' as Id<'submissions'>) {
+					return Promise.resolve(null);
+				}
+				// Return other mocks as normal
+				return Promise.resolve({} as any);
+			});
+
+			const args = {
+				submissionId: 'nonexistent' as Id<'submissions'>,
+				submissionToken: 'any-token',
+			};
+
+			await expect(deleteSubmission._handler(mockMutationCtx, args)).rejects.toThrow(
+				'Submission not found'
+			);
+
+			expect(mockMutationCtx.db.delete).not.toHaveBeenCalled();
+		});
+
+		it('should throw error if submission token is invalid', async () => {
+			const args = {
+				submissionId: 'submission123' as Id<'submissions'>,
+				submissionToken: 'invalid-token',
+			};
+
+			await expect(deleteSubmission._handler(mockMutationCtx, args)).rejects.toThrow(
+				'Invalid submission token'
+			);
+
+			expect(mockMutationCtx.db.delete).not.toHaveBeenCalled();
+		});
+
+		it('should throw error if event does not exist', async () => {
+			vi.mocked(mockMutationCtx.db.get).mockImplementation((id) => {
+				if (id === 'submission123' as Id<'submissions'>) {
+					return Promise.resolve({
+						_id: 'submission123' as Id<'submissions'>,
+						eventId: 'nonexistent-event' as Id<'events'>,
+						timeslotId: 'timeslot123' as Id<'timeslots'>,
+						uniqueLink: 'valid-token',
+					} as any);
+				}
+				if (id === 'nonexistent-event' as Id<'events'>) {
+					return Promise.resolve(null);
+				}
+				return Promise.resolve({} as any);
+			});
+
+			const args = {
+				submissionId: 'submission123' as Id<'submissions'>,
+				submissionToken: 'valid-token',
+			};
+
+			await expect(deleteSubmission._handler(mockMutationCtx, args)).rejects.toThrow(
+				'Event not found'
+			);
+
+			expect(mockMutationCtx.db.delete).not.toHaveBeenCalled();
+		});
+
+		it('should throw error if event capabilities do not allow submissions deletion', async () => {
+			// Mock computeEventCapabilities to return false for canAcceptSubmissions
+			vi.mocked(computeEventCapabilities).mockReturnValue({
+				canAcceptSubmissions: false,
+				canViewEvents: true,
+				canPublish: false,
+			});
+
+			const args = {
+				submissionId: 'submission123' as Id<'submissions'>,
+				submissionToken: 'valid-token',
+			};
+
+			await expect(deleteSubmission._handler(mockMutationCtx, args)).rejects.toThrow(
+				'Submissions can no longer be deleted for this event'
+			);
+
+			expect(mockMutationCtx.db.delete).not.toHaveBeenCalled();
+		});
+
+		it('should handle case where timeslot does not exist', async () => {
+			vi.mocked(mockMutationCtx.db.get).mockImplementation((id) => {
+				if (id === 'submission123' as Id<'submissions'>) {
+					return Promise.resolve({
+						_id: 'submission123' as Id<'submissions'>,
+						eventId: 'event123' as Id<'events'>,
+						timeslotId: 'nonexistent-timeslot' as Id<'timeslots'>,
+						uniqueLink: 'valid-token',
+					} as any);
+				}
+				if (id === 'event123' as Id<'events'>) {
+					return Promise.resolve({
+						_id: 'event123' as Id<'events'>,
+						deadlines: {
+							submission: '2025-12-31T23:59:59.000Z',
+							editing: '2025-12-31T23:59:59.000Z',
+						},
+					} as any);
+				}
+				if (id === 'nonexistent-timeslot' as Id<'timeslots'>) {
+					return Promise.resolve(null);
+				}
+				return Promise.resolve({} as any);
+			});
+
+			const args = {
+				submissionId: 'submission123' as Id<'submissions'>,
+				submissionToken: 'valid-token',
+			};
+
+			const result = await deleteSubmission._handler(mockMutationCtx, args);
+
+			expect(result.success).toBe(true);
+			expect(mockMutationCtx.db.delete).toHaveBeenCalledWith('submission123');
+			// Should not try to patch a non-existent timeslot
+			expect(mockMutationCtx.db.patch).not.toHaveBeenCalled();
+		});
+
+		it('should handle case where timeslot exists but has different submission ID', async () => {
+			vi.mocked(mockMutationCtx.db.get).mockImplementation((id) => {
+				if (id === 'submission123' as Id<'submissions'>) {
+					return Promise.resolve({
+						_id: 'submission123' as Id<'submissions'>,
+						eventId: 'event123' as Id<'events'>,
+						timeslotId: 'timeslot123' as Id<'timeslots'>,
+						uniqueLink: 'valid-token',
+					} as any);
+				}
+				if (id === 'event123' as Id<'events'>) {
+					return Promise.resolve({
+						_id: 'event123' as Id<'events'>,
+						deadlines: {
+							submission: '2025-12-31T23:59:59.000Z',
+							editing: '2025-12-31T23:59:59.000Z',
+						},
+					} as any);
+				}
+				if (id === 'timeslot123' as Id<'timeslots'>) {
+					return Promise.resolve({
+						_id: 'timeslot123' as Id<'timeslots'>,
+						eventId: 'event123' as Id<'events'>,
+						submissionId: 'different-submission' as Id<'submissions'>,
+						submissionToken: 'valid-token',
+					} as any);
+				}
+				return Promise.resolve({} as any);
+			});
+
+			const args = {
+				submissionId: 'submission123' as Id<'submissions'>,
+				submissionToken: 'valid-token',
+			};
+
+			const result = await deleteSubmission._handler(mockMutationCtx, args);
+
+			expect(result.success).toBe(true);
+			expect(mockMutationCtx.db.delete).toHaveBeenCalledWith('submission123');
+			// Should not patch timeslot since it references a different submission
 			expect(mockMutationCtx.db.patch).not.toHaveBeenCalled();
 		});
 	});
