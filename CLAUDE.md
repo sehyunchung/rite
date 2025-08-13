@@ -72,6 +72,10 @@ GOOGLE_CLIENT_SECRET=your_google_client_secret
 # Apple OAuth (TBD)
 APPLE_ID=your_apple_id
 APPLE_SECRET=your_apple_secret
+
+# Data Protection (Basic Obfuscation)
+CONVEX_ENCRYPTION_KEY=your_32_character_encryption_key_here
+CONVEX_HASH_SALT=your_hash_salt_here
 ```
 
 **Mobile (.env or Expo environment):**
@@ -84,6 +88,10 @@ EXPO_PUBLIC_GOOGLE_OAUTH_CLIENT_ID_IOS=your_ios_client_id
 EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID=your_android_client_id
 EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID=your_web_client_id
 EXPO_PUBLIC_GOOGLE_WEB_CLIENT_SECRET=your_web_client_secret
+
+# Data Protection (Basic Obfuscation)
+CONVEX_ENCRYPTION_KEY=your_32_character_encryption_key_here
+CONVEX_HASH_SALT=your_hash_salt_here
 ```
 
 ### Mobile Authentication Architecture
@@ -261,8 +269,76 @@ rite/
 - `users` - Authentication and profiles
 - `events` - Event information
 - `timeslots` - DJ slots with submission tokens (pre-confirmed DJs)
-- `submissions` - DJ information collection (guest lists, contact info, promo materials)
+- `submissions` - DJ information collection (guest lists, contact info, promo materials) with basic data obfuscation
 - `instagramConnections` - Instagram profiles
+
+## Data Protection
+
+The platform implements a basic data obfuscation system for sensitive information in submissions. This system works synchronously within Convex's V8 runtime environment.
+
+### Implementation
+
+**Location**: `/packages/backend/convex/encryption.ts`
+
+**Core Functions**:
+
+- `encryptSensitiveData(data: string)`: XOR-based obfuscation with Base64 encoding
+- `decryptSensitiveData(encryptedData: string)`: Reverses the obfuscation process
+- `hashData(data: string)`: Creates deterministic hashes for searchable encrypted data
+
+### Environment Configuration
+
+**Required Environment Variables**:
+
+```bash
+# 32-character encryption key for XOR obfuscation
+CONVEX_ENCRYPTION_KEY=your_32_character_encryption_key_here
+
+# Salt for creating deterministic hashes
+CONVEX_HASH_SALT=your_hash_salt_here
+```
+
+### Security Level: Basic Obfuscation
+
+**⚠️ IMPORTANT SECURITY NOTICE:**
+
+This implementation provides **basic obfuscation only**, NOT cryptographic security. It is suitable for:
+
+- Development environments
+- Preventing casual data exposure
+- Basic compliance with data handling practices
+
+**NOT suitable for**:
+
+- GDPR/HIPAA compliance requirements
+- Protection against determined attackers
+- Highly sensitive data (SSNs, credit cards, etc.)
+
+### Production Recommendations
+
+For production systems with sensitive data, consider:
+
+1. **Client-side encryption** before sending to Convex
+2. **External encryption services** (AWS KMS, HashiCorp Vault)
+3. **Field-level encryption** in your database
+4. **Convex actions** with Node.js runtime for proper cryptographic libraries
+
+### Technical Details
+
+- **Synchronous operation**: Works within Convex mutations without async operations
+- **Unicode support**: Proper handling via TextEncoder/TextDecoder
+- **Version compatibility**: Includes version prefixes for future upgrades
+- **Legacy support**: Handles migration from older formats
+
+### Usage in Submissions
+
+Sensitive fields in DJ submissions are automatically obfuscated:
+
+- Account numbers
+- Resident registration numbers
+- Contact information (when marked sensitive)
+
+The system maintains searchability through deterministic hashing while providing basic data protection.
 
 ## RITE Design System
 
@@ -319,7 +395,7 @@ All themes generate CSS variables for seamless switching:
 **Usage:**
 
 ```typescript
-import { ThemeSwitcher } from "@/components/ThemeSwitcher";
+import { ThemeSwitcher } from '@/components/ThemeSwitcher';
 
 // Theme switcher automatically handles:
 // - Loading saved theme from localStorage
@@ -428,10 +504,10 @@ next-intl with Korean/English support:
 ### Usage
 
 ```typescript
-import { useTranslations } from "next-intl";
-import { Link, useRouter } from "@/i18n/routing";
+import { useTranslations } from 'next-intl';
+import { Link, useRouter } from '@/i18n/routing';
 
-const t = useTranslations("dashboard");
+const t = useTranslations('dashboard');
 ```
 
 ## Theme Development
@@ -462,10 +538,10 @@ newTheme: {
 const themes = [
   // ... existing themes
   {
-    key: "newTheme",
-    name: "Theme Name",
-    description: "Description",
-    icon: "🎨",
+    key: 'newTheme',
+    name: 'Theme Name',
+    description: 'Description',
+    icon: '🎨',
   },
 ] as const;
 ```
@@ -474,7 +550,7 @@ const themes = [
 
 ```typescript
 // From @rite/ui/design-tokens
-import { themes, generateThemeCSS } from "@rite/ui/design-tokens";
+import { themes, generateThemeCSS } from '@rite/ui/design-tokens';
 // Note: alternativeThemes is still available for backward compatibility
 ```
 
@@ -554,11 +630,11 @@ See `/apps/next-app/e2e/visual/README.md` for detailed documentation.
 - i18n system with language switcher
 - Hydration-safe providers
 - "use dom" example implementations (QR Code, Dropzone)
+- **Basic data obfuscation system** for sensitive submission data
 
 **🚧 In Progress:**
 
 - File uploads with Convex
-- Submission data encryption
 
 **📋 Planned:**
 
@@ -574,30 +650,27 @@ See `/apps/next-app/e2e/visual/README.md` for detailed documentation.
 2. **NextAuth prerender**: Add `export const dynamic = 'force-dynamic'`
 3. **Missing env vars**: Check NEXT_PUBLIC_CONVEX_URL
 4. **Mobile OAuth**: Check force web parameters in proxy logs
+5. **Data obfuscation errors**: Ensure CONVEX_ENCRYPTION_KEY (32 characters) and CONVEX_HASH_SALT are set
 
 ### Mobile OAuth Troubleshooting
 
 **Google OAuth Setup Issues:**
 
 1. **Missing Client IDs**
-
    - Ensure all platform-specific client IDs are configured in environment
    - Check `EXPO_PUBLIC_GOOGLE_OAUTH_CLIENT_ID_IOS`, `EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID`, `EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID`
 
 2. **Redirect URI Mismatch**
-
    - **iOS/Expo Go**: Use Google URL scheme format: `com.googleusercontent.apps.[CLIENT-ID]://`
    - **Android**: Use custom scheme: `com.rite.mobile://`
    - **Web**: Use localhost: `http://localhost:8081`
 
 3. **URL Scheme Configuration**
-
    - Verify `app.json` contains correct URL schemes for both platforms
    - iOS bundle identifier must match Google Cloud Console configuration
    - Android package name must match Google Cloud Console and `app.json`
 
 4. **Platform Detection Issues**
-
    - Check `getPlatformInfo()` function returns correct platform/environment
    - Expo Go vs standalone app detection affects OAuth flow selection
 
@@ -657,7 +730,7 @@ pnpm android
 
    ```typescript
    // Add provider config to oauth-config.ts
-   export const getProviderConfig = (provider: "google" | "apple") => {
+   export const getProviderConfig = (provider: 'google' | 'apple') => {
      // Platform-specific configuration logic
    };
 

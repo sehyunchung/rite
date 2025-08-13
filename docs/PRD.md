@@ -138,7 +138,6 @@ Access via unique link: `app.com/submit/[unique-id]`
 **Form Sections:**
 
 1. **Promo Materials**
-
    - Drag & drop zone
    - Accepted: images (jpg, png), videos (mp4, mov), documents (pdf)
    - Max file size: 50MB per file
@@ -146,7 +145,6 @@ Access via unique link: `app.com/submit/[unique-id]`
    - Preview uploaded files
 
 2. **Guest List**
-
    - Dynamic form: "Number of guests" dropdown (0 to limit)
    - Name fields appear based on selection
    - Optional: phone number per guest
@@ -176,7 +174,7 @@ Access via unique link: `app.com/submit/[unique-id]`
 ### Convex Considerations
 
 - Use Convex file storage for promo materials
-- Implement custom encryption for sensitive fields
+- ✅ Basic data obfuscation implemented for sensitive fields (XOR-based)
 - Real-time updates for organizer dashboard
 - Efficient query patterns for submission tracking
 
