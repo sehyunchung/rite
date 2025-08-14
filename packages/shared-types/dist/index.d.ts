@@ -1,5 +1,6 @@
 export * from './effect-schemas';
 export * from './file-validation';
+export * from './file-upload-effect';
 export interface Event {
     id: string;
     name: string;
