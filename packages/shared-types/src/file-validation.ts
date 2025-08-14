@@ -6,7 +6,6 @@ export const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
 
 export const ALLOWED_FILE_TYPES = [
 	'image/jpeg',
-	'image/jpg', 
 	'image/png',
 	'image/gif',
 	'image/webp',
@@ -64,7 +63,7 @@ export function validateFileType(fileType: string): FileValidationResult {
 		};
 	}
 
-	// Normalize MIME type (lowercase, trim whitespace)
+	// Convert to lowercase for comparison (validation will reject if original wasn't lowercase)
 	const normalizedType = fileType.toLowerCase().trim();
 
 	if (!normalizedType.includes('/')) {
@@ -131,7 +130,6 @@ export function validateFileExtensionMatch(filename: string, mimeType: string): 
 	// Define expected extensions for each MIME type
 	const mimeToExtensions: Record<string, string[]> = {
 		'image/jpeg': ['jpg', 'jpeg'],
-		'image/jpg': ['jpg', 'jpeg'],
 		'image/png': ['png'],
 		'image/gif': ['gif'],
 		'image/webp': ['webp'],
