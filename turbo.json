@@ -30,9 +30,17 @@
 			"dependsOn": [],
 			"outputs": ["dist/**"]
 		},
+		"@rite/shared-types#build": {
+			"dependsOn": [],
+			"outputs": ["dist/**"]
+		},
 		"next-app#build": {
 			"dependsOn": ["^build", "@rite/posthog-config#build"],
 			"outputs": [".next/**", "!.next/cache/**"]
+		},
+		"mobile#build": {
+			"dependsOn": ["^build", "@rite/shared-types#build"],
+			"outputs": ["dist/**"]
 		},
 		"dev": {
 			"cache": false,

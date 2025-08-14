@@ -3,6 +3,12 @@
 // Export Effect schemas for type-safe validation and undefined pollution elimination
 export * from './effect-schemas';
 
+// Export file validation utilities
+export * from './file-validation';
+
+// Export Effect-based file upload utilities
+export * from './file-upload-effect';
+
 export interface Event {
 	id: string;
 	name: string;
