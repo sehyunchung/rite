@@ -1,5 +1,14 @@
 /**
  * Effect-based file upload utilities for type-safe, composable file operations
+ * 
+ * Why Effect for file uploads?
+ * - Type-safe error handling: All errors are tracked at compile time
+ * - Built-in retry logic: Essential for unreliable mobile networks  
+ * - Concurrent uploads: Fine-grained control over parallel operations
+ * - Progress tracking: Stream-based architecture for real-time updates
+ * - Resource safety: Automatic cleanup of file handles and connections
+ * 
+ * See docs/effect-library-rationale.md for detailed architectural decisions
  */
 
 import { Effect, Data, pipe, Schedule, Chunk, Stream, Ref, Option, Schema } from 'effect';

@@ -28,6 +28,10 @@ interface SelectedFile extends FileToUpload {
 	type: 'image' | 'video' | 'document';
 }
 
+// Create Effect runtime at module level for better performance
+// This avoids recreating the runtime on every component render
+const effectRuntime = Runtime.defaultRuntime;
+
 export default function DJSubmissionScreen() {
 	const { token } = useLocalSearchParams<{ token: string }>();
 	const router = useRouter();
@@ -38,8 +42,8 @@ export default function DJSubmissionScreen() {
 	const [djName, setDjName] = React.useState('');
 	const [djEmail, setDjEmail] = React.useState('');
 	const [djPhone, setDjPhone] = React.useState('');
-	// TODO: Add UI for selecting preferred contact method (like web version has)
-	const [preferredContact] = React.useState<'email' | 'phone' | 'both'>('email');
+	// TODO: Implement preferred contact method selection UI similar to web version
+	// Will need: preferredContact state ('email' | 'phone' | 'both') and RadioGroup component
 	const [guestNames, setGuestNames] = React.useState('');
 	const [guestNamesLineup, setGuestNamesLineup] = React.useState('');
 	const [promoVideoUrl, setPromoVideoUrl] = React.useState('');
@@ -63,9 +67,6 @@ export default function DJSubmissionScreen() {
 	);
 
 	const { event, timeslot } = submissionData || {};
-
-	// Create Effect runtime
-	const runtime = React.useMemo(() => Runtime.defaultRuntime, []);
 
 	if (!token) {
 		return (
@@ -126,7 +127,7 @@ export default function DJSubmissionScreen() {
 
 	// File validation with Effect
 	const validateSelectedFile = (file: SelectedFile): boolean => {
-		const result = Runtime.runSync(runtime)(validateFileEffect(file));
+		const result = Runtime.runSync(effectRuntime)(validateFileEffect(file));
 		
 		if (Effect.isSuccess(result)) {
 			return true;
@@ -263,8 +264,13 @@ export default function DJSubmissionScreen() {
 				// Upload file with progress tracking
 				const response = yield* Effect.tryPromise({
 					try: async () => {
-						// For React Native, we can't easily track progress with fetch
-						// So we'll simulate progress updates
+						// LIMITATION: React Native's fetch API doesn't provide upload progress events
+						// Unlike XMLHttpRequest on web, we cannot track real upload progress.
+						// Current implementation simulates progress: 0% → 50% (start) → 100% (complete)
+						// For real progress tracking, consider:
+						// - react-native-background-upload (for background uploads with progress)
+						// - react-native-fs (for file uploads with progress callbacks)
+						// - expo-file-system (for Expo apps with progress support)
 						setUploadProgress((prev) => ({ ...prev, [file.name]: 50 }));
 						
 						const resp = await fetch(uploadUrl, {
@@ -306,7 +312,7 @@ export default function DJSubmissionScreen() {
 		);
 
 		try {
-			const results = await Runtime.runPromise(runtime)(uploadEffect);
+			const results = await Runtime.runPromise(effectRuntime)(uploadEffect);
 			
 			// Separate successful and failed uploads
 			const successfulUploads = results
@@ -361,7 +367,7 @@ export default function DJSubmissionScreen() {
 				djContact: {
 					email: djEmail.trim(),
 					phone: djPhone.trim() || undefined,
-					preferredContactMethod: preferredContact,
+					preferredContactMethod: 'email', // Default to email until UI is implemented
 				},
 				paymentInfo: {
 					accountHolder: djName.trim(),

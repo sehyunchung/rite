@@ -1,5 +1,14 @@
 /**
  * Effect-based file upload utilities for type-safe, composable file operations
+ *
+ * Why Effect for file uploads?
+ * - Type-safe error handling: All errors are tracked at compile time
+ * - Built-in retry logic: Essential for unreliable mobile networks
+ * - Concurrent uploads: Fine-grained control over parallel operations
+ * - Progress tracking: Stream-based architecture for real-time updates
+ * - Resource safety: Automatic cleanup of file handles and connections
+ *
+ * See docs/effect-library-rationale.md for detailed architectural decisions
  */
 import { Effect, Schedule, Stream, Ref, Schema } from 'effect';
 declare const FileTooLargeError_base: new <A extends Record<string, any> = {}>(args: import("effect/Types").Equals<A, {}> extends true ? void : { readonly [P in keyof A as P extends "_tag" ? never : P]: A[P]; }) => import("effect/Cause").YieldableError & {
