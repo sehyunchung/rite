@@ -35,6 +35,7 @@
 		"@rite/shared-types": "workspace:*",
 		"@rite/ui": "workspace:*",
 		"convex": "^1.19.1",
+		"effect": "3.17.6",
 		"expo": "~53.0.20",
 		"expo-application": "~6.0.2",
 		"expo-auth-session": "~6.2.1",

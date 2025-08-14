@@ -28,7 +28,7 @@ interface SelectedFile extends FileToUpload {
 	type: 'image' | 'video' | 'document';
 }
 
-export default function DJSubmissionScreen() {
+export default function DJSubmissionScreenWithEffect() {
 	const { token } = useLocalSearchParams<{ token: string }>();
 	const router = useRouter();
 	const createSubmission = useMutation(api.submissions.saveSubmission);
