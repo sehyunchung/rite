@@ -1,5 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { generateUploadUrl, saveSubmission, updateSubmission, getFileUrl, deleteSubmission } from '../convex/submissions';
+import {
+	generateUploadUrl,
+	saveSubmission,
+	updateSubmission,
+	getFileUrl,
+	deleteSubmission,
+} from '../convex/submissions';
 import type { MutationCtx, QueryCtx } from '../convex/_generated/server';
 import type { Id } from '../convex/_generated/dataModel';
 
@@ -80,7 +86,7 @@ describe('File Upload System', () => {
 		vi.clearAllMocks();
 
 		// Setup environment variables for encryption (required by submissions)
-		process.env.CONVEX_ENCRYPTION_KEY = 'test-encryption-key-32-chars!!!!';  // Exactly 32 bytes
+		process.env.CONVEX_ENCRYPTION_KEY = 'test-encryption-key-32-chars!!!!'; // Exactly 32 bytes
 		process.env.CONVEX_HASH_SALT = 'test-hash-salt-for-testing';
 
 		// Mock storage.get for file content validation (default behavior)
@@ -88,14 +94,16 @@ describe('File Upload System', () => {
 			// Return appropriate magic numbers for known test files
 			if (storageId === 'kg2222222222222222') {
 				// MP4 file - return MP4 magic number matching our validation
-				return new Blob([new Uint8Array([0x00, 0x00, 0x00, 0x00, 0x66, 0x74, 0x79, 0x70])], { type: 'video/mp4' });
+				return new Blob([new Uint8Array([0x00, 0x00, 0x00, 0x00, 0x66, 0x74, 0x79, 0x70])], {
+					type: 'video/mp4',
+				});
 			}
 			if (storageId === 'kg3333333333333333') {
 				// PDF file - return PDF magic number
 				return new Blob([new Uint8Array([0x25, 0x50, 0x44, 0x46])], { type: 'application/pdf' });
 			}
 			// Default: return valid JPEG for any other unmocked storage IDs
-			return new Blob([new Uint8Array([0xFF, 0xD8, 0xFF, 0xE0])], { type: 'image/jpeg' });
+			return new Blob([new Uint8Array([0xff, 0xd8, 0xff, 0xe0])], { type: 'image/jpeg' });
 		});
 	});
 
@@ -252,7 +260,8 @@ describe('File Upload System', () => {
 			expect(result.submissionId).toBeDefined();
 
 			// Verify db.insert was called with correct data structure
-			expect(mockMutationCtx.db.insert).toHaveBeenCalledWith('submissions', 
+			expect(mockMutationCtx.db.insert).toHaveBeenCalledWith(
+				'submissions',
 				expect.objectContaining({
 					promoMaterials: expect.objectContaining({
 						files: expect.arrayContaining([
@@ -314,7 +323,8 @@ describe('File Upload System', () => {
 			expect(result.success).toBe(true);
 
 			// Verify all files were included in the submission
-			expect(mockMutationCtx.db.insert).toHaveBeenCalledWith('submissions',
+			expect(mockMutationCtx.db.insert).toHaveBeenCalledWith(
+				'submissions',
 				expect.objectContaining({
 					promoMaterials: expect.objectContaining({
 						files: expect.arrayContaining([
@@ -387,7 +397,9 @@ describe('File Upload System', () => {
 				fileSize: 1024,
 			};
 
-			await expect(generateUploadUrl._handler(mockMutationCtx, malformedTypeArgs)).rejects.toThrow();
+			await expect(
+				generateUploadUrl._handler(mockMutationCtx, malformedTypeArgs)
+			).rejects.toThrow();
 		});
 
 		it('should handle edge case file sizes', async () => {
@@ -397,14 +409,18 @@ describe('File Upload System', () => {
 			};
 
 			// Negative sizes should be rejected by server-side validation
-			await expect(generateUploadUrl._handler(mockMutationCtx, negativeArgs)).rejects.toThrow('File size must be a positive number');
+			await expect(generateUploadUrl._handler(mockMutationCtx, negativeArgs)).rejects.toThrow(
+				'File size must be a positive number'
+			);
 
 			const extremelyLargeArgs = {
 				fileType: 'image/jpeg',
 				fileSize: Number.MAX_SAFE_INTEGER,
 			};
 
-			await expect(generateUploadUrl._handler(mockMutationCtx, extremelyLargeArgs)).rejects.toThrow();
+			await expect(
+				generateUploadUrl._handler(mockMutationCtx, extremelyLargeArgs)
+			).rejects.toThrow();
 		});
 	});
 
@@ -485,7 +501,8 @@ describe('File Upload System', () => {
 			expect(result.success).toBe(true);
 
 			// Verify the submission was updated with new file metadata
-			expect(mockMutationCtx.db.patch).toHaveBeenCalledWith('submission123',
+			expect(mockMutationCtx.db.patch).toHaveBeenCalledWith(
+				'submission123',
 				expect.objectContaining({
 					promoMaterials: expect.objectContaining({
 						files: expect.arrayContaining([
@@ -539,17 +556,19 @@ describe('File Upload System', () => {
 			// Mock file content retrieval
 			vi.mocked(mockMutationCtx.storage.get).mockImplementation(async (storageId) => {
 				// Mock different file types based on storageId
-				if (storageId === 'valid-jpeg-file' as Id<'_storage'>) {
+				if (storageId === ('valid-jpeg-file' as Id<'_storage'>)) {
 					// JPEG magic number: FF D8 FF
-					return new Blob([new Uint8Array([0xFF, 0xD8, 0xFF, 0xE0])], { type: 'image/jpeg' });
+					return new Blob([new Uint8Array([0xff, 0xd8, 0xff, 0xe0])], { type: 'image/jpeg' });
 				}
-				if (storageId === 'fake-jpeg-file' as Id<'_storage'>) {
+				if (storageId === ('fake-jpeg-file' as Id<'_storage'>)) {
 					// Fake JPEG (exe file with jpeg extension): MZ header
-					return new Blob([new Uint8Array([0x4D, 0x5A, 0x90, 0x00])], { type: 'image/jpeg' });
+					return new Blob([new Uint8Array([0x4d, 0x5a, 0x90, 0x00])], { type: 'image/jpeg' });
 				}
-				if (storageId === 'valid-png-file' as Id<'_storage'>) {
+				if (storageId === ('valid-png-file' as Id<'_storage'>)) {
 					// PNG magic number: 89 50 4E 47
-					return new Blob([new Uint8Array([0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A])], { type: 'image/png' });
+					return new Blob([new Uint8Array([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a])], {
+						type: 'image/png',
+					});
 				}
 				return null;
 			});
@@ -668,7 +687,7 @@ describe('File Upload System', () => {
 		beforeEach(() => {
 			// Mock existing submission
 			vi.mocked(mockMutationCtx.db.get).mockImplementation((id) => {
-				if (id === 'submission123' as Id<'submissions'>) {
+				if (id === ('submission123' as Id<'submissions'>)) {
 					return Promise.resolve({
 						_id: 'submission123' as Id<'submissions'>,
 						eventId: 'event123' as Id<'events'>,
@@ -704,7 +723,7 @@ describe('File Upload System', () => {
 						lastUpdatedAt: '2025-01-01T00:00:00.000Z',
 					});
 				}
-				if (id === 'event123' as Id<'events'>) {
+				if (id === ('event123' as Id<'events'>)) {
 					return Promise.resolve({
 						_id: 'event123' as Id<'events'>,
 						title: 'Test Event',
@@ -714,7 +733,7 @@ describe('File Upload System', () => {
 						},
 					});
 				}
-				if (id === 'timeslot123' as Id<'timeslots'>) {
+				if (id === ('timeslot123' as Id<'timeslots'>)) {
 					return Promise.resolve({
 						_id: 'timeslot123' as Id<'timeslots'>,
 						eventId: 'event123' as Id<'events'>,
@@ -763,7 +782,7 @@ describe('File Upload System', () => {
 
 		it('should throw error if submission does not exist', async () => {
 			vi.mocked(mockMutationCtx.db.get).mockImplementation((id) => {
-				if (id === 'nonexistent' as Id<'submissions'>) {
+				if (id === ('nonexistent' as Id<'submissions'>)) {
 					return Promise.resolve(null);
 				}
 				// Return other mocks as normal
@@ -797,7 +816,7 @@ describe('File Upload System', () => {
 
 		it('should throw error if event does not exist', async () => {
 			vi.mocked(mockMutationCtx.db.get).mockImplementation((id) => {
-				if (id === 'submission123' as Id<'submissions'>) {
+				if (id === ('submission123' as Id<'submissions'>)) {
 					return Promise.resolve({
 						_id: 'submission123' as Id<'submissions'>,
 						eventId: 'nonexistent-event' as Id<'events'>,
@@ -805,7 +824,7 @@ describe('File Upload System', () => {
 						uniqueLink: 'valid-token',
 					} as any);
 				}
-				if (id === 'nonexistent-event' as Id<'events'>) {
+				if (id === ('nonexistent-event' as Id<'events'>)) {
 					return Promise.resolve(null);
 				}
 				return Promise.resolve({} as any);
@@ -845,7 +864,7 @@ describe('File Upload System', () => {
 
 		it('should handle case where timeslot does not exist', async () => {
 			vi.mocked(mockMutationCtx.db.get).mockImplementation((id) => {
-				if (id === 'submission123' as Id<'submissions'>) {
+				if (id === ('submission123' as Id<'submissions'>)) {
 					return Promise.resolve({
 						_id: 'submission123' as Id<'submissions'>,
 						eventId: 'event123' as Id<'events'>,
@@ -853,7 +872,7 @@ describe('File Upload System', () => {
 						uniqueLink: 'valid-token',
 					} as any);
 				}
-				if (id === 'event123' as Id<'events'>) {
+				if (id === ('event123' as Id<'events'>)) {
 					return Promise.resolve({
 						_id: 'event123' as Id<'events'>,
 						deadlines: {
@@ -862,7 +881,7 @@ describe('File Upload System', () => {
 						},
 					} as any);
 				}
-				if (id === 'nonexistent-timeslot' as Id<'timeslots'>) {
+				if (id === ('nonexistent-timeslot' as Id<'timeslots'>)) {
 					return Promise.resolve(null);
 				}
 				return Promise.resolve({} as any);
@@ -883,7 +902,7 @@ describe('File Upload System', () => {
 
 		it('should handle case where timeslot exists but has different submission ID', async () => {
 			vi.mocked(mockMutationCtx.db.get).mockImplementation((id) => {
-				if (id === 'submission123' as Id<'submissions'>) {
+				if (id === ('submission123' as Id<'submissions'>)) {
 					return Promise.resolve({
 						_id: 'submission123' as Id<'submissions'>,
 						eventId: 'event123' as Id<'events'>,
@@ -891,7 +910,7 @@ describe('File Upload System', () => {
 						uniqueLink: 'valid-token',
 					} as any);
 				}
-				if (id === 'event123' as Id<'events'>) {
+				if (id === ('event123' as Id<'events'>)) {
 					return Promise.resolve({
 						_id: 'event123' as Id<'events'>,
 						deadlines: {
@@ -900,7 +919,7 @@ describe('File Upload System', () => {
 						},
 					} as any);
 				}
-				if (id === 'timeslot123' as Id<'timeslots'>) {
+				if (id === ('timeslot123' as Id<'timeslots'>)) {
 					return Promise.resolve({
 						_id: 'timeslot123' as Id<'timeslots'>,
 						eventId: 'event123' as Id<'events'>,

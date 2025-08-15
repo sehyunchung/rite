@@ -11,7 +11,7 @@
  * See docs/effect-library-rationale.md for detailed architectural decisions
  */
 import { Effect, Data, pipe, Schedule, Chunk, Stream, Ref, Option, Schema } from 'effect';
-import { MAX_FILE_SIZE, ALLOWED_FILE_TYPES, formatFileSize } from './file-validation';
+import { MAX_FILE_SIZE, ALLOWED_FILE_TYPES, formatFileSize, } from './file-validation';
 // ============================================================================
 // Error Types
 // ============================================================================

@@ -21,31 +21,35 @@ const ALLOWED_FILE_TYPES = [
 // Magic number validation constants
 const MAGIC_NUMBERS = {
 	'image/jpeg': [
-		[0xFF, 0xD8, 0xFF],  // JPEG/JFIF
+		[0xff, 0xd8, 0xff], // JPEG/JFIF
 	],
 	'image/png': [
-		[0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A],  // PNG
+		[0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a], // PNG
 	],
 	'image/gif': [
-		[0x47, 0x49, 0x46, 0x38, 0x37, 0x61],  // GIF87a
-		[0x47, 0x49, 0x46, 0x38, 0x39, 0x61],  // GIF89a
+		[0x47, 0x49, 0x46, 0x38, 0x37, 0x61], // GIF87a
+		[0x47, 0x49, 0x46, 0x38, 0x39, 0x61], // GIF89a
 	],
 	'image/webp': [
-		[0x52, 0x49, 0x46, 0x46],  // RIFF (need to check WEBP at offset 8-11)
+		[0x52, 0x49, 0x46, 0x46], // RIFF (need to check WEBP at offset 8-11)
 	],
 	'video/mp4': [
 		// MP4 files have 'ftyp' box at bytes 4-7
-		[0x00, 0x00, 0x00, 0x00, 0x66, 0x74, 0x79, 0x70],  // ....ftyp (simplified check)
+		[0x00, 0x00, 0x00, 0x00, 0x66, 0x74, 0x79, 0x70], // ....ftyp (simplified check)
 	],
 	'application/pdf': [
-		[0x25, 0x50, 0x44, 0x46],  // %PDF
+		[0x25, 0x50, 0x44, 0x46], // %PDF
 	],
 };
 
 /**
  * Validate file content matches declared MIME type using magic numbers
  */
-async function validateFileContent(ctx: any, storageId: string, declaredType: string): Promise<void> {
+async function validateFileContent(
+	ctx: any,
+	storageId: string,
+	declaredType: string
+): Promise<void> {
 	if (!MAGIC_NUMBERS[declaredType as keyof typeof MAGIC_NUMBERS]) {
 		// If we don't have magic numbers for this type, skip validation
 		return;
@@ -60,7 +64,7 @@ async function validateFileContent(ctx: any, storageId: string, declaredType: st
 	const bytes = new Uint8Array(arrayBuffer);
 
 	const validMagicNumbers = MAGIC_NUMBERS[declaredType as keyof typeof MAGIC_NUMBERS];
-	
+
 	// Check if file starts with any of the valid magic numbers for this type
 	for (const magicNumber of validMagicNumbers) {
 		if (bytes.length >= magicNumber.length) {
@@ -106,7 +110,7 @@ export const generateUploadUrl = mutation({
 		if (args.fileSize < 0) {
 			throw new Error('File size must be a positive number');
 		}
-		
+
 		// Validate file size - reject files exceeding maximum
 		if (args.fileSize > MAX_FILE_SIZE) {
 			throw new Error(

@@ -46,9 +46,7 @@ export function SelectValue({ placeholder }: SelectValueProps) {
 	if (!context) throw new Error('SelectValue must be used within Select');
 
 	return (
-		<Text className="text-base text-gray-900">
-			{context.value || placeholder || 'Select...'}
-		</Text>
+		<Text className="text-base text-gray-900">{context.value || placeholder || 'Select...'}</Text>
 	);
 }
 
@@ -94,10 +92,7 @@ export function SelectContent({ children, className = '' }: SelectContentProps) 
 			animationType="fade"
 			onRequestClose={() => context.setOpen(false)}
 		>
-			<Pressable
-				className="flex-1 bg-black/50 justify-end"
-				onPress={() => context.setOpen(false)}
-			>
+			<Pressable className="flex-1 bg-black/50 justify-end" onPress={() => context.setOpen(false)}>
 				<View className={`bg-white rounded-t-xl max-h-96 ${className}`}>
 					<ScrollView className="p-2">{children}</ScrollView>
 				</View>

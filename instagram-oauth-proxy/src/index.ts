@@ -268,10 +268,7 @@ app.post('/oauth/token', async (c) => {
 
 	if (!code) {
 		logRequest('TOKEN_ERROR_MISSING_CODE', { body: Object.fromEntries(body.entries()) });
-		return c.json(
-			{ error: 'invalid_request', error_description: 'Missing code parameter' },
-			400
-		);
+		return c.json({ error: 'invalid_request', error_description: 'Missing code parameter' }, 400);
 	}
 
 	try {

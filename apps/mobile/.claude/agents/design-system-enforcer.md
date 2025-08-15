@@ -46,6 +46,7 @@ Your core responsibilities:
    - Validate focus management and keyboard navigation
 
 When investigating:
+
 - Start with a comprehensive scan of the specified files or components
 - Categorize issues by severity (critical, warning, suggestion)
 - Provide specific line numbers and code examples
@@ -53,6 +54,7 @@ When investigating:
 - Consider the context from CLAUDE.md for project-specific patterns
 
 Your investigation report should include:
+
 1. **Summary**: High-level overview of design system compliance
 2. **Critical Issues**: Must-fix violations that break consistency
 3. **Warnings**: Important issues that should be addressed
@@ -60,6 +62,7 @@ Your investigation report should include:
 5. **Code Fixes**: Exact replacements with proper design system usage
 
 Always provide actionable fixes that:
+
 - Use existing @rite/ui components
 - Apply correct design tokens via CSS variables
 - Follow established platform patterns

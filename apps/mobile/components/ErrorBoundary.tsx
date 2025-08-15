@@ -49,8 +49,8 @@ export class ErrorBoundary extends Component<Props, State> {
 						</Text>
 
 						<Text className="text-base text-center text-gray-500 mb-6 leading-6">
-							We&apos;re sorry, but an unexpected error occurred. Please restart the
-							app or contact support if the problem persists.
+							We&apos;re sorry, but an unexpected error occurred. Please restart the app or contact
+							support if the problem persists.
 						</Text>
 
 						{__DEV__ && this.state.error && (
@@ -58,9 +58,7 @@ export class ErrorBoundary extends Component<Props, State> {
 								<Text className="text-xs font-mono text-gray-700 mb-2 font-bold">
 									Error Details (Development Mode):
 								</Text>
-								<Text className="text-xs font-mono text-gray-500">
-									{this.state.error.message}
-								</Text>
+								<Text className="text-xs font-mono text-gray-500">{this.state.error.message}</Text>
 								{this.state.error.stack && (
 									<Text className="text-xs font-mono text-gray-400 mt-2">
 										{this.state.error.stack}

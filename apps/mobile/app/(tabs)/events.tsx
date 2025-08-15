@@ -37,18 +37,10 @@ export default function EventsScreen() {
 					) : events.length === 0 ? (
 						<Card>
 							<CardContent className="items-center">
-								<Typography
-									variant="body"
-									color="default"
-									className="text-center mb-2"
-								>
+								<Typography variant="body" color="default" className="text-center mb-2">
 									No events available
 								</Typography>
-								<Typography
-									variant="caption"
-									color="secondary"
-									className="text-center"
-								>
+								<Typography variant="caption" color="secondary" className="text-center">
 									Check back later for upcoming events
 								</Typography>
 							</CardContent>

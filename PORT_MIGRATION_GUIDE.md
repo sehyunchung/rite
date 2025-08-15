@@ -7,6 +7,7 @@ This guide documents all the platform and environment variable updates needed af
 ### 1. Update `.env.local` files
 
 **Next.js App** (`/apps/next-app/.env.local`):
+
 ```bash
 # Change from:
 NEXTAUTH_URL=http://localhost:3000
@@ -16,6 +17,7 @@ NEXTAUTH_URL=http://localhost:8000
 ```
 
 **SvelteKit POC** (`/apps/sveltekit-poc/.env.local`):
+
 ```bash
 # Change from:
 NEXTAUTH_URL=http://localhost:3001
@@ -39,6 +41,7 @@ NEXTAUTH_URL=http://localhost:8001
 ### 3. Instagram OAuth Proxy (if self-hosted)
 
 If you're running your own OAuth proxy locally:
+
 - Update any redirect URIs that point to `localhost:3000`
 - Update to use `localhost:8000`
 
@@ -51,14 +54,17 @@ If you're running your own OAuth proxy locally:
 ### 5. NextAuth Configuration
 
 The NextAuth configuration should automatically use the `NEXTAUTH_URL` environment variable, but verify:
+
 - No hardcoded `localhost:3000` references in `/apps/next-app/app/lib/auth.ts`
 
 ## Testing After Migration
 
 1. **Start the dev server**:
+
    ```bash
    pnpm run dev:next
    ```
+
    Verify it starts on port 8000
 
 2. **Test authentication flow**:
@@ -74,14 +80,17 @@ The NextAuth configuration should automatically use the `NEXTAUTH_URL` environme
 ## Common Issues and Fixes
 
 ### Issue: OAuth redirect mismatch
+
 **Error**: "Redirect URI mismatch"
 **Fix**: Ensure all OAuth providers have the new `localhost:8000` URLs added
 
 ### Issue: CORS errors
+
 **Error**: "Cross-Origin Request Blocked"
 **Fix**: Update any API CORS configurations to allow `localhost:8000`
 
 ### Issue: Cookie domain mismatch
+
 **Error**: Authentication cookies not being set
 **Fix**: Clear browser cookies and localStorage for localhost
 
@@ -92,6 +101,7 @@ No changes needed for production as these are development-only port changes. Pro
 ## Rollback Instructions
 
 If you need to rollback to port 3000:
+
 1. Revert the package.json changes
 2. Update all .env.local files back to port 3000
 3. Update OAuth redirect URIs back to port 3000

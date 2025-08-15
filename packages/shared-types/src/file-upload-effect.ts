@@ -1,22 +1,22 @@
 /**
  * Effect-based file upload utilities for type-safe, composable file operations
- * 
+ *
  * Why Effect for file uploads?
  * - Type-safe error handling: All errors are tracked at compile time
- * - Built-in retry logic: Essential for unreliable mobile networks  
+ * - Built-in retry logic: Essential for unreliable mobile networks
  * - Concurrent uploads: Fine-grained control over parallel operations
  * - Progress tracking: Stream-based architecture for real-time updates
  * - Resource safety: Automatic cleanup of file handles and connections
- * 
+ *
  * See docs/effect-library-rationale.md for detailed architectural decisions
  */
 
 import { Effect, Data, pipe, Schedule, Chunk, Stream, Ref, Option, Schema } from 'effect';
-import { 
-	MAX_FILE_SIZE, 
-	ALLOWED_FILE_TYPES, 
+import {
+	MAX_FILE_SIZE,
+	ALLOWED_FILE_TYPES,
 	type AllowedFileType,
-	formatFileSize 
+	formatFileSize,
 } from './file-validation';
 
 // ============================================================================
@@ -46,10 +46,10 @@ export class StorageError extends Data.TaggedError('StorageError')<{
 	readonly message: string;
 }> {}
 
-export type FileUploadError = 
-	| FileTooLargeError 
-	| InvalidFileTypeError 
-	| UploadNetworkError 
+export type FileUploadError =
+	| FileTooLargeError
+	| InvalidFileTypeError
+	| UploadNetworkError
 	| StorageError;
 
 // ============================================================================
@@ -135,10 +135,8 @@ export const createProgressTracker = () => Ref.make<UploadProgress | null>(null)
 /**
  * Updates progress for a file upload
  */
-export const updateProgress = (
-	ref: Ref.Ref<UploadProgress | null>,
-	progress: UploadProgress
-) => Ref.set(ref, progress);
+export const updateProgress = (ref: Ref.Ref<UploadProgress | null>, progress: UploadProgress) =>
+	Ref.set(ref, progress);
 
 // ============================================================================
 // File Upload Effects
@@ -176,7 +174,7 @@ export const uploadFileToStorage = (
 		return Effect.void; // Default return for both paths
 		// For React Native, we'd use a different approach
 		// This example shows web-based upload with XMLHttpRequest for progress tracking
-		
+
 		if (typeof XMLHttpRequest === 'undefined') {
 			// React Native path using fetch (without progress)
 			const formData = new FormData();
@@ -335,9 +333,7 @@ export const uploadFile = (
 		// Add retry logic with exponential backoff
 		Effect.retry(
 			options?.retrySchedule ||
-				Schedule.exponential('1 second').pipe(
-					Schedule.intersect(Schedule.recurs(3))
-				)
+				Schedule.exponential('1 second').pipe(Schedule.intersect(Schedule.recurs(3)))
 		),
 		// Add timeout
 		Effect.timeout('5 minutes')

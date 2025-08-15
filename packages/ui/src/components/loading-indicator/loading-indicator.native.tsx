@@ -10,11 +10,7 @@ export function LoadingIndicator({ className = '' }: LoadingIndicatorProps) {
 	return (
 		<View className={`items-center ${className}`}>
 			<Text className="font-medium text-brand-primary text-4xl">RITE</Text>
-			<ActivityIndicator
-				size="small"
-				className="text-brand-primary"
-				style={{ marginTop: 8 }}
-			/>
+			<ActivityIndicator size="small" className="text-brand-primary" style={{ marginTop: 8 }} />
 		</View>
 	);
 }

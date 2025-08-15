@@ -37,60 +37,36 @@ export default function ProfileScreen() {
 						<TouchableOpacity onPress={() => router.push('/settings')}>
 							<Card className="bg-neutral-700 border-neutral-600 p-6 flex-row items-center mb-4">
 								<View className="w-10 h-10 rounded-full bg-neutral-800 items-center justify-center mr-4">
-									<Ionicons
-										name="settings-outline"
-										size={24}
-										color="var(--brand-primary)"
-									/>
+									<Ionicons name="settings-outline" size={24} color="var(--brand-primary)" />
 								</View>
 								<Typography variant="body" className="text-white flex-1">
 									Settings
 								</Typography>
-								<Ionicons
-									name="chevron-forward"
-									size={20}
-									color="var(--neutral-400)"
-								/>
+								<Ionicons name="chevron-forward" size={20} color="var(--neutral-400)" />
 							</Card>
 						</TouchableOpacity>
 
 						<TouchableOpacity>
 							<Card className="bg-neutral-700 border-neutral-600 p-6 flex-row items-center mb-4">
 								<View className="w-10 h-10 rounded-full bg-neutral-800 items-center justify-center mr-4">
-									<Ionicons
-										name="calendar-outline"
-										size={24}
-										color="var(--brand-primary)"
-									/>
+									<Ionicons name="calendar-outline" size={24} color="var(--brand-primary)" />
 								</View>
 								<Typography variant="body" className="text-white flex-1">
 									My Events
 								</Typography>
-								<Ionicons
-									name="chevron-forward"
-									size={20}
-									color="var(--neutral-400)"
-								/>
+								<Ionicons name="chevron-forward" size={20} color="var(--neutral-400)" />
 							</Card>
 						</TouchableOpacity>
 
 						<TouchableOpacity>
 							<Card className="bg-neutral-700 border-neutral-600 p-6 flex-row items-center mb-4">
 								<View className="w-10 h-10 rounded-full bg-neutral-800 items-center justify-center mr-4">
-									<Ionicons
-										name="musical-notes-outline"
-										size={24}
-										color="var(--brand-primary)"
-									/>
+									<Ionicons name="musical-notes-outline" size={24} color="var(--brand-primary)" />
 								</View>
 								<Typography variant="body" className="text-white flex-1">
 									DJ Applications
 								</Typography>
-								<Ionicons
-									name="chevron-forward"
-									size={20}
-									color="var(--neutral-400)"
-								/>
+								<Ionicons name="chevron-forward" size={20} color="var(--neutral-400)" />
 							</Card>
 						</TouchableOpacity>
 					</View>

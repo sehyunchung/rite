@@ -60,12 +60,10 @@ export function SubmissionCompleteMessage({
 							<span className="font-medium">{t('eventLabel')}:</span> {eventName}
 						</Typography>
 						<Typography variant="body-sm">
-							<span className="font-medium">{t('timeSlotLabel')}:</span> {startTime} -{' '}
-							{endTime}
+							<span className="font-medium">{t('timeSlotLabel')}:</span> {startTime} - {endTime}
 						</Typography>
 						<Typography variant="body-sm">
-							<span className="font-medium">{t('djLabel')}:</span> {djName} (
-							{djInstagram})
+							<span className="font-medium">{t('djLabel')}:</span> {djName} ({djInstagram})
 						</Typography>
 					</div>
 				</CardContent>

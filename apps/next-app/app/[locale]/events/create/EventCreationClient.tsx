@@ -35,9 +35,7 @@ export function EventCreationClient({
 					</div>
 
 					<ErrorBoundary>
-						<EventCreationForm
-							onEventCreated={() => router.push(`/${locale}/dashboard`)}
-						/>
+						<EventCreationForm onEventCreated={() => router.push(`/${locale}/dashboard`)} />
 					</ErrorBoundary>
 				</div>
 			</div>

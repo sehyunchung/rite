@@ -52,10 +52,7 @@ export function MobileLayout({ children, userId, fallbackDisplayName }: MobileLa
 						<div className="flex flex-col space-y-4 p-4">
 							{userId && fallbackDisplayName && (
 								<div className="flex items-center justify-between">
-									<UserDisplay
-										userId={userId}
-										fallbackName={fallbackDisplayName}
-									/>
+									<UserDisplay userId={userId} fallbackName={fallbackDisplayName} />
 								</div>
 							)}
 							<div className="flex items-center justify-between">

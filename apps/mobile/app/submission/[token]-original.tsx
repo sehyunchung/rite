@@ -1,5 +1,13 @@
 import * as React from 'react';
-import { View, ScrollView, SafeAreaView, Platform, ActivityIndicator, Alert, TouchableOpacity } from 'react-native';
+import {
+	View,
+	ScrollView,
+	SafeAreaView,
+	Platform,
+	ActivityIndicator,
+	Alert,
+	TouchableOpacity,
+} from 'react-native';
 import { Typography, Card, Button, Input, Textarea } from '../../lib/ui-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useQuery, useMutation } from 'convex/react';
@@ -128,13 +136,13 @@ export default function DJSubmissionScreen() {
 			fileType: file.mimeType,
 			fileSize: file.size,
 		};
-		
+
 		const validation = validateFile(fileMetadata);
 		if (!validation.isValid) {
 			Alert.alert('File Validation Error', validation.error);
 			return false;
 		}
-		
+
 		return true;
 	};
 
@@ -353,8 +361,7 @@ export default function DJSubmissionScreen() {
 							<View className="flex-row items-center">
 								<Ionicons name="time" size={20} color="var(--neutral-400)" />
 								<Typography variant="body" className="ml-2 text-neutral-400">
-									{formatTime(timeslot.startTime)} -{' '}
-									{formatTime(timeslot.endTime)}
+									{formatTime(timeslot.startTime)} - {formatTime(timeslot.endTime)}
 								</Typography>
 							</View>
 						</View>
@@ -451,7 +458,7 @@ export default function DJSubmissionScreen() {
 							<Typography variant="label" className="mb-2 text-white">
 								Upload Promo Materials (Optional)
 							</Typography>
-							
+
 							<View className="gap-4">
 								{/* File Selection Buttons */}
 								<View className="flex-row gap-2">
@@ -464,7 +471,7 @@ export default function DJSubmissionScreen() {
 											Select Images
 										</Typography>
 									</TouchableOpacity>
-									
+
 									<TouchableOpacity
 										onPress={selectVideos}
 										className="flex-1 bg-neutral-700 border border-neutral-600 rounded-lg p-3 items-center"
@@ -482,9 +489,9 @@ export default function DJSubmissionScreen() {
 										<Typography variant="h6" className="mb-2 text-white">
 											Selected Files ({selectedFiles.length})
 										</Typography>
-										
+
 										{selectedFiles.map((file, index) => (
-											<View 
+											<View
 												key={`${file.uri}-${index}`}
 												className="bg-neutral-700 border border-neutral-600 rounded-lg p-3 mb-2"
 											>
@@ -500,7 +507,7 @@ export default function DJSubmissionScreen() {
 															{file.mimeType}
 														</Typography>
 													</View>
-													
+
 													<TouchableOpacity
 														onPress={() => removeFile(file.uri)}
 														className="bg-red-500/20 border border-red-500 rounded p-1"
@@ -540,9 +547,7 @@ export default function DJSubmissionScreen() {
 										Guest List Deadline
 									</Typography>
 									<Typography variant="body" className="text-white">
-										{event?.deadlines?.guestList
-											? formatDate(event.deadlines.guestList)
-											: 'TBD'}
+										{event?.deadlines?.guestList ? formatDate(event.deadlines.guestList) : 'TBD'}
 									</Typography>
 								</View>
 								<View>

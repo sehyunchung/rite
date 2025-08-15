@@ -119,9 +119,7 @@ export default function SubmissionsScreen() {
 					{/* Event Info */}
 					<Card className="bg-neutral-700 border-neutral-600 rounded-2xl mb-6">
 						<CardHeader className="p-6">
-							<CardTitle className="text-white text-2xl font-bold">
-								{event.name}
-							</CardTitle>
+							<CardTitle className="text-white text-2xl font-bold">{event.name}</CardTitle>
 						</CardHeader>
 						<CardContent className="p-6 pt-0">
 							<Typography variant="body" color="secondary">
@@ -134,11 +132,7 @@ export default function SubmissionsScreen() {
 					{event.timeslots.length === 0 ? (
 						<Card className="bg-neutral-700 border-neutral-600 rounded-2xl">
 							<CardContent className="p-6">
-								<Typography
-									variant="body"
-									color="secondary"
-									className="text-center"
-								>
+								<Typography variant="body" color="secondary" className="text-center">
 									No timeslots configured for this event
 								</Typography>
 							</CardContent>
@@ -153,13 +147,11 @@ export default function SubmissionsScreen() {
 										<View className="flex-row items-center justify-between mb-3">
 											<View>
 												<Typography variant="h6" color="default">
-													{formatTime(timeslot.startTime)} -{' '}
-													{formatTime(timeslot.endTime)}
+													{formatTime(timeslot.startTime)} - {formatTime(timeslot.endTime)}
 												</Typography>
 												<Typography variant="caption" color="secondary">
 													{timeslot.djName || 'Open Slot'}
-													{timeslot.djInstagram &&
-														` • @${timeslot.djInstagram}`}
+													{timeslot.djInstagram && ` • @${timeslot.djInstagram}`}
 												</Typography>
 											</View>
 											<View
@@ -167,11 +159,7 @@ export default function SubmissionsScreen() {
 											>
 												<Typography
 													variant="caption"
-													color={
-														slotSubmissions.length > 0
-															? 'success'
-															: 'secondary'
-													}
+													color={slotSubmissions.length > 0 ? 'success' : 'secondary'}
 													className="text-xs font-medium"
 												>
 													{`${slotSubmissions.length} submission${slotSubmissions.length !== 1 ? 's' : ''}`}
@@ -182,11 +170,7 @@ export default function SubmissionsScreen() {
 										{slotSubmissions.length === 0 ? (
 											<Card className="bg-neutral-700 border-neutral-600 rounded-2xl">
 												<CardContent className="p-6">
-													<Typography
-														variant="body"
-														color="secondary"
-														className="text-center"
-													>
+													<Typography variant="body" color="secondary" className="text-center">
 														No submissions yet
 													</Typography>
 												</CardContent>
@@ -202,22 +186,13 @@ export default function SubmissionsScreen() {
 															<View className="flex-row items-start justify-between">
 																<View className="flex-1">
 																	<CardTitle className="text-white text-base">
-																		{submission.guestList
-																			.length > 0
-																			? submission
-																					.guestList[0]
-																					.name
+																		{submission.guestList.length > 0
+																			? submission.guestList[0].name
 																			: 'Anonymous Submission'}
 																	</CardTitle>
-																	<Typography
-																		variant="caption"
-																		color="secondary"
-																	>
+																	<Typography variant="caption" color="secondary">
 																		Submitted{' '}
-																		{formatDate(
-																			submission.submittedAt ||
-																				new Date().toISOString()
-																		)}
+																		{formatDate(submission.submittedAt || new Date().toISOString())}
 																	</Typography>
 																</View>
 																<View className="rounded-full px-3 py-1 bg-green-500/20">
@@ -234,22 +209,10 @@ export default function SubmissionsScreen() {
 														<CardContent className="p-6 pt-0">
 															{submission.guestList.length > 0 && (
 																<View className="mb-3">
-																	<Typography
-																		variant="caption"
-																		color="secondary"
-																		className="mb-1"
-																	>
-																		Guests (
-																		{
-																			submission.guestList
-																				.length
-																		}
-																		)
+																	<Typography variant="caption" color="secondary" className="mb-1">
+																		Guests ({submission.guestList.length})
 																	</Typography>
-																	<Typography
-																		variant="body"
-																		color="default"
-																	>
+																	<Typography variant="body" color="default">
 																		{submission.guestList
 																			.map(
 																				(guest) =>
@@ -260,36 +223,20 @@ export default function SubmissionsScreen() {
 																</View>
 															)}
 
-															{submission.promoMaterials
-																.description && (
+															{submission.promoMaterials.description && (
 																<View className="mb-3">
-																	<Typography
-																		variant="caption"
-																		color="secondary"
-																		className="mb-1"
-																	>
+																	<Typography variant="caption" color="secondary" className="mb-1">
 																		Promo Description
 																	</Typography>
-																	<Typography
-																		variant="body"
-																		color="default"
-																	>
-																		{
-																			submission
-																				.promoMaterials
-																				.description
-																		}
+																	<Typography variant="body" color="default">
+																		{submission.promoMaterials.description}
 																	</Typography>
 																</View>
 															)}
 
-															{submission.promoMaterials.files
-																.length > 0 && (
+															{submission.promoMaterials.files.length > 0 && (
 																<View>
-																	<Typography
-																		variant="caption"
-																		color="primary"
-																	>
+																	<Typography variant="caption" color="primary">
 																		{`📁 ${submission.promoMaterials.files.length} file${submission.promoMaterials.files.length !== 1 ? 's' : ''} uploaded`}
 																	</Typography>
 																</View>

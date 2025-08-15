@@ -35,8 +35,8 @@ function ConfigurationErrorScreen() {
 				Configuration Error
 			</Text>
 			<Text style={{ fontSize: 16, textAlign: 'center', color: '#6B7280', marginBottom: 24 }}>
-				The app is missing required configuration. Please contact support or check your
-				environment setup.
+				The app is missing required configuration. Please contact support or check your environment
+				setup.
 			</Text>
 			<Text style={{ fontSize: 12, fontFamily: 'monospace', color: '#9CA3AF' }}>
 				Error: EXPO_PUBLIC_CONVEX_URL not configured

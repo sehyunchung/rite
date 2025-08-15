@@ -1,11 +1,13 @@
 # Rite Deployment Guide
 
 ## Overview
+
 This guide covers deploying the Rite DJ event management platform to production, with a focus on Korean market requirements and the specific tech stack (Next.js 15 + App Router + Convex + NextAuth v5).
 
 ## Recommended Platform: Vercel
 
 ### Why Vercel?
+
 1. **Asia Performance**: Edge network optimized for Korean users (Seoul edge location)
 2. **Zero Configuration**: Works perfectly with Next.js out of the box
 3. **GitHub Integration**: Automatic deployments on push to main branch
@@ -14,6 +16,7 @@ This guide covers deploying the Rite DJ event management platform to production,
 6. **SSR Support**: Handles server-side rendering and API routes automatically
 
 ### Prerequisites
+
 - GitHub repository connected (already done ✓)
 - Vercel account (free tier is sufficient)
 - Production keys from Convex and NextAuth configuration
@@ -25,11 +28,13 @@ This guide covers deploying the Rite DJ event management platform to production,
 First, get your production keys:
 
 **Convex Production URL:**
+
 ```bash
 npx convex deploy --cmd 'npx convex env get CONVEX_URL'
 ```
 
 **NextAuth v5 Configuration:**
+
 - Configure OAuth providers (Instagram via proxy, Google)
 - Set NEXTAUTH_SECRET for production
 - Configure redirect URLs for each OAuth provider
@@ -37,6 +42,7 @@ npx convex deploy --cmd 'npx convex env get CONVEX_URL'
 ### 2. Vercel Configuration
 
 Vercel automatically detects Next.js projects and configures them optimally. No additional configuration is needed as Next.js 15 with App Router handles:
+
 - Server-side rendering and static generation
 - API routes
 - Internationalization routing
@@ -46,6 +52,7 @@ Vercel automatically detects Next.js projects and configures them optimally. No 
 ### 3. Connect to Vercel
 
 #### Option A: Vercel CLI (Recommended)
+
 ```bash
 # Install Vercel CLI
 pnpm add -g vercel
@@ -65,6 +72,7 @@ vercel
 ```
 
 #### Option B: Vercel Dashboard
+
 1. Go to [vercel.com/new](https://vercel.com/new)
 2. Import your GitHub repository
 3. Configure project:
@@ -96,7 +104,8 @@ GOOGLE_CLIENT_SECRET=your_google_client_secret
 CONVEX_DEPLOY_KEY=your_deploy_key
 ```
 
-**Important**: 
+**Important**:
+
 - Use `NEXT_PUBLIC_` prefix for client-side variables
 - Don't commit production keys to git
 - Set different values for Preview/Development/Production environments
@@ -115,6 +124,7 @@ git push origin main
 ### 6. Verify Deployment
 
 Check these critical paths:
+
 - `/` - Landing page loads with theme switcher
 - `/ko` and `/en` - Internationalization works
 - `/auth/signin` - NextAuth v5 authentication works
@@ -126,6 +136,7 @@ Check these critical paths:
 ## Production Checklist
 
 ### Security
+
 - [ ] Environment variables set correctly (not exposed in client)
 - [ ] HTTPS enforced (automatic on Vercel)
 - [ ] NextAuth v5 production configuration active
@@ -133,6 +144,7 @@ Check these critical paths:
 - [ ] Convex production deployment active
 
 ### Performance
+
 - [ ] Build optimization enabled (automatic with Next.js 15)
 - [ ] Assets served from CDN (automatic on Vercel)
 - [ ] Gzip compression active (automatic on Vercel)
@@ -141,6 +153,7 @@ Check these critical paths:
 - [ ] i18n routing works correctly
 
 ### Monitoring
+
 - [ ] Vercel Analytics enabled (optional)
 - [ ] Error tracking configured (consider Sentry)
 - [ ] Convex dashboard accessible for monitoring
@@ -150,9 +163,11 @@ Check these critical paths:
 ## Alternative Deployment Options
 
 ### Netlify
+
 Next.js support with additional configuration:
 
 `netlify.toml`:
+
 ```toml
 [build]
   command = "cd ../.. && pnpm run build --filter=next-app"
@@ -169,6 +184,7 @@ Pros: Good free tier, Next.js plugin support
 Cons: Slightly slower in Asia, requires additional configuration
 
 ### Cloudflare Pages
+
 Fast globally but limited Next.js support:
 
 1. Build configuration:
@@ -182,17 +198,19 @@ Fast globally but limited Next.js support:
    const nextConfig = {
      output: 'export',
      trailingSlash: true,
-     images: { unoptimized: true }
-   }
+     images: { unoptimized: true },
+   };
    ```
 
 Pros: Excellent global performance
 Cons: Limited Next.js features (no server-side rendering, API routes)
 
 ### Railway
+
 Full-stack platform suitable for Next.js apps:
 
 `railway.json`:
+
 ```json
 {
   "build": {
@@ -213,6 +231,7 @@ Cons: More expensive than Vercel free tier
 ## Korean Market Optimizations
 
 ### CDN Configuration
+
 For optimal Korean performance, consider:
 
 1. **Cloudflare (Free)**:
@@ -225,6 +244,7 @@ For optimal Korean performance, consider:
    - Configure origin to Vercel deployment
 
 ### Performance Tips
+
 1. **Font Loading**: SUIT Variable font with `font-display: swap`
 2. **Image Optimization**: Next.js automatic optimization with WebP
 3. **Bundle Splitting**: Automatic with Next.js App Router
@@ -236,20 +256,24 @@ For optimal Korean performance, consider:
 ### Common Issues
 
 **404 on refresh:**
+
 - Next.js App Router handles this automatically
 - Ensure dynamic routes are properly configured
 
 **Environment variables not working:**
+
 - Variables must start with `NEXT_PUBLIC_` to be exposed to client
 - Rebuild after changing environment variables
 - Check Vercel dashboard environment settings
 
 **Slow initial load:**
+
 - Enable Vercel Edge Network
 - Use Next.js static generation where possible
 - Optimize images with Next.js Image component
 
 **Authentication issues:**
+
 - Verify NextAuth redirect URLs include production domain
 - Check OAuth provider settings
 - Ensure NEXTAUTH_SECRET is set in production
@@ -308,17 +332,20 @@ vercel promote [deployment-url]
 ## Cost Estimation
 
 ### Free Tier Limits (Monthly)
+
 - **Vercel**: 100GB bandwidth, 1000 image optimizations
 - **Convex**: 1M function calls, 1GB storage
 - **Clerk**: 1000 monthly active users
 
 ### Estimated Costs for 100 Users
+
 - **Vercel**: $0 (within free tier)
 - **Convex**: $0 (within free tier)
 - **Clerk**: $0 (within free tier)
 - **Total**: $0/month
 
 ### When to Upgrade
+
 - Over 1000 active users
 - Need custom domain with SSL
 - Advanced analytics required

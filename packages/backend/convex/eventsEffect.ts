@@ -118,7 +118,11 @@ const insertEvent = (ctx: MutationCtx, eventData: EventDataInput, userId: Id<'us
 			}),
 	});
 
-const insertTimeslot = (ctx: MutationCtx, eventId: Id<'events'>, slot: CreateEventArgs['timeslots'][0]) =>
+const insertTimeslot = (
+	ctx: MutationCtx,
+	eventId: Id<'events'>,
+	slot: CreateEventArgs['timeslots'][0]
+) =>
 	Effect.tryPromise({
 		try: async () => {
 			const submissionToken = generateSubmissionToken();

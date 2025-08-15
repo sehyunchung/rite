@@ -76,11 +76,7 @@ export const AlertDescription = React.forwardRef<View, AlertDescriptionProps>(
 
 		return (
 			<View ref={ref} className={className} {...props}>
-				{typeof children === 'string' ? (
-					<Text className={textClass}>{children}</Text>
-				) : (
-					children
-				)}
+				{typeof children === 'string' ? <Text className={textClass}>{children}</Text> : children}
 			</View>
 		);
 	}

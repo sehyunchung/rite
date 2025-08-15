@@ -124,9 +124,7 @@ const downloadFile = (content: string, filename: string, mimeType: string) =>
 			return { success: true, filename };
 		} catch (error) {
 			return yield* _(
-				Effect.fail(
-					new FileDownloadError(`Failed to download file: ${filename}`, filename, error)
-				)
+				Effect.fail(new FileDownloadError(`Failed to download file: ${filename}`, filename, error))
 			);
 		}
 	});
@@ -207,21 +205,13 @@ const copyToClipboardAndOpenSheets = (sheetsData: GoogleSheetsData) =>
 					return { success: true, copied: true };
 				},
 				catch: (error) =>
-					new ExportProcessingError(
-						'Failed to copy data to clipboard',
-						'google_sheets',
-						error
-					),
+					new ExportProcessingError('Failed to copy data to clipboard', 'google_sheets', error),
 			});
 
 			return { success: true, copied: true };
 		} catch (error) {
 			return yield* Effect.fail(
-				new ExportProcessingError(
-					'Failed to process Google Sheets export',
-					'google_sheets',
-					error
-				)
+				new ExportProcessingError('Failed to process Google Sheets export', 'google_sheets', error)
 			);
 		}
 	});
@@ -251,11 +241,7 @@ const processExportEffect = (exportData: ExportData, format: string) =>
 		switch (format) {
 			case 'csv':
 				if (isCSVData(exportData)) {
-					return yield* downloadFile(
-						exportData.content,
-						exportData.filename,
-						exportData.mimeType
-					);
+					return yield* downloadFile(exportData.content, exportData.filename, exportData.mimeType);
 				}
 				break;
 
@@ -273,11 +259,7 @@ const processExportEffect = (exportData: ExportData, format: string) =>
 			case 'pdf':
 				if (isPDFData(exportData)) {
 					const pdfResult = yield* generatePDFClientSide(exportData);
-					return yield* downloadFile(
-						pdfResult.content,
-						pdfResult.filename,
-						pdfResult.mimeType
-					);
+					return yield* downloadFile(pdfResult.content, pdfResult.filename, pdfResult.mimeType);
 				}
 				break;
 
@@ -370,13 +352,10 @@ export function ExportGuestList({ eventId, userId }: ExportGuestListProps) {
 					case 'google_sheets':
 						// Fetch Google Sheets data if not already loaded
 						if (!googleSheetsData) {
-							const data = await convex.query(
-								api.exports.exportGuestListGoogleSheets,
-								{
-									eventId,
-									userId,
-								}
-							);
+							const data = await convex.query(api.exports.exportGuestListGoogleSheets, {
+								eventId,
+								userId,
+							});
 							setGoogleSheetsData(data as GoogleSheetsData);
 							exportData = data;
 						} else {
@@ -401,16 +380,13 @@ export function ExportGuestList({ eventId, userId }: ExportGuestListProps) {
 						);
 					} else {
 						toast.success(
-							t('success.downloaded') ||
-								`${format.toUpperCase()} file downloaded successfully`
+							t('success.downloaded') || `${format.toUpperCase()} file downloaded successfully`
 						);
 					}
 				}
 			} catch (error) {
 				console.error('Export error:', error);
-				toast.error(
-					t('errors.exportFailed') || `Failed to export ${format.toUpperCase()} file`
-				);
+				toast.error(t('errors.exportFailed') || `Failed to export ${format.toUpperCase()} file`);
 			} finally {
 				setLoadingFormat(null);
 			}
@@ -491,11 +467,7 @@ export function ExportGuestList({ eventId, userId }: ExportGuestListProps) {
 								disabled={loadingFormat === 'csv'}
 								className="flex flex-col items-center space-y-2 h-auto py-4"
 							>
-								{loadingFormat === 'csv' ? (
-									<LoadingIndicator />
-								) : (
-									<FileText className="w-6 h-6" />
-								)}
+								{loadingFormat === 'csv' ? <LoadingIndicator /> : <FileText className="w-6 h-6" />}
 								<span className="text-sm">CSV</span>
 							</Button>
 
@@ -521,11 +493,7 @@ export function ExportGuestList({ eventId, userId }: ExportGuestListProps) {
 								disabled={loadingFormat === 'pdf'}
 								className="flex flex-col items-center space-y-2 h-auto py-4"
 							>
-								{loadingFormat === 'pdf' ? (
-									<LoadingIndicator />
-								) : (
-									<FileImage className="w-6 h-6" />
-								)}
+								{loadingFormat === 'pdf' ? <LoadingIndicator /> : <FileImage className="w-6 h-6" />}
 								<span className="text-sm">PDF</span>
 							</Button>
 

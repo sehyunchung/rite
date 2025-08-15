@@ -8,79 +8,77 @@ Create the test file **before** implementing the feature:
 
 ```typescript
 // apps/next-app/__tests__/utils/eventDuration.test.ts
-import { describe, it, expect } from "vitest";
+import { describe, it, expect } from 'vitest';
 import {
   calculateEventDuration,
   formatDuration,
   isOvernightEvent,
   getEventTimeRange,
-} from "@/utils/eventDuration";
+} from '@/utils/eventDuration';
 
-describe("Event Duration Calculator", () => {
-  describe("calculateEventDuration", () => {
-    it("should calculate duration for same-day event", () => {
-      const duration = calculateEventDuration("18:00", "23:00");
+describe('Event Duration Calculator', () => {
+  describe('calculateEventDuration', () => {
+    it('should calculate duration for same-day event', () => {
+      const duration = calculateEventDuration('18:00', '23:00');
       expect(duration).toBe(5);
     });
 
-    it("should calculate duration for overnight event", () => {
-      const duration = calculateEventDuration("22:00", "04:00");
+    it('should calculate duration for overnight event', () => {
+      const duration = calculateEventDuration('22:00', '04:00');
       expect(duration).toBe(6);
     });
 
-    it("should handle midnight correctly", () => {
-      const duration = calculateEventDuration("23:00", "00:00");
+    it('should handle midnight correctly', () => {
+      const duration = calculateEventDuration('23:00', '00:00');
       expect(duration).toBe(1);
     });
 
-    it("should throw error for invalid time format", () => {
-      expect(() => calculateEventDuration("25:00", "26:00")).toThrow(
-        "Invalid time format",
-      );
+    it('should throw error for invalid time format', () => {
+      expect(() => calculateEventDuration('25:00', '26:00')).toThrow('Invalid time format');
     });
   });
 
-  describe("formatDuration", () => {
-    it("should format single hour correctly", () => {
-      expect(formatDuration(1)).toBe("1 hour");
+  describe('formatDuration', () => {
+    it('should format single hour correctly', () => {
+      expect(formatDuration(1)).toBe('1 hour');
     });
 
-    it("should format multiple hours correctly", () => {
-      expect(formatDuration(5)).toBe("5 hours");
+    it('should format multiple hours correctly', () => {
+      expect(formatDuration(5)).toBe('5 hours');
     });
 
-    it("should include minutes when present", () => {
-      expect(formatDuration(2.5)).toBe("2 hours 30 minutes");
+    it('should include minutes when present', () => {
+      expect(formatDuration(2.5)).toBe('2 hours 30 minutes');
     });
 
-    it("should handle zero duration", () => {
-      expect(formatDuration(0)).toBe("0 minutes");
-    });
-  });
-
-  describe("isOvernightEvent", () => {
-    it("should detect overnight event", () => {
-      expect(isOvernightEvent("22:00", "04:00")).toBe(true);
-    });
-
-    it("should detect same-day event", () => {
-      expect(isOvernightEvent("14:00", "18:00")).toBe(false);
-    });
-
-    it("should handle edge case at midnight", () => {
-      expect(isOvernightEvent("23:00", "00:30")).toBe(true);
+    it('should handle zero duration', () => {
+      expect(formatDuration(0)).toBe('0 minutes');
     });
   });
 
-  describe("getEventTimeRange", () => {
-    it("should format time range for same-day event", () => {
-      const range = getEventTimeRange("2025-02-01", "18:00", "23:00");
-      expect(range).toBe("Feb 1, 2025 • 6:00 PM - 11:00 PM");
+  describe('isOvernightEvent', () => {
+    it('should detect overnight event', () => {
+      expect(isOvernightEvent('22:00', '04:00')).toBe(true);
     });
 
-    it("should format time range for overnight event", () => {
-      const range = getEventTimeRange("2025-02-01", "22:00", "04:00");
-      expect(range).toBe("Feb 1, 2025 • 10:00 PM - Feb 2, 2025 • 4:00 AM");
+    it('should detect same-day event', () => {
+      expect(isOvernightEvent('14:00', '18:00')).toBe(false);
+    });
+
+    it('should handle edge case at midnight', () => {
+      expect(isOvernightEvent('23:00', '00:30')).toBe(true);
+    });
+  });
+
+  describe('getEventTimeRange', () => {
+    it('should format time range for same-day event', () => {
+      const range = getEventTimeRange('2025-02-01', '18:00', '23:00');
+      expect(range).toBe('Feb 1, 2025 • 6:00 PM - 11:00 PM');
+    });
+
+    it('should format time range for overnight event', () => {
+      const range = getEventTimeRange('2025-02-01', '22:00', '04:00');
+      expect(range).toBe('Feb 1, 2025 • 10:00 PM - Feb 2, 2025 • 4:00 AM');
     });
   });
 });
@@ -108,16 +106,13 @@ Create the implementation file:
 /**
  * Calculate event duration in hours
  */
-export function calculateEventDuration(
-  startTime: string,
-  endTime: string,
-): number {
-  const [startHour, startMin] = startTime.split(":").map(Number);
-  const [endHour, endMin] = endTime.split(":").map(Number);
+export function calculateEventDuration(startTime: string, endTime: string): number {
+  const [startHour, startMin] = startTime.split(':').map(Number);
+  const [endHour, endMin] = endTime.split(':').map(Number);
 
   // Validate time format
   if (startHour > 23 || endHour > 23 || startMin > 59 || endMin > 59) {
-    throw new Error("Invalid time format");
+    throw new Error('Invalid time format');
   }
 
   let startMinutes = startHour * 60 + startMin;
@@ -135,28 +130,28 @@ export function calculateEventDuration(
  * Format duration for display
  */
 export function formatDuration(hours: number): string {
-  if (hours === 0) return "0 minutes";
+  if (hours === 0) return '0 minutes';
 
   const wholeHours = Math.floor(hours);
   const minutes = Math.round((hours - wholeHours) * 60);
 
   if (wholeHours === 0) {
-    return `${minutes} minute${minutes !== 1 ? "s" : ""}`;
+    return `${minutes} minute${minutes !== 1 ? 's' : ''}`;
   }
 
   if (minutes === 0) {
-    return `${wholeHours} hour${wholeHours !== 1 ? "s" : ""}`;
+    return `${wholeHours} hour${wholeHours !== 1 ? 's' : ''}`;
   }
 
-  return `${wholeHours} hour${wholeHours !== 1 ? "s" : ""} ${minutes} minute${minutes !== 1 ? "s" : ""}`;
+  return `${wholeHours} hour${wholeHours !== 1 ? 's' : ''} ${minutes} minute${minutes !== 1 ? 's' : ''}`;
 }
 
 /**
  * Check if event runs overnight
  */
 export function isOvernightEvent(startTime: string, endTime: string): boolean {
-  const [startHour] = startTime.split(":").map(Number);
-  const [endHour] = endTime.split(":").map(Number);
+  const [startHour] = startTime.split(':').map(Number);
+  const [endHour] = endTime.split(':').map(Number);
 
   return endHour < startHour;
 }
@@ -164,14 +159,10 @@ export function isOvernightEvent(startTime: string, endTime: string): boolean {
 /**
  * Get formatted event time range
  */
-export function getEventTimeRange(
-  date: string,
-  startTime: string,
-  endTime: string,
-): string {
+export function getEventTimeRange(date: string, startTime: string, endTime: string): string {
   const eventDate = new Date(date);
-  const [startHour, startMin] = startTime.split(":").map(Number);
-  const [endHour, endMin] = endTime.split(":").map(Number);
+  const [startHour, startMin] = startTime.split(':').map(Number);
+  const [endHour, endMin] = endTime.split(':').map(Number);
 
   const startDate = new Date(eventDate);
   startDate.setHours(startHour, startMin);
@@ -185,17 +176,17 @@ export function getEventTimeRange(
   }
 
   const formatDate = (d: Date) => {
-    return d.toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
+    return d.toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
     });
   };
 
   const formatTime = (d: Date) => {
-    return d.toLocaleTimeString("en-US", {
-      hour: "numeric",
-      minute: "2-digit",
+    return d.toLocaleTimeString('en-US', {
+      hour: 'numeric',
+      minute: '2-digit',
     });
   };
 
@@ -242,10 +233,10 @@ interface Time {
  * Parse time string into Time object
  */
 function parseTime(timeString: string): Time {
-  const [hours, minutes] = timeString.split(":").map(Number);
+  const [hours, minutes] = timeString.split(':').map(Number);
 
   if (hours > MAX_HOUR || minutes > MAX_MINUTE || hours < 0 || minutes < 0) {
-    throw new Error("Invalid time format");
+    throw new Error('Invalid time format');
   }
 
   return { hours, minutes };
@@ -261,10 +252,7 @@ function timeToMinutes(time: Time): number {
 /**
  * Calculate event duration in hours
  */
-export function calculateEventDuration(
-  startTime: string,
-  endTime: string,
-): number {
+export function calculateEventDuration(startTime: string, endTime: string): number {
   const start = parseTime(startTime);
   const end = parseTime(endTime);
 
@@ -283,7 +271,7 @@ export function calculateEventDuration(
  * Format duration for display
  */
 export function formatDuration(hours: number): string {
-  if (hours === 0) return "0 minutes";
+  if (hours === 0) return '0 minutes';
 
   const wholeHours = Math.floor(hours);
   const minutes = Math.round((hours - wholeHours) * MINUTES_PER_HOUR);
@@ -291,14 +279,14 @@ export function formatDuration(hours: number): string {
   const parts: string[] = [];
 
   if (wholeHours > 0) {
-    parts.push(`${wholeHours} ${pluralize("hour", wholeHours)}`);
+    parts.push(`${wholeHours} ${pluralize('hour', wholeHours)}`);
   }
 
   if (minutes > 0) {
-    parts.push(`${minutes} ${pluralize("minute", minutes)}`);
+    parts.push(`${minutes} ${pluralize('minute', minutes)}`);
   }
 
-  return parts.join(" ");
+  return parts.join(' ');
 }
 
 /**
@@ -321,21 +309,13 @@ export function isOvernightEvent(startTime: string, endTime: string): boolean {
 /**
  * Get formatted event time range
  */
-export function getEventTimeRange(
-  date: string,
-  startTime: string,
-  endTime: string,
-): string {
+export function getEventTimeRange(date: string, startTime: string, endTime: string): string {
   const eventDate = new Date(date);
   const start = parseTime(startTime);
   const end = parseTime(endTime);
 
   const startDateTime = createDateTime(eventDate, start);
-  const endDateTime = createDateTime(
-    eventDate,
-    end,
-    isOvernightEvent(startTime, endTime),
-  );
+  const endDateTime = createDateTime(eventDate, end, isOvernightEvent(startTime, endTime));
 
   const startFormatted = formatDateTime(startDateTime);
   const endFormatted = formatDateTime(endDateTime);
@@ -366,14 +346,14 @@ function createDateTime(date: Date, time: Time, addDay = false): Date {
  */
 function formatDateTime(dateTime: Date): { date: string; time: string } {
   return {
-    date: dateTime.toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
+    date: dateTime.toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
     }),
-    time: dateTime.toLocaleTimeString("en-US", {
-      hour: "numeric",
-      minute: "2-digit",
+    time: dateTime.toLocaleTimeString('en-US', {
+      hour: 'numeric',
+      minute: '2-digit',
     }),
   };
 }
@@ -397,19 +377,19 @@ After refactoring, add more edge case tests:
 
 ```typescript
 // Additional tests to add
-describe("Edge Cases", () => {
-  it("should handle 24-hour event", () => {
-    const duration = calculateEventDuration("00:00", "00:00");
+describe('Edge Cases', () => {
+  it('should handle 24-hour event', () => {
+    const duration = calculateEventDuration('00:00', '00:00');
     expect(duration).toBe(24);
   });
 
-  it("should handle partial hours correctly", () => {
-    const duration = calculateEventDuration("18:30", "21:15");
+  it('should handle partial hours correctly', () => {
+    const duration = calculateEventDuration('18:30', '21:15');
     expect(duration).toBeCloseTo(2.75, 2);
   });
 
-  it("should format partial minutes correctly", () => {
-    expect(formatDuration(1.25)).toBe("1 hour 15 minutes");
+  it('should format partial minutes correctly', () => {
+    expect(formatDuration(1.25)).toBe('1 hour 15 minutes');
   });
 });
 ```

@@ -19,11 +19,7 @@ export function GeneralError({ error, retry }: GeneralErrorProps) {
 							Try Again
 						</Button>
 					)}
-					<Button
-						variant="outline"
-						onClick={() => (window.location.href = '/')}
-						className="w-full"
-					>
+					<Button variant="outline" onClick={() => (window.location.href = '/')} className="w-full">
 						Go to Dashboard
 					</Button>
 				</div>

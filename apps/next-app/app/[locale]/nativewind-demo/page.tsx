@@ -94,9 +94,7 @@ export default function NativeWindDemo() {
 					<div className="space-y-4">
 						<H4>Interactive Example</H4>
 						<div className="flex items-center gap-4">
-							<Button onClick={() => setCount(count + 1)}>
-								Clicked {count} times
-							</Button>
+							<Button onClick={() => setCount(count + 1)}>Clicked {count} times</Button>
 							<Button variant="outline" onClick={() => setCount(0)}>
 								Reset
 							</Button>

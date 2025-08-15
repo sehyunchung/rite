@@ -84,10 +84,7 @@ export function EventEditClient({ eventId, userId, locale }: EventEditClientProp
 				<div className="max-w-7xl mx-auto">
 					{/* Back Button - Desktop only */}
 					<div className="hidden md:block mb-4">
-						<Button
-							variant="outline"
-							onClick={() => router.push(`/${locale}/events/${eventId}`)}
-						>
+						<Button variant="outline" onClick={() => router.push(`/${locale}/events/${eventId}`)}>
 							← {t('backToEvent')}
 						</Button>
 					</div>

@@ -110,16 +110,16 @@ The app runs at http://localhost:8000
 All UI components are imported from the shared package:
 
 ```tsx
-import { 
-  Button, 
-  Card, 
+import {
+  Button,
+  Card,
   CardContent,
   CardHeader,
   CardTitle,
   Alert,
   AlertDialog,
   Dropzone,
-  QRCode 
+  QRCode,
 } from '@rite/ui';
 
 // Components automatically use web implementations
@@ -130,7 +130,7 @@ import {
   <CardContent>
     <Button onClick={handleClick}>Create Event</Button>
   </CardContent>
-</Card>
+</Card>;
 ```
 
 ## Internationalization
@@ -138,16 +138,18 @@ import {
 The app supports Korean and English with automatic locale detection:
 
 ### URL Structure
+
 - English: `http://localhost:8000/en/dashboard`
 - Korean: `http://localhost:8000/ko/dashboard`
 
 ### Using Translations
+
 ```tsx
 import { useTranslations } from 'next-intl';
 
 function Dashboard() {
   const t = useTranslations('dashboard');
-  
+
   return (
     <h1>{t('title')}</h1> // "Dashboard" or "대시보드"
   );
@@ -155,6 +157,7 @@ function Dashboard() {
 ```
 
 ### Adding New Translations
+
 1. Edit `/messages/en.json` and `/messages/ko.json`
 2. Use nested keys for organization
 3. Include placeholders for dynamic content: `{name}`, `{count}`
@@ -168,6 +171,7 @@ NextAuth v5 with multiple providers:
 - **Apple**: TBD - Planned for future implementation
 
 ### Instagram OAuth Flow
+
 1. User clicks "Sign in with Instagram"
 2. Redirected to Instagram for authorization
 3. OAuth proxy transforms Instagram OAuth to OIDC
@@ -194,17 +198,20 @@ The app uses SUIT Variable font for optimal Korean/English rendering:
 ## Build & Deploy
 
 ### Development
+
 ```bash
 pnpm run dev
 ```
 
 ### Production Build
+
 ```bash
 pnpm run build
 pnpm run start
 ```
 
 ### Deployment (Vercel)
+
 ```bash
 vercel
 ```

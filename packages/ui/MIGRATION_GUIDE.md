@@ -5,13 +5,14 @@
 The following components have been migrated to the shared @rite/ui package with both web and native implementations:
 
 - ✅ Input
-- ✅ Label  
+- ✅ Label
 - ✅ Textarea
 - ✅ Badge
 
 ## How to Update Your Imports
 
 ### Before (Old Import)
+
 ```typescript
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -20,6 +21,7 @@ import { Badge } from '@/components/ui/badge';
 ```
 
 ### After (New Import)
+
 ```typescript
 import { Input, Label, Textarea, Badge } from '@rite/ui';
 ```
@@ -38,12 +40,12 @@ export function MyForm() {
         <Label htmlFor="name">Name</Label>
         <Input id="name" placeholder="Enter your name" />
       </div>
-      
+
       <div>
         <Label htmlFor="bio">Bio</Label>
         <Textarea id="bio" placeholder="Tell us about yourself" />
       </div>
-      
+
       <Badge variant="secondary">Draft</Badge>
     </div>
   );
@@ -63,10 +65,10 @@ export function MobileForm() {
     <View style={{ padding: 16 }}>
       <Label>Name</Label>
       <Input placeholder="Enter your name" />
-      
-      <Label>Bio</Label>  
+
+      <Label>Bio</Label>
       <Textarea placeholder="Tell us about yourself" />
-      
+
       <Badge variant="secondary">Draft</Badge>
     </View>
   );
