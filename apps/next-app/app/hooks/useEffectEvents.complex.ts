@@ -5,11 +5,6 @@ import { api } from '@rite/backend/convex/_generated/api';
 import { Id, Doc } from '@rite/backend/convex/_generated/dataModel';
 import { Effect, Schema as S, pipe } from 'effect';
 
-// ========================================
-// TRUE EFFECT TYPESCRIPT IMPLEMENTATION
-// ========================================
-
-// 1. Effect Schema Definitions
 const TimeslotSchema = S.Struct({
 	_id: S.String,
 	_creationTime: S.Number,
@@ -57,21 +52,12 @@ const EventSchema = S.Struct({
 	submissionCount: S.optional(S.Number.pipe(S.nonNegative())),
 });
 
-// 2. Effect Error Types
 class ValidationError extends S.TaggedError<ValidationError>()('ValidationError', {
 	message: S.String,
 	issues: S.Array(S.String),
 	eventId: S.optional(S.String),
 }) {}
 
-// Currently unused but kept for future data integrity checks
-// class DataIntegrityError extends S.TaggedError<DataIntegrityError>()("DataIntegrityError", {
-//   message: S.String,
-//   eventId: S.String,
-//   missingField: S.String
-// }) {}
-
-// 3. Effect Validation Functions
 const validateEventEffect = (rawEvent: unknown) =>
 	pipe(
 		S.decodeUnknown(EventSchema)(rawEvent),
@@ -121,13 +107,8 @@ const normalizeEventEffect = (rawEvent: Doc<'events'> & { timeslots?: unknown })
 		};
 	});
 
-// 4. Derived Types
 export type TrueValidatedEvent = S.Schema.Type<typeof EventSchema>;
 
-/**
- * TRUE Effect TypeScript events hook
- * Uses Effect Schema validation, error handling, and functional composition
- */
 export function useTrueEffectEvents(userId: string) {
 	const rawEvents = useQuery(
 		api.events.listEvents,
@@ -167,9 +148,6 @@ export function useTrueEffectEvents(userId: string) {
 	};
 }
 
-/**
- * TRUE Effect TypeScript single event hook
- */
 export function useTrueEffectEvent(eventId: string, userId: string) {
 	const rawEvent = useQuery(
 		api.events.getEvent,
@@ -240,3 +218,7 @@ export const safeEventAccess = (event: unknown) =>
 			})
 		)
 	);
+
+export { useTrueEffectEvents as useEffectEvents };
+export { useTrueEffectEvent as useEffectEvent };
+export type { TrueValidatedEvent as ValidatedEvent };
