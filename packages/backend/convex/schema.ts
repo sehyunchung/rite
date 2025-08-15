@@ -132,6 +132,7 @@ export default defineSchema({
 		lastLoginAt: v.optional(v.string()),
 		emailVerified: v.optional(v.number()),
 		image: v.optional(v.string()),
+		nextAuthId: v.optional(v.string()), // NextAuth.js user ID for backward compatibility
 	}).index('by_email', ['email']),
 
 	// NextAuth.js required tables
