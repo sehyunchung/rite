@@ -27,7 +27,6 @@ export default function RootLayout() {
 		'SUIT-Medium': require('../assets/fonts/SUIT-Medium.otf'),
 		'SUIT-SemiBold': require('../assets/fonts/SUIT-SemiBold.otf'),
 		'SUIT-Bold': require('../assets/fonts/SUIT-Bold.otf'),
-		SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
 	});
 
 	if (error) {
