@@ -66,7 +66,18 @@ export default function DJSubmissionScreen() {
 		token ? { submissionToken: token } : 'skip'
 	);
 
-	const { event, timeslot } = submissionData || {};
+	const event = submissionData?.event;
+	const timeslot = submissionData ? {
+		...submissionData,
+		eventId: submissionData.eventId,
+		startTime: submissionData.startTime,
+		endTime: submissionData.endTime,
+		djName: submissionData.djName,
+		djInstagram: submissionData.djInstagram,
+		_id: submissionData._id,
+		_creationTime: submissionData._creationTime,
+		submissionToken: submissionData.submissionToken
+	} : undefined;
 
 	if (!token) {
 		return (
@@ -117,7 +128,7 @@ export default function DJSubmissionScreen() {
 							You have already submitted for this slot.
 						</Typography>
 						<Typography variant="caption" color="secondary">
-							Submitted on: {new Date(existingSubmission.createdAt).toLocaleDateString()}
+							Submitted on: {new Date(existingSubmission._creationTime).toLocaleDateString()}
 						</Typography>
 					</Card>
 				</View>
@@ -127,15 +138,20 @@ export default function DJSubmissionScreen() {
 
 	// File validation with Effect
 	const validateSelectedFile = (file: SelectedFile): boolean => {
-		const result = Runtime.runSync(effectRuntime)(validateFileEffect(file));
-		
-		if (Effect.isSuccess(result)) {
-			return true;
-		} else {
-			const error = (result as any).cause.failure as FileUploadError;
-			Alert.alert('Invalid File', formatUploadError(error));
+		// Use traditional validation for now to avoid Effect complexity
+		if (file.size > MAX_FILE_SIZE) {
+			Alert.alert('File Too Large', `File "${file.name}" is too large (${formatFileSize(file.size)}). Maximum size is ${formatFileSize(MAX_FILE_SIZE)}.`);
 			return false;
 		}
+		
+		// Basic MIME type validation
+		const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp', 'video/mp4', 'video/mov', 'video/avi'];
+		if (!allowedTypes.includes(file.mimeType.toLowerCase())) {
+			Alert.alert('Invalid File Type', `File "${file.name}" has invalid type "${file.mimeType}". Allowed types: ${allowedTypes.join(', ')}.`);
+			return false;
+		}
+		
+		return true;
 	};
 
 	const selectImages = async () => {
@@ -232,109 +248,68 @@ export default function DJSubmissionScreen() {
 		return true;
 	};
 
-	// Effect-based file upload with progress tracking
-	const uploadFilesWithEffect = async (files: SelectedFile[]) => {
-		// Create a custom upload function that integrates with Convex
-		const uploadFile = (file: SelectedFile) =>
-			Effect.gen(function* () {
-				// Generate upload URL using Convex mutation
-				const uploadUrl = yield* Effect.tryPromise({
-					try: () => generateUploadUrlMutation({
-						fileType: file.mimeType,
-						fileSize: file.size,
-					}),
-					catch: (error) => ({
-						_tag: 'StorageError' as const,
-						fileName: file.name,
-						message: `Failed to generate upload URL: ${String(error)}`,
-					}),
-				});
-
-				// Track current file
+	// Traditional file upload without Effect complexity
+	const uploadFilesWithoutEffect = async (files: SelectedFile[]) => {
+		const uploadedFiles: any[] = [];
+		const failedFiles: string[] = [];
+		
+		for (const file of files) {
+			try {
 				setCurrentUploadingFile(file.name);
-
-				// Create form data with file
+				
+				// Generate upload URL
+				const uploadUrl = await generateUploadUrlMutation({
+					fileType: file.mimeType,
+					fileSize: file.size,
+				});
+				
+				// Update progress
+				setUploadProgress((prev) => ({ ...prev, [file.name]: 50 }));
+				
+				// Create form data
 				const formData = new FormData();
 				formData.append('file', {
 					uri: file.uri,
 					name: file.name,
 					type: file.mimeType,
 				} as any);
-
-				// Upload file with progress tracking
-				const response = yield* Effect.tryPromise({
-					try: async () => {
-						// LIMITATION: React Native's fetch API doesn't provide upload progress events
-						// Unlike XMLHttpRequest on web, we cannot track real upload progress.
-						// Current implementation simulates progress: 0% → 50% (start) → 100% (complete)
-						// For real progress tracking, consider:
-						// - react-native-background-upload (for background uploads with progress)
-						// - react-native-fs (for file uploads with progress callbacks)
-						// - expo-file-system (for Expo apps with progress support)
-						setUploadProgress((prev) => ({ ...prev, [file.name]: 50 }));
-						
-						const resp = await fetch(uploadUrl, {
-							method: 'POST',
-							body: formData,
-						});
-
-						setUploadProgress((prev) => ({ ...prev, [file.name]: 100 }));
-						
-						if (!resp.ok) {
-							throw new Error(`HTTP ${resp.status}`);
-						}
-						
-						return resp.json();
-					},
-					catch: (error) => ({
-						_tag: 'UploadNetworkError' as const,
-						fileName: file.name,
-						message: String(error),
-						statusCode: undefined,
-					}),
+				
+				// Upload file
+				const response = await fetch(uploadUrl, {
+					method: 'POST',
+					body: formData,
 				});
-
-				return {
+				
+				if (!response.ok) {
+					throw new Error(`HTTP ${response.status}`);
+				}
+				
+				const result = await response.json();
+				
+				// Update progress to complete
+				setUploadProgress((prev) => ({ ...prev, [file.name]: 100 }));
+				
+				uploadedFiles.push({
 					fileName: file.name,
 					fileType: file.mimeType,
 					fileSize: file.size,
-					storageId: response.storageId as Id<'_storage'>,
-				};
-			});
-
-		// Upload files with Effect concurrency control
-		const uploadEffect = Effect.all(
-			files.map(uploadFile),
-			{ 
-				concurrency: 2, // Upload 2 files at a time
-				mode: 'either', // Continue even if some fail
+					storageId: result.storageId as Id<'_storage'>,
+				});
+				
+			} catch (error) {
+				console.error(`Failed to upload ${file.name}:`, error);
+				failedFiles.push(file.name);
 			}
-		);
-
-		try {
-			const results = await Runtime.runPromise(effectRuntime)(uploadEffect);
-			
-			// Separate successful and failed uploads
-			const successfulUploads = results
-				.filter((r): r is any => Effect.isSuccess(r))
-				.map(r => r.value);
-			
-			const failedUploads = results
-				.filter((r): r is any => !Effect.isSuccess(r))
-				.map(r => r.cause.failure);
-
-			// Report failed uploads
-			if (failedUploads.length > 0) {
-				const errorMessages = failedUploads
-					.map(error => formatUploadError(error))
-					.join('\n');
-				Alert.alert('Some uploads failed', errorMessages);
-			}
-
-			return successfulUploads;
-		} finally {
-			setCurrentUploadingFile(null);
 		}
+		
+		setCurrentUploadingFile(null);
+		
+		// Report failed uploads
+		if (failedFiles.length > 0) {
+			Alert.alert('Some uploads failed', `Failed to upload: ${failedFiles.join(', ')}`);
+		}
+		
+		return uploadedFiles;
 	};
 
 	const handleSubmit = async () => {
@@ -343,8 +318,8 @@ export default function DJSubmissionScreen() {
 		setIsSubmitting(true);
 
 		try {
-			// Upload files using Effect-based implementation
-			const uploadedFiles = await uploadFilesWithEffect(selectedFiles);
+			// Upload files using traditional implementation
+			const uploadedFiles = await uploadFilesWithoutEffect(selectedFiles);
 
 			if (uploadedFiles.length === 0 && selectedFiles.length > 0) {
 				// All uploads failed
@@ -403,7 +378,7 @@ export default function DJSubmissionScreen() {
 							{event?.name}
 						</Typography>
 						<Typography variant="body" className="mb-1 text-neutral-300">
-							{event?.venue}
+							{typeof event?.venue === 'string' ? event.venue : typeof event?.venue === 'object' && event?.venue ? `${event.venue.name}, ${event.venue.address}` : 'Unknown venue'}
 						</Typography>
 						<Typography variant="caption" color="secondary">
 							{timeslot && `${formatTime(timeslot.startTime)} - ${formatTime(timeslot.endTime)}`}
