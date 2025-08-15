@@ -1,5 +1,5 @@
 import { v } from 'convex/values';
-import { mutation } from './_generated/server';
+import { mutation, type MutationCtx } from './_generated/server';
 import type { Id, Doc } from './_generated/dataModel';
 import { EventPhase, computeEventCapabilities } from './eventStatus';
 import { Effect, Schema as S, pipe } from 'effect';
@@ -77,8 +77,11 @@ const validateTimeslots = (timeslots: unknown[]) =>
 		return validated;
 	});
 
+// Define event data type (excluding fields added by the function)
+type EventDataInput = Omit<CreateEventArgs, 'userId' | 'timeslots'>;
+
 // Database operations as Effects
-const insertEvent = (ctx: any, eventData: any, userId: string) =>
+const insertEvent = (ctx: MutationCtx, eventData: EventDataInput, userId: Id<'users'>) =>
 	Effect.tryPromise({
 		try: () => {
 			const now = new Date().toISOString();
@@ -90,7 +93,7 @@ const insertEvent = (ctx: any, eventData: any, userId: string) =>
 				phase: EventPhase.DRAFT,
 				phaseMetadata: {
 					enteredAt: now,
-					enteredBy: userId,
+					enteredBy: userId as Id<'users'>,
 				},
 				stateVersion: 1,
 				milestones: {
@@ -115,7 +118,7 @@ const insertEvent = (ctx: any, eventData: any, userId: string) =>
 			}),
 	});
 
-const insertTimeslot = (ctx: any, eventId: Id<'events'>, slot: any) =>
+const insertTimeslot = (ctx: MutationCtx, eventId: Id<'events'>, slot: CreateEventArgs['timeslots'][0]) =>
 	Effect.tryPromise({
 		try: async () => {
 			const submissionToken = generateSubmissionToken();
@@ -137,7 +140,7 @@ const insertTimeslot = (ctx: any, eventId: Id<'events'>, slot: any) =>
 			}),
 	});
 
-const deleteResource = (ctx: any, resourceId: any) =>
+const deleteResource = (ctx: MutationCtx, resourceId: Id<'events'>) =>
 	Effect.tryPromise({
 		try: () => ctx.db.delete(resourceId),
 		catch: (error) =>
@@ -150,7 +153,7 @@ const deleteResource = (ctx: any, resourceId: any) =>
 		Effect.catchAll(() => Effect.void) // Ignore cleanup errors
 	);
 
-const updateEventCapabilities = (ctx: any, eventId: Id<'events'>) =>
+const updateEventCapabilities = (ctx: MutationCtx, eventId: Id<'events'>) =>
 	Effect.gen(function* (_) {
 		const event = yield* _(
 			Effect.tryPromise({
@@ -171,7 +174,7 @@ const updateEventCapabilities = (ctx: any, eventId: Id<'events'>) =>
 				try: () =>
 					ctx.db
 						.query('timeslots')
-						.filter((q: any) => q.eq(q.field('eventId'), eventId))
+						.filter((q) => q.eq(q.field('eventId'), eventId))
 						.collect(),
 				catch: (error) =>
 					new DatabaseError({
@@ -201,8 +204,38 @@ const updateEventCapabilities = (ctx: any, eventId: Id<'events'>) =>
 		);
 	});
 
+// Define typed arguments interface
+interface CreateEventArgs {
+	userId: Id<'users'>;
+	name: string;
+	date: string;
+	venue: {
+		name: string;
+		address: string;
+	};
+	description?: string;
+	hashtags?: string;
+	deadlines: {
+		guestList: string;
+		promoMaterials: string;
+	};
+	payment: {
+		amount: number;
+		perDJ: number;
+		currency: string;
+		dueDate: string;
+	};
+	guestLimitPerDJ: number;
+	timeslots: Array<{
+		startTime: string;
+		endTime: string;
+		djName: string;
+		djInstagram: string;
+	}>;
+}
+
 // Main Effect pipeline for createEvent
-const createEventEffect = (ctx: any, args: any) =>
+const createEventEffect = (ctx: MutationCtx, args: CreateEventArgs) =>
 	Effect.gen(function* (_) {
 		const { userId, timeslots, ...eventData } = args;
 
@@ -245,7 +278,7 @@ const createEventEffect = (ctx: any, args: any) =>
 		};
 	}).pipe(
 		// Add structured logging
-		Effect.withSpan('createEvent', { attributes: { userId: args.userId } }),
+		Effect.withSpan('createEvent', { attributes: { userId: args.userId as string } }),
 		// Ensure cleanup on any failure
 		Effect.catchAll((error) => {
 			console.error('Event creation failed:', error);
