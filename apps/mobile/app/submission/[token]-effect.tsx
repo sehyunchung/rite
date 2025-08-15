@@ -1,5 +1,12 @@
 import * as React from 'react';
-import { View, ScrollView, SafeAreaView, Platform, ActivityIndicator, Alert, TouchableOpacity } from 'react-native';
+import {
+	View,
+	ScrollView,
+	SafeAreaView,
+	ActivityIndicator,
+	Alert,
+	TouchableOpacity,
+} from 'react-native';
 import { Typography, Card, Button, Input, Textarea } from '../../lib/ui-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useQuery, useMutation } from 'convex/react';
@@ -9,20 +16,14 @@ import { formatTime } from '../../lib/time-utils';
 import * as DocumentPicker from 'expo-document-picker';
 import * as ImagePicker from 'expo-image-picker';
 import { Id } from '@rite/backend/convex/_generated/dataModel';
-import { 
-	validateFile, 
-	formatFileSize, 
+import {
+	validateFile,
+	formatFileSize,
 	MAX_FILE_SIZE,
-	ALLOWED_FILE_TYPES,
 	// Effect-based utilities
 	type FileToUpload,
-	uploadMultipleFiles,
-	validateFileEffect,
-	formatUploadError,
-	type UploadProgress,
-	type FileUploadError
 } from '@rite/shared-types';
-import { Effect, Runtime, pipe } from 'effect';
+import { Runtime } from 'effect';
 
 interface SelectedFile extends FileToUpload {
 	uri: string;
@@ -42,11 +43,11 @@ export default function DJSubmissionScreenWithEffect() {
 	// Preferred contact method UI implementation needed - tracked in project management
 	const [preferredContact] = React.useState<'email' | 'phone' | 'both'>('email');
 	const [guestNames, setGuestNames] = React.useState('');
-	const [guestNamesLineup, setGuestNamesLineup] = React.useState('');
+	// const [guestNamesLineup, setGuestNamesLineup] = React.useState(''); // Future feature
 	const [promoVideoUrl, setPromoVideoUrl] = React.useState('');
 	const [selectedFiles, setSelectedFiles] = React.useState<SelectedFile[]>([]);
 	const [isSubmitting, setIsSubmitting] = React.useState(false);
-	
+
 	// Progress tracking state
 	const [uploadProgress, setUploadProgress] = React.useState<Record<string, number>>({});
 	const [currentUploadingFile, setCurrentUploadingFile] = React.useState<string | null>(null);
@@ -66,8 +67,8 @@ export default function DJSubmissionScreenWithEffect() {
 	const event = submissionData?.event;
 	const timeslot = submissionData || undefined;
 
-	// Create Effect runtime
-	const runtime = React.useMemo(() => Runtime.defaultRuntime, []);
+	// Create Effect runtime for future use
+	// const runtime = React.useMemo(() => Runtime.defaultRuntime, []);
 
 	if (!token) {
 		return (
@@ -133,12 +134,12 @@ export default function DJSubmissionScreenWithEffect() {
 			fileType: file.mimeType,
 			fileSize: file.size,
 		});
-		
+
 		if (!validation.isValid) {
 			Alert.alert('Invalid File', validation.error || 'File validation failed');
 			return false;
 		}
-		
+
 		return true;
 	};
 
@@ -203,7 +204,7 @@ export default function DJSubmissionScreenWithEffect() {
 		setSelectedFiles((prev) => prev.filter((file) => file.uri !== uri));
 		setUploadProgress((prev) => {
 			const newProgress = { ...prev };
-			const fileName = selectedFiles.find(f => f.uri === uri)?.name;
+			const fileName = selectedFiles.find((f) => f.uri === uri)?.name;
 			if (fileName) delete newProgress[fileName];
 			return newProgress;
 		});
@@ -242,16 +243,16 @@ export default function DJSubmissionScreenWithEffect() {
 		const uploadSingleFile = async (file: SelectedFile) => {
 			try {
 				setCurrentUploadingFile(file.name);
-				
+
 				// Generate upload URL
 				const uploadUrl = await generateUploadUrlMutation({
 					fileType: file.mimeType,
 					fileSize: file.size,
 				});
-				
+
 				// Update progress
 				setUploadProgress((prev) => ({ ...prev, [file.name]: 50 }));
-				
+
 				// Create form data
 				const formData = new FormData();
 				formData.append('file', {
@@ -259,22 +260,22 @@ export default function DJSubmissionScreenWithEffect() {
 					name: file.name,
 					type: file.mimeType,
 				} as any);
-				
+
 				// Upload file
 				const response = await fetch(uploadUrl, {
 					method: 'POST',
 					body: formData,
 				});
-				
+
 				if (!response.ok) {
 					throw new Error(`HTTP ${response.status}`);
 				}
-				
+
 				const result = await response.json();
-				
+
 				// Update progress to complete
 				setUploadProgress((prev) => ({ ...prev, [file.name]: 100 }));
-				
+
 				return {
 					fileName: file.name,
 					fileType: file.mimeType,
@@ -286,17 +287,17 @@ export default function DJSubmissionScreenWithEffect() {
 				throw new Error(`Failed to upload ${file.name}: ${String(error)}`);
 			}
 		};
-		
+
 		// Upload all files concurrently
 		const uploadPromises = files.map(uploadSingleFile);
 		const results = await Promise.allSettled(uploadPromises);
-		
+
 		setCurrentUploadingFile(null);
-		
+
 		// Separate successful and failed uploads
 		const uploadedFiles: any[] = [];
 		const failedFiles: string[] = [];
-		
+
 		results.forEach((result, index) => {
 			if (result.status === 'fulfilled') {
 				uploadedFiles.push(result.value);
@@ -304,12 +305,12 @@ export default function DJSubmissionScreenWithEffect() {
 				failedFiles.push(files[index].name);
 			}
 		});
-		
+
 		// Report failed uploads
 		if (failedFiles.length > 0) {
 			Alert.alert('Some uploads failed', `Failed to upload: ${failedFiles.join(', ')}`);
 		}
-		
+
 		return uploadedFiles;
 	};
 
@@ -379,7 +380,11 @@ export default function DJSubmissionScreenWithEffect() {
 							{event?.name}
 						</Typography>
 						<Typography variant="body" className="mb-1 text-neutral-300">
-							{typeof event?.venue === 'string' ? event.venue : typeof event?.venue === 'object' && event?.venue ? `${event.venue.name}, ${event.venue.address}` : 'Unknown venue'}
+							{typeof event?.venue === 'string'
+								? event.venue
+								: typeof event?.venue === 'object' && event?.venue
+									? `${event.venue.name}, ${event.venue.address}`
+									: 'Unknown venue'}
 						</Typography>
 						<Typography variant="caption" color="secondary">
 							{timeslot && `${formatTime(timeslot.startTime)} - ${formatTime(timeslot.endTime)}`}
@@ -477,23 +482,13 @@ export default function DJSubmissionScreenWithEffect() {
 							</Typography>
 
 							<View className="flex-row gap-2">
-								<Button
-									onPress={selectImages}
-									variant="secondary"
-									size="sm"
-									className="flex-1"
-								>
+								<Button onPress={selectImages} variant="secondary" size="sm" className="flex-1">
 									<Ionicons name="image-outline" size={16} color="white" />
 									<Typography variant="button" className="ml-2 text-white">
 										Images
 									</Typography>
 								</Button>
-								<Button
-									onPress={selectVideos}
-									variant="secondary"
-									size="sm"
-									className="flex-1"
-								>
+								<Button onPress={selectVideos} variant="secondary" size="sm" className="flex-1">
 									<Ionicons name="videocam-outline" size={16} color="white" />
 									<Typography variant="button" className="ml-2 text-white">
 										Videos
@@ -543,11 +538,7 @@ export default function DJSubmissionScreenWithEffect() {
 					</Card>
 
 					{/* Submit Button */}
-					<Button
-						onPress={handleSubmit}
-						disabled={isSubmitting}
-						className="mb-8"
-					>
+					<Button onPress={handleSubmit} disabled={isSubmitting} className="mb-8">
 						{isSubmitting ? (
 							<>
 								<ActivityIndicator size="small" color="white" />
