@@ -13,6 +13,7 @@ import {
 	validateFile, 
 	formatFileSize, 
 	MAX_FILE_SIZE,
+	ALLOWED_FILE_TYPES,
 	// Effect-based utilities
 	type FileToUpload,
 	uploadMultipleFiles,
@@ -42,8 +43,7 @@ export default function DJSubmissionScreen() {
 	const [djName, setDjName] = React.useState('');
 	const [djEmail, setDjEmail] = React.useState('');
 	const [djPhone, setDjPhone] = React.useState('');
-	// TODO: Implement preferred contact method selection UI similar to web version
-	// Will need: preferredContact state ('email' | 'phone' | 'both') and RadioGroup component
+	// Preferred contact method UI implementation needed - tracked in project management
 	const [guestNames, setGuestNames] = React.useState('');
 	const [guestNamesLineup, setGuestNamesLineup] = React.useState('');
 	const [promoVideoUrl, setPromoVideoUrl] = React.useState('');
@@ -136,18 +136,16 @@ export default function DJSubmissionScreen() {
 		);
 	}
 
-	// File validation with Effect
+	// File validation using shared utilities
 	const validateSelectedFile = (file: SelectedFile): boolean => {
-		// Use traditional validation for now to avoid Effect complexity
-		if (file.size > MAX_FILE_SIZE) {
-			Alert.alert('File Too Large', `File "${file.name}" is too large (${formatFileSize(file.size)}). Maximum size is ${formatFileSize(MAX_FILE_SIZE)}.`);
-			return false;
-		}
+		const validation = validateFile({
+			fileName: file.name,
+			fileType: file.mimeType,
+			fileSize: file.size,
+		});
 		
-		// Basic MIME type validation
-		const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp', 'video/mp4', 'video/mov', 'video/avi'];
-		if (!allowedTypes.includes(file.mimeType.toLowerCase())) {
-			Alert.alert('Invalid File Type', `File "${file.name}" has invalid type "${file.mimeType}". Allowed types: ${allowedTypes.join(', ')}.`);
+		if (!validation.isValid) {
+			Alert.alert('Invalid File', validation.error || 'File validation failed');
 			return false;
 		}
 		
@@ -248,12 +246,10 @@ export default function DJSubmissionScreen() {
 		return true;
 	};
 
-	// Traditional file upload without Effect complexity
-	const uploadFilesWithoutEffect = async (files: SelectedFile[]) => {
-		const uploadedFiles: any[] = [];
-		const failedFiles: string[] = [];
-		
-		for (const file of files) {
+	// Concurrent file upload with Promise.allSettled
+	const uploadFilesWithConcurrency = async (files: SelectedFile[]) => {
+		// Upload single file function
+		const uploadSingleFile = async (file: SelectedFile) => {
 			try {
 				setCurrentUploadingFile(file.name);
 				
@@ -289,20 +285,35 @@ export default function DJSubmissionScreen() {
 				// Update progress to complete
 				setUploadProgress((prev) => ({ ...prev, [file.name]: 100 }));
 				
-				uploadedFiles.push({
+				return {
 					fileName: file.name,
 					fileType: file.mimeType,
 					fileSize: file.size,
 					storageId: result.storageId as Id<'_storage'>,
-				});
-				
+				};
 			} catch (error) {
 				console.error(`Failed to upload ${file.name}:`, error);
-				failedFiles.push(file.name);
+				throw new Error(`Failed to upload ${file.name}: ${String(error)}`);
 			}
-		}
+		};
+		
+		// Upload all files concurrently
+		const uploadPromises = files.map(uploadSingleFile);
+		const results = await Promise.allSettled(uploadPromises);
 		
 		setCurrentUploadingFile(null);
+		
+		// Separate successful and failed uploads
+		const uploadedFiles: any[] = [];
+		const failedFiles: string[] = [];
+		
+		results.forEach((result, index) => {
+			if (result.status === 'fulfilled') {
+				uploadedFiles.push(result.value);
+			} else {
+				failedFiles.push(files[index].name);
+			}
+		});
 		
 		// Report failed uploads
 		if (failedFiles.length > 0) {
@@ -318,8 +329,8 @@ export default function DJSubmissionScreen() {
 		setIsSubmitting(true);
 
 		try {
-			// Upload files using traditional implementation
-			const uploadedFiles = await uploadFilesWithoutEffect(selectedFiles);
+			// Upload files using concurrent implementation
+			const uploadedFiles = await uploadFilesWithConcurrency(selectedFiles);
 
 			if (uploadedFiles.length === 0 && selectedFiles.length > 0) {
 				// All uploads failed
