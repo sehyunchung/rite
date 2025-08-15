@@ -35,9 +35,7 @@ const ListItem = React.forwardRef<HTMLButtonElement, ListItemProps>(
 				</div>
 
 				{trailing ||
-					(showChevron && (
-						<ChevronRight className="h-5 w-5 text-text-muted flex-shrink-0" />
-					))}
+					(showChevron && <ChevronRight className="h-5 w-5 text-text-muted flex-shrink-0" />)}
 			</button>
 		);
 	}

@@ -17,16 +17,19 @@ This document outlines the EAS configuration for the RITE mobile app.
 ## Build Profiles
 
 ### Development
+
 - **Purpose**: Development builds with debug capabilities
 - **Distribution**: Internal only
 - **Features**: Includes expo-dev-client for development features
 
 ### Preview
+
 - **Purpose**: Preview builds for testing
 - **Distribution**: Internal only
 - **Use case**: Sharing with team members and testers
 
 ### Production
+
 - **Purpose**: Production-ready builds
 - **Distribution**: App stores
 - **Use case**: Final release builds
@@ -50,6 +53,7 @@ pnpm run submit:production
 ## Environment Configuration
 
 The app uses Convex as the backend service:
+
 - **Convex URL**: Configured in `app.json` under `extra.convexUrl`
 - **Current Environment**: `https://agreeable-crayfish-565.convex.cloud`
 

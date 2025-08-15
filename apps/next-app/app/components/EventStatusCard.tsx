@@ -105,13 +105,9 @@ export function EventStatusCard({ eventId, userId }: EventStatusCardProps) {
 					<div className="flex items-center justify-between">
 						<div className="flex items-center gap-2">
 							<Icon className={`h-5 w-5 text-${phaseInfo.color}-500`} />
-							<CardTitle className="text-lg">
-								{t(`phases.${event.phase}.label`)}
-							</CardTitle>
+							<CardTitle className="text-lg">{t(`phases.${event.phase}.label`)}</CardTitle>
 						</div>
-						<Badge variant={colorToVariant[phaseInfo.color] || 'default'}>
-							{event.phase}
-						</Badge>
+						<Badge variant={colorToVariant[phaseInfo.color] || 'default'}>{event.phase}</Badge>
 					</div>
 					<p className="text-sm text-muted-foreground mt-1">
 						{t(`phases.${event.phase}.description`)}
@@ -131,14 +127,8 @@ export function EventStatusCard({ eventId, userId }: EventStatusCardProps) {
 					<div className="space-y-3">
 						<div className="grid grid-cols-2 gap-2 text-sm">
 							<div className="flex items-center gap-2">
-								<span className="text-muted-foreground">
-									{t('capabilities.canEdit')}:
-								</span>
-								<span
-									className={
-										capabilities?.canEdit ? 'text-green-600' : 'text-gray-400'
-									}
-								>
+								<span className="text-muted-foreground">{t('capabilities.canEdit')}:</span>
+								<span className={capabilities?.canEdit ? 'text-green-600' : 'text-gray-400'}>
 									{capabilities?.canEdit ? '✓' : '✗'}
 								</span>
 							</div>
@@ -148,9 +138,7 @@ export function EventStatusCard({ eventId, userId }: EventStatusCardProps) {
 								</span>
 								<span
 									className={
-										capabilities?.canAcceptSubmissions
-											? 'text-green-600'
-											: 'text-gray-400'
+										capabilities?.canAcceptSubmissions ? 'text-green-600' : 'text-gray-400'
 									}
 								>
 									{capabilities?.canAcceptSubmissions ? '✓' : '✗'}
@@ -206,10 +194,7 @@ export function EventStatusCard({ eventId, userId }: EventStatusCardProps) {
 			</Card>
 
 			{/* Confirmation Dialog */}
-			<AlertDialog
-				open={!!confirmDialog}
-				onOpenChange={(open) => !open && setConfirmDialog(null)}
-			>
+			<AlertDialog open={!!confirmDialog} onOpenChange={(open) => !open && setConfirmDialog(null)}>
 				<AlertDialogContent>
 					<AlertDialogHeader>
 						<AlertDialogTitle>{t('confirmAction')}</AlertDialogTitle>
@@ -219,9 +204,7 @@ export function EventStatusCard({ eventId, userId }: EventStatusCardProps) {
 					</AlertDialogHeader>
 					<AlertDialogFooter>
 						<AlertDialogCancel>{t('cancel')}</AlertDialogCancel>
-						<AlertDialogAction onClick={confirmAction}>
-							{t('confirm')}
-						</AlertDialogAction>
+						<AlertDialogAction onClick={confirmAction}>{t('confirm')}</AlertDialogAction>
 					</AlertDialogFooter>
 				</AlertDialogContent>
 			</AlertDialog>

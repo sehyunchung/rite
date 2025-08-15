@@ -16,7 +16,7 @@ export const ALLOWED_FILE_TYPES = [
 	'application/pdf',
 ] as const;
 
-export type AllowedFileType = typeof ALLOWED_FILE_TYPES[number];
+export type AllowedFileType = (typeof ALLOWED_FILE_TYPES)[number];
 
 export interface FileValidationResult {
 	isValid: boolean;
@@ -123,10 +123,13 @@ export function getFileExtension(filename: string): string {
 /**
  * Check if file extension matches MIME type expectations
  */
-export function validateFileExtensionMatch(filename: string, mimeType: string): FileValidationResult {
+export function validateFileExtensionMatch(
+	filename: string,
+	mimeType: string
+): FileValidationResult {
 	const extension = getFileExtension(filename);
 	const normalizedMimeType = mimeType.toLowerCase().trim();
-	
+
 	// Define expected extensions for each MIME type
 	const mimeToExtensions: Record<string, string[]> = {
 		'image/jpeg': ['jpg', 'jpeg'],
@@ -139,7 +142,7 @@ export function validateFileExtensionMatch(filename: string, mimeType: string): 
 		'video/quicktime': ['mov', 'qt'],
 		'application/pdf': ['pdf'],
 	};
-	
+
 	const expectedExtensions = mimeToExtensions[normalizedMimeType];
 	if (!expectedExtensions) {
 		return {
@@ -147,14 +150,14 @@ export function validateFileExtensionMatch(filename: string, mimeType: string): 
 			error: `Unknown MIME type: ${mimeType}`,
 		};
 	}
-	
+
 	if (!expectedExtensions.includes(extension)) {
 		return {
 			isValid: false,
 			error: `File extension '${extension}' does not match MIME type '${mimeType}'. Expected: ${expectedExtensions.join(', ')}`,
 		};
 	}
-	
+
 	return { isValid: true };
 }
 
@@ -170,7 +173,7 @@ export function validateFiles(files: FileMetadata[]): FileValidationResult {
 				error: `File "${file.fileName}": ${validation.error}`,
 			};
 		}
-		
+
 		// Also validate filename/MIME type consistency
 		const extensionValidation = validateFileExtensionMatch(file.fileName, file.fileType);
 		if (!extensionValidation.isValid) {
@@ -180,6 +183,6 @@ export function validateFiles(files: FileMetadata[]): FileValidationResult {
 			};
 		}
 	}
-	
+
 	return { isValid: true };
 }

@@ -7,26 +7,31 @@ This guide documents the secure OAuth implementation for the RITE mobile app.
 All critical security issues have been resolved:
 
 ### 1. ✅ **No Hardcoded Credentials**
+
 - Converted `app.json` to `app.config.js` for dynamic configuration
 - OAuth client IDs are now read from environment variables
 - No fallback values that could expose credentials
 
 ### 2. ✅ **PKCE Implementation**
+
 - expo-auth-session automatically handles PKCE for code flow
 - Includes code_challenge and code_verifier generation
 - Secure token exchange without client secrets
 
 ### 3. ✅ **CSRF Protection**
+
 - expo-auth-session automatically generates and validates state parameters
 - Prevents cross-site request forgery attacks
 - State is securely stored and validated
 
 ### 4. ✅ **Comprehensive Error Handling**
+
 - AuthContext now includes error state management
 - User-friendly error messages via AuthErrorAlert component
 - Specific error codes for debugging
 
 ### 5. ✅ **Environment Variable Validation**
+
 - Fail-fast approach with clear error messages
 - Platform-specific validation
 - No silent failures
@@ -56,32 +61,38 @@ EXPO_PUBLIC_CONVEX_URL=your-convex-url
 4. Create OAuth 2.0 Client IDs:
 
 #### iOS Client
+
 - Type: iOS
 - Bundle ID: `com.rite.mobile`
 - URL Scheme: Auto-generated
 
 #### Android Client
+
 - Type: Android
 - Package name: `com.rite.mobile`
 - SHA-1 certificate fingerprint: (from your keystore)
 
 #### Web Client
+
 - Type: Web application
 - Authorized redirect URIs: `http://localhost:8081`
 
 ## Platform-Specific Behavior
 
 ### Web Platform
+
 - Uses implicit flow (response_type=token)
 - Direct access token retrieval
 - Redirect URI: `http://localhost:8081`
 
 ### iOS/Expo Go
+
 - Uses authorization code flow with PKCE
 - URL Scheme: `com.googleusercontent.apps.[CLIENT-ID]://`
 - Automatic token exchange
 
 ### Android
+
 - Uses authorization code flow with PKCE
 - Custom scheme: `com.rite.mobile://`
 - Automatic token exchange
@@ -104,7 +115,7 @@ import { AuthErrorAlert } from '../components/AuthErrorAlert';
 
 function LoginScreen() {
   const { signIn, user, error, clearError } = useAuth();
-  
+
   return (
     <>
       <AuthErrorAlert />
@@ -125,16 +136,19 @@ function LoginScreen() {
 ## Troubleshooting
 
 ### "OAuth not configured" Error
+
 - Ensure all required environment variables are set
 - Restart Metro bundler after adding env vars
 - Check platform-specific requirements
 
 ### "Redirect URI mismatch" Error
+
 - Verify URL schemes in app.config.js
 - Check Google Cloud Console settings
 - Ensure correct platform detection
 
 ### Token Exchange Failures
+
 - expo-auth-session handles PKCE automatically
 - Check network connectivity
 - Verify client IDs match

@@ -254,11 +254,7 @@ export const createEvent = mutation({
 						.query('timeslots')
 						.filter((q) => q.eq(q.field('eventId'), eventId))
 						.collect();
-					const capabilities = computeEventCapabilities(
-						updatedEvent,
-						createdTimeslots,
-						[]
-					);
+					const capabilities = computeEventCapabilities(updatedEvent, createdTimeslots, []);
 					await ctx.db.patch(eventId, { capabilities });
 				}
 			}
@@ -591,9 +587,7 @@ export const updateEvent = mutation({
 					// Check if timeslot has submissions before deleting
 					const hasSubmissions = submissions.some((s) => s.timeslotId === existing._id);
 					if (hasSubmissions) {
-						throw new Error(
-							`Cannot delete timeslot with existing submissions: ${existing.djName}`
-						);
+						throw new Error(`Cannot delete timeslot with existing submissions: ${existing.djName}`);
 					}
 					await ctx.db.delete(existing._id);
 				}

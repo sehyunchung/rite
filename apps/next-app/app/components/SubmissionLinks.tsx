@@ -32,12 +32,9 @@ export function SubmissionLinks({ events }: SubmissionLinksProps) {
 									<div key={slot._id} className="border rounded-lg p-4 bg-muted">
 										<div className="flex justify-between items-start mb-2">
 											<div>
-												<h4 className="font-medium text-foreground">
-													{event.name}
-												</h4>
+												<h4 className="font-medium text-foreground">{event.name}</h4>
 												<p className="text-sm text-muted-foreground">
-													{slot.djName} ({slot.djInstagram}) -{' '}
-													{slot.startTime} to {slot.endTime}
+													{slot.djName} ({slot.djInstagram}) - {slot.startTime} to {slot.endTime}
 												</p>
 											</div>
 										</div>

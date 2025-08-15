@@ -28,6 +28,7 @@ This document explains how Convex backend is automatically deployed when code ch
 ### 2. Verify Vercel Environment Variables
 
 Ensure these are set in Vercel project settings:
+
 - `NEXT_PUBLIC_CONVEX_URL` - Your production Convex URL
 - `CONVEX_DEPLOY_KEY` - Same key as GitHub (for local builds)
 

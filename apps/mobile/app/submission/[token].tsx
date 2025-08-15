@@ -1,5 +1,12 @@
 import * as React from 'react';
-import { View, ScrollView, SafeAreaView, Platform, ActivityIndicator, Alert, TouchableOpacity } from 'react-native';
+import {
+	View,
+	ScrollView,
+	SafeAreaView,
+	ActivityIndicator,
+	Alert,
+	TouchableOpacity,
+} from 'react-native';
 import { Typography, Card, Button, Input, Textarea } from '../../lib/ui-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useQuery, useMutation } from 'convex/react';
@@ -9,19 +16,14 @@ import { formatTime } from '../../lib/time-utils';
 import * as DocumentPicker from 'expo-document-picker';
 import * as ImagePicker from 'expo-image-picker';
 import { Id } from '@rite/backend/convex/_generated/dataModel';
-import { 
-	validateFile, 
-	formatFileSize, 
+import {
+	validateFile,
+	formatFileSize,
 	MAX_FILE_SIZE,
 	// Effect-based utilities
 	type FileToUpload,
-	uploadMultipleFiles,
-	validateFileEffect,
-	formatUploadError,
-	type UploadProgress,
-	type FileUploadError
 } from '@rite/shared-types';
-import { Effect, Runtime, pipe } from 'effect';
+// import { Effect, Runtime, pipe } from 'effect'; // Future Effect integration
 
 interface SelectedFile extends FileToUpload {
 	uri: string;
@@ -30,7 +32,7 @@ interface SelectedFile extends FileToUpload {
 
 // Create Effect runtime at module level for better performance
 // This avoids recreating the runtime on every component render
-const effectRuntime = Runtime.defaultRuntime;
+// const effectRuntime = Runtime.defaultRuntime; // Future Effect integration
 
 export default function DJSubmissionScreen() {
 	const { token } = useLocalSearchParams<{ token: string }>();
@@ -42,14 +44,13 @@ export default function DJSubmissionScreen() {
 	const [djName, setDjName] = React.useState('');
 	const [djEmail, setDjEmail] = React.useState('');
 	const [djPhone, setDjPhone] = React.useState('');
-	// TODO: Implement preferred contact method selection UI similar to web version
-	// Will need: preferredContact state ('email' | 'phone' | 'both') and RadioGroup component
+	// Preferred contact method UI implementation needed - tracked in project management
 	const [guestNames, setGuestNames] = React.useState('');
-	const [guestNamesLineup, setGuestNamesLineup] = React.useState('');
+	// const [guestNamesLineup, setGuestNamesLineup] = React.useState(''); // Future feature
 	const [promoVideoUrl, setPromoVideoUrl] = React.useState('');
 	const [selectedFiles, setSelectedFiles] = React.useState<SelectedFile[]>([]);
 	const [isSubmitting, setIsSubmitting] = React.useState(false);
-	
+
 	// Progress tracking state
 	const [uploadProgress, setUploadProgress] = React.useState<Record<string, number>>({});
 	const [currentUploadingFile, setCurrentUploadingFile] = React.useState<string | null>(null);
@@ -66,7 +67,20 @@ export default function DJSubmissionScreen() {
 		token ? { submissionToken: token } : 'skip'
 	);
 
-	const { event, timeslot } = submissionData || {};
+	const event = submissionData?.event;
+	const timeslot = submissionData
+		? {
+				...submissionData,
+				eventId: submissionData.eventId,
+				startTime: submissionData.startTime,
+				endTime: submissionData.endTime,
+				djName: submissionData.djName,
+				djInstagram: submissionData.djInstagram,
+				_id: submissionData._id,
+				_creationTime: submissionData._creationTime,
+				submissionToken: submissionData.submissionToken,
+			}
+		: undefined;
 
 	if (!token) {
 		return (
@@ -117,7 +131,7 @@ export default function DJSubmissionScreen() {
 							You have already submitted for this slot.
 						</Typography>
 						<Typography variant="caption" color="secondary">
-							Submitted on: {new Date(existingSubmission.createdAt).toLocaleDateString()}
+							Submitted on: {new Date(existingSubmission._creationTime).toLocaleDateString()}
 						</Typography>
 					</Card>
 				</View>
@@ -125,17 +139,20 @@ export default function DJSubmissionScreen() {
 		);
 	}
 
-	// File validation with Effect
+	// File validation using shared utilities
 	const validateSelectedFile = (file: SelectedFile): boolean => {
-		const result = Runtime.runSync(effectRuntime)(validateFileEffect(file));
-		
-		if (Effect.isSuccess(result)) {
-			return true;
-		} else {
-			const error = (result as any).cause.failure as FileUploadError;
-			Alert.alert('Invalid File', formatUploadError(error));
+		const validation = validateFile({
+			fileName: file.name,
+			fileType: file.mimeType,
+			fileSize: file.size,
+		});
+
+		if (!validation.isValid) {
+			Alert.alert('Invalid File', validation.error || 'File validation failed');
 			return false;
 		}
+
+		return true;
 	};
 
 	const selectImages = async () => {
@@ -199,7 +216,7 @@ export default function DJSubmissionScreen() {
 		setSelectedFiles((prev) => prev.filter((file) => file.uri !== uri));
 		setUploadProgress((prev) => {
 			const newProgress = { ...prev };
-			const fileName = selectedFiles.find(f => f.uri === uri)?.name;
+			const fileName = selectedFiles.find((f) => f.uri === uri)?.name;
 			if (fileName) delete newProgress[fileName];
 			return newProgress;
 		});
@@ -232,28 +249,23 @@ export default function DJSubmissionScreen() {
 		return true;
 	};
 
-	// Effect-based file upload with progress tracking
-	const uploadFilesWithEffect = async (files: SelectedFile[]) => {
-		// Create a custom upload function that integrates with Convex
-		const uploadFile = (file: SelectedFile) =>
-			Effect.gen(function* () {
-				// Generate upload URL using Convex mutation
-				const uploadUrl = yield* Effect.tryPromise({
-					try: () => generateUploadUrlMutation({
-						fileType: file.mimeType,
-						fileSize: file.size,
-					}),
-					catch: (error) => ({
-						_tag: 'StorageError' as const,
-						fileName: file.name,
-						message: `Failed to generate upload URL: ${String(error)}`,
-					}),
-				});
-
-				// Track current file
+	// Concurrent file upload with Promise.allSettled
+	const uploadFilesWithConcurrency = async (files: SelectedFile[]) => {
+		// Upload single file function
+		const uploadSingleFile = async (file: SelectedFile) => {
+			try {
 				setCurrentUploadingFile(file.name);
 
-				// Create form data with file
+				// Generate upload URL
+				const uploadUrl = await generateUploadUrlMutation({
+					fileType: file.mimeType,
+					fileSize: file.size,
+				});
+
+				// Update progress
+				setUploadProgress((prev) => ({ ...prev, [file.name]: 50 }));
+
+				// Create form data
 				const formData = new FormData();
 				formData.append('file', {
 					uri: file.uri,
@@ -261,80 +273,57 @@ export default function DJSubmissionScreen() {
 					type: file.mimeType,
 				} as any);
 
-				// Upload file with progress tracking
-				const response = yield* Effect.tryPromise({
-					try: async () => {
-						// LIMITATION: React Native's fetch API doesn't provide upload progress events
-						// Unlike XMLHttpRequest on web, we cannot track real upload progress.
-						// Current implementation simulates progress: 0% → 50% (start) → 100% (complete)
-						// For real progress tracking, consider:
-						// - react-native-background-upload (for background uploads with progress)
-						// - react-native-fs (for file uploads with progress callbacks)
-						// - expo-file-system (for Expo apps with progress support)
-						setUploadProgress((prev) => ({ ...prev, [file.name]: 50 }));
-						
-						const resp = await fetch(uploadUrl, {
-							method: 'POST',
-							body: formData,
-						});
-
-						setUploadProgress((prev) => ({ ...prev, [file.name]: 100 }));
-						
-						if (!resp.ok) {
-							throw new Error(`HTTP ${resp.status}`);
-						}
-						
-						return resp.json();
-					},
-					catch: (error) => ({
-						_tag: 'UploadNetworkError' as const,
-						fileName: file.name,
-						message: String(error),
-						statusCode: undefined,
-					}),
+				// Upload file
+				const response = await fetch(uploadUrl, {
+					method: 'POST',
+					body: formData,
 				});
+
+				if (!response.ok) {
+					throw new Error(`HTTP ${response.status}`);
+				}
+
+				const result = await response.json();
+
+				// Update progress to complete
+				setUploadProgress((prev) => ({ ...prev, [file.name]: 100 }));
 
 				return {
 					fileName: file.name,
 					fileType: file.mimeType,
 					fileSize: file.size,
-					storageId: response.storageId as Id<'_storage'>,
+					storageId: result.storageId as Id<'_storage'>,
 				};
-			});
-
-		// Upload files with Effect concurrency control
-		const uploadEffect = Effect.all(
-			files.map(uploadFile),
-			{ 
-				concurrency: 2, // Upload 2 files at a time
-				mode: 'either', // Continue even if some fail
+			} catch (error) {
+				console.error(`Failed to upload ${file.name}:`, error);
+				throw new Error(`Failed to upload ${file.name}: ${String(error)}`);
 			}
-		);
+		};
 
-		try {
-			const results = await Runtime.runPromise(effectRuntime)(uploadEffect);
-			
-			// Separate successful and failed uploads
-			const successfulUploads = results
-				.filter((r): r is any => Effect.isSuccess(r))
-				.map(r => r.value);
-			
-			const failedUploads = results
-				.filter((r): r is any => !Effect.isSuccess(r))
-				.map(r => r.cause.failure);
+		// Upload all files concurrently
+		const uploadPromises = files.map(uploadSingleFile);
+		const results = await Promise.allSettled(uploadPromises);
 
-			// Report failed uploads
-			if (failedUploads.length > 0) {
-				const errorMessages = failedUploads
-					.map(error => formatUploadError(error))
-					.join('\n');
-				Alert.alert('Some uploads failed', errorMessages);
+		setCurrentUploadingFile(null);
+
+		// Separate successful and failed uploads
+		const uploadedFiles: any[] = [];
+		const failedFiles: string[] = [];
+
+		results.forEach((result, index) => {
+			if (result.status === 'fulfilled') {
+				uploadedFiles.push(result.value);
+			} else {
+				failedFiles.push(files[index].name);
 			}
+		});
 
-			return successfulUploads;
-		} finally {
-			setCurrentUploadingFile(null);
+		// Report failed uploads
+		if (failedFiles.length > 0) {
+			Alert.alert('Some uploads failed', `Failed to upload: ${failedFiles.join(', ')}`);
 		}
+
+		return uploadedFiles;
 	};
 
 	const handleSubmit = async () => {
@@ -343,8 +332,8 @@ export default function DJSubmissionScreen() {
 		setIsSubmitting(true);
 
 		try {
-			// Upload files using Effect-based implementation
-			const uploadedFiles = await uploadFilesWithEffect(selectedFiles);
+			// Upload files using concurrent implementation
+			const uploadedFiles = await uploadFilesWithConcurrency(selectedFiles);
 
 			if (uploadedFiles.length === 0 && selectedFiles.length > 0) {
 				// All uploads failed
@@ -403,7 +392,11 @@ export default function DJSubmissionScreen() {
 							{event?.name}
 						</Typography>
 						<Typography variant="body" className="mb-1 text-neutral-300">
-							{event?.venue}
+							{typeof event?.venue === 'string'
+								? event.venue
+								: typeof event?.venue === 'object' && event?.venue
+									? `${event.venue.name}, ${event.venue.address}`
+									: 'Unknown venue'}
 						</Typography>
 						<Typography variant="caption" color="secondary">
 							{timeslot && `${formatTime(timeslot.startTime)} - ${formatTime(timeslot.endTime)}`}
@@ -501,23 +494,13 @@ export default function DJSubmissionScreen() {
 							</Typography>
 
 							<View className="flex-row gap-2">
-								<Button
-									onPress={selectImages}
-									variant="secondary"
-									size="sm"
-									className="flex-1"
-								>
+								<Button onPress={selectImages} variant="secondary" size="sm" className="flex-1">
 									<Ionicons name="image-outline" size={16} color="white" />
 									<Typography variant="button" className="ml-2 text-white">
 										Images
 									</Typography>
 								</Button>
-								<Button
-									onPress={selectVideos}
-									variant="secondary"
-									size="sm"
-									className="flex-1"
-								>
+								<Button onPress={selectVideos} variant="secondary" size="sm" className="flex-1">
 									<Ionicons name="videocam-outline" size={16} color="white" />
 									<Typography variant="button" className="ml-2 text-white">
 										Videos
@@ -567,11 +550,7 @@ export default function DJSubmissionScreen() {
 					</Card>
 
 					{/* Submit Button */}
-					<Button
-						onPress={handleSubmit}
-						disabled={isSubmitting}
-						className="mb-8"
-					>
+					<Button onPress={handleSubmit} disabled={isSubmitting} className="mb-8">
 						{isSubmitting ? (
 							<>
 								<ActivityIndicator size="small" color="white" />

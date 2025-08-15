@@ -78,8 +78,7 @@ const validateEvent = (
 	Effect.gen(function* () {
 		const event = yield* Effect.tryPromise({
 			try: () => ctx.db.get(eventId),
-			catch: (error) =>
-				new DataRetrievalError('Failed to retrieve event', 'get_event', error),
+			catch: (error) => new DataRetrievalError('Failed to retrieve event', 'get_event', error),
 		});
 
 		if (!event) {
@@ -128,7 +127,7 @@ const aggregateGuestData = (
 	timeslots: Doc<'timeslots'>[],
 	submissions: Doc<'submissions'>[]
 ): Effect.Effect<ExportData, never, never> =>
-	Effect.gen(function* () {
+	Effect.succeed((() => {
 		const timeslotMap = new Map(timeslots.map((t) => [t._id, t]));
 		const guests: Array<{
 			name: string;
@@ -172,7 +171,7 @@ const aggregateGuestData = (
 
 		// Return the aggregated data (validation removed for simplicity)
 		return exportData;
-	});
+	})());
 
 // Helper function to sanitize CSV cells against injection attacks
 const sanitizeCSVCell = (cell: string): string => {
@@ -188,7 +187,7 @@ const sanitizeCSVCell = (cell: string): string => {
 };
 
 const generateCSVData = (data: ExportData) =>
-	Effect.gen(function* () {
+	Effect.succeed((() => {
 		const headers = ['Guest Name', 'Phone', 'DJ Name', 'DJ Instagram', 'Time Slot'];
 		const rows = data.guests.map((guest) => [
 			guest.name,
@@ -208,105 +207,91 @@ const generateCSVData = (data: ExportData) =>
 			filename: `${data.event.name.replace(/[^a-zA-Z0-9]/g, '_')}_guest_list.csv`,
 			mimeType: 'text/csv',
 		};
-	});
+	})());
 
 const generateExcelData = (data: ExportData) =>
-	Effect.gen(function* () {
-		// For now, return structured data that can be processed client-side
-		// This avoids server-side Excel generation which requires additional dependencies
-		return {
-			sheets: {
-				'Guest List': {
-					headers: ['Guest Name', 'Phone', 'DJ Name', 'DJ Instagram', 'Time Slot'],
-					data: data.guests.map((guest) => [
-						guest.name,
-						guest.phone || '',
-						guest.djName,
-						guest.djInstagram,
-						guest.timeslot,
-					]),
-				},
-				'DJ Summary': {
-					headers: ['DJ Name', 'DJ Instagram', 'Time Slot', 'Guest Count'],
-					data: Object.values(
-						data.guests.reduce(
-							(acc, guest) => {
-								const key = `${guest.djName}-${guest.timeslot}`;
-								if (!acc[key]) {
-									acc[key] = {
-										djName: guest.djName,
-										djInstagram: guest.djInstagram,
-										timeslot: guest.timeslot,
-										count: 0,
-									};
-								}
-								acc[key].count++;
-								return acc;
-							},
-							{} as Record<string, any>
-						)
-					).map((dj: any) => [dj.djName, dj.djInstagram, dj.timeslot, dj.count]),
-				},
-				'Event Summary': {
-					headers: [
-						'Event Name',
-						'Date',
-						'Venue',
-						'Total Guests',
-						'Total DJs',
-						'Submitted DJs',
-					],
-					data: [
-						[
-							data.event.name,
-							data.event.date,
-							data.event.venue.name,
-							data.summary.totalGuests,
-							data.summary.totalDJs,
-							data.summary.submittedDJs,
-						],
-					],
-				},
+	Effect.succeed({
+		sheets: {
+			'Guest List': {
+				headers: ['Guest Name', 'Phone', 'DJ Name', 'DJ Instagram', 'Time Slot'],
+				data: data.guests.map((guest) => [
+					guest.name,
+					guest.phone || '',
+					guest.djName,
+					guest.djInstagram,
+					guest.timeslot,
+				]),
 			},
-			filename: `${data.event.name.replace(/[^a-zA-Z0-9]/g, '_')}_guest_list.xlsx`,
-			mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-		};
+			'DJ Summary': {
+				headers: ['DJ Name', 'DJ Instagram', 'Time Slot', 'Guest Count'],
+				data: Object.values(
+					data.guests.reduce(
+						(acc, guest) => {
+							const key = `${guest.djName}-${guest.timeslot}`;
+							if (!acc[key]) {
+								acc[key] = {
+									djName: guest.djName,
+									djInstagram: guest.djInstagram,
+									timeslot: guest.timeslot,
+									count: 0,
+								};
+							}
+							acc[key].count++;
+							return acc;
+						},
+						{} as Record<string, any>
+					)
+				).map((dj: any) => [dj.djName, dj.djInstagram, dj.timeslot, dj.count]),
+			},
+			'Event Summary': {
+				headers: ['Event Name', 'Date', 'Venue', 'Total Guests', 'Total DJs', 'Submitted DJs'],
+				data: [
+					[
+						data.event.name,
+						data.event.date,
+						data.event.venue.name,
+						data.summary.totalGuests,
+						data.summary.totalDJs,
+						data.summary.submittedDJs,
+					],
+				],
+			},
+		},
+		filename: `${data.event.name.replace(/[^a-zA-Z0-9]/g, '_')}_guest_list.xlsx`,
+		mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
 	});
 
 const generatePDFData = (data: ExportData) =>
-	Effect.gen(function* () {
-		// Structure data for client-side PDF generation
-		return {
-			event: data.event,
-			summary: data.summary,
-			guestsByDJ: Object.entries(
-				data.guests.reduce(
-					(acc, guest) => {
-						const key = `${guest.djName} (${guest.timeslot})`;
-						if (!acc[key]) {
-							acc[key] = {
-								djName: guest.djName,
-								djInstagram: guest.djInstagram,
-								timeslot: guest.timeslot,
-								guests: [],
-							};
-						}
-						acc[key].guests.push({
-							name: guest.name,
-							phone: guest.phone || '',
-						});
-						return acc;
-					},
-					{} as Record<string, any>
-				)
-			).map(([_, value]) => value),
-			filename: `${data.event.name.replace(/[^a-zA-Z0-9]/g, '_')}_guest_list.pdf`,
-			mimeType: 'application/pdf',
-		};
+	Effect.succeed({
+		event: data.event,
+		summary: data.summary,
+		guestsByDJ: Object.entries(
+			data.guests.reduce(
+				(acc, guest) => {
+					const key = `${guest.djName} (${guest.timeslot})`;
+					if (!acc[key]) {
+						acc[key] = {
+							djName: guest.djName,
+							djInstagram: guest.djInstagram,
+							timeslot: guest.timeslot,
+							guests: [],
+						};
+					}
+					acc[key].guests.push({
+						name: guest.name,
+						phone: guest.phone || '',
+					});
+					return acc;
+				},
+				{} as Record<string, any>
+			)
+		).map(([_, value]) => value),
+		filename: `${data.event.name.replace(/[^a-zA-Z0-9]/g, '_')}_guest_list.pdf`,
+		mimeType: 'application/pdf',
 	});
 
 const generateGoogleSheetsData = (data: ExportData) =>
-	Effect.gen(function* () {
+	Effect.succeed((() => {
 		const sheetsData = [
 			['Guest Name', 'Phone', 'DJ Name', 'DJ Instagram', 'Time Slot'],
 			...data.guests.map((guest) => [
@@ -324,7 +309,7 @@ const generateGoogleSheetsData = (data: ExportData) =>
 			filename: `${data.event.name.replace(/[^a-zA-Z0-9]/g, '_')}_guest_list`,
 			mimeType: 'text/plain',
 		};
-	});
+	})());
 
 // Main Effect pipeline for export operations
 const exportGuestListEffect = (
@@ -356,12 +341,8 @@ const exportGuestListEffect = (
 					: format === 'google_sheets'
 						? generateGoogleSheetsData(aggregatedData)
 						: Effect.fail(
-								new ExportDataError(
-									`Unsupported export format: ${format}`,
-									format,
-									undefined
-								)
-							);
+							new ExportDataError(`Unsupported export format: ${format}`, format, undefined)
+						);
 
 		return formatData;
 	}).pipe(
@@ -387,9 +368,7 @@ export const exportGuestListCSV = query({
 		userId: v.id('users'),
 	},
 	handler: async (ctx, args) => {
-		return await Effect.runPromise(
-			exportGuestListEffect(ctx, args.eventId, args.userId, 'csv')
-		);
+		return await Effect.runPromise(exportGuestListEffect(ctx, args.eventId, args.userId, 'csv'));
 	},
 });
 
@@ -399,9 +378,7 @@ export const exportGuestListExcel = query({
 		userId: v.id('users'),
 	},
 	handler: async (ctx, args) => {
-		return await Effect.runPromise(
-			exportGuestListEffect(ctx, args.eventId, args.userId, 'excel')
-		);
+		return await Effect.runPromise(exportGuestListEffect(ctx, args.eventId, args.userId, 'excel'));
 	},
 });
 
@@ -411,9 +388,7 @@ export const exportGuestListPDF = query({
 		userId: v.id('users'),
 	},
 	handler: async (ctx, args) => {
-		return await Effect.runPromise(
-			exportGuestListEffect(ctx, args.eventId, args.userId, 'pdf')
-		);
+		return await Effect.runPromise(exportGuestListEffect(ctx, args.eventId, args.userId, 'pdf'));
 	},
 });
 

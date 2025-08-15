@@ -10,12 +10,9 @@ This repository follows strict TDD practices. **Write tests first, then implemen
 
 ```typescript
 // ❌ Start with a test that fails
-it("should calculate event duration correctly", () => {
-  const duration = calculateEventDuration(
-    "2025-01-01T18:00",
-    "2025-01-02T04:00",
-  );
-  expect(duration).toBe("10 hours");
+it('should calculate event duration correctly', () => {
+  const duration = calculateEventDuration('2025-01-01T18:00', '2025-01-02T04:00');
+  expect(duration).toBe('10 hours');
 });
 ```
 
@@ -33,17 +30,14 @@ export function calculateEventDuration(start: string, end: string): string {
 
 ```typescript
 // ♻️ Refactor for clarity and maintainability
-export function calculateEventDuration(
-  startTime: string | Date,
-  endTime: string | Date,
-): string {
+export function calculateEventDuration(startTime: string | Date, endTime: string | Date): string {
   const start = startTime instanceof Date ? startTime : new Date(startTime);
   const end = endTime instanceof Date ? endTime : new Date(endTime);
 
   const durationMs = end.getTime() - start.getTime();
   const hours = Math.floor(durationMs / (1000 * 60 * 60));
 
-  return hours === 1 ? "1 hour" : `${hours} hours`;
+  return hours === 1 ? '1 hour' : `${hours} hours`;
 }
 ```
 
@@ -72,20 +66,20 @@ describe('EventCard', () => {
 
 ```typescript
 // packages/backend/__tests__/events.test.ts
-import { test, expect } from "vitest";
-import { ConvexTestingHelper } from "@convex-dev/testing";
-import schema from "../convex/schema";
+import { test, expect } from 'vitest';
+import { ConvexTestingHelper } from '@convex-dev/testing';
+import schema from '../convex/schema';
 
-test("should create event with timeslots", async () => {
+test('should create event with timeslots', async () => {
   const t = new ConvexTestingHelper(schema);
 
-  const eventId = await t.mutation("events.create", {
-    name: "Test Event",
-    date: "2025-02-01",
+  const eventId = await t.mutation('events.create', {
+    name: 'Test Event',
+    date: '2025-02-01',
     slots: 3,
   });
 
-  const event = await t.query("events.get", { id: eventId });
+  const event = await t.query('events.get', { id: eventId });
   expect(event.timeslots).toHaveLength(3);
 });
 ```
@@ -206,17 +200,17 @@ export function renderWithProviders(ui: React.ReactElement) {
 ```typescript
 // test-utils/factories.ts
 export const createMockEvent = (overrides = {}) => ({
-  _id: "event_123",
-  name: "Test Event",
-  date: "2025-02-01",
-  venue: "Test Venue",
+  _id: 'event_123',
+  name: 'Test Event',
+  date: '2025-02-01',
+  venue: 'Test Venue',
   ...overrides,
 });
 
 export const createMockUser = (overrides = {}) => ({
-  _id: "user_123",
-  email: "test@example.com",
-  name: "Test User",
+  _id: 'user_123',
+  email: 'test@example.com',
+  name: 'Test User',
   ...overrides,
 });
 ```
@@ -302,12 +296,12 @@ open coverage/index.html
 
 ```typescript
 // Test first
-describe("POST /api/events", () => {
-  it("should validate required fields", async () => {
-    const response = await request(app).post("/api/events").send({ name: "" });
+describe('POST /api/events', () => {
+  it('should validate required fields', async () => {
+    const response = await request(app).post('/api/events').send({ name: '' });
 
     expect(response.status).toBe(400);
-    expect(response.body.error).toContain("Name is required");
+    expect(response.body.error).toContain('Name is required');
   });
 });
 ```
@@ -316,13 +310,13 @@ describe("POST /api/events", () => {
 
 ```typescript
 // Test first
-describe("EventForm validation", () => {
-  it("should require future date", () => {
+describe('EventForm validation', () => {
+  it('should require future date', () => {
     const yesterday = new Date();
     yesterday.setDate(yesterday.getDate() - 1);
 
     const result = validateEventDate(yesterday);
-    expect(result.error).toBe("Event date must be in the future");
+    expect(result.error).toBe('Event date must be in the future');
   });
 });
 ```
@@ -331,12 +325,12 @@ describe("EventForm validation", () => {
 
 ```typescript
 // Test first
-describe("AuthContext", () => {
-  it("should persist session across refreshes", async () => {
+describe('AuthContext', () => {
+  it('should persist session across refreshes', async () => {
     const { result, rerender } = renderHook(() => useAuth());
 
     await act(async () => {
-      await result.current.signIn("test@example.com", "password");
+      await result.current.signIn('test@example.com', 'password');
     });
 
     rerender();

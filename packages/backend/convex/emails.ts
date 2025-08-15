@@ -226,15 +226,15 @@ export const sendActionRequiredEmail = internalAction({
         </div>
         
         ${
-			context.feedback
-				? `
+					context.feedback
+						? `
         <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin: 20px 0;">
           <h4 style="margin: 0 0 10px 0; color: #333;">Organizer Feedback:</h4>
           <p style="margin: 0; color: #555;">${context.feedback}</p>
         </div>
         `
-				: ''
-		}
+						: ''
+				}
         
         <p>Please:</p>
         <ul style="color: #555;">
@@ -330,10 +330,10 @@ export const sendEventReminderEmail = internalAction({
         <p>Hi ${context.djName},</p>
         
         <p>${
-			context.daysUntilEvent === 1
-				? `<strong>Your performance is tomorrow!</strong>`
-				: `This is a reminder that you're performing at <strong>${context.eventName}</strong> in ${context.daysUntilEvent} days!`
-		}</p>
+					context.daysUntilEvent === 1
+						? `<strong>Your performance is tomorrow!</strong>`
+						: `This is a reminder that you're performing at <strong>${context.eventName}</strong> in ${context.daysUntilEvent} days!`
+				}</p>
         
         <div style="background: linear-gradient(135deg, #E946FF 0%, #9333EA 100%); color: white; padding: 20px; border-radius: 8px; margin: 20px 0;">
           <h3 style="margin: 0 0 10px 0;">Performance Details:</h3>

@@ -42,9 +42,7 @@ export const CardDescription = React.forwardRef<Text, React.ComponentProps<typeo
 CardDescription.displayName = 'CardDescription';
 
 export const CardContent = React.forwardRef<View, React.ComponentProps<typeof View>>(
-	({ className, ...props }, ref) => (
-		<View ref={ref} className={cn('p-6', className)} {...props} />
-	)
+	({ className, ...props }, ref) => <View ref={ref} className={cn('p-6', className)} {...props} />
 );
 CardContent.displayName = 'CardContent';
 

@@ -35,8 +35,7 @@ export default function AuthScreen() {
 						accessibilityRole="text"
 						accessibilityHint="Application description"
 					>
-						Sign in to create events, manage DJ lineups, and connect with the music
-						community
+						Sign in to create events, manage DJ lineups, and connect with the music community
 					</Text>
 				</View>
 
@@ -110,9 +109,7 @@ export default function AuthScreen() {
 							color={themeColors.neutral[500]}
 							accessibilityElementsHidden={true}
 						/>
-						<Text style={styles.instagramButtonText}>
-							Continue with Instagram (Coming Soon)
-						</Text>
+						<Text style={styles.instagramButtonText}>Continue with Instagram (Coming Soon)</Text>
 					</TouchableOpacity>
 				</View>
 

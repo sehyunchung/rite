@@ -138,9 +138,7 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
 	};
 
 	const updateTimeslot = (id: string, field: keyof Timeslot, value: string) => {
-		setTimeslots(
-			timeslots.map((slot) => (slot.id === id ? { ...slot, [field]: value } : slot))
-		);
+		setTimeslots(timeslots.map((slot) => (slot.id === id ? { ...slot, [field]: value } : slot)));
 
 		// Clear field-specific errors when user starts typing
 		const errorKey = `timeslot-${id}-${field}`;
@@ -182,19 +180,13 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
 		if (dateError) newErrors.date = dateError;
 
 		// Enhanced deadline validation with business rule suggestions
-		const guestValidation = validateGuestListDeadline(
-			formData.deadlines.guestList,
-			formData.date
-		);
+		const guestValidation = validateGuestListDeadline(formData.deadlines.guestList, formData.date);
 		if (!guestValidation.isValid && guestValidation.error) {
 			newErrors.guestListDeadline = guestValidation.error;
 		}
 
 		// Validate promo materials deadline
-		const promoValidation = validatePromoDeadline(
-			formData.deadlines.promoMaterials,
-			formData.date
-		);
+		const promoValidation = validatePromoDeadline(formData.deadlines.promoMaterials, formData.date);
 		if (!promoValidation.isValid && promoValidation.error) {
 			newErrors.promoDeadline = promoValidation.error;
 		}
@@ -224,8 +216,7 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
 		timeslots.forEach((slot, index) => {
 			const slotValidation = validateTimeslot(slot);
 			if (slotValidation instanceof Error) {
-				newErrors[`timeslot-${slot.id}`] =
-					`Timeslot ${index + 1}: ${slotValidation.message}`;
+				newErrors[`timeslot-${slot.id}`] = `Timeslot ${index + 1}: ${slotValidation.message}`;
 			}
 
 			// Validate time range
@@ -262,10 +253,8 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
 					const end2 = new Date(`2000-01-01T${slot2.endTime}:00`);
 
 					if (start1 < end2 && end1 > start2) {
-						newErrors[`timeslot-${slot1.id}-overlap`] =
-							`Overlaps with another timeslot`;
-						newErrors[`timeslot-${slot2.id}-overlap`] =
-							`Overlaps with another timeslot`;
+						newErrors[`timeslot-${slot1.id}-overlap`] = `Overlaps with another timeslot`;
+						newErrors[`timeslot-${slot2.id}-overlap`] = `Overlaps with another timeslot`;
 					}
 				}
 			}
@@ -363,10 +352,7 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
 	};
 
 	return (
-		<form
-			onSubmit={(e) => void handleSubmit(e)}
-			className="space-y-4 sm:space-y-6 lg:space-y-8"
-		>
+		<form onSubmit={(e) => void handleSubmit(e)} className="space-y-4 sm:space-y-6 lg:space-y-8">
 			{/* Basic Event Information */}
 			<Card>
 				<CardHeader>
@@ -388,9 +374,7 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
 								className={errors.event ? 'border-red-500' : ''}
 								required
 							/>
-							{errors.event && (
-								<p className="text-sm text-red-500 mt-1">{errors.event}</p>
-							)}
+							{errors.event && <p className="text-sm text-red-500 mt-1">{errors.event}</p>}
 						</div>
 						<div className="space-y-2">
 							<Label htmlFor="eventDate">{t('eventDate')}</Label>
@@ -405,9 +389,7 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
 								className={errors.date ? 'border-red-500' : ''}
 								required
 							/>
-							{errors.date && (
-								<p className="text-sm text-red-500 mt-1">{errors.date}</p>
-							)}
+							{errors.date && <p className="text-sm text-red-500 mt-1">{errors.date}</p>}
 						</div>
 					</div>
 
@@ -417,9 +399,7 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
 							id="description"
 							placeholder={t('descriptionPlaceholder')}
 							value={formData.description}
-							onChange={(e) =>
-								setFormData({ ...formData, description: e.target.value })
-							}
+							onChange={(e) => setFormData({ ...formData, description: e.target.value })}
 							rows={3}
 						/>
 					</div>
@@ -585,9 +565,7 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
 									min="0"
 									required
 								/>
-								<p className="text-sm text-muted-foreground">
-									{t('guestLimitDescription')}
-								</p>
+								<p className="text-sm text-muted-foreground">{t('guestLimitDescription')}</p>
 							</div>
 						</div>
 					</CardContent>
@@ -626,9 +604,7 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
 								<p className="text-sm text-red-500 mt-1">{errors.promoDeadline}</p>
 							)}
 							{suggestions.promoDeadline && !errors.promoDeadline && (
-								<p className="text-sm text-blue-600 mt-1">
-									💡 {suggestions.promoDeadline}
-								</p>
+								<p className="text-sm text-blue-600 mt-1">💡 {suggestions.promoDeadline}</p>
 							)}
 						</div>
 						<div className="space-y-2">
@@ -652,14 +628,10 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
 								required
 							/>
 							{errors.guestListDeadline && (
-								<p className="text-sm text-red-500 mt-1">
-									{errors.guestListDeadline}
-								</p>
+								<p className="text-sm text-red-500 mt-1">{errors.guestListDeadline}</p>
 							)}
 							{suggestions.guestListDeadline && !errors.guestListDeadline && (
-								<p className="text-sm text-blue-600 mt-1">
-									💡 {suggestions.guestListDeadline}
-								</p>
+								<p className="text-sm text-blue-600 mt-1">💡 {suggestions.guestListDeadline}</p>
 							)}
 						</div>
 					</div>
@@ -681,10 +653,7 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
 				</CardHeader>
 				<CardContent className="space-y-3 sm:space-y-4">
 					{timeslots.map((slot, index) => (
-						<div
-							key={slot.id}
-							className="border rounded-lg p-3 sm:p-4 space-y-3 sm:space-y-4"
-						>
+						<div key={slot.id} className="border rounded-lg p-3 sm:p-4 space-y-3 sm:space-y-4">
 							<div className="flex justify-between items-center">
 								<h4 className="font-medium">Timeslot {index + 1}</h4>
 								<Button
@@ -703,9 +672,7 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
 									<Input
 										type="time"
 										value={slot.startTime}
-										onChange={(e) =>
-											updateTimeslot(slot.id, 'startTime', e.target.value)
-										}
+										onChange={(e) => updateTimeslot(slot.id, 'startTime', e.target.value)}
 										className={
 											errors[`timeslot-${slot.id}-time`] ||
 											errors[`timeslot-${slot.id}-overlap`] ||
@@ -730,9 +697,7 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
 									<Input
 										type="time"
 										value={slot.endTime}
-										onChange={(e) =>
-											updateTimeslot(slot.id, 'endTime', e.target.value)
-										}
+										onChange={(e) => updateTimeslot(slot.id, 'endTime', e.target.value)}
 										required
 									/>
 								</div>
@@ -741,14 +706,8 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
 									<Input
 										placeholder="DJ Name (optional)"
 										value={slot.djName}
-										onChange={(e) =>
-											updateTimeslot(slot.id, 'djName', e.target.value)
-										}
-										className={
-											errors[`timeslot-${slot.id}-djName`]
-												? 'border-red-500'
-												: ''
-										}
+										onChange={(e) => updateTimeslot(slot.id, 'djName', e.target.value)}
+										className={errors[`timeslot-${slot.id}-djName`] ? 'border-red-500' : ''}
 									/>
 									{errors[`timeslot-${slot.id}-djName`] && (
 										<p className="text-xs text-red-500 mt-1">
@@ -761,14 +720,8 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
 									<Input
 										placeholder="@username"
 										value={slot.djInstagram}
-										onChange={(e) =>
-											updateTimeslot(slot.id, 'djInstagram', e.target.value)
-										}
-										className={
-											errors[`timeslot-${slot.id}-instagram`]
-												? 'border-red-500'
-												: ''
-										}
+										onChange={(e) => updateTimeslot(slot.id, 'djInstagram', e.target.value)}
+										className={errors[`timeslot-${slot.id}-instagram`] ? 'border-red-500' : ''}
 									/>
 									{errors[`timeslot-${slot.id}-instagram`] && (
 										<p className="text-xs text-red-500 mt-1">
@@ -780,12 +733,7 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
 						</div>
 					))}
 
-					<Button
-						type="button"
-						variant="outline"
-						onClick={addTimeslot}
-						className="w-full"
-					>
+					<Button type="button" variant="outline" onClick={addTimeslot} className="w-full">
 						{t('addTimeslot')}
 					</Button>
 
@@ -802,9 +750,7 @@ export function EventCreationForm({ onEventCreated }: EventCreationFormProps) {
 				<Card className="border-red-200 bg-red-50">
 					<CardContent className="pt-6">
 						<div className="space-y-2">
-							<h4 className="font-medium text-red-800">
-								Please fix the following errors:
-							</h4>
+							<h4 className="font-medium text-red-800">Please fix the following errors:</h4>
 							<ul className="text-sm text-red-700 space-y-1">
 								{Object.entries(errors).map(([key, message]) => (
 									<li key={key}>• {message}</li>

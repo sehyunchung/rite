@@ -610,9 +610,7 @@ export const djPhoneValidator = (phone: string): ValidationResult => {
 // Composite validator for the entire event form
 export function useEventFormValidation(initialData: Partial<EventFormData>) {
 	const [eventDate, setEventDate] = React.useState(initialData.date || '');
-	const [guestDeadline, setGuestDeadline] = React.useState(
-		initialData.deadlines?.guestList || ''
-	);
+	const [guestDeadline, setGuestDeadline] = React.useState(initialData.deadlines?.guestList || '');
 
 	const name = useProgressiveValidation(initialData.name || '', [eventNameValidator], 300);
 

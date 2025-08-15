@@ -23,10 +23,7 @@ export const POSTHOG_CONFIG = {
 		sanitize_properties: (properties: any, event: string) => {
 			// Remove sensitive data
 			if (properties.$current_url) {
-				properties.$current_url = properties.$current_url.replace(
-					/token=[^&]+/g,
-					'token=***'
-				);
+				properties.$current_url = properties.$current_url.replace(/token=[^&]+/g, 'token=***');
 			}
 			if (properties.url) {
 				properties.url = properties.url.replace(/token=[^&]+/g, 'token=***');

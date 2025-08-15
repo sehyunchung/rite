@@ -21,17 +21,16 @@ mkdir .storybook
 #### Configuration
 
 Create `.storybook/main.js`:
+
 ```javascript
 module.exports = {
   stories: ['../visual-tests/**/*.stories.@(js|jsx|ts|tsx)'],
-  addons: [
-    '@storybook/addon-ondevice-controls',
-    '@storybook/addon-ondevice-actions',
-  ],
+  addons: ['@storybook/addon-ondevice-controls', '@storybook/addon-ondevice-actions'],
 };
 ```
 
 Create `.storybook/preview.js`:
+
 ```javascript
 import { withBackgrounds } from '@storybook/addon-ondevice-backgrounds';
 
@@ -78,7 +77,7 @@ describe('Button Visual Tests', () => {
 
   it('renders all button variants', () => {
     const variants = ['default', 'destructive', 'outline', 'secondary', 'ghost'] as const;
-    
+
     variants.forEach(variant => {
       const { toJSON } = render(
         <Button variant={variant} onPress={() => {}}>
@@ -142,13 +141,14 @@ pnpm add -D @playwright/test
 #### Configuration
 
 Create `playwright.config.ts`:
+
 ```typescript
 import { defineConfig, devices } from '@playwright/test';
 
 export default defineConfig({
   testDir: './visual-tests/web',
   outputDir: './visual-tests/web/results',
-  
+
   use: {
     baseURL: 'http://localhost:8081',
     screenshot: 'only-on-failure',
@@ -157,14 +157,14 @@ export default defineConfig({
   projects: [
     {
       name: 'Mobile Chrome',
-      use: { 
+      use: {
         ...devices['Pixel 5'],
         hasTouch: true,
       },
     },
     {
       name: 'Mobile Safari',
-      use: { 
+      use: {
         ...devices['iPhone 12'],
         hasTouch: true,
       },
@@ -193,13 +193,13 @@ test.describe('Mobile Web Visual Tests', () => {
 
   test('all themes render correctly', async ({ page }) => {
     const themes = ['joshComeau', 'joshComeauLight'];
-    
+
     for (const theme of themes) {
       await page.evaluate((themeName) => {
         localStorage.setItem('rite-theme', themeName);
         window.location.reload();
       }, theme);
-      
+
       await page.waitForLoadState('networkidle');
       await expect(page).toHaveScreenshot(`theme-${theme}.png`);
     }
@@ -216,6 +216,7 @@ For the RITE mobile app, I recommend:
 3. **E2E Testing**: Detox for critical user flows
 
 This combination provides:
+
 - Fast feedback during development (snapshots)
 - Visual regression catching (Playwright)
 - Real device testing (Detox)

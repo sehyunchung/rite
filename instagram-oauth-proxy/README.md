@@ -42,8 +42,9 @@ wrangler secret put RITE_APP_URL
 ```
 
 Environment variables:
+
 - `INSTAGRAM_CLIENT_ID`: Your Instagram app client ID
-- `INSTAGRAM_CLIENT_SECRET`: Your Instagram app client secret  
+- `INSTAGRAM_CLIENT_SECRET`: Your Instagram app client secret
 - `RITE_APP_URL`: Your main Rite app URL (e.g., `https://app.rite.com`)
 
 ### 4. Deploy
@@ -106,6 +107,7 @@ curl http://localhost:8787/.well-known/openid-configuration
 ## Production Deployment
 
 The proxy is deployed to Cloudflare Workers for:
+
 - Global edge performance
 - Automatic scaling
 - 99.9% uptime SLA

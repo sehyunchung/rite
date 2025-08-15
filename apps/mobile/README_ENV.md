@@ -33,6 +33,7 @@ pnpm start
 ## Troubleshooting
 
 If you see "EXPO_PUBLIC_CONVEX_URL is required but not set":
+
 1. Ensure your `.env` file exists in `apps/mobile`
 2. Restart the Expo development server after adding the `.env` file
 3. Clear the Expo cache: `npx expo start -c`

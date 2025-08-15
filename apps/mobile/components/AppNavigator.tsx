@@ -16,11 +16,7 @@ export default function AppNavigator() {
 				accessibilityRole="progressbar"
 				accessibilityLabel="Loading application"
 			>
-				<Text
-					className="text-brand-primary text-2xl"
-					accessible={true}
-					accessibilityRole="text"
-				>
+				<Text className="text-brand-primary text-2xl" accessible={true} accessibilityRole="text">
 					Loading...
 				</Text>
 			</View>

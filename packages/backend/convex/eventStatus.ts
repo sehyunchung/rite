@@ -289,8 +289,7 @@ export function getAvailableActions(
 				action: 'CANCEL_EVENT',
 				variant: 'destructive',
 				confirmRequired: true,
-				confirmMessage:
-					'Are you sure you want to cancel this event? All submissions will be lost.',
+				confirmMessage: 'Are you sure you want to cancel this event? All submissions will be lost.',
 			});
 			break;
 

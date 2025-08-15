@@ -77,7 +77,7 @@ import { Button, Card, LoadingIndicator } from '@rite/ui';
   <Button onPress={handlePress} variant="primary">
     Submit
   </Button>
-</Card>
+</Card>;
 ```
 
 ## Styling with NativeWind
@@ -88,10 +88,8 @@ NativeWind enables Tailwind CSS classes in React Native:
 import { View, Text } from 'react-native';
 
 <View className="flex-1 items-center justify-center p-4">
-  <Text className="text-2xl font-bold text-gray-900">
-    Welcome to RITE
-  </Text>
-</View>
+  <Text className="text-2xl font-bold text-gray-900">Welcome to RITE</Text>
+</View>;
 ```
 
 ## Backend Integration
@@ -104,19 +102,15 @@ import { api } from '@rite/backend/convex/_generated/api';
 
 function EventsList() {
   const events = useQuery(api.events.list);
-  
-  return (
-    <FlatList
-      data={events}
-      renderItem={({ item }) => <EventCard event={item} />}
-    />
-  );
+
+  return <FlatList data={events} renderItem={({ item }) => <EventCard event={item} />} />;
 }
 ```
 
 ## Authentication
 
 ⚠️ **Note**: Authentication is not yet implemented for mobile. Options being considered:
+
 - Convex Auth (Beta) - Native mobile support
 - Clerk - Easy integration with Expo
 - Custom implementation with magic links
@@ -129,25 +123,28 @@ For production builds, configure in `app.json` or `app.config.js`:
 export default {
   expo: {
     extra: {
-      convexUrl: process.env.EXPO_PUBLIC_CONVEX_URL
-    }
-  }
+      convexUrl: process.env.EXPO_PUBLIC_CONVEX_URL,
+    },
+  },
 };
 ```
 
 ## Building for Production
 
 ### iOS
+
 ```bash
 npx expo build:ios
 ```
 
 ### Android
+
 ```bash
 npx expo build:android
 ```
 
 ### EAS Build (Recommended)
+
 ```bash
 npx eas-cli build --platform all
 ```
@@ -162,6 +159,7 @@ npx eas-cli build --platform all
 ## Troubleshooting
 
 ### Metro Configuration
+
 The `metro.config.js` is configured for monorepo support. If you encounter module resolution issues:
 
 1. Clear Metro cache: `npx expo start --clear`
@@ -169,6 +167,7 @@ The `metro.config.js` is configured for monorepo support. If you encounter modul
 3. Reinstall dependencies: `pnpm install`
 
 ### NativeWind Issues
+
 If Tailwind classes aren't working:
 
 1. Check `tailwind.config.js` includes all source paths
@@ -250,6 +249,7 @@ EXPO_PUBLIC_WEB_URL=https://your-production-url.vercel.app  # Optional, for OAut
 ### Web-Specific Configuration
 
 The app uses:
+
 - Static output for better performance
 - Metro bundler for web compatibility
 - Responsive design with `@rite/ui` components
@@ -258,6 +258,7 @@ The app uses:
 ### Web Limitations
 
 Some features may not work on web:
+
 - Native device APIs (camera, biometrics)
 - Push notifications (use web push instead)
 - Deep linking (use standard web URLs)

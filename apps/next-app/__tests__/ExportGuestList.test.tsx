@@ -11,12 +11,7 @@ describe('CSV Export Security', () => {
 				return `'${cell}`;
 			}
 			// Handle quotes and commas
-			if (
-				cell.includes(',') ||
-				cell.includes('"') ||
-				cell.includes('\n') ||
-				cell.includes('\r')
-			) {
+			if (cell.includes(',') || cell.includes('"') || cell.includes('\n') || cell.includes('\r')) {
 				return `"${cell.replace(/"/g, '""')}"`;
 			}
 			return cell;

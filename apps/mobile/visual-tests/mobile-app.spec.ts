@@ -122,9 +122,7 @@ test.describe('RITE Mobile Visual Tests', () => {
 		await page.goto('/events');
 
 		// Capture any loading indicators if visible
-		const loadingIndicator = page
-			.locator('[role="progressbar"]')
-			.or(page.locator('text=Loading'));
+		const loadingIndicator = page.locator('[role="progressbar"]').or(page.locator('text=Loading'));
 
 		if (await loadingIndicator.isVisible()) {
 			await expect(loadingIndicator).toHaveScreenshot('loading-state.png');

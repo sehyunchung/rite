@@ -219,9 +219,7 @@ const Dropzone = ({
 						</p>
 					)}
 					{maxSize && (
-						<p className="text-xs text-gray-400">
-							Maximum file size: {formatBytes(maxSize)}
-						</p>
+						<p className="text-xs text-gray-400">Maximum file size: {formatBytes(maxSize)}</p>
 					)}
 				</div>
 			)}
@@ -270,7 +268,7 @@ const useDropzoneContext = () => {
 };
 
 // Default export with all components and types
- 
+
 export default {
 	Dropzone,
 	DropzoneProvider,

@@ -3,7 +3,7 @@
  */
 export declare const MAX_FILE_SIZE: number;
 export declare const ALLOWED_FILE_TYPES: readonly ["image/jpeg", "image/png", "image/gif", "image/webp", "video/mp4", "video/mov", "video/avi", "video/quicktime", "application/pdf"];
-export type AllowedFileType = typeof ALLOWED_FILE_TYPES[number];
+export type AllowedFileType = (typeof ALLOWED_FILE_TYPES)[number];
 export interface FileValidationResult {
     isValid: boolean;
     error?: string;

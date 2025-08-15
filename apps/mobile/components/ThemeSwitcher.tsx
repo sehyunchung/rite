@@ -158,11 +158,7 @@ export function CompactThemeSwitcher() {
 				<Typography variant="button" color="default" className="mr-2">
 					{currentThemeData?.name || 'Theme'}
 				</Typography>
-				<Ionicons
-					name={showOptions ? 'chevron-up' : 'chevron-down'}
-					size={16}
-					color="#8C8CA3"
-				/>
+				<Ionicons name={showOptions ? 'chevron-up' : 'chevron-down'} size={16} color="#8C8CA3" />
 			</TouchableOpacity>
 
 			{showOptions && (

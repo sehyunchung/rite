@@ -100,8 +100,7 @@ export function DatePicker({
 					className="bg-neutral-700 border border-neutral-600 rounded-xl h-12 px-4 text-white placeholder-neutral-400 focus:border-brand-primary focus:outline-none w-full"
 					placeholder={placeholder}
 					aria-label={
-						accessibilityLabel ||
-						`Date selector. Currently selected: ${formatDate(value)}`
+						accessibilityLabel || `Date selector. Currently selected: ${formatDate(value)}`
 					}
 					title={accessibilityHint || 'Select a date'}
 					style={

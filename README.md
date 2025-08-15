@@ -87,18 +87,21 @@ Both applications use the **SUIT Variable font**, a modern Korean/English typefa
 ### Font Configuration
 
 **Next.js App** (`apps/next-app/`):
+
 - Font file: `/app/lib/SUIT-Variable.woff2`
 - Configuration: `/app/lib/fonts.ts` with `next/font/local`
 - CSS Variable: `--font-suit` available globally
 - Tailwind Class: `font-suit` available in components
 
 **Mobile App** (`apps/mobile/`):
+
 - System fonts with Korean/English support
 - NativeWind for consistent styling with web
 
 ### Usage Examples
 
 **Next.js with Tailwind:**
+
 ```tsx
 // Use Tailwind font class
 <h1 className="font-suit font-bold text-2xl">
@@ -112,12 +115,11 @@ Both applications use the **SUIT Variable font**, a modern Korean/English typefa
 ```
 
 **React Native with NativeWind:**
+
 ```tsx
 import { Text } from 'react-native';
 
-<Text className="text-2xl font-bold">
-  한국어 + English Heading
-</Text>
+<Text className="text-2xl font-bold">한국어 + English Heading</Text>;
 ```
 
 ### Performance Benefits
@@ -132,6 +134,7 @@ import { Text } from 'react-native';
 The `@rite/ui` package provides cross-platform UI components with platform-specific implementations:
 
 ### Component Structure
+
 ```
 packages/ui/src/components/
 ├── button/
@@ -142,12 +145,14 @@ packages/ui/src/components/
 ```
 
 ### Available Components
+
 - **Basic**: Button, Input, Label, Textarea, Badge, Card
 - **Layout**: Select, Alert, AlertDialog
 - **Feedback**: LoadingIndicator, FullScreenLoading
 - **Advanced**: Dropzone (file upload), QRCode
 
 ### Usage
+
 ```tsx
 // Same import works for both web and mobile
 import { Button, Card, LoadingIndicator } from '@rite/ui';
@@ -155,12 +160,13 @@ import { Button, Card, LoadingIndicator } from '@rite/ui';
 // Components automatically use platform-specific implementation
 <Button variant="primary" onPress={handlePress}>
   Submit
-</Button>
+</Button>;
 ```
 
 ## Font Assets
 
 The SUIT Variable font is used in the Next.js web app:
+
 - **Location**: `/apps/next-app/app/lib/SUIT-Variable.woff2`
 - **Size**: ~50KB with variable weights (100-900)
 - **Support**: Full Korean Hangul + Latin characters

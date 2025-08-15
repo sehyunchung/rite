@@ -57,17 +57,17 @@ describe('File Upload Integration Tests', () => {
 		// Mock storage.get for file validation
 		vi.mocked(mockMutationCtx.storage.get).mockImplementation(async (storageId) => {
 			// Return valid magic numbers based on the file type
-			if (storageId === 'valid-jpeg-file' as Id<'_storage'>) {
+			if (storageId === ('valid-jpeg-file' as Id<'_storage'>)) {
 				return new Blob([new Uint8Array([0xff, 0xd8, 0xff, 0xe0])], {
 					type: 'image/jpeg',
 				});
 			}
-			if (storageId === 'valid-png-file' as Id<'_storage'>) {
+			if (storageId === ('valid-png-file' as Id<'_storage'>)) {
 				return new Blob([new Uint8Array([0x89, 0x50, 0x4e, 0x47])], {
 					type: 'image/png',
 				});
 			}
-			if (storageId === 'valid-mp4-file' as Id<'_storage'>) {
+			if (storageId === ('valid-mp4-file' as Id<'_storage'>)) {
 				return new Blob([new Uint8Array([0x00, 0x00, 0x00, 0x00, 0x66, 0x74, 0x79, 0x70])], {
 					type: 'video/mp4',
 				});
@@ -293,7 +293,7 @@ describe('File Upload Integration Tests', () => {
 		it('should validate file content integrity with magic numbers', async () => {
 			// Mock storage.get to return mismatched content
 			vi.mocked(mockMutationCtx.storage.get).mockImplementation(async (storageId) => {
-				if (storageId === 'fake-jpeg-file' as Id<'_storage'>) {
+				if (storageId === ('fake-jpeg-file' as Id<'_storage'>)) {
 					// Return executable magic number instead of JPEG
 					return new Blob([new Uint8Array([0x4d, 0x5a, 0x90, 0x00])], {
 						type: 'image/jpeg',
@@ -389,7 +389,7 @@ describe('File Upload Integration Tests', () => {
 			const invalidCaseTypes = [
 				'IMAGE/JPEG',
 				'Image/Jpeg',
-				'image/JPEG', 
+				'image/JPEG',
 				'APPLICATION/PDF',
 				'Video/MP4',
 			];
@@ -408,7 +408,7 @@ describe('File Upload Integration Tests', () => {
 
 			// Test that correct lowercase types still work
 			const validTypes = ['image/jpeg', 'application/pdf', 'video/mp4'];
-			
+
 			for (const fileType of validTypes) {
 				const args = {
 					fileType,
