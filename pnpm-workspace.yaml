@@ -1,3 +1,10 @@
 packages:
-  - 'apps/*'
-  - 'packages/*'
+  - apps/*
+  - packages/*
+
+onlyBuiltDependencies:
+  - core-js
+  - esbuild
+  - msw
+  - sharp
+  - unrs-resolver
