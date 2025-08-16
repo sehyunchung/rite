@@ -23,6 +23,16 @@ import {
 	type Platform,
 } from '@rite/shared-types';
 
+// Utility to sanitize error messages in production
+const sanitizeError = (error: unknown, fallbackMessage: string): unknown => {
+	// In development, expose full error details for debugging
+	if (typeof process !== 'undefined' && process.env.NODE_ENV === 'development') {
+		return error;
+	}
+	// In production, only return generic message to prevent information leakage
+	return fallbackMessage;
+};
+
 // Web Crypto utilities
 const isWebCryptoSupported = (): boolean => {
 	return (
@@ -34,9 +44,53 @@ const isWebCryptoSupported = (): boolean => {
 };
 
 const detectWebPlatform = (): Platform => {
-	if (typeof window !== 'undefined' && typeof document !== 'undefined') {
+	// More robust platform detection logic
+	// Check for Node.js/server environment first
+	if (typeof window === 'undefined' || typeof document === 'undefined') {
+		return 'unknown';
+	}
+
+	// Check for mobile-specific indicators
+	const userAgent = window.navigator?.userAgent?.toLowerCase() || '';
+	const isMobileUserAgent = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(userAgent);
+	
+	// Check for mobile viewport characteristics
+	const isMobileViewport = window.screen?.width <= 768 && window.screen?.height <= 1024;
+	
+	// Check for touch capability
+	const hasTouchCapability = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+	
+	// Check for mobile-specific APIs or environments
+	const hasDeviceMotion = 'DeviceMotionEvent' in window;
+	const hasDeviceOrientation = 'DeviceOrientationEvent' in window;
+	
+	// Expo/React Native WebView detection
+	const windowAny = window as any;
+	const isExpoWebView = !!windowAny.expo || !!windowAny.ReactNativeWebView;
+	
+	// Cordova/PhoneGap detection
+	const isCordova = !!windowAny.cordova || !!windowAny.phonegap;
+	
+	// Capacitor detection (Ionic)
+	const isCapacitor = !!windowAny.Capacitor;
+	
+	// If any mobile indicators are present, classify as mobile
+	if (
+		isMobileUserAgent ||
+		isExpoWebView ||
+		isCordova ||
+		isCapacitor ||
+		(isMobileViewport && hasTouchCapability && (hasDeviceMotion || hasDeviceOrientation))
+	) {
+		return 'mobile';
+	}
+	
+	// If we have a proper browser environment with DOM, classify as web
+	if (window.location && window.history && typeof document.createElement === 'function') {
 		return 'web';
 	}
+	
+	// Fallback for unknown environments
 	return 'unknown';
 };
 
@@ -167,7 +221,7 @@ const WebCryptoProvider = Layer.succeed(
 						catch: (error) =>
 							new EncryptionError({
 								message: 'Encryption failed',
-								cause: error,
+								cause: sanitizeError(error, 'Encryption operation failed'),
 							}),
 					})
 				),
@@ -193,22 +247,11 @@ const WebCryptoProvider = Layer.succeed(
 				Effect.bind('cryptoKey', () =>
 					key
 						? Effect.succeed(key)
-						: Effect.tryPromise({
-								try: () =>
-									window.crypto.subtle.generateKey(
-										{
-											name: 'AES-GCM',
-											length: DEFAULT_CRYPTO_CONFIG.keyLength,
-										},
-										false, // not extractable for security
-										['encrypt', 'decrypt']
-									),
-								catch: (error) =>
-									new KeyDerivationError({
-										message: 'Key generation failed',
-										cause: error,
-									}),
-							})
+						: Effect.fail(
+								new DecryptionError({
+									message: 'Decryption key required but not provided',
+								})
+							)
 				),
 				Effect.bind('encryptedBytes', () =>
 					Effect.try({
@@ -270,7 +313,7 @@ const WebCryptoProvider = Layer.succeed(
 						catch: (error) =>
 							new DecryptionError({
 								message: 'Decryption failed',
-								cause: error,
+								cause: sanitizeError(error, 'Decryption operation failed'),
 							}),
 					})
 				),
@@ -291,7 +334,7 @@ const WebCryptoProvider = Layer.succeed(
 				catch: (error) =>
 					new KeyDerivationError({
 						message: 'Key generation failed',
-						cause: error,
+						cause: sanitizeError(error, 'Key generation operation failed'),
 					}),
 			}),
 
@@ -311,7 +354,7 @@ const WebCryptoProvider = Layer.succeed(
 						catch: (error) =>
 							new KeyDerivationError({
 								message: 'Failed to import password',
-								cause: error,
+								cause: sanitizeError(error, 'Password import operation failed'),
 							}),
 					})
 				),
@@ -336,7 +379,7 @@ const WebCryptoProvider = Layer.succeed(
 						catch: (error) =>
 							new KeyDerivationError({
 								message: 'Key derivation failed',
-								cause: error,
+								cause: sanitizeError(error, 'Key derivation operation failed'),
 							}),
 					})
 				)
