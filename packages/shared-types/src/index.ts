@@ -9,6 +9,9 @@ export * from './file-validation';
 // Export Effect-based file upload utilities
 export * from './file-upload-effect';
 
+// Export Effect-based crypto utilities
+export * from './crypto-effects';
+
 export interface Event {
 	id: string;
 	name: string;

@@ -1,5 +1,5 @@
 {
-	"buildCommand": "pnpm expo export -p web",
+	"buildCommand": "pnpm run build",
 	"outputDirectory": "dist",
 	"rewrites": [
 		{
