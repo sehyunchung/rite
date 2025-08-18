@@ -1,8 +1,7 @@
 'use client';
 
 import { UploadIcon } from 'lucide-react';
-import type { ReactNode } from 'react';
-import { createContext, useContext } from 'react';
+import * as React from 'react';
 import type { DropEvent, DropzoneOptions, FileRejection } from 'react-dropzone';
 import { useDropzone } from 'react-dropzone';
 import { Button } from '../button';
@@ -29,13 +28,13 @@ const renderBytes = (bytes: number) => {
 	return `${size.toFixed(2)}${units[unitIndex]}`;
 };
 
-const DropzoneContext = createContext<DropzoneContextType | undefined>(undefined);
+const DropzoneContext = React.createContext<DropzoneContextType | undefined>(undefined);
 
 export type DropzoneProps = Omit<DropzoneOptions, 'onDrop'> & {
 	src?: File[];
 	className?: string;
 	onDrop?: (acceptedFiles: File[], fileRejections: FileRejection[], event: DropEvent) => void;
-	children?: ReactNode;
+	children?: React.ReactNode;
 };
 
 export const Dropzone = ({
@@ -94,7 +93,7 @@ export const Dropzone = ({
 };
 
 const useDropzoneContext = () => {
-	const context = useContext(DropzoneContext);
+	const context = React.useContext(DropzoneContext);
 
 	if (!context) {
 		throw new Error('useDropzoneContext must be used within a Dropzone');
@@ -104,7 +103,7 @@ const useDropzoneContext = () => {
 };
 
 export type DropzoneContentProps = {
-	children?: ReactNode;
+	children?: React.ReactNode;
 	className?: string;
 };
 
@@ -141,7 +140,7 @@ export const DropzoneContent = ({ children, className }: DropzoneContentProps) =
 };
 
 export type DropzoneEmptyStateProps = {
-	children?: ReactNode;
+	children?: React.ReactNode;
 	className?: string;
 };
 

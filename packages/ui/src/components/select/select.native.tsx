@@ -1,15 +1,15 @@
-import React, { useState } from 'react';
+import * as React from 'react';
 import { View, Text, TouchableOpacity, Modal, ScrollView, Pressable } from 'react-native';
 import { ChevronDownIcon, CheckIcon } from 'lucide-react-native';
 import '@rite/ui/types/nativewind';
 
 // Root Select component - manages state
-export interface SelectProps {
+export type SelectProps = {
 	value?: string;
 	onValueChange?: (value: string) => void;
 	disabled?: boolean;
 	children?: React.ReactNode;
-}
+};
 
 interface SelectContextType {
 	value?: string;
@@ -22,7 +22,7 @@ interface SelectContextType {
 const SelectContext = React.createContext<SelectContextType | undefined>(undefined);
 
 export function Select({ value, onValueChange, disabled, children }: SelectProps) {
-	const [open, setOpen] = useState(false);
+	const [open, setOpen] = React.useState(false);
 
 	return (
 		<SelectContext.Provider value={{ value, onValueChange, open, setOpen, disabled }}>

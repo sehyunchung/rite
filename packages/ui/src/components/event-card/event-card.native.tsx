@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { Pressable, Text, View } from 'react-native';
 import { Link2 } from 'lucide-react-native';
 import '@rite/ui/types/nativewind';

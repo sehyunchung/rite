@@ -1,5 +1,5 @@
 import { Tabs } from 'expo-router';
-import React from 'react';
+import * as React from 'react';
 import { Platform, View, useWindowDimensions } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 

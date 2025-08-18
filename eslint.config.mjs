@@ -36,6 +36,18 @@ export default tseslint.config(
 			indent: ['error', 'tab', { SwitchCase: 1 }],
 			'no-tabs': 'off',
 			'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
+			// Enforce namespace import for React
+			'no-restricted-syntax': [
+				'error',
+				{
+					selector: 'ImportDefaultSpecifier[imported.name="React"]',
+					message: 'Use namespace import: import * as React from "react"',
+				},
+				{
+					selector: 'ImportDeclaration[source.value="react"] ImportDefaultSpecifier',
+					message: 'Use namespace import: import * as React from "react"',
+				},
+			],
 			'@typescript-eslint/no-unused-vars': [
 				'warn',
 				{ varsIgnorePattern: '^_', argsIgnorePattern: '^_' },

@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { TextInput, Platform } from 'react-native';
 import type { TextInputProps } from 'react-native';
 import '@rite/ui/types/nativewind';

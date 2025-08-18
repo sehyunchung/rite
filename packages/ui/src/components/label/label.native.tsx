@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { Text, View, Pressable } from 'react-native';
 import type { TextProps } from 'react-native';
 import '@rite/ui/types/nativewind';

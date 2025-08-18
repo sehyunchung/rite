@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { Stack } from 'expo-router';
 import { useAuth } from '../contexts/AuthContext';
 import AuthScreen from '../app/auth';
