@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { View, Text, ActivityIndicator } from 'react-native';
 import '@rite/ui/types/nativewind';
 

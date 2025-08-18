@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import * as React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@rite/ui';
 import { Typography } from '@rite/ui';
 import { useTranslations } from 'next-intl';
